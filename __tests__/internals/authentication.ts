@@ -23,13 +23,7 @@ import jwt from 'jsonwebtoken'
 
 import { handleAuthentication, Service } from '~/internals/authentication'
 
-let requestHeaderCookie: string
-
 describe('Service token only', () => {
-  beforeEach(() => {
-    requestHeaderCookie = ''
-  })
-
   test('valid serlo.org token', async () => {
     const token = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
@@ -37,7 +31,12 @@ describe('Service token only', () => {
     })
     const header = `Serlo Service=${token}`
 
-    expect(await handleAuthentication(header, fakeUserAuthenticator)).toEqual({
+    expect(
+      await handleAuthentication(
+        header,
+        createFakeUserAuthenticator({ userId: null })
+      )
+    ).toEqual({
       service: Service.Serlo,
       userId: null,
     })
@@ -51,7 +50,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow(
       'Invalid service token: jwt audience invalid. expected: api.serlo.org'
     )
@@ -65,7 +64,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow('Invalid service token: invalid signature')
   })
 
@@ -84,7 +83,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow('Invalid service token: jwt expired')
   })
 
@@ -96,7 +95,7 @@ describe('Service token only', () => {
     const header = `Bearer Service=${token}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow('Invalid authorization header')
   })
 
@@ -110,41 +109,27 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token};User=${userToken}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow('Invalid authorization header')
   })
 })
 
-describe('Service & User token', () => {
-  test('valid serlo.org token & valid cookie session', async () => {
+describe('Service & User', () => {
+  test('valid serlo.org token', async () => {
     const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
       audience: 'api.serlo.org',
       issuer: Service.Serlo,
     })
-    requestHeaderCookie =
-      'ory_kratos_session=MTY2MTg4OTA4MXxtekxPS2dhV09Ha09fdDN4RDcxNmx0Y0s2REhvWVVuUEJydmQtWWNzTWtULXNPRnBseHZHblQ5SERNWmkxcmQ1aWU1ZHU4MGZEODNFTXdnTnBXZGN1ZWhiWEdhUi01cnRRNC1aMEYyTWFUQ0IySEg1djBqaVlzRi00NE1Nd1R6NHd6OXo4dmR3blE9PXwYVBtzxUcVJgEjP2wtw0U4PrmZoYE7yfo5XPKWC6UDTg=='
-
     const header = `Serlo Service=${serviceToken}`
 
-    expect(await handleAuthentication(header, fakeUserAuthenticator)).toEqual({
+    expect(
+      await handleAuthentication(
+        header,
+        createFakeUserAuthenticator({ userId: 1 })
+      )
+    ).toEqual({
       service: Service.Serlo,
       userId: 1,
-    })
-  })
-
-  test('valid serlo.org token & invalid cookie session', async () => {
-    const serviceToken = jwt.sign({}, process.env.SERLO_ORG_SECRET, {
-      audience: 'api.serlo.org',
-      issuer: Service.Serlo,
-    })
-
-    requestHeaderCookie = 'ory_kratos_session=foobar'
-
-    const header = `Serlo Service=${serviceToken}`
-
-    expect(await handleAuthentication(header, fakeUserAuthenticator)).toEqual({
-      service: Service.Serlo,
-      userId: null,
     })
   })
 
@@ -154,16 +139,11 @@ describe('Service & User token', () => {
     const header = `Serlo Service=${serviceToken}`
 
     await expect(
-      handleAuthentication(header, fakeUserAuthenticator)
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
     ).rejects.toThrow('Invalid service token')
   })
 })
 
-function fakeUserAuthenticator(): Promise<number | null> {
-  return Promise.resolve(
-    requestHeaderCookie ===
-      'ory_kratos_session=MTY2MTg4OTA4MXxtekxPS2dhV09Ha09fdDN4RDcxNmx0Y0s2REhvWVVuUEJydmQtWWNzTWtULXNPRnBseHZHblQ5SERNWmkxcmQ1aWU1ZHU4MGZEODNFTXdnTnBXZGN1ZWhiWEdhUi01cnRRNC1aMEYyTWFUQ0IySEg1djBqaVlzRi00NE1Nd1R6NHd6OXo4dmR3blE9PXwYVBtzxUcVJgEjP2wtw0U4PrmZoYE7yfo5XPKWC6UDTg=='
-      ? 1
-      : null
-  )
+function createFakeUserAuthenticator({ userId }: { userId: number | null }) {
+  return () => Promise.resolve(userId)
 }
