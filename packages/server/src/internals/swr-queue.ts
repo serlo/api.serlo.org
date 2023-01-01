@@ -25,7 +25,7 @@ import * as t from 'io-ts'
 import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
-import { initiateAuthSdks } from './authentication'
+import { createAuthServices } from './authentication'
 import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
@@ -80,7 +80,7 @@ export function createSwrQueue({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
-      authServices: initiateAuthSdks(),
+      authServices: createAuthServices(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
@@ -175,7 +175,7 @@ export function createSwrQueueWorker({
     environment: {
       cache,
       swrQueue: emptySwrQueue,
-      authServices: initiateAuthSdks(),
+      authServices: createAuthServices(),
     },
   }
   const models = R.values(modelFactories).map((createModel) =>

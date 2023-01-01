@@ -30,7 +30,7 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
-export function initiateAuthSdks(): AuthServices {
+export function createAuthServices(): AuthServices {
   return {
     kratos: {
       public: new V0alpha2Api(
