@@ -21,13 +21,40 @@
  */
 import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
+import { Pool, PoolClient, DatabaseError } from 'pg'
 
 export interface AuthServices {
   kratos: {
     public: V0alpha2Api
     admin: V0alpha2Api
+    db: KratosDB
   }
   hydra: AdminApi
+}
+
+class KratosDB extends Pool {
+  async executeQuery<T>({
+    query,
+    params = [],
+  }: {
+    query: string
+    params?: unknown[]
+  }) {
+    let client: PoolClient | undefined
+    try {
+      this.on('error', (error) => {
+        // eslint-disable-next-line no-console
+        console.error('Unexpected error on idle client', error)
+      })
+      client = await this.connect()
+      return (await client.query(query, params)).rows as T[]
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error((error as DatabaseError).stack)
+    } finally {
+      if (client) client.release()
+    }
+  }
 }
 
 export function createAuthServices(): AuthServices {
@@ -44,6 +71,9 @@ export function createAuthServices(): AuthServices {
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
         })
       ),
+      db: new KratosDB({
+        connectionString: process.env.SERVER_KRATOS_DB_URI,
+      }),
     },
     hydra: new AdminApi(
       new HydraConfig({

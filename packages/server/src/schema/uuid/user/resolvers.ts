@@ -367,6 +367,8 @@ export const resolvers: LegacyQueries<
         { botIds }
       )
 
+      // TODO: get kratos identity id and call adminDeleteIdentity
+
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
