@@ -33,6 +33,17 @@ export interface AuthServices {
 }
 
 class KratosDB extends Pool {
+  async getIdByLegacyId(legacyId: number) {
+    const identities = await this.executeQuery({
+      query:
+        "SELECT * FROM identities WHERE metadata_public ->> 'legacy_id' = $1",
+      params: [legacyId],
+    })
+    if (identities) {
+      return identities[0]
+    }
+    return null
+  }
   async executeQuery<T>({
     query,
     params = [],
