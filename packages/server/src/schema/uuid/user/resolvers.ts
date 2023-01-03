@@ -550,13 +550,16 @@ function assertInstanceIsSet(instance: Instance | null) {
     )
   }
 }
-async function deleteKratosUser(userId: number, dataSources: { model: ModelDataSource}) {
-  const identity = await dataSources.model.authServices.kratos.db.getIdByLegacyId(
-    userId
-  ) as { id: string }
-if (identity)
-  await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
-    identity.id
-  )
+async function deleteKratosUser(
+  userId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const identity =
+    (await dataSources.model.authServices.kratos.db.getIdByLegacyId(
+      userId
+    )) as { id: string }
+  if (identity)
+    await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
+      identity.id
+    )
 }
-
