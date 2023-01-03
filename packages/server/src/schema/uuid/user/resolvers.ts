@@ -366,9 +366,18 @@ export const resolvers: LegacyQueries<
       const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
         { botIds }
       )
-
-      // TODO: get kratos identity id and call adminDeleteIdentity
-
+      await Promise.all(
+        botIds.map(async (botId) => {
+          const identity =
+            await dataSources.model.authServices.kratos.db.getIdByLegacyId(
+              botId
+            )
+          if (identity)
+            await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
+              (identity as { id: string }).id
+            )
+        })
+      )
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
