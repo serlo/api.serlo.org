@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { IdentityState, V0alpha2Api } from '@ory/client'
-import { Express, RequestHandler } from 'express'
+import { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 
 import { createRequest } from '~/internals/data-source-helper'
@@ -50,7 +50,7 @@ export function applyKratosMiddleware({
 export function createKratosRegisterHandler(
   kratos: V0alpha2Api
 ): RequestHandler {
-  return (async (request, response) => {
+  async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       response.statusCode = 401
       response.end('Kratos secret mismatch')
@@ -106,5 +106,12 @@ export function createKratosRegisterHandler(
       response.statusCode = 500
       return response.end('Internal error in after hook')
     }
-  }) as RequestHandler
+  }
+
+  // See https://stackoverflow.com/a/71912991
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state=)')
+    )
+  }
 }
