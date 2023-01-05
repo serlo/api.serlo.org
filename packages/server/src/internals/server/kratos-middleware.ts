@@ -23,10 +23,18 @@ import { IdentityState, V0alpha2Api } from '@ory/client'
 import { Express, RequestHandler } from 'express'
 import * as t from 'io-ts'
 
-import { captureErrorEvent } from '../error-event'
+import { createRequest } from '~/internals/data-source-helper'
+import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
+
+const createLegacyUser = createRequest({
+  decoder: DatabaseLayer.getDecoderFor('UserCreateMutation'),
+  async getCurrentValue(payload: DatabaseLayer.Payload<'UserCreateMutation'>) {
+    return DatabaseLayer.makeRequest('UserCreateMutation', payload)
+  },
+})
 
 export function applyKratosMiddleware({
   app,
@@ -64,18 +72,13 @@ export function createKratosRegisterHandler(
         username: string
         email: string
       }
-      const payload = {
+      const { userId: legacyUserId } = await createLegacyUser({
         username,
         // we just need to store something, since the password in legacy DB is not going to be used anymore
         // storing the kratos id is just a good way of easily seeing this value in case we need it
         password: kratosUser.id,
         email,
-      }
-      const legacyUserId = (
-        (await DatabaseLayer.makeRequest('UserCreateMutation', payload)) as {
-          userId: number
-        }
-      ).userId
+      })
 
       await DatabaseLayer.makeRequest('UserAddRoleMutation', {
         roleName: 'login',
