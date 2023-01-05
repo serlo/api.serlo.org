@@ -94,12 +94,9 @@ export function createKratosRegisterHandler(
         traits: kratosUser.traits,
         state: IdentityState.Active,
       })
+
       response.statusCode = 200
-      response.end(
-        JSON.stringify({
-          status: 'success',
-        })
-      )
+      response.end(JSON.stringify({ status: 'success' }))
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
