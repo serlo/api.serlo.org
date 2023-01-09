@@ -52,6 +52,10 @@ export function createKratosRegisterHandler(
 ): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
+      captureErrorEvent({
+        error: new Error('Unauthorized attempt to create user'),
+        errorContext: { request },
+      })
       response.statusCode = 401
       response.end('Kratos secret mismatch')
       return
