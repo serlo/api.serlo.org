@@ -47,9 +47,7 @@ export function applyKratosMiddleware({
   return basePath
 }
 
-export function createKratosRegisterHandler(
-  kratos: V0alpha2Api
-): RequestHandler {
+function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       captureErrorEvent({
