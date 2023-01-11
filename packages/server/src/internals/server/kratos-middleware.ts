@@ -20,13 +20,21 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { IdentityState, V0alpha2Api } from '@ory/client'
-import { Express, RequestHandler } from 'express'
+import { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 
-import { captureErrorEvent } from '../error-event'
+import { createRequest } from '~/internals/data-source-helper'
+import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
+
+const createLegacyUser = createRequest({
+  decoder: DatabaseLayer.getDecoderFor('UserCreateMutation'),
+  async getCurrentValue(payload: DatabaseLayer.Payload<'UserCreateMutation'>) {
+    return DatabaseLayer.makeRequest('UserCreateMutation', payload)
+  },
+})
 
 export function applyKratosMiddleware({
   app,
@@ -39,11 +47,13 @@ export function applyKratosMiddleware({
   return basePath
 }
 
-export function createKratosRegisterHandler(
-  kratos: V0alpha2Api
-): RequestHandler {
-  return (async (request, response) => {
+function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
+  async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
+      captureErrorEvent({
+        error: new Error('Unauthorized attempt to create user'),
+        errorContext: { request },
+      })
       response.statusCode = 401
       response.end('Kratos secret mismatch')
       return
@@ -64,22 +74,12 @@ export function createKratosRegisterHandler(
         username: string
         email: string
       }
-      const payload = {
+      const { userId: legacyUserId } = await createLegacyUser({
         username,
         // we just need to store something, since the password in legacy DB is not going to be used anymore
         // storing the kratos id is just a good way of easily seeing this value in case we need it
         password: kratosUser.id,
         email,
-      }
-      const legacyUserId = (
-        (await DatabaseLayer.makeRequest('UserCreateMutation', payload)) as {
-          userId: number
-        }
-      ).userId
-
-      await DatabaseLayer.makeRequest('UserAddRoleMutation', {
-        roleName: 'login',
-        username,
       })
 
       await kratos.adminUpdateIdentity(kratosUser.id, {
@@ -91,12 +91,8 @@ export function createKratosRegisterHandler(
         traits: kratosUser.traits,
         state: IdentityState.Active,
       })
-      response.statusCode = 200
-      response.end(
-        JSON.stringify({
-          status: 'success',
-        })
-      )
+
+      response.json({ status: 'success' }).end()
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
@@ -106,5 +102,12 @@ export function createKratosRegisterHandler(
       response.statusCode = 500
       return response.end('Internal error in after hook')
     }
-  }) as RequestHandler
+  }
+
+  // See https://stackoverflow.com/a/71912991
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state=)')
+    )
+  }
 }

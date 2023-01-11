@@ -509,7 +509,7 @@ export async function makeRequest<M extends MessageType>(
 
     return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
-    // TODO: Here we can check whether the body is "null" and report it toNullable
+    // TODO: Here we can check whether the body is "null" and report it to
     // Sentry
     return null
   } else if (response.status === 400) {
