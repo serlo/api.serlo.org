@@ -24,6 +24,7 @@ import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, PoolClient, DatabaseError } from 'pg'
+
 import { captureErrorEvent } from '../error-event'
 
 export interface AuthServices {
