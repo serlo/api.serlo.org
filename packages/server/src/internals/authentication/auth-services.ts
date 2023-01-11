@@ -34,6 +34,27 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
+interface Identity {
+  id: string
+  traits: {
+    username: string
+    email: string
+  } & Partial<{
+    description: string | null
+    motivation: string | null
+    profile_image: string | null
+    language: string | null
+  }>
+  schema_id: string
+  created_at: Date
+  updated_at: Date
+  nid: string
+  state: 'active' | 'inactive'
+  state_changed_at: Date
+  metadata_public: { legacy_id: number } | null
+  metadata_admin: unknown | null
+}
+
 export const IdentityDecoder = t.type({
   id: t.string,
   traits: t.intersection([
@@ -59,9 +80,7 @@ export const IdentityDecoder = t.type({
 })
 
 class KratosDB extends Pool {
-  async getIdentityByLegacyId(
-    legacyId: number
-  ): Promise<{ id: string } | null> {
+  async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
     const identities = await this.executeQuery({
       query:
         "SELECT * FROM identities WHERE metadata_public ->> 'legacy_id' = $1",
