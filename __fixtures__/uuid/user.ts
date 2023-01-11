@@ -34,7 +34,6 @@ export const user: Model<'User'> = {
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
   roles: ['login', 'german_horizonhelper', 'sysadmin'],
-  language: Instance.De
 }
 
 export const user2: Model<'User'> = {
