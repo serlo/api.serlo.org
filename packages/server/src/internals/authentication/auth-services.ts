@@ -24,6 +24,7 @@ import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, PoolClient, DatabaseError } from 'pg'
+import { captureErrorEvent } from '../error-event'
 
 export interface AuthServices {
   kratos: {
@@ -99,14 +100,12 @@ class KratosDB extends Pool {
     let client: PoolClient | undefined
     try {
       this.on('error', (error) => {
-        // eslint-disable-next-line no-console
-        console.error('Unexpected error on idle client', error)
+        captureErrorEvent({ error })
       })
       client = await this.connect()
       return (await client.query(query, params)).rows as T[]
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error((error as DatabaseError).stack)
+      captureErrorEvent({ error: error as DatabaseError })
     } finally {
       if (client) client.release()
     }
