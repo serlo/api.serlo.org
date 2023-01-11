@@ -34,6 +34,7 @@ import * as R from 'ramda'
 import {
   AuthServices,
   handleAuthentication,
+  IdentityDecoder,
   Service,
 } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
@@ -45,9 +46,8 @@ import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
-// TODO: When the time comes change it to session.identity.id
 const SessionDecoder = t.type({
-  identity: t.type({ metadata_public: t.type({ legacy_id: t.number }) }),
+  identity: IdentityDecoder,
 })
 
 export async function applyGraphQLMiddleware({
@@ -125,6 +125,7 @@ export function getGraphQLOptions(
           ).data
 
           if (SessionDecoder.is(session)) {
+            // TODO: When the time comes change it to session.identity.id
             return session.identity.metadata_public.legacy_id
           } else {
             return null
