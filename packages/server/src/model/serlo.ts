@@ -77,13 +77,10 @@ export function createSerloModel({
     S extends Model<'AbstractUuid'> | null
   >({ id, decoder }: { id: number; decoder: t.Type<S, unknown> }): Promise<S> {
     if (decoder.is(UserDecoder)) {
-
-      const kratosId: string = await environment.authServices.kratos.db.getIdByLegacyId(id) as string
-      const kratosUser = await environment.authServices.kratos.admin.adminGetIdentity(kratosId)
-      const language: Instance = kratosUser.traits.language as Instance
+      const kratosIdentity = await environment.authServices.kratos.db.getIdentityByLegacyId(id)
       return {
-        language: language,
-          ...await getUuid._querySpec.queryWithDecoder({ id }, decoder)
+        language: kratosIdentity?.traits.language,
+        ...await getUuid._querySpec.queryWithDecoder({ id }, decoder)
       }
     }
     return getUuid._querySpec.queryWithDecoder({ id }, decoder)
