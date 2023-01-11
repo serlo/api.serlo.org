@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.48.0-stable.3](https://github.com/serlo/api.serlo.org/compare/v0.48.0-stable.2..v0.48.0-stable.3) - January 11, 2023
+
 ## [v0.48.0-stable.2](https://github.com/serlo/api.serlo.org/compare/v0.48.0-stable.1..v0.48.0-stable.2) - December 13, 2022
 
 ## [v0.48.0-stable.1](https://github.com/serlo/api.serlo.org/compare/v0.48.0-stable.0..v0.48.0-stable.1) - December 11, 2022
