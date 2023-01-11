@@ -21,6 +21,8 @@
  */
 import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
+import * as t from 'io-ts'
+import { DateFromISOString } from 'io-ts-types'
 import { Pool, PoolClient, DatabaseError } from 'pg'
 
 export interface AuthServices {
@@ -32,16 +34,40 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
+export const IdentityDecoder = t.type({
+  id: t.string,
+  traits: t.intersection([
+    t.type({
+      username: t.string,
+      email: t.string,
+    }),
+    t.partial({
+      description: t.union([t.null, t.string]),
+      motivation: t.union([t.undefined, t.null, t.string]),
+      profile_image: t.union([t.undefined, t.null, t.string]),
+      language: t.union([t.undefined, t.null, t.string]),
+    }),
+  ]),
+  schema_id: t.string,
+  created_at: DateFromISOString,
+  updated_at: DateFromISOString,
+  nid: t.string,
+  state: t.union([t.literal('active'), t.literal('inactive')]),
+  state_changed_at: DateFromISOString,
+  metadata_public: t.union([t.null, t.type({ legacy_id: t.number })]),
+  metadata_admin: t.union([t.null, t.type({})]),
+})
+
 class KratosDB extends Pool {
-  async getIdByLegacyId(legacyId: number) {
+  async getIdentityByLegacyId(
+    legacyId: number
+  ): Promise<{ id: string } | null> {
     const identities = await this.executeQuery({
       query:
         "SELECT * FROM identities WHERE metadata_public ->> 'legacy_id' = $1",
       params: [legacyId],
     })
-    if (identities) {
-      return identities[0]
-    }
+    if (identities && IdentityDecoder.is(identities[0])) return identities[0]
     return null
   }
   async executeQuery<T>({
