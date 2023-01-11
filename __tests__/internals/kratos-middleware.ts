@@ -42,7 +42,7 @@ afterAll((done) => {
 })
 
 describe('Kratos middleware - register endpoint', () => {
-  test('fails when secret is not send', async () => {
+  test('fails when secret is not sent', async () => {
     const response = await fetchKratos({ withKratosKey: false })
 
     expect(response.status).toBe(401)
