@@ -10,7 +10,7 @@ fi
 
 auth_file=packages/server/src/internals/server/graphql-middleware.ts
 
-body_of_context_method='108,133d'
+body_of_context_method='113,138d'
 
 sed -i -e $body_of_context_method $auth_file
 sed -i "s/context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {/context(): Promise<Pick<Context, 'service' | 'userId'>> {return Promise.resolve({ service: Service.SerloCloudflareWorker,userId: $user_id,}) }/" $auth_file
