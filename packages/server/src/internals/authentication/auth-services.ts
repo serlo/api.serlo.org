@@ -25,6 +25,8 @@ import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, PoolClient, DatabaseError } from 'pg'
 
+import { captureErrorEvent } from '../error-event'
+
 export interface AuthServices {
   kratos: {
     public: V0alpha2Api
@@ -46,13 +48,12 @@ interface Identity {
     language: string | null
   }>
   schema_id: string
-  created_at: Date
-  updated_at: Date
-  nid: string
+  created_at: Date | string
+  updated_at: Date | string
   state: 'active' | 'inactive'
-  state_changed_at: Date
-  metadata_public: { legacy_id: number } | null
-  metadata_admin: unknown | null
+  state_changed_at: Date | string
+  metadata_public: { legacy_id: number }
+  metadata_admin?: null
 }
 
 export const IdentityDecoder = t.type({
@@ -70,13 +71,11 @@ export const IdentityDecoder = t.type({
     }),
   ]),
   schema_id: t.string,
-  created_at: DateFromISOString,
-  updated_at: DateFromISOString,
-  nid: t.string,
+  created_at: t.union([DateFromISOString, t.string]),
+  updated_at: t.union([DateFromISOString, t.string]),
   state: t.union([t.literal('active'), t.literal('inactive')]),
-  state_changed_at: DateFromISOString,
-  metadata_public: t.union([t.null, t.type({ legacy_id: t.number })]),
-  metadata_admin: t.union([t.null, t.type({})]),
+  state_changed_at: t.union([DateFromISOString, t.string]),
+  metadata_public: t.type({ legacy_id: t.number }),
 })
 
 class KratosDB extends Pool {
@@ -99,14 +98,12 @@ class KratosDB extends Pool {
     let client: PoolClient | undefined
     try {
       this.on('error', (error) => {
-        // eslint-disable-next-line no-console
-        console.error('Unexpected error on idle client', error)
+        captureErrorEvent({ error })
       })
       client = await this.connect()
       return (await client.query(query, params)).rows as T[]
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error((error as DatabaseError).stack)
+      captureErrorEvent({ error: error as DatabaseError })
     } finally {
       if (client) client.release()
     }
