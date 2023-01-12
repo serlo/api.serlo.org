@@ -21,13 +21,93 @@
  */
 import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
 import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
+import * as t from 'io-ts'
+import { DateFromISOString } from 'io-ts-types'
+import { Pool, PoolClient, DatabaseError } from 'pg'
+
+import { captureErrorEvent } from '../error-event'
 
 export interface AuthServices {
   kratos: {
     public: V0alpha2Api
     admin: V0alpha2Api
+    db: KratosDB
   }
   hydra: AdminApi
+}
+
+interface Identity {
+  id: string
+  traits: {
+    username: string
+    email: string
+  } & Partial<{
+    description: string | null
+    motivation: string | null
+    profile_image: string | null
+    language: string | null
+  }>
+  schema_id: string
+  created_at: Date | string
+  updated_at: Date | string
+  state: 'active' | 'inactive'
+  state_changed_at: Date | string
+  metadata_public: { legacy_id: number }
+  metadata_admin?: null
+}
+
+export const IdentityDecoder = t.type({
+  id: t.string,
+  traits: t.intersection([
+    t.type({
+      username: t.string,
+      email: t.string,
+    }),
+    t.partial({
+      description: t.union([t.null, t.string]),
+      motivation: t.union([t.undefined, t.null, t.string]),
+      profile_image: t.union([t.undefined, t.null, t.string]),
+      language: t.union([t.undefined, t.null, t.string]),
+    }),
+  ]),
+  schema_id: t.string,
+  created_at: t.union([DateFromISOString, t.string]),
+  updated_at: t.union([DateFromISOString, t.string]),
+  state: t.union([t.literal('active'), t.literal('inactive')]),
+  state_changed_at: t.union([DateFromISOString, t.string]),
+  metadata_public: t.type({ legacy_id: t.number }),
+})
+
+class KratosDB extends Pool {
+  async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
+    const identities = await this.executeQuery({
+      query:
+        "SELECT * FROM identities WHERE metadata_public ->> 'legacy_id' = $1",
+      params: [legacyId],
+    })
+    if (identities && IdentityDecoder.is(identities[0])) return identities[0]
+    return null
+  }
+  async executeQuery<T>({
+    query,
+    params = [],
+  }: {
+    query: string
+    params?: unknown[]
+  }) {
+    let client: PoolClient | undefined
+    try {
+      this.on('error', (error) => {
+        captureErrorEvent({ error })
+      })
+      client = await this.connect()
+      return (await client.query(query, params)).rows as T[]
+    } catch (error) {
+      captureErrorEvent({ error: error as DatabaseError })
+    } finally {
+      if (client) client.release()
+    }
+  }
 }
 
 export function createAuthServices(): AuthServices {
@@ -44,6 +124,9 @@ export function createAuthServices(): AuthServices {
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
         })
       ),
+      db: new KratosDB({
+        connectionString: process.env.SERVER_KRATOS_DB_URI,
+      }),
     },
     hydra: new AdminApi(
       new HydraConfig({
