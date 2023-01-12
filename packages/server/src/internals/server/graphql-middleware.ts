@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Session } from '@ory/client'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import {
   ApolloError,
@@ -28,12 +27,14 @@ import {
 } from 'apollo-server-express'
 import { Express, json } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
+import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
 
 import {
   AuthServices,
   handleAuthentication,
+  IdentityDecoder,
   Service,
 } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
@@ -44,6 +45,10 @@ import { createSentryPlugin } from '~/internals/sentry'
 import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
+
+const SessionDecoder = t.type({
+  identity: IdentityDecoder,
+})
 
 export async function applyGraphQLMiddleware({
   app,
@@ -113,22 +118,22 @@ export function getGraphQLOptions(
         })
       }
       return handleAuthentication(authorizationHeader, async () => {
-        let session: Session | undefined
-
         try {
-          session = await environment.authServices.kratos.public
-            .toSession(undefined, req.header('cookie'))
-            .then(({ data }) => data)
+          const publicKratos = environment.authServices.kratos.public
+          const session = (
+            await publicKratos.toSession(undefined, req.header('cookie'))
+          ).data
+
+          if (SessionDecoder.is(session)) {
+            // TODO: When the time comes change it to session.identity.id
+            return session.identity.metadata_public.legacy_id
+          } else {
+            return null
+          }
         } catch {
           // the user is probably unauthenticated
           return null
         }
-
-        // When the time comes change it to session.identity.id
-        const legacyId = (
-          session?.identity?.metadata_public as { legacy_id: number }
-        )?.legacy_id
-        return legacyId ?? null
       })
     },
   }

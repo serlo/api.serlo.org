@@ -4287,10 +4287,10 @@ __metadata:
     "@ory/client": 0.2.0-alpha.4
     "@ory/hydra-client": ^1.11.8
     "@sentry/node": ^6.19.7
-    "@serlo/authorization": ^0.48.0-stable.2
+    "@serlo/authorization": ^0.48.0-stable.3
     "@types/basic-auth": ^1.1.3
     "@types/bull-arena": ^3.0.7
-    "@types/graphql-modules": ^0.48.0-stable.2
+    "@types/graphql-modules": ^0.48.0-stable.3
     "@types/jsonwebtoken": ^9.0.0
     "@types/node-fetch": ^2.6.2
     "@types/pg": ^8.6.6
@@ -4339,7 +4339,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.48.0-stable.2, @serlo/api@workspace:packages/types":
+"@serlo/api@^0.48.0-stable.3, @serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -4350,11 +4350,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.48.0-stable.2, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.48.0-stable.3, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   dependencies:
-    "@serlo/api": ^0.48.0-stable.2
+    "@serlo/api": ^0.48.0-stable.3
   languageName: unknown
   linkType: soft
 
@@ -4608,7 +4608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-modules@^0.48.0-stable.2, @types/graphql-modules@workspace:packages/graphql-modules":
+"@types/graphql-modules@^0.48.0-stable.3, @types/graphql-modules@workspace:packages/graphql-modules":
   version: 0.0.0-use.local
   resolution: "@types/graphql-modules@workspace:packages/graphql-modules"
   languageName: unknown
@@ -13413,9 +13413,9 @@ __metadata:
   linkType: hard
 
 "luxon@npm:^3.1.0":
-  version: 3.1.1
-  resolution: "luxon@npm:3.1.1"
-  checksum: 388fb35d3c51a19d8b305a3338e7e74634b08562e7d2f9ed5c05a7f4bc9ee1c1ab6a2546b6d9c4c104516b24043757d65f5f3fe3d78b206fbf55a9586ab62230
+  version: 3.2.1
+  resolution: "luxon@npm:3.2.1"
+  checksum: 3fa3def2c5f5d3032b4c46220c4da8aeb467ac979888fc9d2557adcd22195f93516b4ad5909a75862bec8dc6ddc0953b0f38e6d2f4a8ab8450ddc531a83cf20d
   languageName: node
   linkType: hard
 
