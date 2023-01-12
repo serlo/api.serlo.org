@@ -1425,24 +1425,16 @@ async function exec(): Promise<void> {
       {
         tagName: 'v0.47.2',
         date: '2022-12-07',
-
         fixed: ['Fix pagination in `allThreads`'],
       },
       {
-        tagName: 'v0.48.0-stable.0',
-        date: '2022-12-11',
-      },
-      {
-        tagName: 'v0.48.0-stable.1',
-        date: '2022-12-11',
-      },
-      {
-        tagName: 'v0.48.0-stable.2',
-        date: '2022-12-13',
-      },
-      {
-        tagName: 'v0.48.0-stable.3',
-        date: '2023-01-11',
+        tagName: 'v0.48.0',
+        date: '2023-01-12',
+        added: [
+          'Endpoint for synchronizing users between new and old tables',
+          'Oauth mutations',
+        ],
+        breakingChanges: ['authenticate user using cookie'],
       },
     ],
   })
