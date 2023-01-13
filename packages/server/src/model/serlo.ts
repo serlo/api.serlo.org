@@ -44,7 +44,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isSupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { AbstractUuid, Instance } from '~/types'
+import { Instance } from '~/types'
 
 export function createSerloModel({
   environment,
@@ -59,16 +59,19 @@ export function createSerloModel({
         const uuid = (await DatabaseLayer.makeRequest(
           'UuidQuery',
           payload
-        )) as AbstractUuid
-        const kratosIdentity =
-          await environment.authServices.kratos.db.getIdentityByLegacyId(
-            payload.id
-          )
-        const updatedUuid = {
-          language: kratosIdentity?.traits.language,
-          ...uuid,
+        ))
+        if (!isSupportedUuid(uuid)) return null
+        if (uuid.__typename === 'User') {
+          const kratosIdentity =
+            await environment.authServices.kratos.db.getIdentityByLegacyId(
+              payload.id
+            )
+          return {
+            language: kratosIdentity?.traits.language,
+            ...uuid,
+          }
         }
-        return isSupportedUuid(updatedUuid) ? updatedUuid : null
+        return uuid
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
