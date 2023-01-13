@@ -534,7 +534,7 @@ export const UserDecoder = t.exact(
     t.partial({
       lastLogin: t.union([t.string, t.null]),
       description: t.union([t.string, t.null]),
-      language: t.union([InstanceDecoder, t.null])
+      language: t.union([InstanceDecoder, t.null]),
     }),
   ])
 )

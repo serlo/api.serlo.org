@@ -22,7 +22,6 @@
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
-import {Instance} from "~/types";
 
 export const user: Model<'User'> = {
   __typename: DiscriminatorType.User,

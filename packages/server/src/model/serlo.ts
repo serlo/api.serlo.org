@@ -44,7 +44,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { isSupportedNotificationEvent } from '~/schema/notification/utils'
 import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance } from '~/types'
+import {AbstractUuid, Instance} from '~/types'
 
 export function createSerloModel({
   environment,
@@ -56,8 +56,13 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
-        return isSupportedUuid(uuid) ? uuid : null
+        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload) as AbstractUuid
+        const kratosIdentity = await environment.authServices.kratos.db.getIdentityByLegacyId(payload.id)
+        const updatedUuid = {
+          language: kratosIdentity?.traits.language,
+          ...uuid
+        }
+        return isSupportedUuid(updatedUuid) ? updatedUuid : null
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -76,13 +81,6 @@ export function createSerloModel({
   async function getUuidWithCustomDecoder<
     S extends Model<'AbstractUuid'> | null
   >({ id, decoder }: { id: number; decoder: t.Type<S, unknown> }): Promise<S> {
-    if (decoder.is(UserDecoder)) {
-      const kratosIdentity = await environment.authServices.kratos.db.getIdentityByLegacyId(id)
-      return {
-        language: kratosIdentity?.traits.language,
-        ...await getUuid._querySpec.queryWithDecoder({ id }, decoder)
-      }
-    }
     return getUuid._querySpec.queryWithDecoder({ id }, decoder)
   }
 
