@@ -4285,7 +4285,7 @@ __metadata:
     "@types/basic-auth": ^1.1.3
     "@types/bull-arena": ^3.0.7
     "@types/graphql-modules": ^0.48.0
-    "@types/jsonwebtoken": ^9.0.0
+    "@types/jsonwebtoken": ^9.0.1
     "@types/node-fetch": ^2.6.2
     "@types/pg": ^8.6.6
     "@types/ramda": ^0.28.20
@@ -4735,12 +4735,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@types/jsonwebtoken@npm:9.0.0"
+"@types/jsonwebtoken@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "@types/jsonwebtoken@npm:9.0.1"
   dependencies:
     "@types/node": "*"
-  checksum: c7791354ba895759524c18ba609ea04efdc576e2b660bd6f80d5b917db8dc4b01acd4d1bc115a62d35406a82e627067973d475c4b36035dabaa27862b141ae49
+  checksum: a7f0925e9a42ad3ae970364c63c5986d40da5c83d51d3f4e624eb0f064a380376f9e3fb3f2f837390a9ab80143f5d75fd51866da30e110f6b486a3379e1c768f
   languageName: node
   linkType: hard
 
