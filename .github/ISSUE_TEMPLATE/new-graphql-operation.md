@@ -1,9 +1,8 @@
 ---
-name: New endpoint
-about: Issue for creating a new endpoint
-title: '[New Endpoint]'
+name: New GraphQL Operation
+about: Issue for creating a new GraphQL Operation
+title: '[New Operation]'
 labels: enhancement
-assignees: ''
 ---
 
 ## Definition
