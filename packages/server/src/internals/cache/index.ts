@@ -25,11 +25,11 @@ import Redis from 'ioredis'
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 
+import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
 import { redisUrl } from '../redis-url'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
-import { createLockManager, LockManager } from './lock-manager'
 import { AsyncOrSync } from '~/utils'
 
 const msgpack = (
