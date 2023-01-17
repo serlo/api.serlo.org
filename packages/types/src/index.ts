@@ -2535,10 +2535,22 @@ export type ThreadCreateThreadResponse = {
   success: Scalars['Boolean'];
 };
 
+export type ThreadEditCommentInput = {
+  commentId: Scalars['String'];
+  content: Scalars['String'];
+};
+
+export type ThreadEditCommentResponse = {
+  __typename?: 'ThreadEditCommentResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
   createComment?: Maybe<ThreadCreateCommentResponse>;
   createThread?: Maybe<ThreadCreateThreadResponse>;
+  editComment?: Maybe<ThreadEditCommentResponse>;
   setCommentState?: Maybe<ThreadSetCommentStateResponse>;
   setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
   setThreadState?: Maybe<ThreadSetThreadStateResponse>;
@@ -2552,6 +2564,11 @@ export type ThreadMutationCreateCommentArgs = {
 
 export type ThreadMutationCreateThreadArgs = {
   input: ThreadCreateThreadInput;
+};
+
+
+export type ThreadMutationEditCommentArgs = {
+  input: ThreadEditCommentInput;
 };
 
 
