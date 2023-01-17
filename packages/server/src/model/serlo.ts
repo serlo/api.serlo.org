@@ -650,6 +650,29 @@ export function createSerloModel({
     },
   })
 
+  const editComment = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('ThreadEditCommentMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadEditCommentMutation'>
+     ) {
+      return DatabaseLayer.makeRequest('ThreadEditCommentMutation', payload)
+    },
+    async updateCache(payload, value) {
+      if (value.success === true) {
+        await getUuid._querySpec.setCache({
+          payload: { id: payload.commentId },
+          getValue(current) {
+            if (!current) return
+            return {
+              content: payload.content,
+              ...current
+            }
+          },
+        })
+      }
+    },
+  })
+
   const archiveThread = createMutation({
     decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
     async mutate(
@@ -1145,6 +1168,7 @@ export function createSerloModel({
     createThread,
     deleteBots,
     deleteRegularUsers,
+    editComment,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
