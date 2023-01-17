@@ -14,7 +14,7 @@ type Thread {
 }
 
 type Comment implements AbstractUuid {
-  id: Int!
+  id: String!
   title: String!
   content: String!
   alias: String!

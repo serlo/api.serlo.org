@@ -125,6 +125,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     },
   },
   Comment: {
+    id(comment) {
+      return encodeThreadId(comment.id)
+    },
     ...createUuidResolvers(),
     createdAt(comment) {
       return comment.date
