@@ -652,9 +652,7 @@ export function createSerloModel({
 
   const editComment = createMutation({
     decoder: DatabaseLayer.getDecoderFor('ThreadEditCommentMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadEditCommentMutation'>
-     ) {
+    async mutate(payload: DatabaseLayer.Payload<'ThreadEditCommentMutation'>) {
       return DatabaseLayer.makeRequest('ThreadEditCommentMutation', payload)
     },
     async updateCache(payload, value) {
@@ -665,7 +663,7 @@ export function createSerloModel({
             if (!current) return
             return {
               content: payload.content,
-              ...current
+              ...current,
             }
           },
         })

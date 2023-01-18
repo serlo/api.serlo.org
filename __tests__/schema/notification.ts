@@ -64,6 +64,7 @@ import {
   givenThreads,
 } from '../__utils__'
 import { Payload } from '~/internals/model'
+import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
 
 describe('notifications', () => {
@@ -509,7 +510,10 @@ describe('notificationEvent', () => {
         variables: createCommentNotificationEvent,
         data: {
           notificationEvent: {
-            comment: getTypenameAndId(comment),
+            comment: {
+              __typename: 'Comment',
+              id: encodeThreadId(comment.id),
+            },
           },
         },
         client,

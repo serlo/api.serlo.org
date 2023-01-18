@@ -548,8 +548,11 @@ const pactSpec: PactSpec = {
   },
   ThreadEditCommentMutation: {
     examples: [
-      [{ content: comment.content, commentId: comment.id, userId: user.id }, { success: true }]
-    ]
+      [
+        { content: comment.content, commentId: comment.id, userId: user.id },
+        { success: true },
+      ],
+    ],
   },
   ThreadSetThreadArchivedMutation: {
     examples: [
