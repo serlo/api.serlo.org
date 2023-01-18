@@ -71,12 +71,6 @@ web_modules/
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.pnp.*
-
 # Generated pact files
 pacts/
 
@@ -87,7 +81,7 @@ dist/
 .idea
 .vscode
 
-# Yarn
+# Yarn (with Zero-Installs)
 .yarn/*
 !.yarn/cache
 !.yarn/patches
@@ -95,3 +89,6 @@ dist/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# asdf version file
+.tool-versions

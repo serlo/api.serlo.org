@@ -51,18 +51,7 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import {
-  assertFailingGraphQLQuery,
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createMessageHandler,
-  createTestClient,
-  createUuidHandler,
-  getTypenameAndId,
-  given,
-  Client,
-  givenThreads,
-} from '../../__utils__'
+import { getTypenameAndId, given, Client, givenThreads } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
@@ -75,11 +64,7 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+const client = new Client()
 
 // Endpoint uuid() returns null for comments
 type AccessibleUuidTypes = Exclude<UuidType, DiscriminatorType.Comment>
@@ -116,291 +101,187 @@ const abstractUuidFixtures: Record<
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 
 describe('uuid', () => {
-  test('returns null when alias cannot be found', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'AliasQuery',
-          payload: {
-            instance: Instance.De,
-            path: '/not-existing',
-          },
-        },
-        statusCode: 404,
-        body: null,
-      })
-    )
-
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query notExistingUuid($alias: AliasInput) {
-          uuid(alias: $alias) {
-            __typename
-          }
+  const uuidQuery = client.prepareQuery({
+    query: gql`
+      query ($id: Int, $alias: AliasInput) {
+        uuid(id: $id, alias: $alias) {
+          id
+          __typename
         }
-      `,
-      variables: { alias: { instance: Instance.De, path: '/not-existing' } },
-      data: { uuid: null },
-      client,
-    })
+      }
+    `,
+  })
+
+  test('returns null when alias cannot be found', async () => {
+    given('AliasQuery')
+      .withPayload({
+        instance: Instance.De,
+        path: '/not-existing',
+      })
+      .returnsNotFound()
+
+    await uuidQuery
+      .withVariables({
+        alias: { instance: Instance.De, path: '/not-existing' },
+      })
+      .shouldReturnData({ uuid: null })
   })
 
   test('returns uuid when alias is /entity/view/:id', async () => {
-    global.server.use(createUuidHandler(article))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            id
-            __typename
-          }
-        }
-      `,
-      variables: {
+    given('UuidQuery').for(article)
+
+    await uuidQuery
+      .withVariables({
         alias: { instance: Instance.De, path: `/entity/view/${article.id}` },
-      },
-      data: { uuid: getTypenameAndId(article) },
-      client,
-    })
+      })
+      .shouldReturnData({ uuid: getTypenameAndId(article) })
   })
 
   test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
-    global.server.use(createUuidHandler(article))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            __typename
-            id
-          }
-        }
-      `,
-      variables: {
+    given('UuidQuery').for(article)
+
+    await uuidQuery
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/mathe/${article.id}/das-viereck`,
         },
-      },
-      data: { uuid: getTypenameAndId(article) },
-      client,
-    })
+      })
+      .shouldReturnData({ uuid: getTypenameAndId(article) })
   })
 
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
-    global.server.use(createUuidHandler(articleRevision))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            id
-          }
-        }
-      `,
-      variables: {
+    given('UuidQuery').for(articleRevision)
+
+    await uuidQuery
+      .withVariables({
         alias: {
           instance: Instance.De,
           path: `/entity/repository/compare/${article.id}/${articleRevision.id}`,
         },
-      },
-      data: { uuid: { id: articleRevision.id } },
-      client,
-    })
+      })
+      .shouldReturnData({ uuid: { id: articleRevision.id } })
   })
 
   test('returns null when uuid does not exist', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: 666 },
-        },
-        body: null,
-      })
-    )
+    given('UuidQuery').withPayload({ id: 666 }).returnsNotFound()
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query requestNonExistingUuid($id: Int!) {
-          uuid(id: $id) {
-            __typename
-          }
-        }
-      `,
-      variables: { id: 666 },
-      data: {
-        uuid: null,
-      },
-      client,
-    })
+    await uuidQuery.withVariables({ id: 666 }).shouldReturnData({ uuid: null })
   })
 
   test('returns null when requested id is too high to be an uuid', async () => {
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query ($path: String!) {
-          uuid(alias: { instance: de, path: $path }) {
-            __typename
-          }
-        }
-      `,
-      variables: { path: '/100000000000000' },
-      data: { uuid: null },
-      client,
-    })
+    await uuidQuery
+      .withVariables({ alias: { path: '/100000000000000', instance: 'de' } })
+      .shouldReturnData({ uuid: null })
   })
 
   test('returns an error when alias contains the null character', async () => {
-    global.server.use(
-      createUuidHandler({ ...article, alias: '\0\0/1/math' as Alias })
-    )
+    given('UuidQuery').for({ ...article, alias: '\0\0/1/math' as Alias })
 
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            __typename
-          }
-        }
-      `,
-      variables: { id: article.id },
-      message: expect.stringContaining('Invalid value'),
-      client,
-    })
+    await uuidQuery
+      .withVariables({ id: article.id })
+      .shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 
   test('returns an error when no arguments are given', async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query emptyUuidRequest {
-          uuid {
-            __typename
-          }
-        }
-      `,
-      message: 'you need to provide an id or an alias',
-      client,
-    })
+    await uuidQuery.shouldFailWithError('BAD_USER_INPUT')
   })
 
   test("returns an error when the path does not start with '/'", async () => {
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query emptyUuidRequest {
-          uuid(alias: { instance: de, path: "mathe" }) {
-            __typename
-          }
-        }
-      `,
-      message:
-        "First is the worst, please add a '/' at the beginning of your path",
-      client,
-    })
+    await uuidQuery
+      .withVariables({ alias: { instance: 'de', path: 'math' } })
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('returns an error when request fails (500)', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        statusCode: 500,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).hasInternalServerError()
 
-    await assertFailingGraphQLQuery({
-      query: gql`
-        query user($id: Int!) {
-          uuid(id: $id) {
-            __typename
-          }
-        }
-      `,
-      variables: user,
-      message: '500: {"type":"UuidQuery","payload":{"id":1}}',
-      client,
-    })
+    await uuidQuery
+      .withVariables({ id: user.id })
+      .shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 
   test('succeeds on 404', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'UuidQuery',
-          payload: { id: user.id },
-        },
-        body: null,
-        statusCode: 404,
-      })
-    )
+    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
 
-    await assertSuccessfulGraphQLQuery({
+    await uuidQuery
+      .withVariables({ id: user.id })
+      .shouldReturnData({ uuid: null })
+  })
+})
+
+test('`uuid` returns null on unsupported uuid type', async () => {
+  given('UuidQuery').for({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error We assume here that we get an invalid type name
+    __typename: 'MathPuzzle',
+    id: castToUuid(146944),
+    trashed: false,
+  })
+
+  await new Client()
+    .prepareQuery({
       query: gql`
-        query user($id: Int!) {
+        query unsupported($id: Int!) {
           uuid(id: $id) {
             __typename
+            id
           }
         }
       `,
-      variables: user,
-      data: {
-        uuid: null,
-      },
-      client,
     })
-  })
+    .withVariables({ id: 146944 })
+    .shouldReturnData({ uuid: null })
 })
 
 describe('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
-      global.server.use(
-        createUuidHandler({
-          ...payload,
-          alias: castToAlias('/%%/größe'),
-          id: castToUuid(23),
-        })
-      )
-
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query ($id: Int) {
-            uuid(id: $id) {
-              alias
-            }
-          }
-        `,
-        variables: { id: 23 },
-        data: { uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } },
-        client,
+      given('UuidQuery').for({
+        ...payload,
+        alias: castToAlias('/%%/größe'),
+        id: castToUuid(23),
       })
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query ($id: Int) {
+              uuid(id: $id) {
+                alias
+              }
+            }
+          `,
+        })
+        .withVariables({ id: 23 })
+        .shouldReturnData({ uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } })
     })
   })
 })
 
 describe('custom aliases', () => {
-  test('de.serlo.org/community resolves to uuid 19882', async () => {
+  test('de.serlo.org/community resolves to uuid 19767', async () => {
     given('UuidQuery').for({
       ...page,
       id: castToUuid(19882),
       alias: castToAlias('/legacy-alias'),
     })
 
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query uuid($alias: AliasInput!) {
-          uuid(alias: $alias) {
-            id
-            ... on Page {
-              alias
+    await client
+      .prepareQuery({
+        query: gql`
+          query uuid($alias: AliasInput!) {
+            uuid(alias: $alias) {
+              id
+              ... on Page {
+                alias
+              }
             }
           }
-        }
-      `,
-      variables: { alias: { instance: Instance.De, path: '/community' } },
-      data: { uuid: { id: 19882, alias: '/community' } },
-      client,
-    })
+        `,
+      })
+      .withVariables({ alias: { instance: Instance.De, path: '/community' } })
+      .shouldReturnData({ uuid: { id: 19882, alias: '/community' } })
   })
 })
 
@@ -459,7 +340,7 @@ describe('property "title"', () => {
   test.each(testCases)('%s', async (_, uuids, title) => {
     given('UuidQuery').for(uuids)
 
-    await new Client()
+    await client
       .prepareQuery({
         query: gql`
           query ($id: Int!) {
@@ -479,7 +360,7 @@ describe('property "title"', () => {
       threads: [[comment, { ...comment1, title: null }]],
     })
 
-    await new Client()
+    await client
       .prepareQuery({
         query: gql`
           query propertyCreatedAt($id: Int!) {
@@ -527,7 +408,7 @@ describe('property "title"', () => {
     })
     given('UuidQuery').for(articleRevision)
 
-    await new Client()
+    await client
       .prepareQuery({
         query: gql`
           query propertyCreatedAt($id: Int!) {

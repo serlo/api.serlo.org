@@ -24,10 +24,10 @@ import * as t from 'io-ts'
 import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
+import { InvalidCurrentValueError } from './common'
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
-import { InvalidCurrentValueError } from './common'
 import { captureErrorEvent } from '~/internals/error-event'
 
 /**

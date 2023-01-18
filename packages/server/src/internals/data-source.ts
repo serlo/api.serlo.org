@@ -39,6 +39,7 @@ export class ModelDataSource extends RESTDataSource {
   public serlo: ReturnType<typeof createSerloModel>
   public chat: ReturnType<typeof createChatModel>
   public mailchimp: ReturnType<typeof createMailchimpModel>
+  public authServices: Environment['authServices']
 
   constructor(private environment: Environment) {
     super()
@@ -47,6 +48,7 @@ export class ModelDataSource extends RESTDataSource {
     this.serlo = createSerloModel({ environment })
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
     this.mailchimp = createMailchimpModel()
+    this.authServices = environment.authServices
   }
 
   public async removeCacheValue({ keys }: { keys: string[] }) {
