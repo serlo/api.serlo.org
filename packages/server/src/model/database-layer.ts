@@ -73,7 +73,7 @@ export const spec = {
   AllThreadsQuery: {
     payload: t.intersection([
       t.type({ first: t.number }),
-      t.partial({ after: t.number }),
+      t.partial({ after: t.string }),
       t.partial({ instance: InstanceDecoder }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
@@ -405,6 +405,18 @@ export const spec = {
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
     canBeNull: false,
   },
+  UserCreateMutation: {
+    payload: t.type({
+      username: t.string,
+      password: t.string,
+      email: t.string,
+    }),
+    response: t.strict({
+      success: t.literal(true),
+      userId: t.number,
+    }),
+    canBeNull: false,
+  },
   UserAddRoleMutation: {
     payload: t.type({ username: t.string, roleName: t.string }),
     response: t.strict({
@@ -497,7 +509,7 @@ export async function makeRequest<M extends MessageType>(
 
     return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
-    // TODO: Here we can check whether the body is "null" and report it toNullable
+    // TODO: Here we can check whether the body is "null" and report it to
     // Sentry
     return null
   } else if (response.status === 400) {

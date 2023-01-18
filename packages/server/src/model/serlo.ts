@@ -56,8 +56,22 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
-        return isSupportedUuid(uuid) ? uuid : null
+        const uuid = (await DatabaseLayer.makeRequest(
+          'UuidQuery',
+          payload
+        ))
+        if (!isSupportedUuid(uuid)) return null
+        if (uuid.__typename === 'User') {
+          const kratosIdentity =
+            await environment.authServices.kratos.db.getIdentityByLegacyId(
+              payload.id
+            )
+          return {
+            language: kratosIdentity?.traits.language,
+            ...uuid,
+          }
+        }
+        return uuid
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -266,7 +280,7 @@ export function createSerloModel({
       const payload = await getNavigationPayload({ instance })
       const { data } = payload
 
-      type NodeData = typeof data[number]
+      type NodeData = (typeof data)[number]
 
       const leaves: Record<string, number> = {}
 

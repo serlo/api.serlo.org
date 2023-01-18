@@ -48,16 +48,7 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import {
-  assertSuccessfulGraphQLQuery,
-  LegacyClient,
-  createTestClient,
-  createUuidHandler,
-  nextUuid,
-  getTypenameAndId,
-  given,
-  Client,
-} from '../../__utils__'
+import { nextUuid, getTypenameAndId, given, Client } from '../../__utils__'
 import { getDefaultLicense } from '~/config/licenses'
 import { Model } from '~/internals/graphql'
 import {
@@ -69,11 +60,7 @@ import {
   castToUuid,
 } from '~/model/decoder'
 
-let client: LegacyClient
-
-beforeEach(() => {
-  client = createTestClient()
-})
+const client = new Client()
 
 const repositoryFixtures: Record<
   RepositoryType,
@@ -142,27 +129,41 @@ const repositoryFixtures: Record<
 const repositoryCases = R.toPairs(repositoryFixtures)
 
 describe('Repository', () => {
-  test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
-    global.server.use(createUuidHandler(repository))
-    await assertSuccessfulGraphQLQuery({
-      query: gql`
-        query repository($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on AbstractRepository {
-              id
-              trashed
-              date
-            }
+  const aliasQuery = client.prepareQuery({
+    query: gql`
+      query repository($alias: AliasInput!) {
+        uuid(alias: $alias) {
+          __typename
+          ... on AbstractRepository {
+            id
           }
         }
-      `,
-      variables: repository,
-      data: {
+      }
+    `,
+  })
+
+  test.each(repositoryCases)('%s by id', async (_type, { repository }) => {
+    given('UuidQuery').for(repository)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query repository($id: Int!) {
+            uuid(id: $id) {
+              __typename
+              ... on AbstractRepository {
+                id
+                trashed
+                date
+              }
+            }
+          }
+        `,
+      })
+      .withVariables(repository)
+      .shouldReturnData({
         uuid: R.pick(['__typename', 'id', 'trashed', 'date'], repository),
-      },
-      client,
-    })
+      })
   })
 
   test.each(repositoryCases)(
@@ -177,28 +178,11 @@ describe('Repository', () => {
           path: '/ü',
         })
 
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query repository($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              __typename
-              ... on AbstractRepository {
-                id
-              }
-            }
-          }
-        `,
-        variables: {
-          alias: {
-            instance: repository.instance,
-            path: '/%C3%BC',
-          },
-        },
-        data: {
-          uuid: getTypenameAndId(repository),
-        },
-        client,
-      })
+      await aliasQuery
+        .withVariables({
+          alias: { instance: repository.instance, path: '/%C3%BC' },
+        })
+        .shouldReturnData({ uuid: getTypenameAndId(repository) })
     }
   )
 
@@ -213,74 +197,57 @@ describe('Repository', () => {
           instance: repository.instance,
           path: '/path',
         })
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query repository($alias: AliasInput!) {
-            uuid(alias: $alias) {
-              __typename
-              ... on AbstractRepository {
-                id
-              }
-            }
-          }
-        `,
-        variables: {
-          alias: {
-            instance: repository.instance,
-            path: `/${repository.id}`,
-          },
-        },
-        data: {
-          uuid: getTypenameAndId(repository),
-        },
-        client,
-      })
+
+      await aliasQuery
+        .withVariables({
+          alias: { instance: repository.instance, path: `/${repository.id}` },
+        })
+        .shouldReturnData({ uuid: getTypenameAndId(repository) })
     }
   )
 
   test.each(repositoryCases)(
     '%s by id (w/ currentRevision)',
     async (type, { repository, revision }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createUuidHandler(revision)
-      )
-      await assertSuccessfulGraphQLQuery({
-        query: `
-          query repository($id: Int!) {
-            uuid(id: $id) {
-              ... on ${type} {
-                currentRevision {
-                  __typename
-                  id
-                  trashed
-                  date
+      given('UuidQuery').for(repository, revision)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query repository($id: Int!) {
+              uuid(id: $id) {
+                ... on ${type} {
+                  currentRevision {
+                    __typename
+                    id
+                    trashed
+                    date
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: repository,
-        data: {
+          `,
+        })
+        .withVariables(repository)
+        .shouldReturnData({
           uuid: {
             currentRevision: R.pick(
               ['__typename', 'id', 'trashed', 'date'],
               revision
             ),
           },
-        },
-        client,
-      })
+        })
     }
   )
 
   test.each(repositoryCases)(
     '%s by id (w/ license)',
     async (_type, { repository }) => {
-      global.server.use(createUuidHandler(repository))
+      given('UuidQuery').for(repository)
 
-      await assertSuccessfulGraphQLQuery({
-        query: `
+      await client
+        .prepareQuery({
+          query: gql`
             query license($id: Int!) {
               uuid(id: $id) {
                 ... on AbstractRepository {
@@ -298,10 +265,9 @@ describe('Repository', () => {
               }
             }
           `,
-        variables: { id: repository.id },
-        data: { uuid: { license } },
-        client,
-      })
+        })
+        .withVariables({ id: repository.id })
+        .shouldReturnData({ uuid: { license } })
     }
   )
 
@@ -336,42 +302,44 @@ describe('Repository', () => {
     (type, { repository, revision }) => {
       const revisedRevision = { ...revision, id: castToUuid(revision.id - 10) }
       const unrevisedRevision = { ...revision, id: nextUuid(revision.id) }
+      const revisionsQuery = client.prepareQuery({
+        query: gql`
+              query unrevisedRevisionsOfRepository($id: Int!, $unrevised: Boolean) {
+                uuid(id: $id) {
+                  ... on ${type} {
+                    revisions (unrevised: $unrevised) {
+                      totalCount
+                      nodes {
+                        __typename
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+      })
 
       beforeEach(() => {
-        global.server.use(
-          createUuidHandler({
+        given('UuidQuery').for(
+          {
             ...repository,
             revisionIds: [
               unrevisedRevision.id,
               revisedRevision.id,
               revision.id,
             ],
-          }),
-
-          createUuidHandler(unrevisedRevision),
-          createUuidHandler(revision),
-          createUuidHandler(revisedRevision)
+          },
+          unrevisedRevision,
+          revision,
+          revisedRevision
         )
       })
 
       test('returns all revisions when no arguments are given', async () => {
-        await assertSuccessfulGraphQLQuery({
-          query: `
-          query revisionsOfRepository($id: Int!) {
-            uuid(id: $id) {
-              ... on ${type} {
-                revisions {
-                  nodes {
-                    __typename
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-          variables: { id: repository.id },
-          data: {
+        await revisionsQuery
+          .withVariables({ id: repository.id })
+          .shouldReturnData({
             uuid: {
               revisions: {
                 nodes: [
@@ -381,84 +349,36 @@ describe('Repository', () => {
                 ],
               },
             },
-          },
-          client,
-        })
+          })
       })
 
       test('returns all unrevised revisions when unrevised=true', async () => {
-        await assertSuccessfulGraphQLQuery({
-          query: `
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: true) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          variables: { id: repository.id },
-          data: {
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: true })
+          .shouldReturnData({
             uuid: {
               revisions: {
                 nodes: [getTypenameAndId(unrevisedRevision)],
                 totalCount: 1,
               },
             },
-          },
-          client,
-        })
+          })
       })
 
       test('when unrevised=true trashed revisions are not included', async () => {
-        global.server.use(createUuidHandler(trashed(unrevisedRevision)))
+        given('UuidQuery').for({ ...unrevisedRevision, trashed: true })
 
-        await assertSuccessfulGraphQLQuery({
-          query: `
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: true) {
-                      totalCount
-                      nodes {
-                        __typename
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          variables: { id: repository.id },
-          data: { uuid: { revisions: { nodes: [], totalCount: 0 } } },
-          client,
-        })
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: true })
+          .shouldReturnData({
+            uuid: { revisions: { nodes: [], totalCount: 0 } },
+          })
       })
 
       test('returns all revised revisions when unrevised=false', async () => {
-        await assertSuccessfulGraphQLQuery({
-          query: `
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: false) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          variables: { id: repository.id },
-          data: {
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: false })
+          .shouldReturnData({
             uuid: {
               revisions: {
                 totalCount: 2,
@@ -468,41 +388,22 @@ describe('Repository', () => {
                 ],
               },
             },
-          },
-          client,
-        })
+          })
       })
 
       test('when unrevised=true trashed revisions are not included', async () => {
-        global.server.use(createUuidHandler(trashed(revisedRevision)))
+        given('UuidQuery').for({ ...revisedRevision, trashed: true })
 
-        await assertSuccessfulGraphQLQuery({
-          query: `
-              query unrevisedRevisionsOfRepository($id: Int!) {
-                uuid(id: $id) {
-                  ... on ${type} {
-                    revisions (unrevised: false) {
-                      totalCount
-                      nodes {
-                        __typename
-                        id
-                      }
-                    }
-                  }
-                }
-              }
-            `,
-          variables: { id: repository.id },
-          data: {
+        await revisionsQuery
+          .withVariables({ id: repository.id, unrevised: false })
+          .shouldReturnData({
             uuid: {
               revisions: {
                 nodes: [getTypenameAndId(revision)],
                 totalCount: 1,
               },
             },
-          },
-          client,
-        })
+          })
       })
     }
   )
@@ -512,40 +413,36 @@ describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
     async (_type, { revision }) => {
-      global.server.use(createUuidHandler(revision), createUuidHandler(user))
-      await assertSuccessfulGraphQLQuery({
-        query: gql`
-          query revision($id: Int!) {
-            uuid(id: $id) {
-              ... on AbstractRevision {
-                author {
-                  __typename
-                  id
+      given('UuidQuery').for(revision, user)
+
+      await client
+        .prepareQuery({
+          query: gql`
+            query revision($id: Int!) {
+              uuid(id: $id) {
+                ... on AbstractRevision {
+                  author {
+                    __typename
+                    id
+                  }
                 }
               }
             }
-          }
-        `,
-        variables: revision,
-        data: {
-          uuid: {
-            author: getTypenameAndId(user),
-          },
-        },
-        client,
-      })
+          `,
+        })
+        .withVariables(revision)
+        .shouldReturnData({ uuid: { author: getTypenameAndId(user) } })
     }
   )
 
   test.each(repositoryCases)(
     '%s by id (w/ repository)',
     async (_type, { repository, revision, revisionType }) => {
-      global.server.use(
-        createUuidHandler(repository),
-        createUuidHandler(revision)
-      )
-      await assertSuccessfulGraphQLQuery({
-        query: `
+      given('UuidQuery').for(repository, revision)
+
+      await client
+        .prepareQuery({
+          query: gql`
             query revision($id: Int!) {
               uuid(id: $id) {
                 ... on ${revisionType} {
@@ -557,18 +454,11 @@ describe('Revision', () => {
               }
             }
           `,
-        variables: revision,
-        data: {
-          uuid: {
-            repository: getTypenameAndId(repository),
-          },
-        },
-        client,
-      })
+        })
+        .withVariables(revision)
+        .shouldReturnData({
+          uuid: { repository: getTypenameAndId(repository) },
+        })
     }
   )
 })
-
-function trashed(revision: Model<'AbstractRevision'>) {
-  return { ...revision, trashed: true }
-}

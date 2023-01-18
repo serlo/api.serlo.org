@@ -19,12 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { AuthServices } from './authentication'
-import { Cache } from './cache'
-import { SwrQueue } from './swr-queue'
+import { resolvers } from './resolvers'
+import typeDefs from './types.graphql'
+import { Schema } from '~/internals/graphql'
 
-export interface Environment {
-  cache: Cache
-  swrQueue: SwrQueue
-  authServices: AuthServices
-}
+export const oauthSchema: Schema = { resolvers, typeDefs: [typeDefs] }
