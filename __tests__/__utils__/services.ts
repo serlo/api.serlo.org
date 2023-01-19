@@ -28,24 +28,59 @@ import {
   restContext,
   PathParams,
 } from 'msw'
-import { v1 as uuidv1 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 
-import type { KratosDB } from '~/internals/authentication'
-import { MajorDimension } from '~/model'
+import type { Identity, KratosDB } from '~/internals/authentication'
+import { Model } from '~/internals/graphql'
+import type { MajorDimension } from '~/model'
 
-// TODO: make it configurable
 export function createFakeAuthServices() {
+  let identities: Identity[] = global.kratosIdentities
   return {
     kratos: {
       public: {} as unknown as V0alpha2Api,
       admin: {
-        adminDeleteIdentity: (_id: string) => undefined,
+        adminDeleteIdentity: (id: string) => {
+          const identity = identities.find((identity) => identity.id === id)
+          if (identity) {
+            const identityIndex = identities.indexOf(identity)
+            identities = identities.splice(identityIndex)
+          }
+        },
       } as unknown as V0alpha2Api,
       db: {
-        getIdentityByLegacyId: (_legacyId: number) => uuidv1(),
+        getIdentityByLegacyId: (
+          legacyId: number
+        ): Partial<Identity> | undefined => {
+          return identities.find(
+            (identity) => identity.metadata_public.legacy_id === legacyId
+          )
+        },
       } as unknown as KratosDB,
     },
     hydra: {} as unknown as AdminApi,
+  }
+}
+
+export function createFakeIdentity(user: Model<'User'>): Identity {
+  return {
+    id: uuidv4(),
+    created_at: user.date,
+    schema_id: 'default',
+    state: 'active',
+    state_changed_at: user.date,
+    updated_at: user.date,
+    traits: {
+      username: user.username,
+      email: `${user.username}@serlo.org`,
+      description: user.description,
+      language: 'de',
+      motivation: null,
+      profile_image: null,
+    },
+    metadata_public: {
+      legacy_id: user.id,
+    },
   }
 }
 
