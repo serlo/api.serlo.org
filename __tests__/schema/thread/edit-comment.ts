@@ -22,11 +22,7 @@
 import { gql } from 'apollo-server'
 
 import { article, comment1, user } from '../../../__fixtures__'
-import {
-  givenThreads,
-  Client,
-  given,
-} from '../../__utils__'
+import { givenThreads, Client, given } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
 const newContent = 'This is new content.'
