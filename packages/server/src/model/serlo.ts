@@ -26,6 +26,7 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
+  CommentDecoder,
   EntityDecoder,
   EntityRevisionDecoder,
   NavigationDataDecoder,
@@ -659,11 +660,16 @@ export function createSerloModel({
       if (value.success === true) {
         await getUuid._querySpec.setCache({
           payload: { id: payload.commentId },
-          getValue(current) {
-            if (!current) return
+          async getValue(current) {
+            if (!current || !CommentDecoder.is(current)) return
+
+            await getUuid._querySpec.removeCache({
+              payload: { id: current.parentId },
+            })
+
             return {
-              content: payload.content,
               ...current,
+              content: payload.content,
             }
           },
         })
