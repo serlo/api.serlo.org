@@ -21,7 +21,8 @@
  */
 import { ApolloServer } from 'apollo-server'
 
-import { createAuthServices, Service } from '~/internals/authentication'
+import { createFakeAuthServices } from './services'
+import { Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
@@ -47,6 +48,6 @@ export function createTestEnvironment(): Environment {
   return {
     cache: global.cache,
     swrQueue: emptySwrQueue,
-    authServices: createAuthServices(),
+    authServices: createFakeAuthServices(),
   }
 }
