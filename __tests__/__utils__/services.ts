@@ -19,6 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import type { V0alpha2Api } from '@ory/client'
+import type { AdminApi } from '@ory/hydra-client'
 import {
   RestRequest,
   ResponseResolver,
@@ -26,8 +28,26 @@ import {
   restContext,
   PathParams,
 } from 'msw'
+import { v1 as uuidv1 } from 'uuid'
 
+import type { KratosDB } from '~/internals/authentication'
 import { MajorDimension } from '~/model'
+
+// TODO: make it configurable
+export function createFakeAuthServices() {
+  return {
+    kratos: {
+      public: {} as unknown as V0alpha2Api,
+      admin: {
+        adminDeleteIdentity: (_id: string) => undefined,
+      } as unknown as V0alpha2Api,
+      db: {
+        getIdentityByLegacyId: (_legacyId: number) => uuidv1(),
+      } as unknown as KratosDB,
+    },
+    hydra: {} as unknown as AdminApi,
+  }
+}
 
 const spreadsheets: Record<string, string[][] | undefined> = {}
 
