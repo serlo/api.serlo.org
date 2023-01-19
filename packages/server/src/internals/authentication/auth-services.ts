@@ -36,7 +36,7 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
-interface Identity {
+export interface Identity {
   id: string
   traits: {
     username: string
