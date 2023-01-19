@@ -27,15 +27,12 @@ import {
   given,
   Client,
   Query,
-  Database,
   RestResolver,
   castToUuid,
   returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
 } from '../../__utils__'
-
-let database: Database
 
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
@@ -60,9 +57,6 @@ beforeEach(() => {
     .withInput({ botIds: [user.id] })
 
   mailchimpEmails = [emailHash(user)]
-
-  database = new Database()
-  database.hasUuids(users)
 
   for (const user of users) {
     given('ActivityByTypeQuery')
