@@ -28,7 +28,6 @@ import {
   Client,
   Query,
   Database,
-  returnsUuidsFromDatabase,
   RestResolver,
   castToUuid,
   returnsJson,
@@ -71,12 +70,12 @@ beforeEach(() => {
       .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
   }
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(users, article)
   given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
     const { botIds } = req.body.payload
 
     for (const id of botIds) {
-      database.deleteUuid(id)
+      given('UuidQuery').withPayload({ id }).returnsNotFound()
     }
 
     return res(
@@ -130,9 +129,11 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
+  expect(global.kratosIdentities).toHaveLength(2)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
+  expect(global.kratosIdentities).toHaveLength(0)
 })
 
 test('updates the cache', async () => {

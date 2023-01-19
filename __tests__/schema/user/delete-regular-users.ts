@@ -23,16 +23,7 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
-import {
-  Client,
-  given,
-  Database,
-  returnsUuidsFromDatabase,
-  nextUuid,
-  Query,
-} from '../../__utils__'
-
-let database: Database
+import { Client, given, nextUuid, Query } from '../../__utils__'
 
 let client: Client
 let mutation: Query
@@ -43,9 +34,6 @@ const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-
-  database = new Database()
-  database.hasUuids(users)
 
   mutation = client
     .prepareQuery({
@@ -66,15 +54,17 @@ beforeEach(() => {
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
     const { userId } = req.body.payload
 
-    database.deleteUuid(userId)
+    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
     return res(ctx.json({ success: true }))
   })
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(users)
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
+  expect(global.kratosIdentities).toHaveLength(2)
+
   await mutation.shouldReturnData({
     user: {
       deleteRegularUsers: [
@@ -83,6 +73,7 @@ test('runs successfully when mutation could be successfully executed', async () 
       ],
     },
   })
+  expect(global.kratosIdentities).toHaveLength(0)
 })
 
 test('runs partially when one of the mutations failed', async () => {
@@ -92,10 +83,12 @@ test('runs partially when one of the mutations failed', async () => {
     if (userId === user.id)
       return res(ctx.json({ success: false, reason: 'failure!' }))
 
-    database.deleteUuid(userId)
+    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
     return res(ctx.json({ success: true }))
   })
+
+  expect(global.kratosIdentities).toHaveLength(2)
 
   await mutation.shouldReturnData({
     user: {
@@ -105,6 +98,7 @@ test('runs partially when one of the mutations failed', async () => {
       ],
     },
   })
+  expect(global.kratosIdentities).toHaveLength(1)
 })
 
 test('fails when username does not match user', async () => {
