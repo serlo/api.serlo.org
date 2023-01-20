@@ -34,30 +34,40 @@ import type { Identity, KratosDB } from '~/internals/authentication'
 import { Model } from '~/internals/graphql'
 import type { MajorDimension } from '~/model'
 
-export function createFakeAuthServices() {
-  let identities: Identity[] = global.kratosIdentities
-  return {
-    kratos: {
-      public: {} as unknown as V0alpha2Api,
-      admin: {
+export class MockKratos {
+  public: V0alpha2Api
+  admin: V0alpha2Api
+  db: KratosDB
+  identities: Identity[] = []
+
+  constructor() {
+    ;(this.public = {} as unknown as V0alpha2Api),
+      (this.admin = {
         adminDeleteIdentity: (id: string) => {
-          const identity = identities.find((identity) => identity.id === id)
+          const identity = this.identities.find(
+            (identity) => identity.id === id
+          )
           if (identity) {
-            const identityIndex = identities.indexOf(identity)
-            identities = identities.splice(identityIndex)
+            const identityIndex = this.identities.indexOf(identity)
+            this.identities.splice(identityIndex)
           }
         },
-      } as unknown as V0alpha2Api,
-      db: {
+      } as unknown as V0alpha2Api),
+      (this.db = {
         getIdentityByLegacyId: (
           legacyId: number
         ): Partial<Identity> | undefined => {
-          return identities.find(
+          return this.identities.find(
             (identity) => identity.metadata_public.legacy_id === legacyId
           )
         },
-      } as unknown as KratosDB,
-    },
+      } as unknown as KratosDB)
+  }
+}
+
+export function createFakeAuthServices() {
+  return {
+    kratos: global.kratos,
     hydra: {} as unknown as AdminApi,
   }
 }
