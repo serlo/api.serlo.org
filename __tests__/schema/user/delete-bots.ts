@@ -123,11 +123,11 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratosIdentities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(2)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
-  expect(global.kratosIdentities).toHaveLength(0)
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
 test('updates the cache', async () => {

@@ -32,7 +32,7 @@ const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
     for (const uuid of uuids) {
       if (uuid.__typename === 'User')
-        global.kratosIdentities.push(createFakeIdentity(uuid))
+        global.kratos.identities.push(createFakeIdentity(uuid))
       given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
     }
   },

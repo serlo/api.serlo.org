@@ -26,6 +26,7 @@ import { setupServer } from 'msw/node'
 import {
   defaultSpreadsheetApi,
   givenSpreadheetApi,
+  MockKratos,
 } from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
 import { initializeSentry, Sentry } from '~/internals/sentry'
@@ -72,7 +73,6 @@ export function setup() {
 
 export async function createBeforeAll(options: SharedOptions) {
   await global.cache.ready()
-  global.kratosIdentities = []
 
   global.server.listen(options)
 }
@@ -99,7 +99,7 @@ export async function createBeforeEach() {
   await global.cache.flush()
   global.timer.flush()
   global.sentryEvents = []
-  global.kratosIdentities = []
+  global.kratos = new MockKratos()
 
   process.env.ENVIRONMENT = 'local'
 }
@@ -111,7 +111,6 @@ export function createAfterEach() {
 export async function createAfterAll() {
   global.server.close()
   await global.cache.quit()
-  global.kratosIdentities = []
   // redis.quit() creates a thread to close the connection.
   // We wait until all threads have been run once to ensure the connection closes.
   await new Promise((resolve) => setImmediate(resolve))
