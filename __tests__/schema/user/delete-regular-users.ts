@@ -63,7 +63,7 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(users.length)
 
   await mutation.shouldReturnData({
     user: {
@@ -73,7 +73,7 @@ test('runs successfully when mutation could be successfully executed', async () 
       ],
     },
   })
-  expect(global.kratos.identities).toHaveLength(0)
+  expect(global.kratos.identities).toHaveLength(users.length - 2)
 })
 
 test('runs partially when one of the mutations failed', async () => {
@@ -88,7 +88,7 @@ test('runs partially when one of the mutations failed', async () => {
     return res(ctx.json({ success: true }))
   })
 
-  expect(global.kratos.identities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(users.length)
 
   await mutation.shouldReturnData({
     user: {
@@ -98,7 +98,7 @@ test('runs partially when one of the mutations failed', async () => {
       ],
     },
   })
-  expect(global.kratos.identities).toHaveLength(1)
+  expect(global.kratos.identities).toHaveLength(users.length - 1)
 })
 
 test('fails when username does not match user', async () => {
@@ -145,4 +145,16 @@ test('fails when database layer has an internal error', async () => {
   given('UserDeleteRegularUsersMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
+})
+
+test('fails when kratos has an error', async () => {
+  global.kratos.admin.adminDeleteIdentity = () => {
+    throw new Error('Error in kratos')
+  }
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
 })

@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import type { V0alpha2Api } from '@ory/client'
-import type { AdminApi } from '@ory/hydra-client'
 import {
   RestRequest,
   ResponseResolver,
@@ -35,41 +34,29 @@ import { Model } from '~/internals/graphql'
 import type { MajorDimension } from '~/model'
 
 export class MockKratos {
-  public: V0alpha2Api
-  admin: V0alpha2Api
-  db: KratosDB
   identities: Identity[] = []
 
-  constructor() {
-    ;(this.public = {} as unknown as V0alpha2Api),
-      (this.admin = {
-        adminDeleteIdentity: (id: string) => {
-          const identity = this.identities.find(
-            (identity) => identity.id === id
-          )
-          if (identity) {
-            const identityIndex = this.identities.indexOf(identity)
-            this.identities.splice(identityIndex)
-          }
-        },
-      } as unknown as V0alpha2Api),
-      (this.db = {
-        getIdentityByLegacyId: (
-          legacyId: number
-        ): Partial<Identity> | undefined => {
-          return this.identities.find(
-            (identity) => identity.metadata_public.legacy_id === legacyId
-          )
-        },
-      } as unknown as KratosDB)
-  }
-}
+  public = {} as unknown as V0alpha2Api
 
-export function createFakeAuthServices() {
-  return {
-    kratos: global.kratos,
-    hydra: {} as unknown as AdminApi,
-  }
+  admin = {
+    adminDeleteIdentity: (id: string) => {
+      const identity = this.identities.find((identity) => identity.id === id)
+      if (identity) {
+        const identityIndex = this.identities.indexOf(identity)
+        this.identities.splice(identityIndex)
+      }
+    },
+  } as unknown as V0alpha2Api
+
+  db = {
+    getIdentityByLegacyId: (
+      legacyId: number
+    ): Partial<Identity> | undefined => {
+      return this.identities.find(
+        (identity) => identity.metadata_public.legacy_id === legacyId
+      )
+    },
+  } as unknown as KratosDB
 }
 
 export function createFakeIdentity(user: Model<'User'>): Identity {

@@ -123,11 +123,11 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(users.length)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
-  expect(global.kratos.identities).toHaveLength(0)
+  expect(global.kratos.identities).toHaveLength(users.length - 2)
 })
 
 test('updates the cache', async () => {
@@ -241,6 +241,18 @@ test('fails when database layer has an internal error', async () => {
   given('UserDeleteBotsMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
+})
+
+test('fails when kratos has an error', async () => {
+  global.kratos.admin.adminDeleteIdentity = () => {
+    throw new Error('Error in kratos')
+  }
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
 })
 
 function givenChatDeleteUserEndpoint(
