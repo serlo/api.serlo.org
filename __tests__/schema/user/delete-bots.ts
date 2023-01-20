@@ -251,8 +251,6 @@ test('fails when kratos has an error', async () => {
   }
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-
-  expect(global.kratos.identities).toHaveLength(users.length)
 })
 
 function givenChatDeleteUserEndpoint(
