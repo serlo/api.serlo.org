@@ -63,7 +63,7 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratosIdentities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(2)
 
   await mutation.shouldReturnData({
     user: {
@@ -73,7 +73,7 @@ test('runs successfully when mutation could be successfully executed', async () 
       ],
     },
   })
-  expect(global.kratosIdentities).toHaveLength(0)
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
 test('runs partially when one of the mutations failed', async () => {
@@ -88,7 +88,7 @@ test('runs partially when one of the mutations failed', async () => {
     return res(ctx.json({ success: true }))
   })
 
-  expect(global.kratosIdentities).toHaveLength(2)
+  expect(global.kratos.identities).toHaveLength(2)
 
   await mutation.shouldReturnData({
     user: {
@@ -98,7 +98,7 @@ test('runs partially when one of the mutations failed', async () => {
       ],
     },
   })
-  expect(global.kratosIdentities).toHaveLength(1)
+  expect(global.kratos.identities).toHaveLength(1)
 })
 
 test('fails when username does not match user', async () => {
