@@ -27,15 +27,12 @@ import {
   given,
   Client,
   Query,
-  Database,
-  returnsUuidsFromDatabase,
   RestResolver,
   castToUuid,
   returnsJson,
   assertErrorEvent,
+  assertNoErrorEvents,
 } from '../../__utils__'
-
-let database: Database
 
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
@@ -61,21 +58,18 @@ beforeEach(() => {
 
   mailchimpEmails = [emailHash(user)]
 
-  database = new Database()
-  database.hasUuids(users)
-
   for (const user of users) {
     given('ActivityByTypeQuery')
       .withPayload({ userId: user.id })
       .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
   }
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(users, article)
   given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
     const { botIds } = req.body.payload
 
     for (const id of botIds) {
-      database.deleteUuid(id)
+      given('UuidQuery').withPayload({ id }).returnsNotFound()
     }
 
     return res(
@@ -129,9 +123,11 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
+  expect(global.kratos.identities).toHaveLength(users.length)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
+  expect(global.kratos.identities).toHaveLength(users.length - 2)
 })
 
 test('updates the cache', async () => {
@@ -162,16 +158,14 @@ describe('community chat', () => {
     await mutation.execute()
 
     expect(chatUsers).toHaveLength(0)
-    // TODO: uncomment when kratos is properly mocked
-    // await assertNoErrorEvents()
+    await assertNoErrorEvents()
   })
 
   test('does not sent a sentry event when the user is not in the community chat', async () => {
     await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(chatUsers).toHaveLength(1)
-    // TODO: uncomment when kratos is properly mocked
-    // await assertNoErrorEvents()
+    await assertNoErrorEvents()
   })
 
   test('send a sentry event when the user cannot be deleted from the community chat', async () => {
@@ -197,16 +191,14 @@ describe('mailchimp', () => {
     await mutation.execute()
 
     expect(mailchimpEmails).toHaveLength(0)
-    // TODO: uncomment when kratos is properly mocked
-    // await assertNoErrorEvents()
+    await assertNoErrorEvents()
   })
 
   test('does not sent a sentry event when the user is not in the newsletter', async () => {
     await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(mailchimpEmails).toHaveLength(1)
-    // TODO: uncomment when kratos is properly mocked
-    // await assertNoErrorEvents()
+    await assertNoErrorEvents()
   })
 
   test('send a sentry event when the user cannot be deleted', async () => {
@@ -247,6 +239,16 @@ test('fails when user does not have role "sysadmin"', async () => {
 
 test('fails when database layer has an internal error', async () => {
   given('UserDeleteBotsMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
+})
+
+test('fails when kratos has an error', async () => {
+  global.kratos.admin.adminDeleteIdentity = () => {
+    throw new Error('Error in kratos')
+  }
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

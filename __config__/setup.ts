@@ -26,6 +26,7 @@ import { setupServer } from 'msw/node'
 import {
   defaultSpreadsheetApi,
   givenSpreadheetApi,
+  MockKratos,
 } from '../__tests__/__utils__'
 import { createCache } from '~/internals/cache'
 import { initializeSentry, Sentry } from '~/internals/sentry'
@@ -98,6 +99,7 @@ export async function createBeforeEach() {
   await global.cache.flush()
   global.timer.flush()
   global.sentryEvents = []
+  global.kratos = new MockKratos()
 
   process.env.ENVIRONMENT = 'local'
 }
