@@ -23,7 +23,7 @@ import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
 import { Database } from './database'
-import { RestResolver } from './services'
+import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { Uuid } from '~/model/decoder'
@@ -31,6 +31,8 @@ import { Uuid } from '~/model/decoder'
 const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
     for (const uuid of uuids) {
+      if (uuid.__typename === 'User')
+        global.kratos.identities.push(createFakeIdentity(uuid))
       given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
     }
   },
