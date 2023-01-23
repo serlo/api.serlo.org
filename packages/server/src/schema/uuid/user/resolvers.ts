@@ -418,13 +418,15 @@ export const resolvers: LegacyQueries<
 
       return await Promise.all(
         users.map(async ({ id, username }) => {
-          await deleteKratosUser(id, dataSources)
-          return {
+          const result = {
             ...(await dataSources.model.serlo.deleteRegularUsers({
               userId: id,
             })),
             username: username,
           }
+
+          if (result.success) await deleteKratosUser(id, dataSources)
+          return result
         })
       )
     },
