@@ -21,8 +21,9 @@
  */
 import { Event } from '@sentry/node'
 
-import { MockTimer } from './setup'
-import { Cache } from '~/internals/cache'
+import type { MockKratos } from '../__tests__/__utils__/services'
+import type { MockTimer } from './setup'
+import type { Cache } from '~/internals/cache'
 
 export {}
 
@@ -32,4 +33,5 @@ declare global {
   var server: ReturnType<typeof import('msw/node').setupServer>
   var timer: MockTimer
   var sentryEvents: Event[]
+  var kratos: MockKratos
 }

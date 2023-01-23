@@ -36,7 +36,7 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
-interface Identity {
+export interface Identity {
   id: string
   traits: {
     username: string
@@ -78,7 +78,7 @@ export const IdentityDecoder = t.type({
   metadata_public: t.type({ legacy_id: t.number }),
 })
 
-class KratosDB extends Pool {
+export class KratosDB extends Pool {
   async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
     const identities = await this.executeQuery({
       query:

@@ -23,16 +23,7 @@ import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
-import {
-  Client,
-  given,
-  Database,
-  returnsUuidsFromDatabase,
-  nextUuid,
-  Query,
-} from '../../__utils__'
-
-let database: Database
+import { Client, given, nextUuid, Query } from '../../__utils__'
 
 let client: Client
 let mutation: Query
@@ -43,9 +34,6 @@ const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-
-  database = new Database()
-  database.hasUuids(users)
 
   mutation = client
     .prepareQuery({
@@ -66,15 +54,17 @@ beforeEach(() => {
   given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
     const { userId } = req.body.payload
 
-    database.deleteUuid(userId)
+    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
     return res(ctx.json({ success: true }))
   })
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(users)
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
+  expect(global.kratos.identities).toHaveLength(users.length)
+
   await mutation.shouldReturnData({
     user: {
       deleteRegularUsers: [
@@ -83,6 +73,7 @@ test('runs successfully when mutation could be successfully executed', async () 
       ],
     },
   })
+  expect(global.kratos.identities).toHaveLength(users.length - 2)
 })
 
 test('runs partially when one of the mutations failed', async () => {
@@ -92,10 +83,12 @@ test('runs partially when one of the mutations failed', async () => {
     if (userId === user.id)
       return res(ctx.json({ success: false, reason: 'failure!' }))
 
-    database.deleteUuid(userId)
+    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
     return res(ctx.json({ success: true }))
   })
+
+  expect(global.kratos.identities).toHaveLength(users.length)
 
   await mutation.shouldReturnData({
     user: {
@@ -105,6 +98,7 @@ test('runs partially when one of the mutations failed', async () => {
       ],
     },
   })
+  expect(global.kratos.identities).toHaveLength(users.length - 1)
 })
 
 test('fails when username does not match user', async () => {
@@ -149,6 +143,16 @@ test('fails when user does not have role "sysadmin"', async () => {
 
 test('fails when database layer has an internal error', async () => {
   given('UserDeleteRegularUsersMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
+})
+
+test('fails when kratos has an error', async () => {
+  global.kratos.admin.adminDeleteIdentity = () => {
+    throw new Error('Error in kratos')
+  }
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
