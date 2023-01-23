@@ -25,8 +25,8 @@ import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
 import { given, nextUuid } from '.'
-import { user } from '../../__fixtures__'
 import { LegacyClient, createTestClient } from './test-client'
+import { user } from '../../__fixtures__'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 

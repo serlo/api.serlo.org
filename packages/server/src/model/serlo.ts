@@ -267,7 +267,7 @@ export function createSerloModel({
       const payload = await getNavigationPayload({ instance })
       const { data } = payload
 
-      type NodeData = typeof data[number]
+      type NodeData = (typeof data)[number]
 
       const leaves: Record<string, number> = {}
 

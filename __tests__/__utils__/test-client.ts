@@ -19,9 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import type { AdminApi } from '@ory/hydra-client'
 import { ApolloServer } from 'apollo-server'
 
-import { createAuthServices, Service } from '~/internals/authentication'
+import { Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
@@ -47,6 +48,9 @@ export function createTestEnvironment(): Environment {
   return {
     cache: global.cache,
     swrQueue: emptySwrQueue,
-    authServices: createAuthServices(),
+    authServices: {
+      kratos: global.kratos,
+      hydra: {} as unknown as AdminApi,
+    },
   }
 }
