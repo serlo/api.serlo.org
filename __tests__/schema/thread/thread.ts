@@ -351,42 +351,6 @@ describe('uuid["threads"]', () => {
       })
   })
 
-  // TODO: now these tests are failing because comment is not anymore treated as Uuid
-  // which is our intention. Do not deploy before being sure such query isn't used in frontend
-  // and create an issue to individual comment query
-  // describe('property "object" of Comment', () => {
-  //   const query = new Client().prepareQuery({
-  //     query: gql`
-  //       query comments($id: Int!) {
-  //         uuid(id: $id) {
-  //           ... on Comment {
-  //             legacyObject {
-  //               id
-  //               alias
-  //             }
-  //           }
-  //         }
-  //       }
-  //     `,
-  //   })
-
-  //   test('1-level comment', async () => {
-  //     givenThreads({ uuid: article, threads: [[comment1]] })
-
-  //     await query.withVariables({ id: comment1.id }).shouldReturnData({
-  //       uuid: { legacyObject: { id: article.id, alias: article.alias } },
-  //     })
-  //   })
-
-  //   test('2-level comment', async () => {
-  //     givenThreads({ uuid: article, threads: [[comment1, comment2]] })
-
-  //     await query.withVariables({ id: comment2.id }).shouldReturnData({
-  //       uuid: { legacyObject: { id: article.id, alias: article.alias } },
-  //     })
-  //   })
-  // })
-
   test('property "createdAt" of Comment', async () => {
     givenThreads({ uuid: article, threads: [[comment1]] })
 
