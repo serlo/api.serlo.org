@@ -657,7 +657,7 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('ThreadEditCommentMutation', payload)
     },
     async updateCache(payload, value) {
-      if (value.success === true) {
+      if (value.success) {
         await getUuid._querySpec.setCache({
           payload: { id: payload.commentId },
           async getValue(current) {
