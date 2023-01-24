@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { gql } from 'apollo-server'
 
-import { article, comment1, user } from '../../../__fixtures__'
+import { article, comment, user } from '../../../__fixtures__'
 import { givenThreads, Client, given } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
@@ -41,36 +41,36 @@ const mutation = new Client({ userId: user.id })
   })
   .withInput({
     content: newContent,
-    commentId: encodeThreadId(comment1.id),
+    commentId: encodeThreadId(comment.id),
   })
 
 beforeEach(() => {
-  givenThreads({ uuid: article, threads: [[comment1]] })
+  givenThreads({ uuid: article, threads: [[comment]] })
 })
 
 describe('comment is edited, cache mutated as expected', () => {
   test.each`
-    mock_db_layer_success | expect_content_change
-    ${false}              | ${false}
-    ${true}               | ${true}
+  mockDbLayerSuccess | expectContentChange
+    ${false}         |   ${false}
+    ${true}          |   ${true}
   `(
     'return success: $mock_db_layer_success from mocked DB layer and expect cache mutation: $expect_content_change',
     async ({
-      mock_db_layer_success,
-      expect_content_change,
+      mockDbLayerSuccess,
+      expectContentChange,
     }: {
-      mock_db_layer_success: boolean
-      expect_content_change: boolean
+      mockDbLayerSuccess: boolean
+      expectContentChange: boolean
     }) => {
       given('UuidQuery').for(user)
       given('ThreadEditCommentMutation')
         .withPayload({
           userId: user.id,
           content: newContent,
-          commentId: comment1.id,
+          commentId: comment.id,
         })
         .returns({
-          success: mock_db_layer_success,
+          success: mockDbLayerSuccess,
         })
 
       const queryComments = new Client()
@@ -98,7 +98,7 @@ describe('comment is edited, cache mutated as expected', () => {
       await queryComments.shouldReturnData({
         uuid: {
           threads: {
-            nodes: [{ comments: { nodes: [{ content: comment1.content }] } }],
+            nodes: [{ comments: { nodes: [{ content: comment.content }] } }],
           },
         },
       })
@@ -119,9 +119,9 @@ describe('comment is edited, cache mutated as expected', () => {
                 comments: {
                   nodes: [
                     {
-                      content: expect_content_change
+                      content: expectContentChange
                         ? newContent
-                        : comment1.content,
+                        : comment.content,
                     },
                   ],
                 },
