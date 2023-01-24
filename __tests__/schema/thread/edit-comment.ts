@@ -50,9 +50,9 @@ beforeEach(() => {
 
 describe('comment is edited, cache mutated as expected', () => {
   test.each`
-  mockDbLayerSuccess | expectContentChange
-    ${false}         |   ${false}
-    ${true}          |   ${true}
+    mockDbLayerSuccess | expectContentChange
+    ${false}           | ${false}
+    ${true}            | ${true}
   `(
     'return success: $mock_db_layer_success from mocked DB layer and expect cache mutation: $expect_content_change',
     async ({
