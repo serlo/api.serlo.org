@@ -26,6 +26,7 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
+  DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
   NavigationDataDecoder,
@@ -61,7 +62,7 @@ export function createSerloModel({
           payload
         ))
         if (!isSupportedUuid(uuid)) return null
-        if (uuid.__typename === 'User') {
+        if (uuid.__typename === DiscriminatorType.User) {
           const kratosIdentity =
             await environment.authServices.kratos.db.getIdentityByLegacyId(
               payload.id
