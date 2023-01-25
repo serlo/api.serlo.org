@@ -54,7 +54,7 @@ describe('comment is edited, cache mutated as expected', () => {
     ${false}           | ${false}
     ${true}            | ${true}
   `(
-    'return success: $mock_db_layer_success from mocked DB layer and expect cache mutation: $expect_content_change',
+    'return success: $mockDbLayerSuccess from mocked DB layer and expect cache mutation: $expectContentChange',
     async ({
       mockDbLayerSuccess,
       expectContentChange,
