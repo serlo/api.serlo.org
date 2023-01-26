@@ -56,10 +56,7 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = (await DatabaseLayer.makeRequest(
-          'UuidQuery',
-          payload
-        ))
+        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
         if (!isSupportedUuid(uuid)) return null
         if (uuid.__typename === 'User') {
           const kratosIdentity =
