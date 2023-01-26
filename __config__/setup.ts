@@ -65,10 +65,12 @@ export function setup() {
   const timer = new MockTimer()
   const cache = createCache({ timer })
   const server = setupServer()
+  const kratos = new MockKratos()
 
   global.cache = cache
   global.server = server
   global.timer = timer
+  global.kratos = kratos
 }
 
 export async function createBeforeAll(options: SharedOptions) {
@@ -99,7 +101,7 @@ export async function createBeforeEach() {
   await global.cache.flush()
   global.timer.flush()
   global.sentryEvents = []
-  global.kratos = new MockKratos()
+  global.kratos.identities = []
 
   process.env.ENVIRONMENT = 'local'
 }

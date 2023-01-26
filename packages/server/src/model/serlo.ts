@@ -68,8 +68,8 @@ export function createSerloModel({
               payload.id
             )
           return {
-            language: kratosIdentity?.traits.language,
             ...uuid,
+            language: kratosIdentity?.traits.language,
           }
         }
         return uuid
