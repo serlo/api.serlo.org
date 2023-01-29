@@ -26,13 +26,19 @@ import { Database } from './database'
 import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { Uuid } from '~/model/decoder'
+import { DiscriminatorType, Uuid } from '~/model/decoder'
 
 const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
     for (const uuid of uuids) {
-      if (uuid.__typename === 'User')
+      if (uuid.__typename === DiscriminatorType.User) {
         global.kratos.identities.push(createFakeIdentity(uuid))
+        // db layer doesn't have user.language, it should be fetched in kratos
+        given('UuidQuery')
+          .withPayload({ id: uuid.id })
+          .returns({ ...uuid, language: undefined })
+        continue
+      }
       given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
     }
   },

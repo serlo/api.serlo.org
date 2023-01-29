@@ -177,8 +177,7 @@ describe('community chat', () => {
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
-      // TODO: find a better to deal with language
-      errorContext: { user: { ...user2, language: 'de' } },
+      errorContext: { user: user2 },
     })
   })
 })
