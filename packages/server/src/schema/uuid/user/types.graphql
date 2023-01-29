@@ -30,6 +30,7 @@ type User implements AbstractUuid & ThreadAware {
   title: String!
   username: String!
   imageUrl: String!
+  language: Instance
   date: DateTime!
   chatUrl: String
   lastLogin: DateTime

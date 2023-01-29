@@ -20,12 +20,11 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ApolloServer } from 'apollo-server'
-import { GraphQLResponse } from 'apollo-server-types'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
 import { given, nextUuid } from '.'
-import { LegacyClient, createTestClient } from './test-client'
+import { createTestClient } from './test-client'
 import { user } from '../../__fixtures__'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
@@ -118,97 +117,6 @@ type Input = Record<string, unknown>
 interface QuerySpec<V> {
   query: DocumentNode
   variables?: V
-}
-
-export async function assertSuccessfulGraphQLQuery({
-  query,
-  variables,
-  data,
-  client,
-}: {
-  query: string | DocumentNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variables?: Record<string, any>
-  data: GraphQLResponse['data']
-  client: LegacyClient
-}) {
-  const response = await client.executeOperation({
-    query,
-    variables,
-  })
-  expect(response.errors).toBeUndefined()
-  expect(response.data).toEqual(data)
-}
-
-export async function assertFailingGraphQLQuery({
-  query,
-  variables,
-  client,
-  expectedError,
-  message,
-}: {
-  query: string | DocumentNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variables?: Record<string, any>
-  client: LegacyClient
-  expectedError?: string
-  message?: unknown
-}) {
-  const response = await client.executeOperation({
-    query,
-    variables,
-  })
-  expect(response.errors).toBeDefined()
-  if (expectedError)
-    expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
-
-  if (message)
-    expect(response.errors?.map((error) => error.message)).toContainEqual(
-      message
-    )
-}
-
-export async function assertSuccessfulGraphQLMutation({
-  mutation,
-  variables,
-  data,
-  client,
-}: {
-  mutation: DocumentNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variables?: Record<string, any>
-  data?: GraphQLResponse['data']
-  client: LegacyClient
-}) {
-  const response = await client.executeOperation({
-    query: mutation,
-    variables,
-  })
-  expect(response.errors).toBeUndefined()
-  if (data !== undefined) expect(response.data).toEqual(data)
-}
-
-export async function assertFailingGraphQLMutation({
-  mutation,
-  variables,
-  client,
-  expectedError,
-  message,
-}: {
-  mutation: DocumentNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  variables?: Record<string, any>
-  client: LegacyClient
-  expectedError: string
-  message?: string
-}) {
-  const response = await client.executeOperation({
-    query: mutation,
-    variables,
-  })
-  expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
-
-  if (message) expect(response?.errors?.[0]?.message).toEqual(message)
 }
 
 /**
