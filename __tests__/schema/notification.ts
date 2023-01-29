@@ -51,42 +51,30 @@ import {
   user2,
 } from '../../__fixtures__'
 import {
-  assertFailingGraphQLMutation,
-  assertSuccessfulGraphQLMutation,
-  assertSuccessfulGraphQLQuery,
   castToUuid,
-  createMessageHandler,
-  createNotificationEventHandler,
-  createTestClient,
-  createUuidHandler,
   getTypenameAndId,
   givenThreads,
   Client,
   given,
 } from '../__utils__'
-import { Service } from '~/internals/authentication'
-import { Payload } from '~/internals/model'
 import { Instance } from '~/types'
 
-let client: Client
-describe('notifications', () => {
-  const notificationsQuery = {
-    query: gql`
-      query notifications($unread: Boolean) {
-        notifications(unread: $unread) {
-          totalCount
-          nodes {
-            id
-            unread
-          }
+const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    query notifications($unread: Boolean) {
+      notifications(unread: $unread) {
+        totalCount
+        nodes {
+          id
+          unread
         }
       }
-    `,
-  }
+    }
+  `,
+})
 
+describe('notifications', () => {
   beforeEach(() => {
-    client = new Client({ userId: user.id, service: Service.Serlo })
-
     given('NotificationsQuery')
       .withPayload({
         userId: user.id,
@@ -102,7 +90,7 @@ describe('notifications', () => {
   })
 
   test('notifications without filter', async () => {
-    await client.prepareQuery(notificationsQuery).shouldReturnData({
+    await notificationsQuery.shouldReturnData({
       notifications: {
         totalCount: 3,
         nodes: [
@@ -115,27 +103,21 @@ describe('notifications', () => {
   })
 
   test('notifications (only unread)', async () => {
-    await client
-      .prepareQuery(notificationsQuery)
-      .withVariables({ unread: false })
-      .shouldReturnData({
-        notifications: {
-          totalCount: 2,
-          nodes: [
-            { id: 2, unread: false },
-            { id: 1, unread: false },
-          ],
-        },
-      })
+    await notificationsQuery.withVariables({ unread: false }).shouldReturnData({
+      notifications: {
+        totalCount: 2,
+        nodes: [
+          { id: 2, unread: false },
+          { id: 1, unread: false },
+        ],
+      },
+    })
   })
 
   test('notifications (only read)', async () => {
-    await client
-      .prepareQuery(notificationsQuery)
-      .withVariables({ unread: true })
-      .shouldReturnData({
-        notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
-      })
+    await notificationsQuery.withVariables({ unread: true }).shouldReturnData({
+      notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
+    })
   })
 
   test('notifications (w/ event)', async () => {
@@ -153,11 +135,9 @@ describe('notifications', () => {
         ],
         userId: user.id,
       })
-    given('EventQuery')
-      .withPayload({ id: checkoutRevisionNotificationEvent.id })
-      .returns(checkoutRevisionNotificationEvent)
+    given('EventQuery').for(checkoutRevisionNotificationEvent)
 
-    await client
+    await new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
           {
@@ -208,9 +188,7 @@ describe('notificationEvent', () => {
 
   describe('CheckoutRevisionNotification', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: checkoutRevisionNotificationEvent.id })
-        .returns(checkoutRevisionNotificationEvent)
+      given('EventQuery').for(checkoutRevisionNotificationEvent)
     })
 
     test('by id', async () => {
@@ -312,9 +290,7 @@ describe('notificationEvent', () => {
 
   describe('RejectRevisionNotification', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: rejectRevisionNotificationEvent.id })
-        .returns(rejectRevisionNotificationEvent)
+      given('EventQuery').for(rejectRevisionNotificationEvent)
     })
 
     test('by id', async () => {
@@ -421,9 +397,7 @@ describe('notificationEvent', () => {
 
   describe('CreateCommentNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createCommentNotificationEvent.id })
-        .returns(createCommentNotificationEvent)
+      given('EventQuery').for(createCommentNotificationEvent)
     })
 
     test('by id', async () => {
@@ -532,9 +506,7 @@ describe('notificationEvent', () => {
 
   describe('CreateEntityNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createEntityNotificationEvent.id })
-        .returns(createEntityNotificationEvent)
+      given('EventQuery').for(createEntityNotificationEvent)
     })
 
     test('by id', async () => {
@@ -616,9 +588,7 @@ describe('notificationEvent', () => {
 
   describe('CreateEntityLinkNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createEntityLinkNotificationEvent.id })
-        .returns(createEntityLinkNotificationEvent)
+      given('EventQuery').for(createEntityLinkNotificationEvent)
     })
 
     test('by id', async () => {
@@ -732,9 +702,7 @@ describe('notificationEvent', () => {
 
   describe('RemoveEntityLinkNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: removeEntityLinkNotificationEvent.id })
-        .returns(removeEntityLinkNotificationEvent)
+      given('EventQuery').for(removeEntityLinkNotificationEvent)
     })
 
     test('by id', async () => {
@@ -848,9 +816,7 @@ describe('notificationEvent', () => {
 
   describe('CreateEntityRevisionNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createEntityRevisionNotificationEvent.id })
-        .returns(createEntityRevisionNotificationEvent)
+      given('EventQuery').for(createEntityRevisionNotificationEvent)
     })
 
     test('by id', async () => {
@@ -958,9 +924,7 @@ describe('notificationEvent', () => {
 
   describe('CreateTaxonomyTermNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createTaxonomyTermNotificationEvent.id })
-        .returns(createTaxonomyTermNotificationEvent)
+      given('EventQuery').for(createTaxonomyTermNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1044,9 +1008,7 @@ describe('notificationEvent', () => {
 
   describe('SetTaxonomyTermNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: setTaxonomyTermNotificationEvent.id })
-        .returns(setTaxonomyTermNotificationEvent)
+      given('EventQuery').for(setTaxonomyTermNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1130,9 +1092,7 @@ describe('notificationEvent', () => {
 
   describe('CreateTaxonomyLinkNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createTaxonomyLinkNotificationEvent.id })
-        .returns(createTaxonomyLinkNotificationEvent)
+      given('EventQuery').for(createTaxonomyLinkNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1240,9 +1200,7 @@ describe('notificationEvent', () => {
 
   describe('RemoveTaxonomyLinkNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: removeTaxonomyLinkNotificationEvent.id })
-        .returns(removeTaxonomyLinkNotificationEvent)
+      given('EventQuery').for(removeTaxonomyLinkNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1350,9 +1308,7 @@ describe('notificationEvent', () => {
 
   describe('SetTaxonomyParentNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: setTaxonomyParentNotificationEvent.id })
-        .returns(setTaxonomyParentNotificationEvent)
+      given('EventQuery').for(setTaxonomyParentNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1488,9 +1444,7 @@ describe('notificationEvent', () => {
 
   describe('CreateThreadNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: createThreadNotificationEvent.id })
-        .returns(createThreadNotificationEvent)
+      given('EventQuery').for(createThreadNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1599,9 +1553,7 @@ describe('notificationEvent', () => {
 
   describe('SetLicenseNotification', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: setLicenseNotificationEvent.id })
-        .returns(setLicenseNotificationEvent)
+      given('EventQuery').for(setLicenseNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1683,9 +1635,7 @@ describe('notificationEvent', () => {
 
   describe('SetThreadStateNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: setThreadStateNotificationEvent.id })
-        .returns(setThreadStateNotificationEvent)
+      given('EventQuery').for(setThreadStateNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1771,9 +1721,7 @@ describe('notificationEvent', () => {
 
   describe('SetUuidStateNotificationEvent', () => {
     beforeEach(() => {
-      given('EventQuery')
-        .withPayload({ id: setUuidStateNotificationEvent.id })
-        .returns(setUuidStateNotificationEvent)
+      given('EventQuery').for(setUuidStateNotificationEvent)
     })
 
     test('by id', async () => {
@@ -1856,16 +1804,14 @@ describe('notificationEvent', () => {
 
   describe('UnsupportedNotificationEvent', () => {
     beforeEach(() => {
-      global.server.use(
-        createNotificationEventHandler({
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error We assume here that we get an invalid type name
-          __typename: 'SomeFancyNotificationEvent',
-          id: castToUuid(1337),
-          instance: Instance.De,
-          date: '2014-03-01T20:45:56Z',
-        })
-      )
+      given('EventQuery').for({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error We assume here that we get an invalid type name
+        __typename: 'SomeFancyNotificationEvent',
+        id: castToUuid(1337),
+        instance: Instance.De,
+        date: '2014-03-01T20:45:56Z',
+      })
     })
 
     test('by id', async () => {
@@ -1890,13 +1836,7 @@ describe('notificationEvent', () => {
   })
 
   test('notificationEvent returns null when event cannot be found', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: { type: 'EventQuery', payload: { id: 1234567 } },
-        statusCode: 404,
-        body: null,
-      })
-    )
+    given('EventQuery').withPayload({ id: 1234567 }).returnsNotFound()
 
     await client
       .prepareQuery({
@@ -1917,229 +1857,202 @@ describe('notificationEvent', () => {
 })
 
 describe('mutation notification setState', () => {
-  const mutation = gql`
-    mutation notification($input: NotificationSetStateInput!) {
-      notification {
-        setState(input: $input) {
-          success
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation notification($input: NotificationSetStateInput!) {
+          notification {
+            setState(input: $input) {
+              success
+            }
+          }
         }
-      }
-    }
-  `
+      `,
+    })
+    .withVariables({
+      input: { id: [1, 2, 3], unread: false },
+    })
 
-  const notificationQuery = gql`
-    query {
-      notifications {
-        nodes {
-          id
-          unread
+  const notificationQuery = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      query {
+        notifications {
+          nodes {
+            id
+            unread
+          }
+          totalCount
         }
-        totalCount
       }
-    }
-  `
+    `,
+  })
 
   beforeEach(() => {
-    global.server.use(
-      createNotificationsHandler({
-        userId: user.id,
+    given('NotificationsQuery')
+      .withPayload({ userId: user.id })
+      .returns({
         notifications: [
           { id: 3, unread: true, eventId: 3 },
           { id: 2, unread: false, eventId: 2 },
           { id: 1, unread: false, eventId: 1 },
         ],
+        userId: user.id,
       })
-    )
+
+    given('UuidQuery').for(user, user2, article)
   })
 
   test('authenticated with array of ids', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
-        },
-      }),
-      createUuidHandler(user),
-      createUuidHandler(article),
-      createNotificationEventHandler({
+    given('NotificationSetStateMutation')
+      .withPayload({
+        ids: [1, 2, 3],
+        userId: user.id,
+        unread: false,
+      })
+      .returns()
+    given('EventQuery').for([
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(1),
         objectId: article.id,
-      }),
-      createNotificationEventHandler({
+      },
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(2),
         objectId: article.id,
-      }),
-      createNotificationEventHandler({
+      },
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(3),
         objectId: article.id,
-      })
-    )
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: [1, 2, 3], unread: false },
       },
-      data: { notification: { setState: { success: true } } },
-      client: createTestClient({ userId: user.id }),
+    ])
+    await mutation.shouldReturnData({
+      notification: { setState: { success: true } },
     })
   })
 
   test('unauthenticated', async () => {
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: 1, unread: false } },
-      client: createTestClient({ userId: null }),
-      expectedError: 'UNAUTHENTICATED',
-    })
+    await mutation
+      .forUnauthenticatedUser()
+      .shouldFailWithError('UNAUTHENTICATED')
   })
 
   test('setting ids from other user', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: { ids: [1, 2, 3], userId: user2.id, unread: false },
-        },
-      }),
-      createNotificationsHandler({
+    given('NotificationSetStateMutation')
+      .withPayload({
+        ids: [1, 2, 3],
         userId: user2.id,
+        unread: false,
+      })
+      .returns()
+
+    given('NotificationsQuery')
+      .withPayload({ userId: user2.id })
+      .returns({
         notifications: [
           { id: 4, unread: true, eventId: 3 },
           { id: 5, unread: false, eventId: 2 },
         ],
+        userId: user2.id,
       })
-    )
-    await assertFailingGraphQLMutation({
-      mutation,
-      variables: { input: { id: [1, 2, 3], unread: false } },
-      client: createTestClient({ userId: user2.id }),
-      expectedError: 'FORBIDDEN',
-    })
+
+    await mutation
+      .withContext({ userId: user2.id })
+      .shouldFailWithError('FORBIDDEN')
   })
 
   test('cache is mutated as expected: single id', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: { ids: [1], userId: user.id, unread: true },
-        },
-      }),
-      createUuidHandler(user),
-      createUuidHandler(article),
-      createNotificationEventHandler({
+    given('NotificationSetStateMutation')
+      .withPayload({
+        ids: [1],
+        userId: user.id,
+        unread: true,
+      })
+      .returns()
+    given('EventQuery').for([
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(1),
         objectId: article.id,
-      })
-    )
-
-    const client = createTestClient({ userId: user.id })
+      },
+    ])
 
     //fill notification cache
-    await client.executeOperation({
-      query: notificationQuery,
-      variables: {},
+    await notificationQuery.withVariables({}).shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 3, unread: true },
+          { id: 2, unread: false },
+          { id: 1, unread: false },
+        ],
+        totalCount: 3,
+      },
     })
 
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: 1, unread: true },
-      },
-      data: { notification: { setState: { success: true } } },
-      client,
-    })
+    await mutation.withInput({ id: 1, unread: true }).execute()
 
-    await assertSuccessfulGraphQLQuery({
-      query: notificationQuery,
-      data: {
-        notifications: {
-          nodes: [
-            { id: 3, unread: true },
-            { id: 2, unread: false },
-            { id: 1, unread: true },
-          ],
-          totalCount: 3,
-        },
+    await notificationQuery.shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 3, unread: true },
+          { id: 2, unread: false },
+          { id: 1, unread: true },
+        ],
+        totalCount: 3,
       },
-      client,
     })
   })
 
   test('cache is mutated as expected: array', async () => {
-    global.server.use(
-      createMessageHandler({
-        message: {
-          type: 'NotificationSetStateMutation',
-          payload: { ids: [1, 2, 3], userId: user.id, unread: false },
-        },
-      }),
-      createUuidHandler(user),
-      createUuidHandler(article),
-      createNotificationEventHandler({
+    given('NotificationSetStateMutation')
+      .withPayload({
+        ids: [1, 2, 3],
+        userId: user.id,
+        unread: false,
+      })
+      .returns()
+    given('EventQuery').for([
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(1),
         objectId: article.id,
-      }),
-      createNotificationEventHandler({
+      },
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(2),
         objectId: article.id,
-      }),
-      createNotificationEventHandler({
+      },
+      {
         ...createEntityNotificationEvent,
         id: castToUuid(3),
         objectId: article.id,
-      })
-    )
-
-    const client = createTestClient({ userId: user.id })
+      },
+    ])
 
     //fill notification cache
-    await client.executeOperation({
-      query: notificationQuery,
-      variables: {},
+    await notificationQuery.withVariables({}).shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 3, unread: true },
+          { id: 2, unread: false },
+          { id: 1, unread: false },
+        ],
+        totalCount: 3,
+      },
     })
 
-    await assertSuccessfulGraphQLMutation({
-      mutation,
-      variables: {
-        input: { id: [1, 2, 3], unread: false },
-      },
-      data: { notification: { setState: { success: true } } },
-      client,
-    })
+    await mutation.withInput({ id: [1, 2, 3], unread: false }).execute()
 
-    await assertSuccessfulGraphQLQuery({
-      query: notificationQuery,
-      data: {
-        notifications: {
-          nodes: [
-            { id: 3, unread: false },
-            { id: 2, unread: false },
-            { id: 1, unread: false },
-          ],
-          totalCount: 3,
-        },
+    await notificationQuery.shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 3, unread: false },
+          { id: 2, unread: false },
+          { id: 1, unread: false },
+        ],
+        totalCount: 3,
       },
-      client,
     })
   })
 })
-
-function createNotificationsHandler(
-  payload: Payload<'serlo', 'getNotifications'>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'NotificationsQuery',
-      payload: { userId: payload.userId },
-    },
-    body: payload,
-  })
-}
