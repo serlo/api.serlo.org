@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -26,6 +26,7 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
+  DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
   NavigationDataDecoder,
@@ -57,7 +58,18 @@ export function createSerloModel({
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
         const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
-        return isSupportedUuid(uuid) ? uuid : null
+        if (!isSupportedUuid(uuid)) return null
+        if (uuid.__typename === DiscriminatorType.User) {
+          const kratosIdentity =
+            await environment.authServices.kratos.db.getIdentityByLegacyId(
+              payload.id
+            )
+          return {
+            ...uuid,
+            language: kratosIdentity?.traits.language,
+          }
+        }
+        return uuid
       },
       staleAfter: { day: 1 },
       getKey: ({ id }) => {
@@ -266,7 +278,7 @@ export function createSerloModel({
       const payload = await getNavigationPayload({ instance })
       const { data } = payload
 
-      type NodeData = typeof data[number]
+      type NodeData = (typeof data)[number]
 
       const leaves: Record<string, number> = {}
 

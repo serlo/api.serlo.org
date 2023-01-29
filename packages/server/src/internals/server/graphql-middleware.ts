@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -27,12 +27,16 @@ import {
 } from 'apollo-server-express'
 import { Express, json } from 'express'
 import createPlayground from 'graphql-playground-middleware-express'
+import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
-import fetch from 'node-fetch'
 import * as R from 'ramda'
-import { URLSearchParams } from 'url'
 
-import { handleAuthentication, Service } from '~/internals/authentication'
+import {
+  AuthServices,
+  handleAuthentication,
+  IdentityDecoder,
+  Service,
+} from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
@@ -42,16 +46,22 @@ import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
+const SessionDecoder = t.type({
+  identity: IdentityDecoder,
+})
+
 export async function applyGraphQLMiddleware({
   app,
   cache,
   swrQueue,
+  authServices,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
+  authServices: AuthServices
 }) {
-  const environment = { cache, swrQueue }
+  const environment = { cache, swrQueue, authServices }
   const server = new ApolloServer(getGraphQLOptions(environment))
   await server.start()
 
@@ -107,27 +117,23 @@ export function getGraphQLOptions(
           userId: null,
         })
       }
-      return handleAuthentication(authorizationHeader, async (token) => {
-        if (process.env.SERVER_HYDRA_HOST === undefined) return null
-        const params = new URLSearchParams()
-        params.append('token', token)
-        const response = await fetch(
-          `${process.env.SERVER_HYDRA_HOST}/oauth2/introspect`,
-          {
-            method: 'post',
-            body: params,
-            headers: {
-              'X-Forwarded-Proto': 'https',
-            },
-          }
-        )
-        const { active, sub } = (await response.json()) as {
-          active: boolean
-          sub: string
-        }
+      return handleAuthentication(authorizationHeader, async () => {
+        try {
+          const publicKratos = environment.authServices.kratos.public
+          const session = (
+            await publicKratos.toSession(undefined, req.header('cookie'))
+          ).data
 
-        if (active) return parseInt(sub, 10)
-        throw new ApolloError('Token expired or invalid', 'INVALID_TOKEN')
+          if (SessionDecoder.is(session)) {
+            // TODO: When the time comes change it to session.identity.id
+            return session.identity.metadata_public.legacy_id
+          } else {
+            return null
+          }
+        } catch {
+          // the user is probably unauthenticated
+          return null
+        }
       })
     },
   }

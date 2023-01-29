@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -27,7 +27,7 @@ import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(
   authorizationHeader: string,
-  userTokenValidator: (token: string) => Promise<number | null>
+  userAuthenticator: () => Promise<number | null>
 ): Promise<Pick<Context, 'service' | 'userId'>> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
@@ -35,12 +35,9 @@ export async function handleAuthentication(
   }
 
   const tokenParts = parts[1].split(';')
-  if (tokenParts.length === 1) {
+  if (tokenParts.length < 2) {
     const service = validateServiceToken(tokenParts[0])
-    return { service, userId: null }
-  } else if (tokenParts.length === 2) {
-    const service = validateServiceToken(tokenParts[0])
-    const userId = await validateUserToken(tokenParts[1], userTokenValidator)
+    const userId = await userAuthenticator()
     return { service, userId }
   } else {
     throw invalid()
@@ -104,16 +101,4 @@ function validateServiceToken(token: string): Service {
       }
     }
   }
-}
-
-async function validateUserToken(
-  token: string,
-  validateToken: (token: string) => Promise<number | null>
-): Promise<number | null> {
-  const userTokenParts = token.split('=')
-  if (userTokenParts.length !== 2 || userTokenParts[0] !== 'User') {
-    throw new AuthenticationError('Invalid authorization header')
-  }
-  const userToken = userTokenParts[1]
-  return await validateToken(userToken)
 }

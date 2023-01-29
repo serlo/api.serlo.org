@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -26,6 +26,7 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
+import { ModelDataSource } from '~/internals/data-source'
 import {
   addContext,
   assertAll,
@@ -366,7 +367,9 @@ export const resolvers: LegacyQueries<
       const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
         { botIds }
       )
-
+      await Promise.all(
+        botIds.map(async (botId) => await deleteKratosUser(botId, dataSources))
+      )
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
@@ -415,12 +418,15 @@ export const resolvers: LegacyQueries<
 
       return await Promise.all(
         users.map(async ({ id, username }) => {
-          return {
+          const result = {
             ...(await dataSources.model.serlo.deleteRegularUsers({
               userId: id,
             })),
             username: username,
           }
+
+          if (result.success) await deleteKratosUser(id, dataSources)
+          return result
         })
       )
     },
@@ -545,4 +551,15 @@ function assertInstanceIsSet(instance: Instance | null) {
       "This role can't have a global scope: `instance` has to be declared."
     )
   }
+}
+async function deleteKratosUser(
+  userId: number,
+  dataSources: { model: ModelDataSource }
+) {
+  const identity =
+    await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(userId)
+  if (identity)
+    await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
+      identity.id
+    )
 }

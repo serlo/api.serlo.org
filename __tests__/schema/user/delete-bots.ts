@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -27,16 +27,12 @@ import {
   given,
   Client,
   Query,
-  Database,
-  returnsUuidsFromDatabase,
   RestResolver,
   castToUuid,
-  assertNoErrorEvents,
   returnsJson,
   assertErrorEvent,
+  assertNoErrorEvents,
 } from '../../__utils__'
-
-let database: Database
 
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
@@ -62,21 +58,18 @@ beforeEach(() => {
 
   mailchimpEmails = [emailHash(user)]
 
-  database = new Database()
-  database.hasUuids(users)
-
   for (const user of users) {
     given('ActivityByTypeQuery')
       .withPayload({ userId: user.id })
       .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
   }
 
-  given('UuidQuery').isDefinedBy(returnsUuidsFromDatabase(database))
+  given('UuidQuery').for(users, article)
   given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
     const { botIds } = req.body.payload
 
     for (const id of botIds) {
-      database.deleteUuid(id)
+      given('UuidQuery').withPayload({ id }).returnsNotFound()
     }
 
     return res(
@@ -130,9 +123,11 @@ beforeEach(() => {
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
+  expect(global.kratos.identities).toHaveLength(users.length)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
+  expect(global.kratos.identities).toHaveLength(users.length - 2)
 })
 
 test('updates the cache', async () => {
@@ -244,6 +239,16 @@ test('fails when user does not have role "sysadmin"', async () => {
 
 test('fails when database layer has an internal error', async () => {
   given('UserDeleteBotsMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+
+  expect(global.kratos.identities).toHaveLength(users.length)
+})
+
+test('fails when kratos has an error', async () => {
+  global.kratos.admin.adminDeleteIdentity = () => {
+    throw new Error('Error in kratos')
+  }
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

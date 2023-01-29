@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import type { AdminApi } from '@ory/hydra-client'
 import { ApolloServer } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
@@ -44,5 +45,12 @@ export function createTestClient(
 }
 
 export function createTestEnvironment(): Environment {
-  return { cache: global.cache, swrQueue: emptySwrQueue }
+  return {
+    cache: global.cache,
+    swrQueue: emptySwrQueue,
+    authServices: {
+      kratos: global.kratos,
+      hydra: {} as unknown as AdminApi,
+    },
+  }
 }
