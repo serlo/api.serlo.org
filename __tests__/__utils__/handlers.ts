@@ -42,6 +42,11 @@ const ForDefinitions = {
       given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
     }
   },
+  EventQuery(events: Model<'AbstractNotificationEvent'>[]) {
+    events.map((event) => {
+      given('EventQuery').withPayload({ id: event.id }).returns(event)
+    })
+  },
   SubjectsQuery(terms: Model<'TaxonomyTerm'>[]) {
     given('SubjectsQuery')
       .withPayload({})
@@ -203,20 +208,6 @@ export function givenThreads({
     .returns({ firstCommentIds })
 
   given('UuidQuery').for(uuid, firstComments, otherComments)
-}
-
-export function createNotificationEventHandler(
-  notificationEvent: Model<'AbstractNotificationEvent'>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'EventQuery',
-      payload: {
-        id: notificationEvent.id,
-      },
-    },
-    body: notificationEvent,
-  })
 }
 
 export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
