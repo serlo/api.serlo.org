@@ -71,7 +71,7 @@ export function createFakeIdentity(user: Model<'User'>): Identity {
       username: user.username,
       email: `${user.username}@serlo.org`,
       description: user.description,
-      language: 'de',
+      language: user.language,
       motivation: null,
       profile_image: null,
     },
