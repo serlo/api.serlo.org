@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,13 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { Instance } from '~/types'
 
 export const user: Model<'User'> = {
   __typename: DiscriminatorType.User,
@@ -33,6 +34,7 @@ export const user: Model<'User'> = {
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
   roles: ['login', 'german_horizonhelper', 'sysadmin'],
+  language: Instance.De,
 }
 
 export const user2: Model<'User'> = {
@@ -45,6 +47,7 @@ export const user2: Model<'User'> = {
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
   roles: ['login'],
+  language: Instance.En,
 }
 
 export const activityByType: Payload<'serlo', 'getActivityByType'> = {

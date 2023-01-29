@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -405,6 +405,18 @@ export const spec = {
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
     canBeNull: false,
   },
+  UserCreateMutation: {
+    payload: t.type({
+      username: t.string,
+      password: t.string,
+      email: t.string,
+    }),
+    response: t.strict({
+      success: t.literal(true),
+      userId: t.number,
+    }),
+    canBeNull: false,
+  },
   UserAddRoleMutation: {
     payload: t.type({ username: t.string, roleName: t.string }),
     response: t.strict({
@@ -497,7 +509,7 @@ export async function makeRequest<M extends MessageType>(
 
     return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
-    // TODO: Here we can check whether the body is "null" and report it toNullable
+    // TODO: Here we can check whether the body is "null" and report it to
     // Sentry
     return null
   } else if (response.status === 400) {

@@ -1,0 +1,19 @@
+extend type Mutation {
+  oauth: OauthMutation!
+}
+
+type OauthMutation {
+  acceptLogin(input: OauthAcceptInput!): OauthAcceptResponse!
+  acceptConsent(input: OauthAcceptInput!): OauthAcceptResponse!
+  acceptLogout(challenge: String!): OauthAcceptResponse!
+}
+
+input OauthAcceptInput {
+  challenge: String!
+  session: JSON!
+}
+
+type OauthAcceptResponse {
+  success: Boolean!
+  redirectUri: String!
+}

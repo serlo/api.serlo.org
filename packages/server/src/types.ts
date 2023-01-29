@@ -1546,6 +1546,7 @@ export type Mutation = {
   _cache: _CacheMutation;
   entity: EntityMutation;
   notification: NotificationMutation;
+  oauth: OauthMutation;
   page: PageMutation;
   subscription: SubscriptionMutation;
   taxonomyTerm: TaxonomyTermMutation;
@@ -1628,6 +1629,39 @@ export type NotificationSetStateResponse = {
   __typename?: 'NotificationSetStateResponse';
   query: Query;
   success: Scalars['Boolean'];
+};
+
+export type OauthAcceptInput = {
+  challenge: Scalars['String'];
+  session: Scalars['JSON'];
+};
+
+export type OauthAcceptResponse = {
+  __typename?: 'OauthAcceptResponse';
+  redirectUri: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type OauthMutation = {
+  __typename?: 'OauthMutation';
+  acceptConsent: OauthAcceptResponse;
+  acceptLogin: OauthAcceptResponse;
+  acceptLogout: OauthAcceptResponse;
+};
+
+
+export type OauthMutationAcceptConsentArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLoginArgs = {
+  input: OauthAcceptInput;
+};
+
+
+export type OauthMutationAcceptLogoutArgs = {
+  challenge: Scalars['String'];
 };
 
 export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
@@ -2613,6 +2647,7 @@ export type User = AbstractUuid & ThreadAware & {
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
+  language?: Maybe<Instance>;
   lastLogin?: Maybe<Scalars['DateTime']>;
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
@@ -3131,6 +3166,9 @@ export type ResolversTypes = {
   NotificationMutation: ResolverTypeWrapper<ModelOf<NotificationMutation>>;
   NotificationSetStateInput: ResolverTypeWrapper<ModelOf<NotificationSetStateInput>>;
   NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
+  OauthAcceptInput: ResolverTypeWrapper<ModelOf<OauthAcceptInput>>;
+  OauthAcceptResponse: ResolverTypeWrapper<ModelOf<OauthAcceptResponse>>;
+  OauthMutation: ResolverTypeWrapper<ModelOf<OauthMutation>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
   PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
@@ -3343,6 +3381,9 @@ export type ResolversParentTypes = {
   NotificationMutation: ModelOf<NotificationMutation>;
   NotificationSetStateInput: ModelOf<NotificationSetStateInput>;
   NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
+  OauthAcceptInput: ModelOf<OauthAcceptInput>;
+  OauthAcceptResponse: ModelOf<OauthAcceptResponse>;
+  OauthMutation: ModelOf<OauthMutation>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
   PageCreateResponse: ModelOf<PageCreateResponse>;
@@ -4265,6 +4306,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
+  oauth?: Resolver<ResolversTypes['OauthMutation'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTermMutation'], ParentType, ContextType>;
@@ -4328,6 +4370,19 @@ export type NotificationMutationResolvers<ContextType = Context, ParentType exte
 export type NotificationSetStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationSetStateResponse'] = ResolversParentTypes['NotificationSetStateResponse']> = {
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OauthAcceptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OauthAcceptResponse'] = ResolversParentTypes['OauthAcceptResponse']> = {
+  redirectUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OauthMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OauthMutation'] = ResolversParentTypes['OauthMutation']> = {
+  acceptConsent?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptConsentArgs, 'input'>>;
+  acceptLogin?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLoginArgs, 'input'>>;
+  acceptLogout?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLogoutArgs, 'challenge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4797,6 +4852,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   isActiveDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isActiveReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isNewAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  language?: Resolver<Maybe<ResolversTypes['Instance']>, ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   motivation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, Partial<UserRolesArgs>>;
@@ -5035,6 +5091,8 @@ export type Resolvers<ContextType = Context> = {
   NotificationEdge?: NotificationEdgeResolvers<ContextType>;
   NotificationMutation?: NotificationMutationResolvers<ContextType>;
   NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
+  OauthAcceptResponse?: OauthAcceptResponseResolvers<ContextType>;
+  OauthMutation?: OauthMutationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;

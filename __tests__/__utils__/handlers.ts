@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -23,14 +23,22 @@ import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
 import { Database } from './database'
-import { RestResolver } from './services'
+import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { Uuid } from '~/model/decoder'
+import { DiscriminatorType, Uuid } from '~/model/decoder'
 
 const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
     for (const uuid of uuids) {
+      if (uuid.__typename === DiscriminatorType.User) {
+        global.kratos.identities.push(createFakeIdentity(uuid))
+        // db layer doesn't have user.language, it should be fetched in kratos
+        given('UuidQuery')
+          .withPayload({ id: uuid.id })
+          .returns({ ...uuid, language: undefined })
+        continue
+      }
       given('UuidQuery').withPayload({ id: uuid.id }).returns(uuid)
     }
   },

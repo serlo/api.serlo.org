@@ -2,11 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.48.0](https://github.com/serlo/api.serlo.org/compare/v0.47.2..v0.48.0) - January 12, 2023
+
+### Breaking Changes
+
+- authenticate user using cookie
+
+### Added
+
+- Endpoint for synchronizing users between new and old tables
+
+- Oauth mutations
+
+## [v0.47.2](https://github.com/serlo/api.serlo.org/compare/v0.47.1..v0.47.2) - December 7, 2022
+
+### Fixed
+
+- Fix pagination in `allThreads`
+
 ## [v0.47.1](https://github.com/serlo/api.serlo.org/compare/v0.47.0..v0.47.1) - November 22, 2022
 
 ### Fixed
 
-- Fix sorting in `allThreads` query by last reacted #73 (depends on DB Layer v0.3.57 or higher)
+- Fix sorting in `allThreads` query by last reacted #739
 
 ## [v0.47.0](https://github.com/serlo/api.serlo.org/compare/v0.46.2..v0.47.0) - October 5, 2022
 
