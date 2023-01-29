@@ -2647,6 +2647,7 @@ export type User = AbstractUuid & ThreadAware & {
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
+  language?: Maybe<Instance>;
   lastLogin?: Maybe<Scalars['DateTime']>;
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
@@ -4851,6 +4852,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   isActiveDonor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isActiveReviewer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isNewAuthor?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  language?: Resolver<Maybe<ResolversTypes['Instance']>, ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   motivation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, Partial<UserRolesArgs>>;
