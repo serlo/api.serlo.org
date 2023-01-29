@@ -210,20 +210,6 @@ export function givenThreads({
   given('UuidQuery').for(uuid, firstComments, otherComments)
 }
 
-export function createNotificationEventHandler(
-  notificationEvent: Model<'AbstractNotificationEvent'>
-) {
-  return createMessageHandler({
-    message: {
-      type: 'EventQuery',
-      payload: {
-        id: notificationEvent.id,
-      },
-    },
-    body: notificationEvent,
-  })
-}
-
 export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
   return createMessageHandler(
     {
