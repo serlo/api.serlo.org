@@ -61,17 +61,33 @@ import { Instance } from '~/types'
 
 const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    query notifications($unread: Boolean) {
-      notifications(unread: $unread) {
+    query notifications(
+      $unread: Boolean
+      $emailSubscribed: Boolean
+      $emailSent: Boolean
+    ) {
+      notifications(
+        unread: $unread
+        emailSubscribed: $emailSubscribed
+        emailSent: $emailSent
+      ) {
         totalCount
         nodes {
           id
           unread
+          emailSubscribed
+          emailSent
         }
       }
     }
   `,
 })
+
+const notifications = [
+  { id: 3, unread: true, eventId: 3, email: false, emailSent: false },
+  { id: 2, unread: false, eventId: 2, email: true, emailSent: true },
+  { id: 1, unread: false, eventId: 1, email: true, emailSent: false },
+]
 
 describe('notifications', () => {
   beforeEach(() => {
@@ -80,11 +96,7 @@ describe('notifications', () => {
         userId: user.id,
       })
       .returns({
-        notifications: [
-          { id: 3, unread: true, eventId: 3 },
-          { id: 2, unread: false, eventId: 2 },
-          { id: 1, unread: false, eventId: 1 },
-        ],
+        notifications,
         userId: user.id,
       })
   })
@@ -94,9 +106,9 @@ describe('notifications', () => {
       notifications: {
         totalCount: 3,
         nodes: [
-          { id: 3, unread: true },
-          { id: 2, unread: false },
-          { id: 1, unread: false },
+          { id: 3, unread: true, emailSubscribed: false, emailSent: false },
+          { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+          { id: 1, unread: false, emailSubscribed: true, emailSent: false },
         ],
       },
     })
@@ -107,8 +119,8 @@ describe('notifications', () => {
       notifications: {
         totalCount: 2,
         nodes: [
-          { id: 2, unread: false },
-          { id: 1, unread: false },
+          { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+          { id: 1, unread: false, emailSubscribed: true, emailSent: false },
         ],
       },
     })
@@ -116,8 +128,40 @@ describe('notifications', () => {
 
   test('notifications (only read)', async () => {
     await notificationsQuery.withVariables({ unread: true }).shouldReturnData({
-      notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
+      notifications: {
+        totalCount: 1,
+        nodes: [
+          { id: 3, unread: true, emailSubscribed: false, emailSent: false },
+        ],
+      },
     })
+  })
+
+  test('notifications (only subscribed to receive email)', async () => {
+    await notificationsQuery
+      .withVariables({ emailSubscribed: true })
+      .shouldReturnData({
+        notifications: {
+          totalCount: 2,
+          nodes: [
+            { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+            { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+          ],
+        },
+      })
+  })
+
+  test('notifications (only sent email)', async () => {
+    await notificationsQuery
+      .withVariables({ emailSent: true })
+      .shouldReturnData({
+        notifications: {
+          totalCount: 1,
+          nodes: [
+            { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+          ],
+        },
+      })
   })
 
   test('notifications (w/ event)', async () => {
@@ -131,6 +175,8 @@ describe('notifications', () => {
             id: 1,
             unread: false,
             eventId: checkoutRevisionNotificationEvent.id,
+            email: false,
+            emailSent: false,
           },
         ],
         userId: user.id,
@@ -1888,16 +1934,10 @@ describe('mutation notification setState', () => {
   })
 
   beforeEach(() => {
-    given('NotificationsQuery')
-      .withPayload({ userId: user.id })
-      .returns({
-        notifications: [
-          { id: 3, unread: true, eventId: 3 },
-          { id: 2, unread: false, eventId: 2 },
-          { id: 1, unread: false, eventId: 1 },
-        ],
-        userId: user.id,
-      })
+    given('NotificationsQuery').withPayload({ userId: user.id }).returns({
+      notifications,
+      userId: user.id,
+    })
 
     given('UuidQuery').for(user, user2, article)
   })
@@ -1951,8 +1991,8 @@ describe('mutation notification setState', () => {
       .withPayload({ userId: user2.id })
       .returns({
         notifications: [
-          { id: 4, unread: true, eventId: 3 },
-          { id: 5, unread: false, eventId: 2 },
+          { id: 4, unread: true, eventId: 3, email: false, emailSent: false },
+          { id: 5, unread: false, eventId: 2, email: false, emailSent: false },
         ],
         userId: user2.id,
       })

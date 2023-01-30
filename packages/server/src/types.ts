@@ -1591,6 +1591,8 @@ export type NavigationNodeEdge = {
 
 export type Notification = {
   __typename?: 'Notification';
+  emailSent: Scalars['Boolean'];
+  emailSubscribed: Scalars['Boolean'];
   event: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
@@ -4345,6 +4347,8 @@ export type NavigationNodeEdgeResolvers<ContextType = Context, ParentType extend
 };
 
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
+  emailSent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  emailSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   event?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
