@@ -55,6 +55,9 @@ export const resolvers: TypeResolvers<Notification> &
 
       return event
     },
+    emailSubscribed(parent) {
+      return parent.email
+    },
   },
   Query: {
     events(_parent, payload, { dataSources }) {
@@ -95,9 +98,14 @@ export const resolvers: TypeResolvers<Notification> &
           (notification) =>
             emailSent == null || notification.emailSent === emailSent
         )
+      const transformedNotifications = filteredNotifications.map(
+        (notification) => {
+          return { ...notification, emailSubscribed: notification.email }
+        }
+      )
 
       return resolveConnection({
-        nodes: filteredNotifications,
+        nodes: transformedNotifications,
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
