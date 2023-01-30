@@ -1587,6 +1587,8 @@ export type NavigationNodeEdge = {
 
 export type Notification = {
   __typename?: 'Notification';
+  emailSent: Scalars['Boolean'];
+  emailSubscribed: Scalars['Boolean'];
   event: AbstractNotificationEvent;
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
