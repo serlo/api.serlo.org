@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+import type { V0alpha2Api } from '@ory/client'
 import {
   RestRequest,
   ResponseResolver,
@@ -26,8 +27,59 @@ import {
   restContext,
   PathParams,
 } from 'msw'
+import { v4 as uuidv4 } from 'uuid'
 
-import { MajorDimension } from '~/model'
+import type { Identity, KratosDB } from '~/internals/authentication'
+import { Model } from '~/internals/graphql'
+import type { MajorDimension } from '~/model'
+
+export class MockKratos {
+  identities: Identity[] = []
+
+  public = {} as unknown as V0alpha2Api
+
+  admin = {
+    adminDeleteIdentity: (id: string) => {
+      const identity = this.identities.find((identity) => identity.id === id)
+      if (identity) {
+        const identityIndex = this.identities.indexOf(identity)
+        this.identities.splice(identityIndex)
+      }
+    },
+  } as unknown as V0alpha2Api
+
+  db = {
+    getIdentityByLegacyId: (
+      legacyId: number
+    ): Partial<Identity> | undefined => {
+      return this.identities.find(
+        (identity) => identity.metadata_public.legacy_id === legacyId
+      )
+    },
+  } as unknown as KratosDB
+}
+
+export function createFakeIdentity(user: Model<'User'>): Identity {
+  return {
+    id: uuidv4(),
+    created_at: user.date,
+    schema_id: 'default',
+    state: 'active',
+    state_changed_at: user.date,
+    updated_at: user.date,
+    traits: {
+      username: user.username,
+      email: `${user.username}@serlo.org`,
+      description: user.description,
+      language: user.language,
+      motivation: null,
+      profile_image: null,
+    },
+    metadata_public: {
+      legacy_id: user.id,
+    },
+  }
+}
 
 const spreadsheets: Record<string, string[][] | undefined> = {}
 

@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -36,7 +36,7 @@ export interface AuthServices {
   hydra: AdminApi
 }
 
-interface Identity {
+export interface Identity {
   id: string
   traits: {
     username: string
@@ -78,7 +78,7 @@ export const IdentityDecoder = t.type({
   metadata_public: t.type({ legacy_id: t.number }),
 })
 
-class KratosDB extends Pool {
+export class KratosDB extends Pool {
   async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
     const identities = await this.executeQuery({
       query:
