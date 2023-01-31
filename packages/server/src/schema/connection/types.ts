@@ -35,7 +35,7 @@ export interface ConnectionPayload {
   last?: Maybe<Scalars['Int']>
 }
 
-export interface Cursor<T> {
+interface Cursor<T> {
   cursor: string
   node: T
 }
