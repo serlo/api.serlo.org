@@ -22,7 +22,6 @@
 import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
-import { Database } from './database'
 import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -246,16 +245,6 @@ export function createMessageHandler(
       )
     },
   })
-}
-
-export function returnsUuidsFromDatabase(
-  database: Database
-): RestResolver<BodyType<string, { id: number }>> {
-  return (req, res, ctx) => {
-    const uuid = database.getUuid(req.body.payload.id)
-
-    return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
-  }
 }
 
 export function givenEntityCheckoutRevisionEndpoint(
