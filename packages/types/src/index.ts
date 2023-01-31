@@ -560,7 +560,7 @@ export type Comment = AbstractUuid & {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   events: AbstractNotificationEventConnection;
-  id: Scalars['String'];
+  id: Scalars['Int'];
   legacyObject: AbstractUuid;
   title: Scalars['String'];
   trashed: Scalars['Boolean'];

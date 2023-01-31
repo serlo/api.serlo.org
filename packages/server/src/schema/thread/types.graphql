@@ -13,8 +13,8 @@ type Thread {
   ): CommentConnection!
 }
 
-type Comment {
-  id: String!
+type Comment implements AbstractUuid {
+  id: Int!
   title: String!
   content: String!
   alias: String!
