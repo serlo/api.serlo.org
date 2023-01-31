@@ -39,7 +39,12 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
+import {
+  CommentDecoder,
+  DiscriminatorType,
+  UserDecoder,
+  UuidDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
@@ -194,7 +199,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async editComment(_parent, { input }, { dataSources, userId }) {
-      const commentId = decodeThreadId(input.commentId)
+      const commentId = input.commentId
       const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
 
       assertUserIsAuthenticated(userId)
@@ -205,15 +210,18 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      const editPayload = await dataSources.model.serlo.editComment({
+      await dataSources.model.serlo.editComment({
         ...input,
         commentId,
         userId,
       })
 
       return {
-        record: editPayload,
-        success: editPayload !== null,
+        record: await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: commentId,
+          decoder: CommentDecoder,
+        }),
+        success: true,
         query: {},
       }
     },

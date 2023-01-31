@@ -2536,7 +2536,7 @@ export type ThreadCreateThreadResponse = {
 };
 
 export type ThreadEditCommentInput = {
-  commentId: Scalars['String'];
+  commentId: Scalars['Int'];
   content: Scalars['String'];
 };
 

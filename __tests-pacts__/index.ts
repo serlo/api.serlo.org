@@ -550,7 +550,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         { content: comment.content, commentId: comment.id, userId: user.id },
-        { success: true },
+        undefined,
       ],
     ],
   },
