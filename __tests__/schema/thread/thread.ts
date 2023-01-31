@@ -90,9 +90,7 @@ describe('uuid["threads"]', () => {
       await query.shouldReturnData({
         uuid: {
           threads: {
-            nodes: [
-              { comments: { nodes: [{ id: comment3.id }] } },
-            ],
+            nodes: [{ comments: { nodes: [{ id: comment3.id }] } }],
           },
         },
       })
@@ -179,9 +177,7 @@ describe('uuid["threads"]', () => {
       await query.shouldReturnData({
         uuid: {
           threads: {
-            nodes: [
-              { comments: { nodes: [{ id: comment3.id }] } },
-            ],
+            nodes: [{ comments: { nodes: [{ id: comment3.id }] } }],
           },
         },
       })
