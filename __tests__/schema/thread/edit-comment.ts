@@ -48,88 +48,83 @@ beforeEach(() => {
   givenThreads({ uuid: article, threads: [[comment]] })
 })
 
-describe('comment is edited, cache mutated as expected', () => {
-  test.each`
-    mockDbLayerSuccess | expectedContentAfterwards
-    ${false}           | ${comment.content}
-    ${true}            | ${newContent}
-  `(
-    'return success: $mockDbLayerSuccess from mocked DB layer and expect the following content afterwards: $expectedContentAfterwards',
-    async ({
-      mockDbLayerSuccess,
-      expectedContentAfterwards,
-    }: {
-      mockDbLayerSuccess: boolean
-      expectedContentAfterwards: string
-    }) => {
-      given('UuidQuery').for(user)
-      given('ThreadEditCommentMutation')
-        .withPayload({
-          userId: user.id,
-          content: newContent,
-          commentId: comment.id,
-        })
-        .returns({
-          success: mockDbLayerSuccess,
-        })
+test('comment is edited, cache mutated as expected', async () => {
+  given('UuidQuery').for(user)
+  given('ThreadEditCommentMutation')
+    .withPayload({
+      userId: user.id,
+      content: newContent,
+      commentId: comment.id,
+    })
+    .returns({ success: true })
 
-      const queryComments = new Client()
-        .prepareQuery({
-          query: gql`
-            query ($id: Int) {
-              uuid(id: $id) {
-                ... on ThreadAware {
-                  threads {
+  const queryComments = new Client()
+    .prepareQuery({
+      query: gql`
+        query ($id: Int) {
+          uuid(id: $id) {
+            ... on ThreadAware {
+              threads {
+                nodes {
+                  comments {
                     nodes {
-                      comments {
-                        nodes {
-                          content
-                        }
-                      }
+                      content
                     }
                   }
                 }
               }
             }
-          `,
-        })
-        .withVariables({ id: article.id })
+          }
+        }
+      `,
+    })
+    .withVariables({ id: article.id })
 
-      await queryComments.shouldReturnData({
-        uuid: {
-          threads: {
-            nodes: [{ comments: { nodes: [{ content: comment.content }] } }],
-          },
-        },
-      })
+  await queryComments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [{ comments: { nodes: [{ content: comment.content }] } }],
+      },
+    },
+  })
 
-      await mutation.shouldReturnData({
-        thread: {
-          editComment: {
-            success: true,
-          },
-        },
-      })
+  await mutation.shouldReturnData({
+    thread: {
+      editComment: {
+        success: true,
+      },
+    },
+  })
 
-      await queryComments.shouldReturnData({
-        uuid: {
-          threads: {
-            nodes: [
-              {
-                comments: {
-                  nodes: [
-                    {
-                      content: expectedContentAfterwards
-                    },
-                  ],
+  await queryComments.shouldReturnData({
+    uuid: {
+      threads: {
+        nodes: [
+          {
+            comments: {
+              nodes: [
+                {
+                  content: newContent,
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-      })
-    }
-  )
+        ],
+      },
+    },
+  })
+})
+
+test('database layer 400 response', async () => {
+  given('ThreadEditCommentMutation').returnsBadRequest()
+
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('database layer 500 response', async () => {
+  given('ThreadEditCommentMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
 test('unauthenticated user gets error', async () => {
