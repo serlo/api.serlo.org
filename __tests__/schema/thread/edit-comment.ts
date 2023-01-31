@@ -50,17 +50,17 @@ beforeEach(() => {
 
 describe('comment is edited, cache mutated as expected', () => {
   test.each`
-    mockDbLayerSuccess | expectContentChange
-    ${false}           | ${false}
-    ${true}            | ${true}
+    mockDbLayerSuccess | expectedContentAfterwards
+    ${false}           | ${comment.content}
+    ${true}            | ${newContent}
   `(
-    'return success: $mockDbLayerSuccess from mocked DB layer and expect cache mutation: $expectContentChange',
+    'return success: $mockDbLayerSuccess from mocked DB layer and expect the following content afterwards: $expectedContentAfterwards',
     async ({
       mockDbLayerSuccess,
-      expectContentChange,
+      expectedContentAfterwards,
     }: {
       mockDbLayerSuccess: boolean
-      expectContentChange: boolean
+      expectedContentAfterwards: string
     }) => {
       given('UuidQuery').for(user)
       given('ThreadEditCommentMutation')
@@ -119,9 +119,7 @@ describe('comment is edited, cache mutated as expected', () => {
                 comments: {
                   nodes: [
                     {
-                      content: expectContentChange
-                        ? newContent
-                        : comment.content,
+                      content: expectedContentAfterwards
                     },
                   ],
                 },
