@@ -209,20 +209,7 @@ export function givenThreads({
   given('UuidQuery').for(uuid, firstComments, otherComments)
 }
 
-export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
-  return createMessageHandler(
-    {
-      message: {
-        type: 'UuidQuery',
-        payload: { id: uuid.id },
-      },
-      body: uuid,
-    },
-    once
-  )
-}
-
-export function createMessageHandler(
+function createMessageHandler(
   args: {
     message: MessagePayload
     body?: unknown
@@ -247,68 +234,7 @@ export function createMessageHandler(
   })
 }
 
-export function givenEntityCheckoutRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('EntityCheckoutRevisionMutation', resolver)
-}
-
-export function givenPageCheckoutRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('PageCheckoutRevisionMutation', resolver)
-}
-
-export function givenEntityRejectRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('EntityRejectRevisionMutation', resolver)
-}
-
-export function givenPageRejectRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('PageRejectRevisionMutation', resolver)
-}
-
-export function givenSerloEndpoint<Payload = DefaultPayloadType>(
-  matchType: string,
-  resolver: MessageResolver<string, Payload>
-) {
-  global.server.use(
-    createDatabaseLayerHandler<string, Payload>({ matchType, resolver })
-  )
-}
-
-export function createDatabaseLayerHandler<
+function createDatabaseLayerHandler<
   MessageType extends string = string,
   Payload = DefaultPayloadType
 >(args: {
@@ -335,7 +261,7 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
-export type MessageResolver<
+type MessageResolver<
   MessageType extends string = string,
   Payload = DefaultPayloadType
 > = RestResolver<BodyType<MessageType, Payload>>
