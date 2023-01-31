@@ -57,7 +57,6 @@ import {
   Client,
   given,
 } from '../__utils__'
-import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
 
 const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
@@ -501,7 +500,7 @@ describe('notificationEvent', () => {
           notificationEvent: {
             comment: {
               __typename: 'Comment',
-              id: encodeThreadId(comment.id),
+              id: comment.id,
             },
           },
         })
