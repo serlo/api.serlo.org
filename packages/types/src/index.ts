@@ -2660,6 +2660,7 @@ export type User = AbstractUuid & ThreadAware & {
   isActiveDonor: Scalars['Boolean'];
   isActiveReviewer: Scalars['Boolean'];
   isNewAuthor: Scalars['Boolean'];
+  language?: Maybe<Instance>;
   lastLogin?: Maybe<Scalars['DateTime']>;
   motivation?: Maybe<Scalars['String']>;
   roles: ScopedRoleConnection;
