@@ -73,7 +73,9 @@ describe('uuid["threads"]', () => {
           threads: {
             nodes: [
               {
-                comments: { nodes: [{ id: comment1.id }, { id: comment2.id }] },
+                comments: {
+                  nodes: [{ id: comment1.id }, { id: comment2.id }],
+                },
               },
               { comments: { nodes: [{ id: comment3.id }] } },
             ],
@@ -87,7 +89,9 @@ describe('uuid["threads"]', () => {
 
       await query.shouldReturnData({
         uuid: {
-          threads: { nodes: [{ comments: { nodes: [{ id: comment3.id }] } }] },
+          threads: {
+            nodes: [{ comments: { nodes: [{ id: comment3.id }] } }],
+          },
         },
       })
     })
@@ -113,7 +117,13 @@ describe('uuid["threads"]', () => {
             .shouldReturnData({
               uuid: {
                 threads: {
-                  nodes: [{ comments: { nodes: [{ id: comment2.id }] } }],
+                  nodes: [
+                    {
+                      comments: {
+                        nodes: [{ id: comment2.id }],
+                      },
+                    },
+                  ],
                 },
               },
             })
@@ -139,7 +149,13 @@ describe('uuid["threads"]', () => {
             .shouldReturnData({
               uuid: {
                 threads: {
-                  nodes: [{ comments: { nodes: [{ id: comment2.id }] } }],
+                  nodes: [
+                    {
+                      comments: {
+                        nodes: [{ id: comment2.id }],
+                      },
+                    },
+                  ],
                 },
               },
             })
@@ -160,7 +176,9 @@ describe('uuid["threads"]', () => {
 
       await query.shouldReturnData({
         uuid: {
-          threads: { nodes: [{ comments: { nodes: [{ id: comment3.id }] } }] },
+          threads: {
+            nodes: [{ comments: { nodes: [{ id: comment3.id }] } }],
+          },
         },
       })
     })
