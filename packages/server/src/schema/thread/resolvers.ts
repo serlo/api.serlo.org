@@ -39,12 +39,7 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import {
-  CommentDecoder,
-  DiscriminatorType,
-  UserDecoder,
-  UuidDecoder,
-} from '~/model/decoder'
+import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
