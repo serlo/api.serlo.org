@@ -22,11 +22,10 @@
 import { MockedRequest, rest } from 'msw'
 import * as R from 'ramda'
 
-import { Database } from './database'
 import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { DiscriminatorType, Uuid } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 
 const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
@@ -210,20 +209,7 @@ export function givenThreads({
   given('UuidQuery').for(uuid, firstComments, otherComments)
 }
 
-export function createUuidHandler(uuid: Model<'AbstractUuid'>, once?: boolean) {
-  return createMessageHandler(
-    {
-      message: {
-        type: 'UuidQuery',
-        payload: { id: uuid.id },
-      },
-      body: uuid,
-    },
-    once
-  )
-}
-
-export function createMessageHandler(
+function createMessageHandler(
   args: {
     message: MessagePayload
     body?: unknown
@@ -248,78 +234,7 @@ export function createMessageHandler(
   })
 }
 
-export function returnsUuidsFromDatabase(
-  database: Database
-): RestResolver<BodyType<string, { id: number }>> {
-  return (req, res, ctx) => {
-    const uuid = database.getUuid(req.body.payload.id)
-
-    return uuid ? res(ctx.json(uuid)) : res(ctx.json(null), ctx.status(404))
-  }
-}
-
-export function givenEntityCheckoutRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('EntityCheckoutRevisionMutation', resolver)
-}
-
-export function givenPageCheckoutRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('PageCheckoutRevisionMutation', resolver)
-}
-
-export function givenEntityRejectRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('EntityRejectRevisionMutation', resolver)
-}
-
-export function givenPageRejectRevisionEndpoint(
-  resolver: MessageResolver<
-    string,
-    {
-      revisionId: Uuid
-      reason: string
-      userId: number
-    }
-  >
-) {
-  givenSerloEndpoint('PageRejectRevisionMutation', resolver)
-}
-
-export function givenSerloEndpoint<Payload = DefaultPayloadType>(
-  matchType: string,
-  resolver: MessageResolver<string, Payload>
-) {
-  global.server.use(
-    createDatabaseLayerHandler<string, Payload>({ matchType, resolver })
-  )
-}
-
-export function createDatabaseLayerHandler<
+function createDatabaseLayerHandler<
   MessageType extends string = string,
   Payload = DefaultPayloadType
 >(args: {
@@ -346,7 +261,7 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
 
-export type MessageResolver<
+type MessageResolver<
   MessageType extends string = string,
   Payload = DefaultPayloadType
 > = RestResolver<BodyType<MessageType, Payload>>
@@ -364,29 +279,6 @@ interface MessagePayload<
 }
 
 type DefaultPayloadType = Record<string, unknown>
-
-export function createSpreadsheetHandler({
-  spreadsheetId,
-  range,
-  majorDimension,
-  apiKey,
-  status = 200,
-  body = {},
-}: {
-  spreadsheetId: string
-  range: string
-  majorDimension: string
-  apiKey: string
-  status?: number
-  body?: Record<string, unknown>
-}) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
-    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
-  return rest.get(url, (_req, res, ctx) =>
-    res.once(ctx.status(status), ctx.json(body))
-  )
-}
 
 export function createChatUsersInfoHandler({
   username,
