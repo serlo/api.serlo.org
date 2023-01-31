@@ -22,6 +22,7 @@
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { Instance } from '~/types'
 
 export const user: Model<'User'> = {
   __typename: DiscriminatorType.User,
@@ -33,6 +34,7 @@ export const user: Model<'User'> = {
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
   roles: ['login', 'german_horizonhelper', 'sysadmin'],
+  language: Instance.De,
 }
 
 export const user2: Model<'User'> = {
@@ -45,6 +47,7 @@ export const user2: Model<'User'> = {
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
   roles: ['login'],
+  language: Instance.En,
 }
 
 export const activityByType: Payload<'serlo', 'getActivityByType'> = {
