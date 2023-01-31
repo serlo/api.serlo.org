@@ -121,7 +121,7 @@ test('comment gets created, cache mutated as expected', async () => {
         record: {
           archived: false,
           content: 'Hello',
-          id: encodeThreadId(nextUuid(comment1.id)),
+          id: nextUuid(comment1.id),
         },
       },
     },
