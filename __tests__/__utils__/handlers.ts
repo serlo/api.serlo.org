@@ -25,7 +25,7 @@ import * as R from 'ramda'
 import { createFakeIdentity, RestResolver } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { DiscriminatorType, Uuid } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 
 const ForDefinitions = {
   UuidQuery(uuids: Model<'AbstractUuid'>[]) {
