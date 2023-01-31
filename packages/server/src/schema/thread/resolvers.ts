@@ -217,10 +217,6 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       })
 
       return {
-        record: await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: commentId,
-          decoder: CommentDecoder,
-        }),
         success: true,
         query: {},
       }
