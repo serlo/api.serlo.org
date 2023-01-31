@@ -98,6 +98,7 @@ extend type Mutation {
 type ThreadMutation {
   createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse
   createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse
+  editComment(input: ThreadEditCommentInput!): ThreadEditCommentResponse
   setThreadArchived(
     input: ThreadSetThreadArchivedInput!
   ): ThreadSetThreadArchivedResponse
@@ -132,6 +133,16 @@ input ThreadCreateCommentInput {
 
 type ThreadCreateCommentResponse {
   record: Comment
+  success: Boolean!
+  query: Query!
+}
+
+input ThreadEditCommentInput {
+  content: String!
+  commentId: Int!
+}
+
+type ThreadEditCommentResponse {
   success: Boolean!
   query: Query!
 }

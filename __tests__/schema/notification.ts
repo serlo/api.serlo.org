@@ -498,7 +498,10 @@ describe('notificationEvent', () => {
         .withVariables(createCommentNotificationEvent)
         .shouldReturnData({
           notificationEvent: {
-            comment: getTypenameAndId(comment),
+            comment: {
+              __typename: 'Comment',
+              id: comment.id,
+            },
           },
         })
     })
