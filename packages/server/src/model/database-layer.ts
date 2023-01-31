@@ -392,7 +392,7 @@ export const spec = {
       userId: t.number,
       content: t.string,
     }),
-    response: t.type({ success: t.boolean }),
+    response: t.void,
     canBeNull: false,
   },
   ThreadSetThreadArchivedMutation: {

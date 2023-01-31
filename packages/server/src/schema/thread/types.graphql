@@ -139,7 +139,7 @@ type ThreadCreateCommentResponse {
 
 input ThreadEditCommentInput {
   content: String!
-  commentId: String!
+  commentId: Int!
 }
 
 type ThreadEditCommentResponse {
