@@ -280,29 +280,6 @@ interface MessagePayload<
 
 type DefaultPayloadType = Record<string, unknown>
 
-export function createSpreadsheetHandler({
-  spreadsheetId,
-  range,
-  majorDimension,
-  apiKey,
-  status = 200,
-  body = {},
-}: {
-  spreadsheetId: string
-  range: string
-  majorDimension: string
-  apiKey: string
-  status?: number
-  body?: Record<string, unknown>
-}) {
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}` +
-    `/values/${range}?majorDimension=${majorDimension}&key=${apiKey}`
-  return rest.get(url, (_req, res, ctx) =>
-    res.once(ctx.status(status), ctx.json(body))
-  )
-}
-
 export function createChatUsersInfoHandler({
   username,
   success,
