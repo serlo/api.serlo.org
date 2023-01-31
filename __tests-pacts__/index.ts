@@ -324,13 +324,15 @@ const pactSpec: PactSpec = {
         { userId: user.id },
         {
           userId: user.id,
-          notifications: [{ 
-            id: 1, 
-            unread: true, 
-            eventId: castToUuid(301),
-            email: false,
-            emailSent: false
-          }],
+          notifications: [
+            {
+              id: 1,
+              unread: true,
+              eventId: castToUuid(301),
+              email: false,
+              emailSent: false,
+            },
+          ],
         },
       ],
     ],
