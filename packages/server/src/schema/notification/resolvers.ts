@@ -56,9 +56,6 @@ export const resolvers: TypeResolvers<Notification> &
 
       return event
     },
-    emailSubscribed(parent) {
-      return parent.email
-    },
   },
   Query: {
     events(_parent, payload, { dataSources }) {
@@ -70,7 +67,7 @@ export const resolvers: TypeResolvers<Notification> &
         userId: requestedUserId,
         unread,
         emailSent,
-        emailSubscribed,
+        email,
         ...cursorPayload
       },
       { dataSources, service, userId: authUserId }
@@ -96,12 +93,12 @@ export const resolvers: TypeResolvers<Notification> &
       const filteredNotifications = notifications.filter(
         (notification) =>
           (unread == null || notification.unread === unread) &&
-          (emailSubscribed == null || notification.email === emailSubscribed) &&
+          (email == null || notification.email === email) &&
           (emailSent == null || notification.emailSent === emailSent)
       )
       const transformedNotifications = filteredNotifications.map(
         (notification) => {
-          return { ...notification, emailSubscribed: notification.email }
+          return { ...notification, email: notification.email }
         }
       )
 
