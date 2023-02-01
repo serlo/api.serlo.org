@@ -63,13 +63,7 @@ export const resolvers: TypeResolvers<Notification> &
     },
     async notifications(
       _parent,
-      {
-        userId: requestedUserId,
-        unread,
-        emailSent,
-        email,
-        ...cursorPayload
-      },
+      { userId: requestedUserId, unread, emailSent, email, ...cursorPayload },
       { dataSources, service, userId: authUserId }
     ) {
       let userId: number
