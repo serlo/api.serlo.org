@@ -88,15 +88,9 @@ export const resolvers: TypeResolvers<Notification> &
 
       const filteredNotifications = notifications
         .filter(
-          (notification) => unread == null || notification.unread === unread
-        )
-        .filter(
-          (notification) =>
-            emailSubscribed == null || notification.email === emailSubscribed
-        )
-        .filter(
-          (notification) =>
-            emailSent == null || notification.emailSent === emailSent
+          (notification) => (unread == null || notification.unread === unread) &&
+            (emailSubscribed == null || notification.email === emailSubscribed) &&
+            (emailSent == null || notification.emailSent === emailSent)
         )
       const transformedNotifications = filteredNotifications.map(
         (notification) => {
