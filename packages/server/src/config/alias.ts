@@ -24,12 +24,12 @@ import * as R from 'ramda'
 import { autoreviewTaxonomyIds } from './autoreview-taxonomies'
 import { Instance, QueryUuidArgs } from '~/types'
 
-export type AliasConfig = {
+type AliasConfig = {
   [instance in Instance]?: Partial<Record<string, number>>
 }
 
 // Custom aliases that take precedence over any alias defined in serlo.org
-export const aliases: AliasConfig = {
+const aliases: AliasConfig = {
   [Instance.De]: {
     '/community': 19882,
     // TODO: Legacy alias. It would be better to redirect it to /community/testbereich

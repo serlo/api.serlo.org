@@ -26,6 +26,7 @@ import * as R from 'ramda'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
+  CommentDecoder,
   DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
@@ -662,6 +663,30 @@ export function createSerloModel({
     },
   })
 
+  const editComment = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('ThreadEditCommentMutation'),
+    async mutate(payload: DatabaseLayer.Payload<'ThreadEditCommentMutation'>) {
+      return DatabaseLayer.makeRequest('ThreadEditCommentMutation', payload)
+    },
+    async updateCache(payload) {
+      await getUuid._querySpec.setCache({
+        payload: { id: payload.commentId },
+        async getValue(current) {
+          if (!current || !CommentDecoder.is(current)) return
+
+          await getUuid._querySpec.removeCache({
+            payload: { id: current.parentId },
+          })
+
+          return {
+            ...current,
+            content: payload.content,
+          }
+        },
+      })
+    },
+  })
+
   const archiveThread = createMutation({
     decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
     async mutate(
@@ -1157,6 +1182,7 @@ export function createSerloModel({
     createThread,
     deleteBots,
     deleteRegularUsers,
+    editComment,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,

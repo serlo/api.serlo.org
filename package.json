@@ -42,6 +42,7 @@
     "redis:cli": "docker-compose exec redis redis-cli",
     "redis:list": "docker-compose exec redis redis-cli KEYS '*'",
     "redis:empty": "docker-compose exec redis redis-cli FLUSHDB",
+    "show-unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport=packages/types/ --excludePathsFromReport=packages/server/src/types.ts --ignoreFiles=/dist/",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
@@ -77,6 +78,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.5",
     "ts-node": "^10.9.1",
+    "ts-unused-exports": "^9.0.2",
     "tsdx": "^0.14.1",
     "typescript": "^4.1.0"
   },

@@ -193,6 +193,29 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
+    async editComment(_parent, { input }, { dataSources, userId }) {
+      const commentId = input.commentId
+      const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
+
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Thread.createThread(scope),
+        message: 'You are not allowed to edit this thread or comment.',
+        dataSources,
+      })
+
+      await dataSources.model.serlo.editComment({
+        ...input,
+        commentId,
+        userId,
+      })
+
+      return {
+        success: true,
+        query: {},
+      }
+    },
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)

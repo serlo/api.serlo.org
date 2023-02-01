@@ -2544,10 +2544,22 @@ export type ThreadCreateThreadResponse = {
   success: Scalars['Boolean'];
 };
 
+export type ThreadEditCommentInput = {
+  commentId: Scalars['Int'];
+  content: Scalars['String'];
+};
+
+export type ThreadEditCommentResponse = {
+  __typename?: 'ThreadEditCommentResponse';
+  query: Query;
+  success: Scalars['Boolean'];
+};
+
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
   createComment?: Maybe<ThreadCreateCommentResponse>;
   createThread?: Maybe<ThreadCreateThreadResponse>;
+  editComment?: Maybe<ThreadEditCommentResponse>;
   setCommentState?: Maybe<ThreadSetCommentStateResponse>;
   setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
   setThreadState?: Maybe<ThreadSetThreadStateResponse>;
@@ -2561,6 +2573,11 @@ export type ThreadMutationCreateCommentArgs = {
 
 export type ThreadMutationCreateThreadArgs = {
   input: ThreadCreateThreadInput;
+};
+
+
+export type ThreadMutationEditCommentArgs = {
+  input: ThreadEditCommentInput;
 };
 
 
@@ -3242,6 +3259,8 @@ export type ResolversTypes = {
   ThreadCreateCommentResponse: ResolverTypeWrapper<ModelOf<ThreadCreateCommentResponse>>;
   ThreadCreateThreadInput: ResolverTypeWrapper<ModelOf<ThreadCreateThreadInput>>;
   ThreadCreateThreadResponse: ResolverTypeWrapper<ModelOf<ThreadCreateThreadResponse>>;
+  ThreadEditCommentInput: ResolverTypeWrapper<ModelOf<ThreadEditCommentInput>>;
+  ThreadEditCommentResponse: ResolverTypeWrapper<ModelOf<ThreadEditCommentResponse>>;
   ThreadMutation: ResolverTypeWrapper<ModelOf<ThreadMutation>>;
   ThreadQuery: ResolverTypeWrapper<ModelOf<ThreadQuery>>;
   ThreadSetCommentStateInput: ResolverTypeWrapper<ModelOf<ThreadSetCommentStateInput>>;
@@ -3453,6 +3472,8 @@ export type ResolversParentTypes = {
   ThreadCreateCommentResponse: ModelOf<ThreadCreateCommentResponse>;
   ThreadCreateThreadInput: ModelOf<ThreadCreateThreadInput>;
   ThreadCreateThreadResponse: ModelOf<ThreadCreateThreadResponse>;
+  ThreadEditCommentInput: ModelOf<ThreadEditCommentInput>;
+  ThreadEditCommentResponse: ModelOf<ThreadEditCommentResponse>;
   ThreadMutation: ModelOf<ThreadMutation>;
   ThreadQuery: ModelOf<ThreadQuery>;
   ThreadSetCommentStateInput: ModelOf<ThreadSetCommentStateInput>;
@@ -4799,9 +4820,16 @@ export type ThreadCreateThreadResponseResolvers<ContextType = Context, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ThreadEditCommentResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadEditCommentResponse'] = ResolversParentTypes['ThreadEditCommentResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ThreadMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadMutation'] = ResolversParentTypes['ThreadMutation']> = {
   createComment?: Resolver<Maybe<ResolversTypes['ThreadCreateCommentResponse']>, ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
   createThread?: Resolver<Maybe<ResolversTypes['ThreadCreateThreadResponse']>, ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
+  editComment?: Resolver<Maybe<ResolversTypes['ThreadEditCommentResponse']>, ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
   setCommentState?: Resolver<Maybe<ResolversTypes['ThreadSetCommentStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
   setThreadArchived?: Resolver<Maybe<ResolversTypes['ThreadSetThreadArchivedResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
   setThreadState?: Resolver<Maybe<ResolversTypes['ThreadSetThreadStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
@@ -5146,6 +5174,7 @@ export type Resolvers<ContextType = Context> = {
   ThreadAware?: ThreadAwareResolvers<ContextType>;
   ThreadCreateCommentResponse?: ThreadCreateCommentResponseResolvers<ContextType>;
   ThreadCreateThreadResponse?: ThreadCreateThreadResponseResolvers<ContextType>;
+  ThreadEditCommentResponse?: ThreadEditCommentResponseResolvers<ContextType>;
   ThreadMutation?: ThreadMutationResolvers<ContextType>;
   ThreadQuery?: ThreadQueryResolvers<ContextType>;
   ThreadSetCommentStateResponse?: ThreadSetCommentStateResponseResolvers<ContextType>;
