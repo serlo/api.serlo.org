@@ -133,25 +133,21 @@ describe('notifications', () => {
     await notificationsQuery.withVariables({ unread: true }).shouldReturnData({
       notifications: {
         totalCount: 1,
-        nodes: [
-          { id: 3, unread: true, email: false, emailSent: false },
-        ],
+        nodes: [{ id: 3, unread: true, email: false, emailSent: false }],
       },
     })
   })
 
   test('notifications (only subscribed to receive email)', async () => {
-    await notificationsQuery
-      .withVariables({ email: true })
-      .shouldReturnData({
-        notifications: {
-          totalCount: 2,
-          nodes: [
-            { id: 2, unread: false, email: true, emailSent: true },
-            { id: 1, unread: false, email: true, emailSent: false },
-          ],
-        },
-      })
+    await notificationsQuery.withVariables({ email: true }).shouldReturnData({
+      notifications: {
+        totalCount: 2,
+        nodes: [
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
+        ],
+      },
+    })
   })
 
   test('notifications (only sent email)', async () => {
@@ -160,9 +156,7 @@ describe('notifications', () => {
       .shouldReturnData({
         notifications: {
           totalCount: 1,
-          nodes: [
-            { id: 2, unread: false, email: true, emailSent: true },
-          ],
+          nodes: [{ id: 2, unread: false, email: true, emailSent: true }],
         },
       })
   })
