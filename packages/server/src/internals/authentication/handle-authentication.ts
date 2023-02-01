@@ -98,6 +98,8 @@ function validateServiceToken(token: string): Service {
           return process.env.SERVER_SERLO_CLOUDFLARE_WORKER_SECRET
         case Service.SerloCacheWorker:
           return process.env.SERVER_SERLO_CACHE_WORKER_SECRET
+        case Service.NotificationEmailService:
+          return process.env.SERVER_SERLO_NOTIFICATION_EMAIL_SERVICE_SECRET
       }
     }
   }
