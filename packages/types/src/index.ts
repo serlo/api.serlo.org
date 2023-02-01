@@ -1587,8 +1587,8 @@ export type NavigationNodeEdge = {
 
 export type Notification = {
   __typename?: 'Notification';
+  email: Scalars['Boolean'];
   emailSent: Scalars['Boolean'];
-  emailSubscribed: Scalars['Boolean'];
   event: AbstractNotificationEvent;
   id: Scalars['Int'];
   unread: Scalars['Boolean'];
@@ -1880,7 +1880,7 @@ export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   emailSent?: InputMaybe<Scalars['Boolean']>;
-  emailSubscribed?: InputMaybe<Scalars['Boolean']>;
+  email?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   unread?: InputMaybe<Scalars['Boolean']>;

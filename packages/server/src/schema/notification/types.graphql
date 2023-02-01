@@ -2,8 +2,8 @@ type Notification {
   id: Int!
   unread: Boolean!
   event: AbstractNotificationEvent!
+  email: Boolean!
   emailSent: Boolean!
-  emailSubscribed: Boolean!
 }
 
 interface AbstractNotificationEvent {
@@ -30,7 +30,7 @@ extend type Query {
     first: Int
     last: Int
     emailSent: Boolean
-    emailSubscribed: Boolean
+    email: Boolean
     unread: Boolean
     userId: Int
   ): NotificationConnection!
