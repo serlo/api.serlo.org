@@ -22,6 +22,7 @@
 import * as auth from '@serlo/authorization'
 import { ForbiddenError, UserInputError } from 'apollo-server'
 
+import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -72,26 +73,32 @@ export const resolvers: TypeResolvers<Notification> &
         emailSubscribed,
         ...cursorPayload
       },
-      { dataSources, userId: authUserId }
+      { dataSources, service, userId: authUserId }
     ) {
-      const userId = requestedUserId ?? authUserId
+      let userId: number
 
-      if (!userId) {
-        throw new UserInputError(
-          'userId has to be set or the user has to be authenticated'
-        )
+      if (!requestedUserId) {
+        assertUserIsAuthenticated(authUserId)
+        userId = authUserId
+      } else {
+        if (service !== Service.NotificationEmailService) {
+          throw new UserInputError(
+            "Service is not allowed to query user's notifications"
+          )
+        }
+        userId = requestedUserId
       }
 
       const { notifications } = await dataSources.model.serlo.getNotifications({
         userId,
       })
 
-      const filteredNotifications = notifications
-        .filter(
-          (notification) => (unread == null || notification.unread === unread) &&
-            (emailSubscribed == null || notification.email === emailSubscribed) &&
-            (emailSent == null || notification.emailSent === emailSent)
-        )
+      const filteredNotifications = notifications.filter(
+        (notification) =>
+          (unread == null || notification.unread === unread) &&
+          (emailSubscribed == null || notification.email === emailSubscribed) &&
+          (emailSent == null || notification.emailSent === emailSent)
+      )
       const transformedNotifications = filteredNotifications.map(
         (notification) => {
           return { ...notification, emailSubscribed: notification.email }

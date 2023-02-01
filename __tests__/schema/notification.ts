@@ -57,6 +57,7 @@ import {
   Client,
   given,
 } from '../__utils__'
+import { Service } from '~/internals/authentication'
 import { Instance } from '~/types'
 
 const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
@@ -65,11 +66,13 @@ const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
       $unread: Boolean
       $emailSubscribed: Boolean
       $emailSent: Boolean
+      $userId: Int
     ) {
       notifications(
         unread: $unread
         emailSubscribed: $emailSubscribed
         emailSent: $emailSent
+        userId: $userId
       ) {
         totalCount
         nodes {
@@ -164,6 +167,39 @@ describe('notifications', () => {
       })
   })
 
+  describe('notifications (setting userId)', () => {
+    test('is successful when service is notification email service', async () => {
+      await notificationsQuery
+        .withContext({
+          service: Service.NotificationEmailService,
+          userId: null,
+        })
+        .withVariables({ userId: user.id })
+        .shouldReturnData({
+          notifications: {
+            totalCount: 3,
+            nodes: [
+              { id: 3, unread: true, emailSubscribed: false, emailSent: false },
+              { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+              { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+            ],
+          },
+        })
+    })
+    test.each([
+      Service.SerloCloudflareWorker,
+      Service.SerloCacheWorker,
+      Service.Serlo,
+    ])('fails when service is %s', async (service) => {
+      await notificationsQuery
+        .withContext({
+          service: service,
+          userId: null,
+        })
+        .withVariables({ userId: user.id })
+        .shouldFailWithError('BAD_USER_INPUT')
+    })
+  })
   test('notifications (w/ event)', async () => {
     given('NotificationsQuery')
       .withPayload({
