@@ -1436,6 +1436,15 @@ async function exec(): Promise<void> {
         ],
         breakingChanges: ['authenticate user using cookie'],
       },
+      {
+        tagName: 'v0.49.0',
+        date: '2023-02-01',
+        added: [
+          'Notification query has as params userId, emailSent and email; userId is to be used only by Notification Email Service #738',
+          'User has now language field #765',
+          'Add thread.editComment mutation',
+        ],
+      },
     ],
   })
 
