@@ -90,14 +90,9 @@ export const resolvers: TypeResolvers<Notification> &
           (email == null || notification.email === email) &&
           (emailSent == null || notification.emailSent === emailSent)
       )
-      const transformedNotifications = filteredNotifications.map(
-        (notification) => {
-          return { ...notification, email: notification.email }
-        }
-      )
 
       return resolveConnection({
-        nodes: transformedNotifications,
+        nodes: filteredNotifications,
         payload: cursorPayload,
         createCursor(node) {
           return `${node.id}`
