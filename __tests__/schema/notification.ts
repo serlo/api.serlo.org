@@ -64,13 +64,13 @@ const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
   query: gql`
     query notifications(
       $unread: Boolean
-      $emailSubscribed: Boolean
+      $email: Boolean
       $emailSent: Boolean
       $userId: Int
     ) {
       notifications(
         unread: $unread
-        emailSubscribed: $emailSubscribed
+        email: $email
         emailSent: $emailSent
         userId: $userId
       ) {
@@ -78,7 +78,7 @@ const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
         nodes {
           id
           unread
-          emailSubscribed
+          email
           emailSent
         }
       }
@@ -109,9 +109,9 @@ describe('notifications', () => {
       notifications: {
         totalCount: 3,
         nodes: [
-          { id: 3, unread: true, emailSubscribed: false, emailSent: false },
-          { id: 2, unread: false, emailSubscribed: true, emailSent: true },
-          { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+          { id: 3, unread: true, email: false, emailSent: false },
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
         ],
       },
     })
@@ -122,8 +122,8 @@ describe('notifications', () => {
       notifications: {
         totalCount: 2,
         nodes: [
-          { id: 2, unread: false, emailSubscribed: true, emailSent: true },
-          { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
         ],
       },
     })
@@ -134,7 +134,7 @@ describe('notifications', () => {
       notifications: {
         totalCount: 1,
         nodes: [
-          { id: 3, unread: true, emailSubscribed: false, emailSent: false },
+          { id: 3, unread: true, email: false, emailSent: false },
         ],
       },
     })
@@ -142,13 +142,13 @@ describe('notifications', () => {
 
   test('notifications (only subscribed to receive email)', async () => {
     await notificationsQuery
-      .withVariables({ emailSubscribed: true })
+      .withVariables({ email: true })
       .shouldReturnData({
         notifications: {
           totalCount: 2,
           nodes: [
-            { id: 2, unread: false, emailSubscribed: true, emailSent: true },
-            { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+            { id: 2, unread: false, email: true, emailSent: true },
+            { id: 1, unread: false, email: true, emailSent: false },
           ],
         },
       })
@@ -161,7 +161,7 @@ describe('notifications', () => {
         notifications: {
           totalCount: 1,
           nodes: [
-            { id: 2, unread: false, emailSubscribed: true, emailSent: true },
+            { id: 2, unread: false, email: true, emailSent: true },
           ],
         },
       })
@@ -179,9 +179,9 @@ describe('notifications', () => {
           notifications: {
             totalCount: 3,
             nodes: [
-              { id: 3, unread: true, emailSubscribed: false, emailSent: false },
-              { id: 2, unread: false, emailSubscribed: true, emailSent: true },
-              { id: 1, unread: false, emailSubscribed: true, emailSent: false },
+              { id: 3, unread: true, email: false, emailSent: false },
+              { id: 2, unread: false, email: true, emailSent: true },
+              { id: 1, unread: false, email: true, emailSent: false },
             ],
           },
         })
