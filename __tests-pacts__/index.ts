@@ -121,7 +121,7 @@ const uuids = [
   taxonomyTermRoot,
   taxonomyTermSubject,
   taxonomyTermCurriculumTopic,
-  user,
+  R.omit(['language'], user),
   video,
   videoRevision,
 ]
@@ -324,7 +324,15 @@ const pactSpec: PactSpec = {
         { userId: user.id },
         {
           userId: user.id,
-          notifications: [{ id: 1, unread: true, eventId: castToUuid(301) }],
+          notifications: [
+            {
+              id: 1,
+              unread: true,
+              eventId: castToUuid(301),
+              email: false,
+              emailSent: false,
+            },
+          ],
         },
       ],
     ],
@@ -549,7 +557,7 @@ const pactSpec: PactSpec = {
   ThreadEditCommentMutation: {
     examples: [
       [
-        { content: comment.content, commentId: comment.id, userId: user.id },
+        { content: 'new content', commentId: 15468, userId: user.id },
         undefined,
       ],
     ],
