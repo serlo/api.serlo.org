@@ -30,7 +30,7 @@ jobs:
           node-version: 16.x
       - uses: 'google-github-actions/auth@v1'
         with:
-          credentials_json: '${{ secrets.GCP_GH_ACTIONS_CREDENTIALS }}'
+          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - run: gcloud auth configure-docker
       - uses: google-github-actions/setup-gcloud@v1
       - run: yarn --immutable --immutable-cache
