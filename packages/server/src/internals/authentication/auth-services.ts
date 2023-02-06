@@ -52,7 +52,7 @@ export interface Identity {
   updated_at: Date | string
   state: 'active' | 'inactive'
   state_changed_at: Date | string
-  metadata_public: { legacy_id: number }
+  metadata_public: { legacy_id: number; lastLogin?: Date | string | null }
   metadata_admin?: null
 }
 
@@ -75,7 +75,10 @@ export const IdentityDecoder = t.type({
   updated_at: t.union([DateFromISOString, t.string]),
   state: t.union([t.literal('active'), t.literal('inactive')]),
   state_changed_at: t.union([DateFromISOString, t.string]),
-  metadata_public: t.type({ legacy_id: t.number }),
+  metadata_public: t.type({
+    legacy_id: t.number,
+    lastLogin: t.union([DateFromISOString, t.string, t.undefined, t.null]),
+  }),
 })
 
 export class KratosDB extends Pool {
