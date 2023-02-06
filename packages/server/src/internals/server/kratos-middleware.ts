@@ -44,6 +44,7 @@ export function applyKratosMiddleware({
   kratosAdmin: V0alpha2Api
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
+  app.post(`${basePath}/updateLastLogin`, updateLastLoginHandler(kratosAdmin))
   return basePath
 }
 
@@ -96,6 +97,49 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
+        errorContext: { userId, error },
+      })
+
+      response.statusCode = 500
+      return response.end('Internal error in after hook')
+    }
+  }
+
+  // See https://stackoverflow.com/a/71912991
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state=)')
+    )
+  }
+}
+
+function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
+  async function handleRequest(request: Request, response: Response) {
+ 
+    if (!t.type({ userId: t.string }).is(request.body)) {
+      response.statusCode = 400
+      response.end('Valid identity id has to be provided')
+      return
+    }
+
+    const { userId } = request.body
+
+    try {
+      const kratosUser = (await kratos.adminGetIdentity(userId)).data
+
+      await kratos.adminUpdateIdentity(kratosUser.id, {
+        ...kratosUser,
+        metadata_public: {
+          ...kratosUser.metadata_public,
+          lastLogin: Date.now(),
+        },
+        state: IdentityState.Active,
+      })
+
+      response.json({ status: 'success' }).end()
+    } catch (error: unknown) {
+      captureErrorEvent({
+        error: new Error('Could not synchronize lastLogin date'),
         errorContext: { userId, error },
       })
 
