@@ -68,6 +68,7 @@ export function createSerloModel({
           return {
             ...uuid,
             language: kratosIdentity?.traits.language,
+            lastLogin: kratosIdentity?.metadata_public.lastLogin,
           }
         }
         return uuid
