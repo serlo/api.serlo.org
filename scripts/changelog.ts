@@ -1445,6 +1445,11 @@ async function exec(): Promise<void> {
           'Add thread.editComment mutation',
         ],
       },
+      {
+        tagName: 'v0.49.1',
+        date: '2023-02-08',
+        fixed: ['Do not create kratos DB pool connection for single query'],
+      },
     ],
   })
 

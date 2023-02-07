@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.1](https://github.com/serlo/api.serlo.org/compare/v0.49.0..v0.49.1) - February 8, 2023
+
+### Fixed
+
+- Do not create kratos DB pool connection for single query
+
 ## [v0.49.0](https://github.com/serlo/api.serlo.org/compare/v0.48.0..v0.49.0) - February 1, 2023
 
 ### Added
