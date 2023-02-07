@@ -80,7 +80,7 @@ export const IdentityDecoder = t.type({
 
 export class KratosDB extends Pool {
   async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
-    const identities = await this.executeQuery({
+    const identities = await this.executeSingleQuery({
       query:
         "SELECT * FROM identities WHERE metadata_public ->> 'legacy_id' = $1",
       params: [legacyId],
@@ -88,24 +88,20 @@ export class KratosDB extends Pool {
     if (identities && IdentityDecoder.is(identities[0])) return identities[0]
     return null
   }
-  async executeQuery<T>({
+  async executeSingleQuery<T>({
     query,
     params = [],
   }: {
     query: string
     params?: unknown[]
   }) {
-    let client: PoolClient | undefined
     try {
       this.on('error', (error) => {
         captureErrorEvent({ error })
       })
-      client = await this.connect()
-      return (await client.query(query, params)).rows as T[]
+      return (await this.query(query, params)).rows as T[]
     } catch (error) {
       captureErrorEvent({ error: error as DatabaseError })
-    } finally {
-      if (client) client.release()
     }
   }
 }
