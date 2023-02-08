@@ -96,9 +96,6 @@ export class KratosDB extends Pool {
     params?: unknown[]
   }) {
     try {
-      this.on('error', (error) => {
-        captureErrorEvent({ error })
-      })
       return (await this.query(query, params)).rows as T[]
     } catch (error) {
       captureErrorEvent({ error: error as DatabaseError })
