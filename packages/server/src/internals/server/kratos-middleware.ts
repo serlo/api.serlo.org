@@ -115,7 +115,6 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
 
 function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
- 
     if (!t.type({ userId: t.string }).is(request.body)) {
       response.statusCode = 400
       response.end('Valid identity id has to be provided')
@@ -128,11 +127,13 @@ function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
       const kratosUser = (await kratos.adminGetIdentity(userId)).data
 
       await kratos.adminUpdateIdentity(kratosUser.id, {
-        ...kratosUser,
+        schema_id: 'default',
         metadata_public: {
           ...kratosUser.metadata_public,
-          lastLogin: Date.now(),
+          lastLogin: new Date(),
         },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        traits: kratosUser.traits,
         state: IdentityState.Active,
       })
 
