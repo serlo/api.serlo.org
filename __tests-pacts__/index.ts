@@ -121,7 +121,7 @@ const uuids = [
   taxonomyTermRoot,
   taxonomyTermSubject,
   taxonomyTermCurriculumTopic,
-  R.omit(['language'], user),
+  user,
   video,
   videoRevision,
 ]
