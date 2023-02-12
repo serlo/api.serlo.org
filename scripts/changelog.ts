@@ -1450,6 +1450,11 @@ async function exec(): Promise<void> {
         date: '2023-02-08',
         fixed: ['Do not create kratos DB pool connection for single query'],
       },
+      {
+        tagName: 'v0.49.2',
+        date: '2023-02-12',
+        fixed: ['user: decrease db calls due to language query'],
+      },
     ],
   })
 

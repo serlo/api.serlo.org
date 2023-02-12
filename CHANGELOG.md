@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.2](https://github.com/serlo/api.serlo.org/compare/v0.49.1..v0.49.2) - February 12, 2023
+
+### Fixed
+
+- user: decrease db calls due to language query
+
 ## [v0.49.1](https://github.com/serlo/api.serlo.org/compare/v0.49.0..v0.49.1) - February 8, 2023
 
 ### Fixed
