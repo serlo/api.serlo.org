@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+/*import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import {
@@ -14,7 +14,7 @@ import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
-/*
+
 describe('allThreads', () => {
   const comment4 = { ...comment3, id: nextUuid(comment3.id) }
 
