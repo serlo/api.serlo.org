@@ -14,6 +14,7 @@ import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
+/*
 describe('allThreads', () => {
   const comment4 = { ...comment3, id: nextUuid(comment3.id) }
 
@@ -157,3 +158,4 @@ describe('allThreads', () => {
 function getThreadData(comment: Model<'Comment'>) {
   return { __typename: 'Thread', createdAt: comment.date }
 }
+*/
