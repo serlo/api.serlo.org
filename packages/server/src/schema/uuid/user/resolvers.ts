@@ -50,7 +50,6 @@ import {
 import {
   DiscriminatorType,
   EntityDecoder,
-  InstanceDecoder,
   RevisionDecoder,
   UserDecoder,
 } from '~/model/decoder'
@@ -287,14 +286,8 @@ export const resolvers: LegacyQueries<
         },
       })
     },
-    async language(user, _, { dataSources }) {
-      const kratosIdentity =
-        await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(
-          user.id
-        )
-      const language = kratosIdentity?.traits.language
-
-      return InstanceDecoder.is(language) ? language : null
+    language(user, _, { dataSources }) {
+      return dataSources.model.kratos.getUserLanguage({ userLegacyId: user.id })
     },
   },
   Mutation: {
