@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   update-version:
     runs-on: ubuntu-latest
@@ -22,16 +23,16 @@ jobs:
     needs: update-version
     if: ${{ needs.update-version.outputs.tag }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v2
         with:
           cache: yarn
           node-version: 16.x
-      - uses: google-github-actions/setup-gcloud@v0
+      - uses: google-github-actions/auth@v1
         with:
-          version: '274.0.0'
-          service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
+          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - run: gcloud auth configure-docker
+      - uses: google-github-actions/setup-gcloud@v1
       - run: yarn --immutable --immutable-cache
       - run: yarn deploy:images
   npm-package:

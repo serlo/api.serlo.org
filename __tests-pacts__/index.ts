@@ -324,7 +324,15 @@ const pactSpec: PactSpec = {
         { userId: user.id },
         {
           userId: user.id,
-          notifications: [{ id: 1, unread: true, eventId: castToUuid(301) }],
+          notifications: [
+            {
+              id: 1,
+              unread: true,
+              eventId: castToUuid(301),
+              email: false,
+              emailSent: false,
+            },
+          ],
         },
       ],
     ],
@@ -549,8 +557,8 @@ const pactSpec: PactSpec = {
   ThreadEditCommentMutation: {
     examples: [
       [
-        { content: comment.content, commentId: comment.id, userId: user.id },
-        { success: true },
+        { content: 'new content', commentId: 17007, userId: user.id },
+        undefined,
       ],
     ],
   },

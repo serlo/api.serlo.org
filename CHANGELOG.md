@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.2](https://github.com/serlo/api.serlo.org/compare/v0.49.1..v0.49.2) - February 12, 2023
+
+### Fixed
+
+- user: decrease db calls due to language query
+
+## [v0.49.1](https://github.com/serlo/api.serlo.org/compare/v0.49.0..v0.49.1) - February 8, 2023
+
+### Fixed
+
+- Do not create kratos DB pool connection for single query
+
+## [v0.49.0](https://github.com/serlo/api.serlo.org/compare/v0.48.0..v0.49.0) - February 1, 2023
+
+### Added
+
+- Notification query has as params userId, emailSent and email; userId is to be used only by Notification Email Service #738
+
+- User has now language field #765
+
+- Add thread.editComment mutation
+
 ## [v0.48.0](https://github.com/serlo/api.serlo.org/compare/v0.47.2..v0.48.0) - January 12, 2023
 
 ### Breaking Changes
