@@ -23,7 +23,6 @@ import { gql } from 'apollo-server'
 
 import { article, comment, user } from '../../../__fixtures__'
 import { givenThreads, Client, given } from '../../__utils__'
-import { encodeThreadId } from '~/schema/thread/utils'
 
 const newContent = 'This is new content.'
 
@@ -41,22 +40,22 @@ const mutation = new Client({ userId: user.id })
   })
   .withInput({
     content: newContent,
-    commentId: encodeThreadId(comment.id),
+    commentId: comment.id,
   })
 
 beforeEach(() => {
+  given('UuidQuery').for(user)
   givenThreads({ uuid: article, threads: [[comment]] })
 })
 
 test('comment is edited, cache mutated as expected', async () => {
-  given('UuidQuery').for(user)
   given('ThreadEditCommentMutation')
     .withPayload({
       userId: user.id,
       content: newContent,
       commentId: comment.id,
     })
-    .returns({ success: true })
+    .returns(undefined)
 
   const queryComments = new Client()
     .prepareQuery({
@@ -115,13 +114,13 @@ test('comment is edited, cache mutated as expected', async () => {
   })
 })
 
-test('database layer 400 response', async () => {
+test('fails when database layer returns a 400er response', async () => {
   given('ThreadEditCommentMutation').returnsBadRequest()
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('database layer 500 response', async () => {
+test('fails when database layer has an internal error', async () => {
   given('ThreadEditCommentMutation').hasInternalServerError()
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')

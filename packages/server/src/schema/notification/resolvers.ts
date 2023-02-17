@@ -22,6 +22,7 @@
 import * as auth from '@serlo/authorization'
 import { ForbiddenError, UserInputError } from 'apollo-server'
 
+import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -62,16 +63,34 @@ export const resolvers: TypeResolvers<Notification> &
     },
     async notifications(
       _parent,
-      { unread, ...cursorPayload },
-      { dataSources, userId }
+      { userId: requestedUserId, unread, emailSent, email, ...cursorPayload },
+      { dataSources, service, userId: authUserId }
     ) {
-      assertUserIsAuthenticated(userId)
+      let userId: number
+
+      if (!requestedUserId) {
+        assertUserIsAuthenticated(authUserId)
+        userId = authUserId
+      } else {
+        if (service !== Service.NotificationEmailService) {
+          throw new UserInputError(
+            "Service is not allowed to query user's notifications"
+          )
+        }
+        userId = requestedUserId
+      }
+
       const { notifications } = await dataSources.model.serlo.getNotifications({
         userId,
       })
+
       const filteredNotifications = notifications.filter(
-        (notification) => unread == null || notification.unread === unread
+        (notification) =>
+          (unread == null || notification.unread === unread) &&
+          (email == null || notification.email === email) &&
+          (emailSent == null || notification.emailSent === emailSent)
       )
+
       return resolveConnection({
         nodes: filteredNotifications,
         payload: cursorPayload,

@@ -57,22 +57,40 @@ import {
   Client,
   given,
 } from '../__utils__'
-import { encodeThreadId } from '~/schema/thread/utils'
+import { Service } from '~/internals/authentication'
 import { Instance } from '~/types'
 
 const notificationsQuery = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    query notifications($unread: Boolean) {
-      notifications(unread: $unread) {
+    query notifications(
+      $unread: Boolean
+      $email: Boolean
+      $emailSent: Boolean
+      $userId: Int
+    ) {
+      notifications(
+        unread: $unread
+        email: $email
+        emailSent: $emailSent
+        userId: $userId
+      ) {
         totalCount
         nodes {
           id
           unread
+          email
+          emailSent
         }
       }
     }
   `,
 })
+
+const notifications = [
+  { id: 3, unread: true, eventId: 3, email: false, emailSent: false },
+  { id: 2, unread: false, eventId: 2, email: true, emailSent: true },
+  { id: 1, unread: false, eventId: 1, email: true, emailSent: false },
+]
 
 describe('notifications', () => {
   beforeEach(() => {
@@ -81,11 +99,7 @@ describe('notifications', () => {
         userId: user.id,
       })
       .returns({
-        notifications: [
-          { id: 3, unread: true, eventId: 3 },
-          { id: 2, unread: false, eventId: 2 },
-          { id: 1, unread: false, eventId: 1 },
-        ],
+        notifications,
         userId: user.id,
       })
   })
@@ -95,9 +109,9 @@ describe('notifications', () => {
       notifications: {
         totalCount: 3,
         nodes: [
-          { id: 3, unread: true },
-          { id: 2, unread: false },
-          { id: 1, unread: false },
+          { id: 3, unread: true, email: false, emailSent: false },
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
         ],
       },
     })
@@ -108,8 +122,8 @@ describe('notifications', () => {
       notifications: {
         totalCount: 2,
         nodes: [
-          { id: 2, unread: false },
-          { id: 1, unread: false },
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
         ],
       },
     })
@@ -117,10 +131,69 @@ describe('notifications', () => {
 
   test('notifications (only read)', async () => {
     await notificationsQuery.withVariables({ unread: true }).shouldReturnData({
-      notifications: { totalCount: 1, nodes: [{ id: 3, unread: true }] },
+      notifications: {
+        totalCount: 1,
+        nodes: [{ id: 3, unread: true, email: false, emailSent: false }],
+      },
     })
   })
 
+  test('notifications (only subscribed to receive email)', async () => {
+    await notificationsQuery.withVariables({ email: true }).shouldReturnData({
+      notifications: {
+        totalCount: 2,
+        nodes: [
+          { id: 2, unread: false, email: true, emailSent: true },
+          { id: 1, unread: false, email: true, emailSent: false },
+        ],
+      },
+    })
+  })
+
+  test('notifications (only sent email)', async () => {
+    await notificationsQuery
+      .withVariables({ emailSent: true })
+      .shouldReturnData({
+        notifications: {
+          totalCount: 1,
+          nodes: [{ id: 2, unread: false, email: true, emailSent: true }],
+        },
+      })
+  })
+
+  describe('notifications (setting userId)', () => {
+    test('is successful when service is notification email service', async () => {
+      await notificationsQuery
+        .withContext({
+          service: Service.NotificationEmailService,
+          userId: null,
+        })
+        .withVariables({ userId: user.id })
+        .shouldReturnData({
+          notifications: {
+            totalCount: 3,
+            nodes: [
+              { id: 3, unread: true, email: false, emailSent: false },
+              { id: 2, unread: false, email: true, emailSent: true },
+              { id: 1, unread: false, email: true, emailSent: false },
+            ],
+          },
+        })
+    })
+    test.each([
+      Service.SerloCloudflareWorker,
+      Service.SerloCacheWorker,
+      Service.Serlo,
+    ])('fails when service is %s', async (service) => {
+      await notificationsQuery
+        .withContext({
+          service: service,
+          userId: null,
+        })
+        .withVariables({ userId: user.id })
+        .shouldFailWithError('BAD_USER_INPUT')
+    })
+  })
   test('notifications (w/ event)', async () => {
     given('NotificationsQuery')
       .withPayload({
@@ -132,6 +205,8 @@ describe('notifications', () => {
             id: 1,
             unread: false,
             eventId: checkoutRevisionNotificationEvent.id,
+            email: false,
+            emailSent: false,
           },
         ],
         userId: user.id,
@@ -501,7 +576,7 @@ describe('notificationEvent', () => {
           notificationEvent: {
             comment: {
               __typename: 'Comment',
-              id: encodeThreadId(comment.id),
+              id: comment.id,
             },
           },
         })
@@ -1892,16 +1967,10 @@ describe('mutation notification setState', () => {
   })
 
   beforeEach(() => {
-    given('NotificationsQuery')
-      .withPayload({ userId: user.id })
-      .returns({
-        notifications: [
-          { id: 3, unread: true, eventId: 3 },
-          { id: 2, unread: false, eventId: 2 },
-          { id: 1, unread: false, eventId: 1 },
-        ],
-        userId: user.id,
-      })
+    given('NotificationsQuery').withPayload({ userId: user.id }).returns({
+      notifications,
+      userId: user.id,
+    })
 
     given('UuidQuery').for(user, user2, article)
   })
@@ -1955,8 +2024,8 @@ describe('mutation notification setState', () => {
       .withPayload({ userId: user2.id })
       .returns({
         notifications: [
-          { id: 4, unread: true, eventId: 3 },
-          { id: 5, unread: false, eventId: 2 },
+          { id: 4, unread: true, eventId: 3, email: false, emailSent: false },
+          { id: 5, unread: false, eventId: 2, email: false, emailSent: false },
         ],
         userId: user2.id,
       })
