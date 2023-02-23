@@ -31,6 +31,7 @@ type AliasConfig = {
 // Custom aliases that take precedence over any alias defined in serlo.org
 const aliases: AliasConfig = {
   [Instance.De]: {
+    '/chancenwerk': 268835,
     '/community': 19882,
     // TODO: Legacy alias. It would be better to redirect it to /community/testbereich
     '/community/sandkasten': autoreviewTaxonomyIds[0],
