@@ -105,7 +105,7 @@ describe('endpoint "licenses"', () => {
   test('returns array of licenses filtered by instance', async () => {
     await licensesQuery
       .withVariables({ instance: 'en' })
-      .shouldReturnData({ license: { licenses: [licenses[8]] } })
+      .shouldReturnData({ license: { licenses: [licenses[9]] } })
   })
 
   test('returns all licenses when used without filter', async () => {
