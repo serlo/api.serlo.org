@@ -1460,6 +1460,11 @@ async function exec(): Promise<void> {
         date: '2023-03-02',
         added: ['Add license for Chancenwerk'],
       },
+      {
+        tagName: 'v0.49.4',
+        date: '2023-03-02',
+        changed: ['Change agreements of default and Chancenwerk license'],
+      },
     ],
   })
 
