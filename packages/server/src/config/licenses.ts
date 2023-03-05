@@ -133,6 +133,18 @@ export const licenses = <License[]>[
     agreement:
       'Mit dem Speichern dieser Seite versicherst du, dass du die Veränderung des Beitrags von MNWeG selbst verfasst hast bzw. dass er keine fremden Rechte verletzt. Du willigst ein, deinen Beitrag unter der <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">Creative Commons Attribution/Share-Alike Lizenz 4.0</a> und/oder unter einer gleichwertigen Lizenz zu veröffentlichen, welche der Serlo Education e. V. entsprechend der Regelungen in den <a href="/21654">Nutzungsbedingungen</a> festlegen darf. Der Beitrag von MNWeG muss unter den <a href="/21654">Nutzungsbedingungen</a> verfügbar sein und du stimmst zu, notwendigen Lizenzanforderungen zu folgen.',
   },
+  {
+    id: 25,
+    instance: Instance.De,
+    default: false,
+    title:
+      'Dieses Werk steht unter der freien Lizenz CC BY-SA 4.0 mit Namensnennung vom Chancenwerk',
+    shortTitle: 'Chancenwerk',
+    url: 'https://chancenwerk.de/',
+    content:
+      '[[{"col":24,"content":"Die Inhalte wurden vom [Chancenwerk](https://chancenwerk.de/) erstellt. Serlo dankt für die freundliche Genehmigung zur Veröffentlichung.\\n\\nDer Lerninhalt steht unter der **Lizenz CC BY SA 4.0.**\\nDu darfst das Werk beliebig kopieren, vervielfältigen, bearbeiten und weiterentwickeln - für verschiedene (auch kommerzielle) Zwecke. Dies gilt unter folgenden Bedingungen:\\n\\n### Wenn du **keine** Veränderungen vornehmen:\\n\\n* Du musst Serlo und das Chancenwerk als Quelle nennen \\"serlo.org & Chancenwerk\\", in digitaler Form als Link direkt zum Lernmaterial.\\n* Du musst die Lizenz angeben \\"Lizenz: CC BY SA 4.0\\", in digitaler Form als Link zu dieser Seite: [https://creativecommons.org/licenses/by-sa/4.0/deed.de](https://creativecommons.org/licenses/by-sa/4.0/deed.de).\\n\\n### Wenn du Veränderungen vornimmst:\\n\\n* Du musst Serlo und das Chancenwerk als Quelle nennen\\"Quelle: serlo.org & Chancenwerk\\", in digitaler Form als Link direkt zum Lernmaterial.\\n* Du musst kurz erläutern, welche Änderungen du vorgenommen hast, z.B. \\"Zahlen vereinfacht\\" oder \\"Bild zugeschnitten\\".\\n* Du musst die Lizenz \\"CC BY SA 4.0\\" angeben, in digitaler Form als Link zu dieser Seite: [https://creativecommons.org/licenses/by-a/4.0/deed.de](https://creativecommons.org/licenses/by-sa/4.0/deed.de). Die Lizenz muss für das gesamte Werk angegeben werden, zu dem dieser Inhalt beigetragen hat."}]]',
+    agreement: `Mit dem Speichern dieser Seite versichere ich, dass ich die Veränderung des Inhalts selbst verfasst habe bzw. dass meine Änderungen keine fremden Rechte verletzen. Ich willige ein, meinen Beitrag unter der <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de">Creative Commons Attribution/Share-Alike Lizenz 4.0</a> und/oder unter einer gleichwertigen Lizenz zu veröffentlichen, welche der Serlo Education e. V. entsprechend der Regelungen in den <a href="/terms">Nutzungsbedingungen</a> festlegen darf. Let's go 🤘`,
+  },
   defaultLicense,
   {
     id: 14,
@@ -147,7 +159,7 @@ export const licenses = <License[]>[
   },
   {
     id: 21,
-    instance: 'es',
+    instance: Instance.Es,
     default: false,
     title: 'Licencia estándar de YouTube',
     shortTitle: 'Licencia estándar de YouTube',

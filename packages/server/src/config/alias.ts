@@ -40,7 +40,7 @@ const aliases: AliasConfig = {
     '/jobs': 21563,
     '/mitmachen': 19869,
     '/partner': 21456,
-    '/physik': 41108,
+    '/physik': 41107,
     '/politik': 79157,
     '/presse': 24887,
     '/serlo': 18922,
