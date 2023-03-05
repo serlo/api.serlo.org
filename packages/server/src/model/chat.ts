@@ -44,6 +44,9 @@ export function createChatModel({ environment }: { environment: Environment }) {
         return `community.serlo.org/api/users.info/${username}`
       },
       getPayload: (key) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (!key.startsWith('community.serlo.org/api/users.info/'))
           return O.none
         const username = key.replace('community.serlo.org/api/users.info/', '')

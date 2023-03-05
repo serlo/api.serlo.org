@@ -65,6 +65,9 @@ export function createSerloModel({
         return `de.serlo.org/api/uuid/${id}`
       },
       getPayload: (key) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (!key.startsWith('de.serlo.org/api/uuid/')) return O.none
         const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
         return O.some({ id })
@@ -112,6 +115,9 @@ export function createSerloModel({
         return 'de.serlo.org/api/user/active-authors'
       },
       getPayload: (key: string) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (key !== 'de.serlo.org/api/user/active-authors') return O.none
         return O.some(undefined)
       },
@@ -132,6 +138,9 @@ export function createSerloModel({
         return 'de.serlo.org/api/user/active-reviewers'
       },
       getPayload: (key: string) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (key !== 'de.serlo.org/api/user/active-reviewers') return O.none
         return O.some(undefined)
       },
@@ -154,6 +163,9 @@ export function createSerloModel({
         return `de.serlo.org/api/user/activity-by-type/${userId}`
       },
       getPayload: (key) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
           return O.none
         const userId = parseInt(
@@ -452,6 +464,9 @@ export function createSerloModel({
         return 'serlo/events/' + JSON.stringify(payload)
       },
       getPayload(key: string) {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (!key.startsWith('serlo/events/')) return O.none
 
         try {

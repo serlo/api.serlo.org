@@ -50,6 +50,9 @@ export function createKratosModel({
         return `kratos.serlo.org/user-language/${userLegacyId}`
       },
       getPayload: (key) => {
+        if(process.env.ENVIRONMENT === 'local'){
+          return O.none
+        }
         if (!key.startsWith('kratos.serlo.org/user-language/')) return O.none
         const userLegacyId = parseInt(
           key.replace('kratos.serlo.org/user-language/', '')
