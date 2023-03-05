@@ -131,6 +131,9 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       maxAge?: Time
     }
   ): Promise<O.Option<CacheEntry<T>>> {
+    if(process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'undefined'){
+      return O.none
+    }
     const packedValue = await client.getBuffer(key)
     if (packedValue === null) return O.none
 
