@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.6](https://github.com/serlo/api.serlo.org/compare/v0.49.5..v0.49.6) - March 6, 2023
+
+### Fixed
+
+- Minor rewording in license of Chancenwerk
+
 ## [v0.49.5](https://github.com/serlo/api.serlo.org/compare/v0.49.4..v0.49.5) - March 2, 2023
 
 ### Fixed
