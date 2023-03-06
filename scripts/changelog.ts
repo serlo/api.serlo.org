@@ -1470,6 +1470,11 @@ async function exec(): Promise<void> {
         date: '2023-03-02',
         fixed: ['Minor rewording in licenses'],
       },
+      {
+        tagName: 'v0.49.6',
+        date: '2023-03-06',
+        fixed: ['Minor rewording in license of Chancenwerk'],
+      },
     ],
   })
 
