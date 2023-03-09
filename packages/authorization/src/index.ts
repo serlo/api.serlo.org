@@ -61,6 +61,7 @@ export enum Permission {
   Page_CheckoutRevision = 'page:checkoutRevision',
   Page_RejectRevision = 'page:rejectRevision',
   Page_Set = 'page:set',
+  Role_GetPermissionsByRole = 'role:getPermissionsByRole',
   Subscription_Set = 'subscription:set',
   TaxonomyTerm_Change = 'taxonomyTerm:change',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
@@ -172,6 +173,12 @@ export const User = {
   getUsersByRole: createPermissionGuard(Permission.User_GetUsersByRole),
   removeRole: createPermissionGuard(Permission.User_RemoveRole),
   setEmail: createPermissionGuard(Permission.User_SetEmail),
+}
+
+export const Role = {
+  getPermissionsByRole: createPermissionGuard(
+    Permission.Role_GetPermissionsByRole
+  ),
 }
 
 export type UuidType =
