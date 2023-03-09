@@ -1814,6 +1814,22 @@ export type PageRevisionCursor = {
   node: PageRevision;
 };
 
+export type PermissionOutput = {
+  __typename?: 'PermissionOutput';
+  inheritence?: Maybe<Array<Role>>;
+  permissionset?: Maybe<Array<Scalars['String']>>;
+};
+
+export type PermissionQuery = {
+  __typename?: 'PermissionQuery';
+  permissionsByRole?: Maybe<PermissionOutput>;
+};
+
+
+export type PermissionQueryPermissionsByRoleArgs = {
+  role: Role;
+};
+
 export type Query = {
   __typename?: 'Query';
   activeAuthors: UserConnection;
@@ -1828,6 +1844,7 @@ export type Query = {
   notificationEvent?: Maybe<AbstractNotificationEvent>;
   notifications: NotificationConnection;
   page: PageQuery;
+  permission?: Maybe<PermissionQuery>;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
@@ -1879,8 +1896,8 @@ export type QueryNotificationEventArgs = {
 export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  emailSent?: InputMaybe<Scalars['Boolean']>;
   email?: InputMaybe<Scalars['Boolean']>;
+  emailSent?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   unread?: InputMaybe<Scalars['Boolean']>;

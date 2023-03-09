@@ -25,3 +25,16 @@ type ScopedRoleCursor {
   cursor: String!
   node: ScopedRole!
 }
+
+extend type Query {
+  permission: PermissionQuery
+}
+
+type PermissionQuery {
+  permissionsByRole(role: Role!): PermissionOutput
+}
+
+type PermissionOutput {
+  permissionset: [String!]
+  inheritence: [Role!]
+}

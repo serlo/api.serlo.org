@@ -1818,6 +1818,22 @@ export type PageRevisionCursor = {
   node: PageRevision;
 };
 
+export type PermissionOutput = {
+  __typename?: 'PermissionOutput';
+  inheritence?: Maybe<Array<Role>>;
+  permissionset?: Maybe<Array<Scalars['String']>>;
+};
+
+export type PermissionQuery = {
+  __typename?: 'PermissionQuery';
+  permissionsByRole?: Maybe<PermissionOutput>;
+};
+
+
+export type PermissionQueryPermissionsByRoleArgs = {
+  role: Role;
+};
+
 export type Query = {
   __typename?: 'Query';
   activeAuthors: UserConnection;
@@ -1832,6 +1848,7 @@ export type Query = {
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   notifications: NotificationConnection;
   page: PageQuery;
+  permission?: Maybe<PermissionQuery>;
   subject: SubjectQuery;
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
@@ -1883,8 +1900,8 @@ export type QueryNotificationEventArgs = {
 export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  emailSent?: InputMaybe<Scalars['Boolean']>;
   email?: InputMaybe<Scalars['Boolean']>;
+  emailSent?: InputMaybe<Scalars['Boolean']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   unread?: InputMaybe<Scalars['Boolean']>;
@@ -3200,6 +3217,8 @@ export type ResolversTypes = {
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
+  PermissionOutput: ResolverTypeWrapper<ModelOf<PermissionOutput>>;
+  PermissionQuery: ResolverTypeWrapper<ModelOf<PermissionQuery>>;
   Query: ResolverTypeWrapper<{}>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
@@ -3417,6 +3436,8 @@ export type ResolversParentTypes = {
   PageRevision: ModelOf<PageRevision>;
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
+  PermissionOutput: ModelOf<PermissionOutput>;
+  PermissionQuery: ModelOf<PermissionQuery>;
   Query: {};
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
@@ -4486,6 +4507,17 @@ export type PageRevisionCursorResolvers<ContextType = Context, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PermissionOutputResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PermissionOutput'] = ResolversParentTypes['PermissionOutput']> = {
+  inheritence?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
+  permissionset?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PermissionQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PermissionQuery'] = ResolversParentTypes['PermissionQuery']> = {
+  permissionsByRole?: Resolver<Maybe<ResolversTypes['PermissionOutput']>, ParentType, ContextType, RequireFields<PermissionQueryPermissionsByRoleArgs, 'role'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   activeAuthors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveAuthorsArgs>>;
   activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
@@ -4499,6 +4531,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
   notifications?: Resolver<ResolversTypes['NotificationConnection'], ParentType, ContextType, Partial<QueryNotificationsArgs>>;
   page?: Resolver<ResolversTypes['PageQuery'], ParentType, ContextType>;
+  permission?: Resolver<Maybe<ResolversTypes['PermissionQuery']>, ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['SubjectQuery'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionQuery'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadQuery'], ParentType, ContextType>;
@@ -5136,6 +5169,8 @@ export type Resolvers<ContextType = Context> = {
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
+  PermissionOutput?: PermissionOutputResolvers<ContextType>;
+  PermissionQuery?: PermissionQueryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
   RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
