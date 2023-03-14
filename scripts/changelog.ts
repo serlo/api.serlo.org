@@ -1450,6 +1450,31 @@ async function exec(): Promise<void> {
         date: '2023-02-08',
         fixed: ['Do not create kratos DB pool connection for single query'],
       },
+      {
+        tagName: 'v0.49.2',
+        date: '2023-02-12',
+        fixed: ['user: decrease db calls due to language query'],
+      },
+      {
+        tagName: 'v0.49.3',
+        date: '2023-03-02',
+        added: ['Add license for Chancenwerk'],
+      },
+      {
+        tagName: 'v0.49.4',
+        date: '2023-03-02',
+        changed: ['Change agreements of default and Chancenwerk license'],
+      },
+      {
+        tagName: 'v0.49.5',
+        date: '2023-03-02',
+        fixed: ['Minor rewording in licenses'],
+      },
+      {
+        tagName: 'v0.49.6',
+        date: '2023-03-06',
+        fixed: ['Minor rewording in license of Chancenwerk'],
+      },
     ],
   })
 
