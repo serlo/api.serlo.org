@@ -81,6 +81,7 @@ type ThreadQuery {
     after: String
     first: Int
     instance: Instance
+    subjectId: Int
   ): AllThreadsConnection!
 }
 

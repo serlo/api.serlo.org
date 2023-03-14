@@ -39,11 +39,16 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
+import {
+  DiscriminatorType,
+  EntityDecoder,
+  UserDecoder,
+  UuidDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Comment, Thread } from '~/types'
+import { Comment, Instance, Thread } from '~/types'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -70,6 +75,24 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
+      const connectionOptions = {
+        payload: { ...input, first, after },
+        createCursor: (node: Model<'Thread'>) => {
+          const comments = node.commentPayloads
+          const latestComment = comments[comments.length - 1]
+
+          return latestComment.date
+        },
+      }
+
+      if (input.subjectId) {
+        const filteredThreads = await filterThreads(first, after, instance)
+        return resolveConnection({
+          ...connectionOptions,
+          nodes: filteredThreads,
+        })
+      }
+
       const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
         first: first + 1,
         after,
@@ -80,16 +103,50 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
 
       // TODO: The types do not match
       // TODO: Support for resolving small changes
-      return resolveConnection({
-        nodes: threads,
-        payload: { ...input, first, after },
-        createCursor: (node) => {
-          const comments = node.commentPayloads
-          const latestComment = comments[comments.length - 1]
+      return resolveConnection({ ...connectionOptions, nodes: threads })
 
-          return latestComment.date
-        },
-      })
+      async function filterThreads(
+        num_Threads: number,
+        after: string | undefined,
+        instance: Instance | undefined
+      ): Promise<Model<'Thread'>[]> {
+        const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
+          {
+            first: 500,
+            after,
+            instance,
+          }
+        )
+
+        const threads = await resolveThreads({ firstCommentIds, dataSources })
+        const promisedThreadSubjectLinks = threads.map(async (thread) => {
+          try {
+            const entity =
+              await dataSources.model.serlo.getUuidWithCustomDecoder({
+                id: thread.commentPayloads[0].parentId,
+                decoder: EntityDecoder,
+              })
+            return { thread, subjectId: entity.canonicalSubjectId }
+          } catch (_) {
+            return { thread, subjectId: null }
+          }
+        })
+        const threadSubjectLinks = await Promise.all(promisedThreadSubjectLinks)
+        const filteredThreads = threadSubjectLinks
+          .filter((promise) => {
+            return promise.subjectId === input.subjectId
+          })
+          .map((thread) => thread.thread)
+        if (filteredThreads.length < num_Threads && threads.length === 501)
+          return filteredThreads.concat(
+            await filterThreads(
+              num_Threads - filteredThreads.length,
+              threads[500].commentPayloads.at(-1)?.date,
+              instance
+            )
+          )
+        return filteredThreads
+      }
     },
   },
   Thread: {
