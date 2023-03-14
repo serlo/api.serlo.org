@@ -45,6 +45,20 @@ export const article: Model<'Article'> = {
   canonicalSubjectId: castToUuid(5),
 }
 
+export const article2: Model<'Article'> = {
+  __typename: EntityType.Article,
+  id: castToUuid(1495),
+  trashed: false,
+  instance: Instance.De,
+  alias: castToAlias('/mathe/1495/addition'),
+  date: '2014-03-01T20:36:44Z',
+  currentRevisionId: castToUuid(32614),
+  licenseId: license.id,
+  taxonomyTermIds: [8].map(castToUuid),
+  revisionIds: [32614].map(castToUuid),
+  canonicalSubjectId: castToUuid(8),
+}
+
 export const articleRevision: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
   id: castToUuid(30674),
