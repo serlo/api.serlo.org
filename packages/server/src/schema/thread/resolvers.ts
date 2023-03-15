@@ -37,10 +37,10 @@ import {
   TypeResolvers,
   Model,
   Context,
-  Queries, decodeId,
+  Queries,
+  decodeId,
 } from '~/internals/graphql'
 import {
-  castToUuid,
   DiscriminatorType,
   EntityDecoder,
   UserDecoder,
@@ -87,7 +87,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
 
       if (input.subjectId) {
-        const filteredThreads = await filterThreads(first, after, instance, input.subjectId)
+        const filteredThreads = await filterThreads(
+          first,
+          after,
+          instance,
+          input.subjectId
+        )
         return resolveConnection({
           ...connectionOptions,
           nodes: filteredThreads,
@@ -136,7 +141,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         const threadSubjectLinks = await Promise.all(promisedThreadSubjectLinks)
         const filteredThreads = threadSubjectLinks
           .filter((promise) => {
-            return promise.subjectId === decodeId({prefix: "s", textId: subjectId})
+            return (
+              promise.subjectId === decodeId({ prefix: 's', textId: subjectId })
+            )
           })
           .map((thread) => thread.thread)
         if (filteredThreads.length < num_Threads && threads.length === 501)

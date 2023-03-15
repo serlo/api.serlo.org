@@ -28,10 +28,11 @@ import {
   comment,
   comment1,
   comment2,
-  comment3, taxonomyTermSubject,
+  comment3,
+  taxonomyTermSubject,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import {encodeId, Model} from '~/internals/graphql'
+import { encodeId, Model } from '~/internals/graphql'
 import { Instance } from '~/types'
 
 describe('allThreads', () => {
@@ -134,7 +135,7 @@ describe('allThreads', () => {
 
     await query
       .withVariables({
-        subjectId: encodeId({prefix: "s", id: taxonomyTermSubject.id}),
+        subjectId: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
       })
       .shouldReturnData({
         thread: {
