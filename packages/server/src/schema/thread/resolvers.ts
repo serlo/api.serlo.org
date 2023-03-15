@@ -37,9 +37,10 @@ import {
   TypeResolvers,
   Model,
   Context,
-  Queries,
+  Queries, decodeId,
 } from '~/internals/graphql'
 import {
+  castToUuid,
   DiscriminatorType,
   EntityDecoder,
   UserDecoder,
@@ -86,7 +87,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
 
       if (input.subjectId) {
-        const filteredThreads = await filterThreads(first, after, instance)
+        const filteredThreads = await filterThreads(first, after, instance, input.subjectId)
         return resolveConnection({
           ...connectionOptions,
           nodes: filteredThreads,
@@ -108,7 +109,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       async function filterThreads(
         num_Threads: number,
         after: string | undefined,
-        instance: Instance | undefined
+        instance: Instance | undefined,
+        subjectId: string
       ): Promise<Model<'Thread'>[]> {
         const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
           {
@@ -134,7 +136,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         const threadSubjectLinks = await Promise.all(promisedThreadSubjectLinks)
         const filteredThreads = threadSubjectLinks
           .filter((promise) => {
-            return promise.subjectId === input.subjectId
+            return promise.subjectId === decodeId({prefix: "s", textId: subjectId})
           })
           .map((thread) => thread.thread)
         if (filteredThreads.length < num_Threads && threads.length === 501)
@@ -142,7 +144,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
             await filterThreads(
               num_Threads - filteredThreads.length,
               threads[500].commentPayloads.at(-1)?.date,
-              instance
+              instance,
+              subjectId
             )
           )
         return filteredThreads
