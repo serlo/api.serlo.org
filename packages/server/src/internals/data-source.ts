@@ -30,6 +30,7 @@ import {
   createSerloModel,
   createChatModel,
 } from '~/model'
+import { createKratosModel } from '~/model/kratos'
 import { createMailchimpModel } from '~/model/mailchimp'
 
 export class ModelDataSource extends RESTDataSource {
@@ -39,6 +40,7 @@ export class ModelDataSource extends RESTDataSource {
   public serlo: ReturnType<typeof createSerloModel>
   public chat: ReturnType<typeof createChatModel>
   public mailchimp: ReturnType<typeof createMailchimpModel>
+  public kratos: ReturnType<typeof createKratosModel>
   public authServices: Environment['authServices']
 
   constructor(private environment: Environment) {
@@ -48,6 +50,7 @@ export class ModelDataSource extends RESTDataSource {
     this.serlo = createSerloModel({ environment })
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
     this.mailchimp = createMailchimpModel()
+    this.kratos = createKratosModel({ environment })
     this.authServices = environment.authServices
   }
 
