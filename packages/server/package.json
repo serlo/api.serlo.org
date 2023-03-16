@@ -49,12 +49,12 @@
     "jsonwebtoken": "^9.0.0",
     "loglevel": "^1.8.1",
     "monocle-ts": "^2.3.13",
-    "msgpack5": "^5.3.2",
+    "msgpack5": "^6.0.2",
     "newtype-ts": "^0.3.5",
     "node-fetch": "^2.6.9",
     "pg": "^8.10.0",
     "ramda": "^0.28.0",
-    "redlock": "^5.0.0-beta2",
+    "redlock": "^5.0.0-beta.2",
     "ts-toolbelt": "^9.6.0",
     "uuid": "^9.0.0"
   },
@@ -75,7 +75,7 @@
     "@types/uuid": "^9.0.1",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "babel-plugin-import-graphql": "^2.8.1",
-    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-plugin-module-resolver": "^5.0.0",
     "semver": "^7.3.8",
     "ttypescript": "^1.5.15"
   }
