@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^6.9.4",
-    "@ory/client": "0.2.0-alpha.60",
-    "@ory/hydra-client": "^1.11.8",
+    "@ory/client": "1.1.21",
+    "@ory/hydra-client": "^2.0.2",
     "@sentry/node": "^6.19.7",
     "@serlo/authorization": "^0.49.3",
     "apollo-datasource-rest": "^3.7.0",
