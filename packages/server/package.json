@@ -54,7 +54,7 @@
     "node-fetch": "^2.6.9",
     "pg": "^8.10.0",
     "ramda": "^0.28.0",
-    "redlock": "^5.0.0-beta.2",
+    "redlock": "^5.0.0-beta2",
     "ts-toolbelt": "^9.6.0",
     "uuid": "^9.0.0"
   },
