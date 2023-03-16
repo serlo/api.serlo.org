@@ -174,8 +174,12 @@ export const resolvers: LegacyQueries<
         payload: { first },
         createCursor: (node) => node.id.toString(),
       })
-      
-      return { ...userConnection, permissions: getPermissionsForRole(role), inheritance: getRolesWithInheritance([role]) }
+
+      return {
+        ...userConnection,
+        permissions: getPermissionsForRole(role),
+        inheritance: getRolesWithInheritance([role]),
+      }
     },
   },
   User: {

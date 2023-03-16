@@ -2737,7 +2737,7 @@ export type UserActivityByType = {
 export type UserConnection = {
   __typename?: 'UserConnection';
   edges: Array<UserEdge>;
-  inheritage?: Maybe<Array<Role>>;
+  inheritance?: Maybe<Array<Role>>;
   nodes: Array<User>;
   pageInfo: PageInfo;
   permissions: Array<Scalars['String']>;
@@ -4911,7 +4911,7 @@ export type UserActivityByTypeResolvers<ContextType = Context, ParentType extend
 
 export type UserConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = {
   edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
-  inheritage?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
+  inheritance?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   permissions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;

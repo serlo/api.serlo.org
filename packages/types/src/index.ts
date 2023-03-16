@@ -2733,7 +2733,7 @@ export type UserActivityByType = {
 export type UserConnection = {
   __typename?: 'UserConnection';
   edges: Array<UserEdge>;
-  inheritage?: Maybe<Array<Role>>;
+  inheritance?: Maybe<Array<Role>>;
   nodes: Array<User>;
   pageInfo: PageInfo;
   permissions: Array<Scalars['String']>;
