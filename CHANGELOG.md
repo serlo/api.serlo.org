@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.6](https://github.com/serlo/api.serlo.org/compare/v0.49.5..v0.49.6) - March 6, 2023
+
+### Fixed
+
+- Minor rewording in license of Chancenwerk
+
+## [v0.49.5](https://github.com/serlo/api.serlo.org/compare/v0.49.4..v0.49.5) - March 2, 2023
+
+### Fixed
+
+- Minor rewording in licenses
+
+## [v0.49.4](https://github.com/serlo/api.serlo.org/compare/v0.49.3..v0.49.4) - March 2, 2023
+
+### Changed
+
+- Change agreements of default and Chancenwerk license
+
+## [v0.49.3](https://github.com/serlo/api.serlo.org/compare/v0.49.2..v0.49.3) - March 2, 2023
+
+### Added
+
+- Add license for Chancenwerk
+
+## [v0.49.2](https://github.com/serlo/api.serlo.org/compare/v0.49.1..v0.49.2) - February 12, 2023
+
+### Fixed
+
+- user: decrease db calls due to language query
+
 ## [v0.49.1](https://github.com/serlo/api.serlo.org/compare/v0.49.0..v0.49.1) - February 8, 2023
 
 ### Fixed
