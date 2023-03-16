@@ -54,6 +54,10 @@ import {
   UserDecoder,
 } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
+import {
+  getPermissionsForRole,
+  getRolesWithInheritance,
+} from '~/schema/authorization/roles'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -165,11 +169,13 @@ export const resolvers: LegacyQueries<
           })
         )
       )
-      return resolveConnection({
+      const userConnection = resolveConnection({
         nodes: users,
         payload: { first },
         createCursor: (node) => node.id.toString(),
       })
+      
+      return { ...userConnection, permissions: getPermissionsForRole(role), inheritance: getRolesWithInheritance([role]) }
     },
   },
   User: {

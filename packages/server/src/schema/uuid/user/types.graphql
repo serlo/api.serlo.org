@@ -91,6 +91,8 @@ type UserConnection {
   nodes: [User!]!
   totalCount: Int!
   pageInfo: PageInfo!
+  permissions: [String!]!
+  inheritance: [Role!]
 }
 
 type UserEdge {
