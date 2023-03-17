@@ -21,6 +21,7 @@
  */
 import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server-core'
+import * as t from 'io-ts'
 
 import {
   decodeThreadId,
@@ -39,17 +40,13 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityDecoder,
-  UserDecoder,
-  UuidDecoder,
-} from '~/model/decoder'
+import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Comment, Instance, Thread } from '~/types'
+import { Comment, Thread } from '~/types'
+import { isDefined } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -66,6 +63,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
   },
   ThreadQuery: {
     async allThreads(_parent, input, { dataSources }) {
+      const subjectId = input.subjectId
+        ? decodeSubjectId(input.subjectId)
+        : null
       const limit = 50
       const { first = 10, instance } = input
       // TODO: Better solution
@@ -76,84 +76,73 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
-      const connectionOptions = {
+      const filteredThreads = await filterThreads({
+        first: first + 1,
+        threadsToFetch: first + 1,
+        after,
+      })
+
+      return resolveConnection({
+        nodes: filteredThreads,
         payload: { ...input, first, after },
-        createCursor: (node: Model<'Thread'>) => {
+        createCursor: (node) => {
           const comments = node.commentPayloads
           const latestComment = comments[comments.length - 1]
 
           return latestComment.date
         },
-      }
-
-      if (input.subjectId) {
-        const filteredThreads = await filterThreads(
-          first,
-          after,
-          instance,
-          input.subjectId
-        )
-        return resolveConnection({
-          ...connectionOptions,
-          nodes: filteredThreads,
-        })
-      }
-
-      const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
-        first: first + 1,
-        after,
-        instance,
       })
 
-      const threads = await resolveThreads({ firstCommentIds, dataSources })
-
-      // TODO: The types do not match
-      // TODO: Support for resolving small changes
-      return resolveConnection({ ...connectionOptions, nodes: threads })
-
-      async function filterThreads(
-        num_Threads: number,
-        after: string | undefined,
-        instance: Instance | undefined,
-        subjectId: string
-      ): Promise<Model<'Thread'>[]> {
+      async function filterThreads({
+        first,
+        after,
+        threadsToFetch,
+      }: {
+        threadsToFetch: number
+        first: number
+        after: string | undefined
+      }): Promise<Model<'Thread'>[]> {
         const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
           {
-            first: 500,
+            first: threadsToFetch,
             after,
             instance,
           }
         )
 
         const threads = await resolveThreads({ firstCommentIds, dataSources })
-        const promisedThreadSubjectLinks = threads.map(async (thread) => {
-          try {
-            const entity =
-              await dataSources.model.serlo.getUuidWithCustomDecoder({
-                id: thread.commentPayloads[0].parentId,
-                decoder: EntityDecoder,
-              })
-            return { thread, subjectId: entity.canonicalSubjectId }
-          } catch (_) {
-            return { thread, subjectId: null }
-          }
-        })
-        const threadSubjectLinks = await Promise.all(promisedThreadSubjectLinks)
-        const filteredThreads = threadSubjectLinks
-          .filter((promise) => {
-            return promise.subjectId === decodeSubjectId(subjectId)
-          })
-          .map((thread) => thread.thread)
-        if (filteredThreads.length < num_Threads && threads.length === 501)
-          return filteredThreads.concat(
-            await filterThreads(
-              num_Threads - filteredThreads.length,
-              threads[500].commentPayloads.at(-1)?.date,
-              instance,
-              subjectId
+        const mappedThreads = await Promise.all(
+          threads.map(async (thread) => {
+            if (subjectId == null) return thread
+
+            const entity = await dataSources.model.serlo.getUuid({
+              id: thread.commentPayloads[0].parentId,
+            })
+
+            if (
+              t.type({ canonicalSubjectId: t.number }).is(entity) &&
+              entity.canonicalSubjectId === subjectId
             )
+              return thread
+
+            return null
+          })
+        )
+        const filteredThreads = mappedThreads.filter(isDefined)
+        if (
+          filteredThreads.length < first &&
+          threads.length === threadsToFetch
+        ) {
+          return filteredThreads.concat(
+            await filterThreads({
+              first: first - filteredThreads.length,
+              after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
+              threadsToFetch,
+            })
           )
-        return filteredThreads
+        } else {
+          return filteredThreads.slice(0, first)
+        }
       }
     },
   },
