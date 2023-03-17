@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.7](https://github.com/serlo/api.serlo.org/compare/v0.49.6..v0.49.7) - March 17, 2023
+
+### Added
+
+- Add `subjectId` to allThreads()
+
 ## [v0.49.6](https://github.com/serlo/api.serlo.org/compare/v0.49.5..v0.49.6) - March 6, 2023
 
 ### Fixed
