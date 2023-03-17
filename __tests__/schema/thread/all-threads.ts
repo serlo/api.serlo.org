@@ -32,20 +32,14 @@ import {
   taxonomyTermSubject,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import { encodeId, Model } from '~/internals/graphql'
+import { Model } from '~/internals/graphql'
+import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
-import {encodeSubjectId} from "~/schema/subject/utils";
 
 describe('allThreads', () => {
   beforeEach(() => {
-    given('UuidQuery').for(
-      comment,
-      comment1,
-      comment2,
-      comment3,
-      article,
-      article2
-    )
+    given('UuidQuery').for(comment, comment1, comment2, comment3)
+    given('UuidQuery').for(article, article2)
   })
 
   const query = new Client().prepareQuery({

@@ -38,7 +38,6 @@ import {
   Model,
   Context,
   Queries,
-  decodeId,
 } from '~/internals/graphql'
 import {
   DiscriminatorType,
@@ -48,9 +47,9 @@ import {
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Instance, Thread } from '~/types'
-import {decodeSubjectId} from "~/schema/subject/utils";
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -142,9 +141,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         const threadSubjectLinks = await Promise.all(promisedThreadSubjectLinks)
         const filteredThreads = threadSubjectLinks
           .filter((promise) => {
-            return (
-              promise.subjectId === decodeSubjectId(subjectId)
-            )
+            return promise.subjectId === decodeSubjectId(subjectId)
           })
           .map((thread) => thread.thread)
         if (filteredThreads.length < num_Threads && threads.length === 501)
