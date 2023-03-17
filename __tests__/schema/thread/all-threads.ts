@@ -123,7 +123,7 @@ describe('allThreads', () => {
 
   test('parameter "subjectId"', async () => {
     given('AllThreadsQuery')
-      .withPayload({ first: 500 })
+      .withPayload({ first: 11 })
       .returns({
         firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
       })
