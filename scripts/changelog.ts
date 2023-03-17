@@ -1475,6 +1475,11 @@ async function exec(): Promise<void> {
         date: '2023-03-06',
         fixed: ['Minor rewording in license of Chancenwerk'],
       },
+      {
+        tagName: 'v0.49.7',
+        date: '2023-03-17',
+        added: ['Add `subjectId` to allThreads()'],
+      },
     ],
   })
 
