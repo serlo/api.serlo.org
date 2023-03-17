@@ -29,7 +29,6 @@ import {
   comment1,
   comment2,
   comment3,
-  taxonomyTermSubject,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
@@ -130,11 +129,36 @@ describe('allThreads', () => {
 
     await query
       .withVariables({
-        subjectId: encodeSubjectId(taxonomyTermSubject.id),
+        subjectId: encodeSubjectId(article.taxonomyTermIds[0]),
       })
       .shouldReturnData({
         thread: {
           allThreads: { nodes: [comment, comment1].map(getThreadData) },
+        },
+      })
+  })
+
+  test('parameter "subjectId" with small first', async () => {
+    given('AllThreadsQuery')
+      .withPayload({ first: 3 })
+      .returns({
+        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
+      })
+
+    given('AllThreadsQuery')
+      .withPayload({ first: 3, after: comment3.date })
+      .returns({
+        firstCommentIds: [comment3].map(R.prop('id')),
+      })
+
+    await query
+      .withVariables({
+        first: 2,
+        subjectId: encodeSubjectId(article2.taxonomyTermIds[0]),
+      })
+      .shouldReturnData({
+        thread: {
+          allThreads: { nodes: [comment3].map(getThreadData) },
         },
       })
   })
