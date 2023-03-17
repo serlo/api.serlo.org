@@ -20,14 +20,9 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { resolveConnection } from '../connection/utils'
-import {
-  createNamespace,
-  decodeId,
-  encodeId,
-  Queries,
-  TypeResolvers,
-} from '~/internals/graphql'
+import { createNamespace, Queries, TypeResolvers } from '~/internals/graphql'
 import { EntityDecoder, TaxonomyTermDecoder } from '~/model/decoder'
+import { decodeSubjectId, encodeSubjectId } from '~/schema/subject/utils'
 import { Subject } from '~/types'
 
 export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
@@ -41,7 +36,7 @@ export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
       return subjects.filter((subject) => subject.instance === instance)
     },
     async subject(_parent, { id }, { dataSources }) {
-      const taxonomyTermId = decodeId({ textId: id, prefix: 's' })
+      const taxonomyTermId = decodeSubjectId(id)
       const { subjects } = await dataSources.model.serlo.getSubjects()
 
       return subjects.some((s) => s.taxonomyTermId === taxonomyTermId)
@@ -51,7 +46,7 @@ export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
   },
   Subject: {
     id(subject) {
-      return encodeId({ prefix: 's', id: subject.taxonomyTermId })
+      return encodeSubjectId(subject.taxonomyTermId)
     },
     taxonomyTerm(subject, _args, { dataSources }) {
       return dataSources.model.serlo.getUuidWithCustomDecoder({
