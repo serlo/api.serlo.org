@@ -50,6 +50,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Instance, Thread } from '~/types'
+import {decodeSubjectId} from "~/schema/subject/utils";
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -142,7 +143,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         const filteredThreads = threadSubjectLinks
           .filter((promise) => {
             return (
-              promise.subjectId === decodeId({ prefix: 's', textId: subjectId })
+              promise.subjectId === decodeSubjectId(subjectId)
             )
           })
           .map((thread) => thread.thread)

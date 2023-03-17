@@ -34,6 +34,7 @@ import {
 import { Client, given } from '../../__utils__'
 import { encodeId, Model } from '~/internals/graphql'
 import { Instance } from '~/types'
+import {encodeSubjectId} from "~/schema/subject/utils";
 
 describe('allThreads', () => {
   beforeEach(() => {
@@ -135,7 +136,7 @@ describe('allThreads', () => {
 
     await query
       .withVariables({
-        subjectId: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+        subjectId: encodeSubjectId(taxonomyTermSubject.id),
       })
       .shouldReturnData({
         thread: {
