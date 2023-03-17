@@ -24,6 +24,7 @@ import { gql } from 'apollo-server'
 import { article, taxonomyTermSubject } from '../../__fixtures__'
 import { Client, given, getTypenameAndId, nextUuid } from '../__utils__'
 import { encodeId, encodeToBase64 } from '~/internals/graphql'
+import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
 describe('SubjectsQuery', () => {
@@ -78,7 +79,7 @@ describe('SubjectsQuery', () => {
 
       await query
         .withVariables({
-          id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+          id: encodeSubjectId(taxonomyTermSubject.id),
         })
         .shouldReturnData({
           subject: {
@@ -92,7 +93,7 @@ describe('SubjectsQuery', () => {
 
       await query
         .withVariables({
-          id: encodeId({ prefix: 's', id: nextUuid(taxonomyTermSubject.id) }),
+          id: encodeSubjectId(nextUuid(taxonomyTermSubject.id)),
         })
         .shouldReturnData({ subject: { subject: null } })
     })
@@ -127,12 +128,12 @@ describe('Subjects', () => {
         `,
       })
       .withVariables({
-        id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+        id: encodeSubjectId(taxonomyTermSubject.id),
       })
       .shouldReturnData({
         subject: {
           subject: {
-            id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+            id: encodeSubjectId(taxonomyTermSubject.id),
           },
         },
       })
@@ -161,7 +162,7 @@ describe('Subjects', () => {
         `,
       })
       .withVariables({
-        id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+        id: encodeSubjectId(taxonomyTermSubject.id),
       })
       .shouldReturnData({
         subject: {
