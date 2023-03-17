@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import {decodeId, encodeId} from "~/internals/graphql";
+import { decodeId, encodeId } from '~/internals/graphql'
 
 export function encodeSubjectId(id: number) {
-  return encodeId({prefix: "s", id})
+  return encodeId({ prefix: 's', id })
 }
 
 export function decodeSubjectId(textId: string) {
-  return decodeId({prefix: "s", textId})
+  return decodeId({ prefix: 's', textId })
 }
