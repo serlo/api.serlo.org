@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { IdentityState, V0alpha2Api } from '@ory/client'
+import { IdentityState, IdentityApi } from '@ory/client'
 import { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 
@@ -41,13 +41,13 @@ export function applyKratosMiddleware({
   kratosAdmin,
 }: {
   app: Express
-  kratosAdmin: V0alpha2Api
+  kratosAdmin: IdentityApi
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
   return basePath
 }
 
-function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
+function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       captureErrorEvent({
@@ -68,7 +68,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
     const { userId } = request.body
 
     try {
-      const kratosUser = (await kratos.adminGetIdentity(userId)).data
+      const kratosUser = (await kratos.getIdentity({ id: userId })).data
 
       const { username, email } = kratosUser.traits as {
         username: string
@@ -82,18 +82,22 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         email,
       })
 
-      await kratos.adminUpdateIdentity(kratosUser.id, {
-        schema_id: 'default',
-        metadata_public: {
-          legacy_id: legacyUserId,
+      await kratos.updateIdentity({
+        id: kratosUser.id,
+        updateIdentityBody: {
+          schema_id: 'default',
+          metadata_public: {
+            legacy_id: legacyUserId,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          traits: kratosUser.traits,
+          state: IdentityState.Active,
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        traits: kratosUser.traits,
-        state: IdentityState.Active,
       })
 
       response.json({ status: 'success' }).end()
     } catch (error: unknown) {
+      console.log(error)
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
         errorContext: { userId, error },

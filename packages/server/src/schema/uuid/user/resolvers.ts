@@ -562,7 +562,7 @@ async function deleteKratosUser(
   const identity =
     await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(userId)
   if (identity)
-    await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
-      identity.id
-    )
+    await dataSources.model.authServices.kratos.admin.deleteIdentity({
+      id: identity.id,
+    })
 }
