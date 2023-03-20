@@ -97,7 +97,6 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
 
       response.json({ status: 'success' }).end()
     } catch (error: unknown) {
-      console.log(error)
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
         errorContext: { userId, error },
