@@ -19,26 +19,21 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { gql } from 'apollo-server'
+import {gql} from 'apollo-server'
 import * as R from 'ramda'
 
-import {
-  article,
-  article2,
-  comment,
-  comment1,
-  comment2,
-  comment3,
-} from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
-import { Model } from '~/internals/graphql'
-import { encodeSubjectId } from '~/schema/subject/utils'
-import { Instance } from '~/types'
+import {article, article2, comment, comment1, comment2, comment3,} from '../../../__fixtures__'
+import {Client, given} from '../../__utils__'
+import {Model} from '~/internals/graphql'
+import {encodeSubjectId} from '~/schema/subject/utils'
+import {Instance} from '~/types'
 
 describe('allThreads', () => {
   beforeEach(() => {
     given('UuidQuery').for(comment, comment1, comment2, comment3)
     given('UuidQuery').for(article, article2)
+    given('SubjectsQuery').returns({subjects: [{instance: article.instance, taxonomyTermId: article.taxonomyTermIds[0]},
+        {instance: article2.instance, taxonomyTermId: article2.taxonomyTermIds[0]}]})
   })
 
   const query = new Client().prepareQuery({
