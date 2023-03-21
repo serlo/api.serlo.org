@@ -43,7 +43,7 @@ import {
 import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { decodeSubjectId } from '~/schema/subject/utils'
+import { validateSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
 import { isDefined } from '~/utils'
@@ -63,9 +63,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
   },
   ThreadQuery: {
     async allThreads(_parent, input, { dataSources }) {
-      const subjectId = input.subjectId
-        ? decodeSubjectId(input.subjectId)
-        : null
+      const subjectId = await validateSubjectId(dataSources, input.subjectId)
       const limit = 50
       const { first = 10, instance } = input
       // TODO: Better solution
@@ -101,7 +99,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         threadsToFetch: number
         first: number
         after: string | undefined
-      }): Promise<Model<'Thread'>[]> {
+      },
+      loopCount = 0): Promise<Model<'Thread'>[]> {
         const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
           {
             first: threadsToFetch,
@@ -131,14 +130,16 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         const filteredThreads = mappedThreads.filter(isDefined)
         if (
           filteredThreads.length < first &&
-          threads.length === threadsToFetch
+          threads.length === threadsToFetch &&
+          loopCount < 5
         ) {
           return filteredThreads.concat(
             await filterThreads({
               first: first - filteredThreads.length,
               after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
               threadsToFetch,
-            })
+            },
+              ++loopCount)
           )
         } else {
           return filteredThreads.slice(0, first)
