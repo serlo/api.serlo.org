@@ -19,7 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import type { FrontendApi, IdentityApi, IdentityApiDeleteIdentityRequest } from '@ory/client'
+import type {
+  FrontendApi,
+  IdentityApi,
+  IdentityApiDeleteIdentityRequest,
+} from '@ory/client'
 import {
   RestRequest,
   ResponseResolver,
@@ -40,7 +44,9 @@ export class MockKratos {
 
   admin = {
     deleteIdentity: (requestParameters: IdentityApiDeleteIdentityRequest) => {
-      const identity = this.identities.find((identity) => identity.id === requestParameters.id)
+      const identity = this.identities.find(
+        (identity) => identity.id === requestParameters.id
+      )
       if (identity) {
         const identityIndex = this.identities.indexOf(identity)
         this.identities.splice(identityIndex)
