@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import type { IdentityApi } from '@ory/client'
+import type { FrontendApi, IdentityApi } from '@ory/client'
 import {
   RestRequest,
   ResponseResolver,
@@ -36,7 +36,7 @@ import type { MajorDimension } from '~/model'
 export class MockKratos {
   identities: Identity[] = []
 
-  public = {} as unknown as IdentityApi
+  public = {} as unknown as FrontendApi
 
   admin = {
     deleteIdentity: (id: string) => {
