@@ -169,6 +169,18 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 }
 
+export function createEmptyCache(): Cache {
+  return {
+    get: (): any => {},
+    set: (): any => {},
+    remove: (): any => {},
+    ready: (): any => {},
+    flush: (): any => {},
+    quit: (): any => {},
+  }
+}
+
+
 export interface CacheEntry<Value> {
   value: Value
   lastModified: number
