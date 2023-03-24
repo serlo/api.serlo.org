@@ -140,9 +140,7 @@ describe('allThreads', () => {
       })
 
     await query
-      .withVariables({
-        subjectId: encodeSubjectId(article.taxonomyTermIds[0]),
-      })
+      .withVariables({ subjectId: encodeSubjectId(article.taxonomyTermIds[0]) })
       .shouldReturnData({
         thread: {
           allThreads: { nodes: [comment, comment1].map(getThreadData) },
@@ -159,9 +157,7 @@ describe('allThreads', () => {
 
     given('AllThreadsQuery')
       .withPayload({ first: 3, after: comment3.date })
-      .returns({
-        firstCommentIds: [comment3].map(R.prop('id')),
-      })
+      .returns({ firstCommentIds: [comment3.id] })
 
     await query
       .withVariables({
@@ -169,9 +165,7 @@ describe('allThreads', () => {
         subjectId: encodeSubjectId(article2.taxonomyTermIds[0]),
       })
       .shouldReturnData({
-        thread: {
-          allThreads: { nodes: [comment3].map(getThreadData) },
-        },
+        thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
       })
   })
 
