@@ -42,7 +42,7 @@ export async function start() {
   initializeSentry({ context: 'server' })
   const timer = createTimer()
   const cache =
-    process.env?.CACHE_TYPE !== 'production'
+    process.env.CACHE_TYPE === 'empty'
       ? createEmptyCache()
       : createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
