@@ -169,17 +169,31 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 }
 
-export function createEmptyCache(): Cache {
-  return {
-    get: (): any => {},
-    set: (): any => {},
-    remove: (): any => {},
-    ready: (): any => {},
-    flush: (): any => {},
-    quit: (): any => {},
-  }
+export interface EmptyCache extends Cache {
+  get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
+  set<T>(
+    payload: {
+      key: string
+      source: string
+      priority?: Priority
+    } & FunctionOrValue<T>
+  ): Promise<void>
+  remove(args: { key: string }): Promise<void>
+  ready(): Promise<void>
+  flush(): Promise<void>
+  quit(): Promise<void>
 }
 
+export function createEmptyCache(): EmptyCache {
+  return {
+    get: async () => O.none,
+    set: async () => {},
+    remove: async () => {},
+    ready: async () => {},
+    flush: async () => {},
+    quit: async () => {},
+  }
+}
 
 export interface CacheEntry<Value> {
   value: Value
