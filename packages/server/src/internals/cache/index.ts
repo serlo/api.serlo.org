@@ -169,24 +169,9 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   }
 }
 
-export interface EmptyCache extends Cache {
-  get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
-  set<T>(
-    payload: {
-      key: string
-      source: string
-      priority?: Priority
-    } & FunctionOrValue<T>
-  ): Promise<void>
-  remove(args: { key: string }): Promise<void>
-  ready(): Promise<void>
-  flush(): Promise<void>
-  quit(): Promise<void>
-}
-
-export function createEmptyCache(): EmptyCache {
+export function createEmptyCache(): Cache {
   return {
-    get: async () => O.none,
+    get: () => Promise.resolve(O.none),
     set: async () => {},
     remove: async () => {},
     ready: async () => {},
