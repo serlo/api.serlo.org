@@ -121,7 +121,7 @@ export function getGraphQLOptions(
         try {
           const publicKratos = environment.authServices.kratos.public
           const session = (
-            await publicKratos.toSession(undefined, req.header('cookie'))
+            await publicKratos.toSession({ cookie: req.header('cookie') })
           ).data
 
           if (SessionDecoder.is(session)) {
