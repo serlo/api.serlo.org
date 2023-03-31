@@ -4265,7 +4265,6 @@ __metadata:
     eslint-plugin-react: ^7.32.2
     glob: ^8.1.0
     graphql: ^16.6.0
-    graphql-tag: ^2.12.6
     jest: ^27.5.1
     jest-transform-graphql: ^2.1.0
     lerna: ^4.0.0
@@ -4309,23 +4308,19 @@ __metadata:
     "@zerollup/ts-transform-paths": ^1.7.18
     apollo-datasource-rest: ^3.7.0
     apollo-server: ^3.11.1
-    apollo-server-caching: ^3.3.0
     apollo-server-core: ^3.11.1
     apollo-server-express: ^3.11.1
     apollo-server-plugin-base: ^3.7.1
-    apollo-server-types: ^3.7.1
     babel-plugin-import-graphql: ^2.8.1
     babel-plugin-module-resolver: ^4.1.0
     basic-auth: ^2.0.1
     bee-queue: ^1.5.0
-    body-parser: ^1.20.2
     bull-arena: ^3.30.4
     dotenv: ^16.0.3
     express: ^4.18.2
     fp-ts: ^2.13.1
     graphql: ^16.6.0
     graphql-playground-middleware-express: ^1.7.23
-    graphql-tag: ^2.12.6
     graphql-type-json: ^0.3.2
     io-ts: ^2.2.20
     io-ts-reporters: ^2.0.1
@@ -5661,15 +5656,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo-server-caching@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "apollo-server-caching@npm:3.3.0"
-  dependencies:
-    lru-cache: ^6.0.0
-  checksum: a5b43025ffb00cb3899fa0584512538747e8afe595ff8a0235caf8469435a03c1edc23fa56893fc77910f032563106872faa7e86a58acf1aed16bf77e9723327
-  languageName: node
-  linkType: hard
-
 "apollo-server-core@npm:^3.11.1":
   version: 3.11.1
   resolution: "apollo-server-core@npm:3.11.1"
@@ -6614,7 +6600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^1.18.2, body-parser@npm:^1.19.0, body-parser@npm:^1.20.0, body-parser@npm:^1.20.2":
+"body-parser@npm:^1.18.2, body-parser@npm:^1.19.0, body-parser@npm:^1.20.0":
   version: 1.20.2
   resolution: "body-parser@npm:1.20.2"
   dependencies:
@@ -10362,7 +10348,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.12.6, graphql-tag@npm:^2.9.1, graphql-tag@npm:^2.9.2":
+"graphql-tag@npm:^2.11.0, graphql-tag@npm:^2.9.1, graphql-tag@npm:^2.9.2":
   version: 2.12.6
   resolution: "graphql-tag@npm:2.12.6"
   dependencies:
