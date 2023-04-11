@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.prod.json",
+  "module": "ESNext",
   "ts-node": {
     "moduleTypes": {
       "packages/server/scripts/deploy.ts": "esm",

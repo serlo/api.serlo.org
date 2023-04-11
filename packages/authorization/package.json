@@ -7,6 +7,7 @@
   "main": "dist/index.js",
   "module": "dist/authorization.esm.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsdx build --tsconfig tsconfig.prod.json"
   },

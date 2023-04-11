@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
   "main": "dist/index.js",
+  "type": "module",
   "module": "dist/authorization.esm.js",
   "typings": "dist/index.d.ts",
   "scripts": {
