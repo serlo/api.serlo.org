@@ -91,18 +91,17 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         },
       })
 
-      async function filterThreads(
-        {
-          first,
-          after,
-          threadsToFetch,
-        }: {
-          threadsToFetch: number
-          first: number
-          after: string | undefined
-        },
-        loopCount = 0
-      ): Promise<Model<'Thread'>[]> {
+      async function filterThreads({
+        first,
+        after,
+        threadsToFetch,
+        loopCount = 0,
+      }: {
+        threadsToFetch: number
+        first: number
+        after: string | undefined
+        loopCount?: number
+      }): Promise<Model<'Thread'>[]> {
         const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
           {
             first: threadsToFetch,
@@ -136,14 +135,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           loopCount < 5
         ) {
           return filteredThreads.concat(
-            await filterThreads(
-              {
-                first: first - filteredThreads.length,
-                after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
-                threadsToFetch,
-              },
-              ++loopCount
-            )
+            await filterThreads({
+              first: first - filteredThreads.length,
+              after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
+              threadsToFetch,
+              loopCount: loopCount + 1,
+            })
           )
         } else {
           return filteredThreads.slice(0, first)
