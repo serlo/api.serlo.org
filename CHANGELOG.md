@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.49.8](https://github.com/serlo/api.serlo.org/compare/v0.49.7..v0.49.8) - April 12, 2023
+
+### Added
+
+- Add support for an empty cache
+
+### Changed
+
+- Update various dependencies
+
+### Fixed
+
+- Make filtering of threads more resource efficient
+
 ## [v0.49.7](https://github.com/serlo/api.serlo.org/compare/v0.49.6..v0.49.7) - March 17, 2023
 
 ### Added
