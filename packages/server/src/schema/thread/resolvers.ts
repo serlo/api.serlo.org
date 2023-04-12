@@ -74,14 +74,14 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
-      const filteredThreads = await filterThreads({
+      const threads = await queryThreads({
         first: first + 1,
         threadsToFetch: first + 1,
         after,
       })
 
       return resolveConnection({
-        nodes: filteredThreads,
+        nodes: threads,
         payload: { ...input, first, after },
         createCursor: (node) => {
           const comments = node.commentPayloads
@@ -91,7 +91,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         },
       })
 
-      async function filterThreads({
+      async function queryThreads({
         first,
         after,
         threadsToFetch,
@@ -121,9 +121,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           firstCommentIds.length === threadsToFetch &&
           loopCount < 3
         ) {
-          return filteredThreads.concat(
-            await filterThreads({
-              first: first - filteredThreads.length,
+          return threads.concat(
+            await queryThreads({
+              first: first - threads.length,
               after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
               threadsToFetch,
               loopCount: loopCount + 1,
