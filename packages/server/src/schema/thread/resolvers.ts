@@ -21,7 +21,6 @@
  */
 import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server-core'
-import * as t from 'io-ts'
 
 import {
   decodeThreadId,
@@ -46,7 +45,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -76,14 +74,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
-      const filteredThreads = await filterThreads({
-        first: first + 1,
-        threadsToFetch: first + 1,
-        after,
-      })
-
       return resolveConnection({
-        nodes: filteredThreads,
+        nodes: await queryThreads({
+          first: first + 1,
+          threadsToFetch: first + 1,
+          after,
+        }),
         payload: { ...input, first, after },
         createCursor: (node) => {
           const comments = node.commentPayloads
@@ -93,14 +89,16 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         },
       })
 
-      async function filterThreads({
+      async function queryThreads({
         first,
         after,
         threadsToFetch,
+        loopCount = 0,
       }: {
         threadsToFetch: number
         first: number
         after: string | undefined
+        loopCount?: number
       }): Promise<Model<'Thread'>[]> {
         const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
           {
@@ -110,38 +108,27 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           }
         )
 
-        const threads = await resolveThreads({ firstCommentIds, dataSources })
-        const mappedThreads = await Promise.all(
-          threads.map(async (thread) => {
-            if (subjectId == null) return thread
+        const threads = await resolveThreads({
+          firstCommentIds,
+          dataSources,
+          subjectId,
+        })
 
-            const entity = await dataSources.model.serlo.getUuid({
-              id: thread.commentPayloads[0].parentId,
-            })
-
-            if (
-              t.type({ canonicalSubjectId: t.number }).is(entity) &&
-              entity.canonicalSubjectId === subjectId
-            )
-              return thread
-
-            return null
-          })
-        )
-        const filteredThreads = mappedThreads.filter(isDefined)
         if (
-          filteredThreads.length < first &&
-          threads.length === threadsToFetch
+          threads.length < first &&
+          firstCommentIds.length === threadsToFetch &&
+          loopCount < 3
         ) {
-          return filteredThreads.concat(
-            await filterThreads({
-              first: first - filteredThreads.length,
+          return threads.concat(
+            await queryThreads({
+              first: first - threads.length,
               after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
               threadsToFetch,
+              loopCount: loopCount + 1,
             })
           )
         } else {
-          return filteredThreads.slice(0, first)
+          return threads.slice(0, first)
         }
       }
     },
