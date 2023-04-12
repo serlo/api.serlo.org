@@ -26,7 +26,7 @@ import path from 'path'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { createAuthServices, AuthServices } from '../authentication'
-import { Cache, createCache } from '../cache'
+import { Cache, createCache, createEmptyCache } from '../cache'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer } from '../timer'
@@ -41,7 +41,10 @@ export async function start() {
   })
   initializeSentry({ context: 'server' })
   const timer = createTimer()
-  const cache = createCache({ timer })
+  const cache =
+    process.env.CACHE_TYPE === 'empty'
+      ? createEmptyCache()
+      : createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
   const authServices = createAuthServices()
   await initializeServer({ cache, swrQueue, authServices })
