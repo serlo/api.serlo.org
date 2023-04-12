@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ModelDataSource } from '~/internals/data-source'
 import { decodeId, encodeId } from '~/internals/graphql'
 
 export function encodeSubjectId(id: number) {
@@ -28,19 +27,4 @@ export function encodeSubjectId(id: number) {
 
 export function decodeSubjectId(textId: string) {
   return decodeId({ prefix: 's', textId })
-}
-
-export async function validateSubjectId(
-  dataSources: { model: ModelDataSource },
-  textId?: string
-) {
-  if (!textId) return null
-  try {
-    const id = decodeSubjectId(textId)
-    const { subjects } = await dataSources.model.serlo.getSubjects()
-
-    return subjects.some((subject) => subject.taxonomyTermId === id) ? id : null
-  } catch (_) {
-    return null
-  }
 }
