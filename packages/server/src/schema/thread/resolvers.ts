@@ -114,7 +114,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
 
         const threads = await resolveThreads({ firstCommentIds, dataSources })
         const mappedThreads = await Promise.all(
-          threads.slice(0, threadsToFetch - 1).map(async (thread) => {
+          threads.map(async (thread) => {
             if (subjectId == null) return thread
 
             const entity = await dataSources.model.serlo.getUuid({
