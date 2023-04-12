@@ -30,14 +30,16 @@ import {
   comment2,
   comment3,
 } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
+const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+
 describe('allThreads', () => {
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3)
+    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
     given('UuidQuery').for(article, article2)
     given('SubjectsQuery').returns({
       subjects: [
@@ -157,7 +159,7 @@ describe('allThreads', () => {
 
     given('AllThreadsQuery')
       .withPayload({ first: 3, after: comment3.date })
-      .returns({ firstCommentIds: [comment3.id] })
+      .returns({ firstCommentIds: [comment4.id] })
 
     await query
       .withVariables({
@@ -165,7 +167,9 @@ describe('allThreads', () => {
         subjectId: encodeSubjectId(article2.taxonomyTermIds[0]),
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
+        thread: {
+          allThreads: { nodes: [comment3, comment4].map(getThreadData) },
+        },
       })
   })
 
