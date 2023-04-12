@@ -1480,6 +1480,13 @@ async function exec(): Promise<void> {
         date: '2023-03-17',
         added: ['Add `subjectId` to allThreads()'],
       },
+      {
+        tagName: 'v0.49.8',
+        date: '2023-04-12',
+        added: ['Add support for an empty cache'],
+        fixed: ['Make filtering of threads more resource efficient'],
+        changed: ['Update various dependencies'],
+      },
     ],
   })
 
