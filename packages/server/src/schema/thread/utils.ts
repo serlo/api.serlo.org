@@ -53,16 +53,18 @@ export async function resolveThreads({
   firstCommentIds,
   archived,
   trashed,
+  subjectId,
   dataSources,
 }: {
   firstCommentIds: number[]
   archived?: boolean
   trashed?: boolean
+  subjectId?: number | null
   dataSources: Context['dataSources']
 }): Promise<Model<'Thread'>[]> {
   const firstComments = await resolveComments(dataSources, firstCommentIds)
 
-  const filteredFirstComments = firstComments.filter((comment) => {
+  const firstCommentsAfterFilter = firstComments.filter((comment) => {
     if (archived !== undefined && archived !== comment.archived) {
       return false
     }
@@ -72,6 +74,23 @@ export async function resolveThreads({
 
     return true
   })
+
+  const firstCommentsAfterSubjectFilter = await Promise.all(
+    firstCommentsAfterFilter.map(async (comment) => {
+      if (subjectId == null) return comment
+
+      const entity = await dataSources.model.serlo.getUuid({
+        id: comment.parentId,
+      })
+
+      return t.type({ canonicalSubjectId: t.number }).is(entity) &&
+        entity.canonicalSubjectId === subjectId
+        ? comment
+        : null
+    })
+  )
+  const filteredFirstComments =
+    firstCommentsAfterSubjectFilter.filter(isDefined)
 
   return await Promise.all(
     filteredFirstComments.map(async (firstComment) => {

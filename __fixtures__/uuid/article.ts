@@ -54,9 +54,9 @@ export const article2: Model<'Article'> = {
   date: '2014-03-01T20:36:44Z',
   currentRevisionId: castToUuid(32614),
   licenseId: license.id,
-  taxonomyTermIds: [8].map(castToUuid),
+  taxonomyTermIds: [17744].map(castToUuid),
   revisionIds: [32614].map(castToUuid),
-  canonicalSubjectId: castToUuid(8),
+  canonicalSubjectId: castToUuid(17744),
 }
 
 export const articleRevision: Model<'ArticleRevision'> = {
