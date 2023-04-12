@@ -43,7 +43,7 @@ import {
 import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { validateSubjectId } from '~/schema/subject/utils'
+import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
 import { isDefined } from '~/utils'
@@ -63,7 +63,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
   },
   ThreadQuery: {
     async allThreads(_parent, input, { dataSources }) {
-      const subjectId = await validateSubjectId(dataSources, input.subjectId)
+      const subjectId = input.subjectId
+        ? decodeSubjectId(input.subjectId)
+        : null
       const limit = 50
       const { first = 10, instance } = input
       // TODO: Better solution
