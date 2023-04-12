@@ -21,7 +21,6 @@
  */
 import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server-core'
-import * as t from 'io-ts'
 
 import {
   decodeThreadId,
@@ -46,7 +45,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, Thread } from '~/types'
-import { isDefined } from '~/utils'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -112,29 +110,16 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           }
         )
 
-        const threads = await resolveThreads({ firstCommentIds, dataSources })
-        const mappedThreads = await Promise.all(
-          threads.map(async (thread) => {
-            if (subjectId == null) return thread
+        const threads = await resolveThreads({
+          firstCommentIds,
+          dataSources,
+          subjectId,
+        })
 
-            const entity = await dataSources.model.serlo.getUuid({
-              id: thread.commentPayloads[0].parentId,
-            })
-
-            if (
-              t.type({ canonicalSubjectId: t.number }).is(entity) &&
-              entity.canonicalSubjectId === subjectId
-            )
-              return thread
-
-            return null
-          })
-        )
-        const filteredThreads = mappedThreads.filter(isDefined)
         if (
-          filteredThreads.length < first &&
-          threads.length === threadsToFetch &&
-          loopCount < 5
+          threads.length < first &&
+          firstCommentIds.length === threadsToFetch &&
+          loopCount < 3
         ) {
           return filteredThreads.concat(
             await filterThreads({
@@ -145,7 +130,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
             })
           )
         } else {
-          return filteredThreads.slice(0, first)
+          return threads.slice(0, first)
         }
       }
     },
