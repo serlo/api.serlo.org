@@ -44,6 +44,10 @@ export function applyKratosMiddleware({
   kratosAdmin: IdentityApi
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
+  app.post(
+    `${basePath}/revokeSessions`,
+    createKratosRevokeSessionsHandler(kratosAdmin)
+  )
   return basePath
 }
 
@@ -110,7 +114,42 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
   // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state=)')
+      response.status(500).send('Internal Server Error (Illegal state)')
+    )
+  }
+}
+
+function createKratosRevokeSessionsHandler(
+  kratos: IdentityApi
+): RequestHandler {
+  async function handleRequest(request: Request, response: Response) {
+    if (!t.type({ userId: t.string }).is(request.body)) {
+      response.statusCode = 400
+      response.end('Valid identity id has to be provided')
+      return
+    }
+
+    const { userId } = request.body
+
+    try {
+      await kratos.deleteIdentitySessions({
+        id: userId,
+      })
+      response.json({ status: 'success' }).end()
+    } catch (error: unknown) {
+      captureErrorEvent({
+        error: new Error('Could not revoke sessions of user'),
+        errorContext: { userId, error },
+      })
+
+      response.statusCode = 500
+      return response.end('Internal error in after hook')
+    }
+  }
+  // See https://stackoverflow.com/a/71912991
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state)')
     )
   }
 }
