@@ -22,6 +22,7 @@
 import { IdentityState, IdentityApi } from '@ory/client'
 import { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
+import { JwtPayload, decode } from 'jsonwebtoken'
 
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
@@ -45,7 +46,7 @@ export function applyKratosMiddleware({
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
   app.post(
-    `${basePath}/revokeSessions`,
+    `${basePath}/single-logout`,
     createKratosRevokeSessionsHandler(kratosAdmin)
   )
   return basePath
@@ -123,27 +124,51 @@ function createKratosRevokeSessionsHandler(
   kratos: IdentityApi
 ): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
-    if (!t.type({ userId: t.string }).is(request.body)) {
+    console.log(request.body)
+    return 'hello logout'
+    // TODO: add referrer check after testing or implement validation of jwt token
+    if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
-      response.end('Valid identity id has to be provided')
+      response.end('no logout_token provided')
       return
     }
 
-    const { userId } = request.body
-
     try {
+      // warning: this does not validate the token
+      const decoded = decode(request.body.logout_token) as JwtPayload
+      const providerUserId = decoded.sub
+
+      if (!providerUserId) {
+        response.statusCode = 400
+        response.end('invalid token or sub info missing')
+        return
+      }
+
+      // let's hope this actually also searches the identifier we need. if it does: create ory docs issue
+      const user = (
+        await kratos.listIdentities({
+          credentialsIdentifier: `nbp|${providerUserId}`,
+        })
+      ).data[0]
+
+      if (!user || !t.type({ id: t.string }).is(user)) {
+        response.statusCode = 400
+        response.end('user not found or not valid')
+        return
+      }
+
       await kratos.deleteIdentitySessions({
-        id: userId,
+        id: user.id,
       })
       response.json({ status: 'success' }).end()
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not revoke sessions of user'),
-        errorContext: { userId, error },
+        errorContext: { error },
       })
 
       response.statusCode = 500
-      return response.end('Internal error in after hook')
+      return response.end('Internal error while attempting single logout')
     }
   }
   // See https://stackoverflow.com/a/71912991
