@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { IdentityState, IdentityApi } from '@ory/client'
-import { Express, Request, Response, RequestHandler } from 'express'
+import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 
@@ -45,6 +45,9 @@ export function applyKratosMiddleware({
   kratosAdmin: IdentityApi
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
+
+  app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
   app.post(
     `${basePath}/single-logout`,
     createKratosRevokeSessionsHandler(kratosAdmin)
@@ -124,8 +127,6 @@ function createKratosRevokeSessionsHandler(
   kratos: IdentityApi
 ): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
-    console.log(request.body)
-    return 'hello logout'
     // TODO: add referrer check after testing or implement validation of jwt token
     if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
@@ -135,21 +136,24 @@ function createKratosRevokeSessionsHandler(
 
     try {
       // warning: this does not validate the token
-      const decoded = decode(request.body.logout_token) as JwtPayload
-      const providerUserId = decoded.sub
+      const { sub } = decode(request.body.logout_token) as JwtPayload
 
-      if (!providerUserId) {
+      if (!sub) {
         response.statusCode = 400
         response.end('invalid token or sub info missing')
         return
       }
 
+      // eslint-disable-next-line no-console
+      console.log(sub)
       // let's hope this actually also searches the identifier we need. if it does: create ory docs issue
-      const user = (
-        await kratos.listIdentities({
-          credentialsIdentifier: `nbp|${providerUserId}`,
-        })
-      ).data[0]
+      const list = await kratos.listIdentities({
+        credentialsIdentifier: `nbp:${sub}`,
+      })
+
+      // eslint-disable-next-line no-console
+      console.log(list.data)
+      const user = list.data[0]
 
       if (!user || !t.type({ id: t.string }).is(user)) {
         response.statusCode = 400
@@ -162,6 +166,9 @@ function createKratosRevokeSessionsHandler(
       })
       response.json({ status: 'success' }).end()
     } catch (error: unknown) {
+      // TODO: remove console.error after POC
+      // eslint-disable-next-line no-console
+      console.error(error)
       captureErrorEvent({
         error: new Error('Could not revoke sessions of user'),
         errorContext: { error },
