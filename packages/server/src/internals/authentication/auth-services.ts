@@ -95,6 +95,27 @@ export class KratosDB extends Pool {
     if (identities && IdentityDecoder.is(identities[0])) return identities[0]
     return null
   }
+
+  async getIdByCredentialsId(identifier: string): Promise<string | null> {
+    const identities = await this.executeSingleQuery({
+      query:
+        // 'SELECT id FROM identity_credential_identifiers WHERE identifier = $1',
+        `SELECT identity_credentials.identity_id
+           FROM identity_credentials
+           JOIN identity_credential_identifiers
+             ON identity_credentials.id = identity_credential_identifiers.identity_credential_id
+             WHERE identity_credential_identifiers.identifier = $1`,
+      params: [identifier],
+    })
+
+    if (
+      identities &&
+      identities[0] &&
+      t.type({ identity_id: t.string }).is(identities[0])
+    )
+      return identities[0].identity_id
+    return null
+  }
   async executeSingleQuery<T>({
     query,
     params = [],

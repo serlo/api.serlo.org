@@ -70,6 +70,7 @@ async function initializeServer({
   const kratosPath = applyKratosMiddleware({
     app,
     kratosAdmin: authServices.kratos.admin,
+    db: authServices.kratos.db,
   })
 
   const port = 3001
