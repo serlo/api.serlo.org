@@ -24,6 +24,7 @@ import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 
+import { KratosDB } from '../authentication'
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
@@ -40,9 +41,11 @@ const createLegacyUser = createRequest({
 export function applyKratosMiddleware({
   app,
   kratosAdmin,
+  db,
 }: {
   app: Express
   kratosAdmin: IdentityApi
+  db?: KratosDB
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
 
@@ -50,7 +53,7 @@ export function applyKratosMiddleware({
 
   app.post(
     `${basePath}/single-logout`,
-    createKratosRevokeSessionsHandler(kratosAdmin)
+    createKratosRevokeSessionsHandler(kratosAdmin, db)
   )
   return basePath
 }
@@ -124,9 +127,12 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
 }
 
 function createKratosRevokeSessionsHandler(
-  kratos: IdentityApi
+  kratos: IdentityApi,
+  db?: KratosDB
 ): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
+    // TODO: for test call
+    if (!db) return
     // TODO: add referrer check after testing or implement validation of jwt token
     if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
@@ -146,24 +152,17 @@ function createKratosRevokeSessionsHandler(
 
       // eslint-disable-next-line no-console
       console.log(sub)
-      // let's hope this actually also searches the identifier we need. if it does: create ory docs issue
-      const list = await kratos.listIdentities({
-        credentialsIdentifier: `nbp:${sub}`,
-      })
+      const id = await db.getIdByCredentialsId(`nbp:${sub}`)
 
       // eslint-disable-next-line no-console
-      console.log(list.data)
-      const user = list.data[0]
-
-      if (!user || !t.type({ id: t.string }).is(user)) {
+      console.log({ id })
+      if (!id) {
         response.statusCode = 400
         response.end('user not found or not valid')
         return
       }
 
-      await kratos.deleteIdentitySessions({
-        id: user.id,
-      })
+      await kratos.deleteIdentitySessions({ id })
       response.json({ status: 'success' }).end()
     } catch (error: unknown) {
       // TODO: remove console.error after POC
