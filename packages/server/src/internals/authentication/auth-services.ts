@@ -98,9 +98,7 @@ export class KratosDB extends Pool {
 
   async getIdByCredentialsId(identifier: string): Promise<string | null> {
     const identities = await this.executeSingleQuery({
-      query:
-        // 'SELECT id FROM identity_credential_identifiers WHERE identifier = $1',
-        `SELECT identity_credentials.identity_id
+      query: `SELECT identity_credentials.identity_id
            FROM identity_credentials
            JOIN identity_credential_identifiers
              ON identity_credentials.id = identity_credential_identifiers.identity_credential_id
