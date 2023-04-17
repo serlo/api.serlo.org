@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { IdentityState, IdentityApi } from '@ory/client'
+import { IdentityState } from '@ory/client'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 
-import { KratosDB } from '../authentication'
+import { Kratos } from '../authentication'
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
@@ -40,25 +40,22 @@ const createLegacyUser = createRequest({
 
 export function applyKratosMiddleware({
   app,
-  kratosAdmin,
-  db,
+  kratos,
 }: {
   app: Express
-  kratosAdmin: IdentityApi
-  db?: KratosDB
+  kratos: Kratos
 }) {
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
+  app.use(express.urlencoded({ extended: true }))
 
-  app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
   app.post(
     `${basePath}/single-logout`,
-    createKratosRevokeSessionsHandler(kratosAdmin, db)
+    createKratosRevokeSessionsHandler(kratos)
   )
   return basePath
 }
 
-function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
+function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       captureErrorEvent({
@@ -79,7 +76,7 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
     const { userId } = request.body
 
     try {
-      const kratosUser = (await kratos.getIdentity({ id: userId })).data
+      const kratosUser = (await kratos.admin.getIdentity({ id: userId })).data
 
       const { username, email } = kratosUser.traits as {
         username: string
@@ -93,7 +90,7 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
         email,
       })
 
-      await kratos.updateIdentity({
+      await kratos.admin.updateIdentity({
         id: kratosUser.id,
         updateIdentityBody: {
           schema_id: 'default',
@@ -126,14 +123,8 @@ function createKratosRegisterHandler(kratos: IdentityApi): RequestHandler {
   }
 }
 
-function createKratosRevokeSessionsHandler(
-  kratos: IdentityApi,
-  db?: KratosDB
-): RequestHandler {
+function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
-    // TODO: for test call
-    if (!db) return
-    // TODO: add referrer check after testing or implement validation of jwt token
     if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
       response.end('no logout_token provided')
@@ -141,7 +132,7 @@ function createKratosRevokeSessionsHandler(
     }
 
     try {
-      // warning: this does not validate the token
+      // TODO: implement validation of jwt token
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
       if (!sub) {
@@ -150,24 +141,18 @@ function createKratosRevokeSessionsHandler(
         return
       }
 
-      // eslint-disable-next-line no-console
-      console.log(sub)
-      const id = await db.getIdByCredentialsId(`nbp:${sub}`)
+      const id = await kratos.db.getIdByCredentialIdentifier(`nbp:${sub}`)
 
-      // eslint-disable-next-line no-console
-      console.log({ id })
       if (!id) {
         response.statusCode = 400
         response.end('user not found or not valid')
         return
       }
 
-      await kratos.deleteIdentitySessions({ id })
+      await kratos.admin.deleteIdentitySessions({ id })
       response.json({ status: 'success' }).end()
+      return
     } catch (error: unknown) {
-      // TODO: remove console.error after POC
-      // eslint-disable-next-line no-console
-      console.error(error)
       captureErrorEvent({
         error: new Error('Could not revoke sessions of user'),
         errorContext: { error },
@@ -177,7 +162,6 @@ function createKratosRevokeSessionsHandler(
       return response.end('Internal error while attempting single logout')
     }
   }
-  // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
       response.status(500).send('Internal Server Error (Illegal state)')
