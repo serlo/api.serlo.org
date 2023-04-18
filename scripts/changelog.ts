@@ -1487,6 +1487,11 @@ async function exec(): Promise<void> {
         fixed: ['Make filtering of threads more resource efficient'],
         changed: ['Update various dependencies'],
       },
+      {
+        tagName: 'v0.50.0',
+        date: '2023-04-18',
+        added: ['Implement single logout endpoint for one oidc provider'],
+      },
     ],
   })
 

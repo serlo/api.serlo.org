@@ -34,12 +34,14 @@ import { Pool, DatabaseError } from 'pg'
 
 import { captureErrorEvent } from '../error-event'
 
+export interface Kratos {
+  public: FrontendApi
+  admin: IdentityApi
+  db: KratosDB
+}
+
 export interface AuthServices {
-  kratos: {
-    public: FrontendApi
-    admin: IdentityApi
-    db: KratosDB
-  }
+  kratos: Kratos
   hydra: HydraOAuth2Api
 }
 
@@ -93,6 +95,28 @@ export class KratosDB extends Pool {
       params: [legacyId],
     })
     if (identities && IdentityDecoder.is(identities[0])) return identities[0]
+    return null
+  }
+
+  async getIdByCredentialIdentifier(
+    identifier: string
+  ): Promise<string | null> {
+    const identities = await this.executeSingleQuery({
+      query: `SELECT identity_credentials.identity_id
+           FROM identity_credentials
+           JOIN identity_credential_identifiers
+             ON identity_credentials.id = identity_credential_identifiers.identity_credential_id
+             WHERE identity_credential_identifiers.identifier = $1`,
+      params: [identifier],
+    })
+
+    if (
+      identities &&
+      identities[0] &&
+      t.type({ identity_id: t.string }).is(identities[0])
+    ) {
+      return identities[0].identity_id
+    }
     return null
   }
   async executeSingleQuery<T>({
