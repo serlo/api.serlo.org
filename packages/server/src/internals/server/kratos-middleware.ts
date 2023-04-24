@@ -48,10 +48,15 @@ export function applyKratosMiddleware({
   app.use(express.urlencoded({ extended: true }))
 
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
-  app.post(
-    `${basePath}/single-logout`,
-    createKratosRevokeSessionsHandler(kratos)
-  )
+  if (
+    process.env.ENVIRONMENT === 'local' ||
+    process.env.ENVIRONMENT === 'staging'
+  ) {
+    app.post(
+      `${basePath}/single-logout`,
+      createKratosRevokeSessionsHandler(kratos)
+    )
+  }
   return basePath
 }
 
