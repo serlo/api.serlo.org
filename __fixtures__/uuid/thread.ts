@@ -84,3 +84,9 @@ export const comment3: Model<'Comment'> = {
   parentId: castToUuid(1495),
   childrenIds: [],
 }
+
+export const comment4 = {
+  ...comment3,
+  id: castToUuid(27145),
+  date: '2014-08-09T12:33:48+02:00'
+}

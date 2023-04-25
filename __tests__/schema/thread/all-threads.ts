@@ -29,13 +29,13 @@ import {
   comment1,
   comment2,
   comment3,
+  comment4,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
-const comment4 = { ...comment3, id: nextUuid(comment3.id) }
 
 describe('allThreads', () => {
   beforeEach(() => {
@@ -150,16 +150,18 @@ describe('allThreads', () => {
       })
   })
 
-  test('parameter "subjectId" with small first', async () => {
+    // Due to pagination the API asks one more thread from the DB-layer than it should hand to the frontend.
+    // This is used for pagination. If it is handed, the frontend might show a thread twice.
+  test('fails if the comment used for pagination is added twice', async () => {
     given('AllThreadsQuery')
       .withPayload({ first: 3 })
       .returns({
-        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
+        firstCommentIds: [comment1, comment, comment4].map(R.prop('id')),
       })
 
     given('AllThreadsQuery')
-      .withPayload({ first: 3, after: comment3.date })
-      .returns({ firstCommentIds: [comment4.id] })
+      .withPayload({ first: 3, after: comment4.date })
+      .returns({ firstCommentIds: [comment4.id, comment3.id] })
 
     await query
       .withVariables({
@@ -168,7 +170,7 @@ describe('allThreads', () => {
       })
       .shouldReturnData({
         thread: {
-          allThreads: { nodes: [comment3, comment4].map(getThreadData) },
+          allThreads: { nodes: [comment4, comment3].map(getThreadData) },
         },
       })
   })
