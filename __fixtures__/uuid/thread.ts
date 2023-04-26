@@ -88,5 +88,5 @@ export const comment3: Model<'Comment'> = {
 export const comment4 = {
   ...comment3,
   id: castToUuid(27145),
-  date: '2014-08-09T12:33:48+02:00'
+  date: '2014-08-09T12:33:48+02:00',
 }

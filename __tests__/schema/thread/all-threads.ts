@@ -36,7 +36,6 @@ import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
-
 describe('allThreads', () => {
   beforeEach(() => {
     given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
@@ -150,8 +149,8 @@ describe('allThreads', () => {
       })
   })
 
-    // Due to pagination the API asks one more thread from the DB-layer than it should hand to the frontend.
-    // This is used for pagination. If it is handed, the frontend might show a thread twice.
+  // Due to pagination the API asks one more thread from the DB-layer than it should hand to the frontend.
+  // This is used for pagination. If it is handed, the frontend might show a thread twice.
   test('fails if the comment used for pagination is added twice', async () => {
     given('AllThreadsQuery')
       .withPayload({ first: 3 })

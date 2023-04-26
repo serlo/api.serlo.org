@@ -100,19 +100,17 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         after: string | undefined
         loopCount?: number
       }): Promise<Model<'Thread'>[]> {
-        let { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
-          {
-            first: threadsToFetch,
-            after,
-            instance,
-          }
-        )
+        let { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
+          first: threadsToFetch,
+          after,
+          instance,
+        })
 
         // The last fetched thread is only there for pagination. We don't want to filter it yet.
-        let cursorThread: (Model<"Thread">)[] = [];
+        let cursorThread: Model<'Thread'>[] = []
         if (firstCommentIds.length === threadsToFetch) {
           cursorThread = await resolveThreads({
-            firstCommentIds: [firstCommentIds[firstCommentIds.length-1]],
+            firstCommentIds: [firstCommentIds[firstCommentIds.length - 1]],
             dataSources,
           })
           firstCommentIds = firstCommentIds.slice(0, -1)
