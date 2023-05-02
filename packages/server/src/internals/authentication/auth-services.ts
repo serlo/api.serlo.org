@@ -19,21 +19,30 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
-import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
+import {
+  Configuration as KratosConfig,
+  IdentityApi,
+  FrontendApi,
+} from '@ory/client'
+import {
+  OAuth2Api as HydraOAuth2Api,
+  Configuration as HydraConfig,
+} from '@ory/hydra-client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, DatabaseError } from 'pg'
 
 import { captureErrorEvent } from '../error-event'
 
+export interface Kratos {
+  public: FrontendApi
+  admin: IdentityApi
+  db: KratosDB
+}
+
 export interface AuthServices {
-  kratos: {
-    public: V0alpha2Api
-    admin: V0alpha2Api
-    db: KratosDB
-  }
-  hydra: AdminApi
+  kratos: Kratos
+  hydra: HydraOAuth2Api
 }
 
 export interface Identity {
@@ -88,6 +97,28 @@ export class KratosDB extends Pool {
     if (identities && IdentityDecoder.is(identities[0])) return identities[0]
     return null
   }
+
+  async getIdByCredentialIdentifier(
+    identifier: string
+  ): Promise<string | null> {
+    const identities = await this.executeSingleQuery({
+      query: `SELECT identity_credentials.identity_id
+           FROM identity_credentials
+           JOIN identity_credential_identifiers
+             ON identity_credentials.id = identity_credential_identifiers.identity_credential_id
+             WHERE identity_credential_identifiers.identifier = $1`,
+      params: [identifier],
+    })
+
+    if (
+      identities &&
+      identities[0] &&
+      t.type({ identity_id: t.string }).is(identities[0])
+    ) {
+      return identities[0].identity_id
+    }
+    return null
+  }
   async executeSingleQuery<T>({
     query,
     params = [],
@@ -106,13 +137,13 @@ export class KratosDB extends Pool {
 export function createAuthServices(): AuthServices {
   return {
     kratos: {
-      public: new V0alpha2Api(
+      public: new FrontendApi(
         new KratosConfig({
           basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
         })
       ),
 
-      admin: new V0alpha2Api(
+      admin: new IdentityApi(
         new KratosConfig({
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
         })
@@ -121,7 +152,7 @@ export function createAuthServices(): AuthServices {
         connectionString: process.env.SERVER_KRATOS_DB_URI,
       }),
     },
-    hydra: new AdminApi(
+    hydra: new HydraOAuth2Api(
       new HydraConfig({
         basePath: process.env.SERVER_HYDRA_HOST,
         baseOptions: {

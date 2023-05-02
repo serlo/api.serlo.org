@@ -1475,6 +1475,23 @@ async function exec(): Promise<void> {
         date: '2023-03-06',
         fixed: ['Minor rewording in license of Chancenwerk'],
       },
+      {
+        tagName: 'v0.49.7',
+        date: '2023-03-17',
+        added: ['Add `subjectId` to allThreads()'],
+      },
+      {
+        tagName: 'v0.49.8',
+        date: '2023-04-12',
+        added: ['Add support for an empty cache'],
+        fixed: ['Make filtering of threads more resource efficient'],
+        changed: ['Update various dependencies'],
+      },
+      {
+        tagName: 'v0.50.0',
+        date: '2023-04-18',
+        added: ['Implement single logout endpoint for one oidc provider'],
+      },
     ],
   })
 
