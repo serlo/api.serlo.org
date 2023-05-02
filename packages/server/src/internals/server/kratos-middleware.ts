@@ -19,10 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { IdentityState, V0alpha2Api } from '@ory/client'
-import { Express, Request, Response, RequestHandler } from 'express'
+import { IdentityState } from '@ory/client'
+import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
+import { JwtPayload, decode } from 'jsonwebtoken'
 
+import { Kratos } from '../authentication'
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
@@ -38,16 +40,27 @@ const createLegacyUser = createRequest({
 
 export function applyKratosMiddleware({
   app,
-  kratosAdmin,
+  kratos,
 }: {
   app: Express
-  kratosAdmin: V0alpha2Api
+  kratos: Kratos
 }) {
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratosAdmin))
+  app.use(express.urlencoded({ extended: true }))
+
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
+  if (
+    process.env.ENVIRONMENT === 'local' ||
+    process.env.ENVIRONMENT === 'staging'
+  ) {
+    app.post(
+      `${basePath}/single-logout`,
+      createKratosRevokeSessionsHandler(kratos)
+    )
+  }
   return basePath
 }
 
-function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
+function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       captureErrorEvent({
@@ -68,7 +81,7 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
     const { userId } = request.body
 
     try {
-      const kratosUser = (await kratos.adminGetIdentity(userId)).data
+      const kratosUser = (await kratos.admin.getIdentity({ id: userId })).data
 
       const { username, email } = kratosUser.traits as {
         username: string
@@ -82,14 +95,17 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
         email,
       })
 
-      await kratos.adminUpdateIdentity(kratosUser.id, {
-        schema_id: 'default',
-        metadata_public: {
-          legacy_id: legacyUserId,
+      await kratos.admin.updateIdentity({
+        id: kratosUser.id,
+        updateIdentityBody: {
+          schema_id: 'default',
+          metadata_public: {
+            legacy_id: legacyUserId,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          traits: kratosUser.traits,
+          state: IdentityState.Active,
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        traits: kratosUser.traits,
-        state: IdentityState.Active,
       })
 
       response.json({ status: 'success' }).end()
@@ -107,7 +123,53 @@ function createKratosRegisterHandler(kratos: V0alpha2Api): RequestHandler {
   // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state=)')
+      response.status(500).send('Internal Server Error (Illegal state)')
+    )
+  }
+}
+
+function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
+  async function handleRequest(request: Request, response: Response) {
+    if (!t.type({ logout_token: t.string }).is(request.body)) {
+      response.statusCode = 400
+      response.end('no logout_token provided')
+      return
+    }
+
+    try {
+      // TODO: implement validation of jwt token
+      const { sub } = decode(request.body.logout_token) as JwtPayload
+
+      if (!sub) {
+        response.statusCode = 400
+        response.end('invalid token or sub info missing')
+        return
+      }
+
+      const id = await kratos.db.getIdByCredentialIdentifier(`nbp:${sub}`)
+
+      if (!id) {
+        response.statusCode = 400
+        response.end('user not found or not valid')
+        return
+      }
+
+      await kratos.admin.deleteIdentitySessions({ id })
+      response.json({ status: 'success' }).end()
+      return
+    } catch (error: unknown) {
+      captureErrorEvent({
+        error: new Error('Could not revoke sessions of user'),
+        errorContext: { error },
+      })
+
+      response.statusCode = 500
+      return response.end('Internal error while attempting single logout')
+    }
+  }
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state)')
     )
   }
 }

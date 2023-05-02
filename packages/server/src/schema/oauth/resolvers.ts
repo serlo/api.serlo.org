@@ -53,10 +53,10 @@ export const resolvers: Mutations<'oauth'> = {
       const { hydra } = dataSources.model.authServices
 
       return await hydra
-        .getLoginRequest(challenge)
+        .getOAuth2LoginRequest(challenge)
         .then(async () => {
           return await hydra
-            .acceptLoginRequest(challenge, {
+            .acceptOAuth2LoginRequest(challenge, {
               subject: String(legacyId),
               context: session as Session,
             })
@@ -83,7 +83,7 @@ export const resolvers: Mutations<'oauth'> = {
           )
         })
     },
-    async acceptConsent(_parent, { input }, { dataSources, userId }) {
+    acceptConsent(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input as {
@@ -108,12 +108,12 @@ export const resolvers: Mutations<'oauth'> = {
       const { hydra } = dataSources.model.authServices
 
       return hydra
-        .getConsentRequest(challenge)
+        .getOAuth2ConsentRequest(challenge)
         .then(async ({ data: body }) => {
           const scopes = body.requested_scope
 
           return await hydra
-            .acceptConsentRequest(challenge, {
+            .acceptOAuth2ConsentRequest(challenge, {
               grant_scope: body.requested_scope,
 
               grant_access_token_audience: body.requested_access_token_audience,
@@ -157,10 +157,10 @@ export const resolvers: Mutations<'oauth'> = {
     async acceptLogout(_parent, { challenge }, { dataSources }) {
       const { hydra } = dataSources.model.authServices
       return await hydra
-        .getLogoutRequest(challenge)
+        .getOAuth2LogoutRequest(challenge)
         .then(async () => {
           return await hydra
-            .acceptLogoutRequest(challenge)
+            .acceptOAuth2LogoutRequest(challenge)
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
             })

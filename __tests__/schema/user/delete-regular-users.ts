@@ -150,7 +150,7 @@ test('fails when database layer has an internal error', async () => {
 })
 
 test('fails when kratos has an error', async () => {
-  global.kratos.admin.adminDeleteIdentity = () => {
+  global.kratos.admin.deleteIdentity = () => {
     throw new Error('Error in kratos')
   }
 

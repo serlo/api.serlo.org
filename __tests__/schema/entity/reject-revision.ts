@@ -29,7 +29,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
-import { encodeId } from '~/internals/graphql'
+import { encodeSubjectId } from '~/schema/subject/utils'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {
@@ -122,7 +122,7 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
       `,
     })
     .withVariables({
-      id: encodeId({ prefix: 's', id: taxonomyTermSubject.id }),
+      id: encodeSubjectId(taxonomyTermSubject.id),
     })
 
   await unrevisedEntitiesQuery.shouldReturnData({

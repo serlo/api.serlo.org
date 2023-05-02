@@ -41,6 +41,7 @@ declare namespace NodeJS {
     SENTRY_RELEASE: string | undefined
     SERLO_ORG_DATABASE_LAYER_HOST: string
     SERLO_ORG_SECRET: string
+    CACHE_TYPE: string
 
     /**
      * Used by server only

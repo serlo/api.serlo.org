@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { V0alpha2Api } from '@ory/client'
 import express, { Express } from 'express'
 import type { Server } from 'http'
 import fetch from 'node-fetch'
 
 import { given } from '../__utils__'
+import { Kratos } from '~/internals/authentication'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 const port = 8100
@@ -35,24 +35,32 @@ beforeAll((done) => {
   app = express()
   app.use(express.json())
 
+  interface IdentityApiGetIdentityRequest {
+    id: string
+  }
+
   applyKratosMiddleware({
     app,
-    kratosAdmin: {
-      adminGetIdentity: async (userId: string) => {
-        return Promise.resolve({
-          data: {
-            id: userId,
-            traits: {
-              username: 'user',
-              email: 'user@serlo.dev',
+    kratos: {
+      admin: {
+        getIdentity: async (
+          requestParameters: IdentityApiGetIdentityRequest
+        ) => {
+          return Promise.resolve({
+            data: {
+              id: requestParameters.id,
+              traits: {
+                username: 'user',
+                email: 'user@serlo.dev',
+              },
             },
-          },
-        })
+          })
+        },
+        updateIdentity: async () => {
+          return Promise.resolve()
+        },
       },
-      adminUpdateIdentity: async () => {
-        return Promise.resolve()
-      },
-    } as unknown as V0alpha2Api,
+    } as unknown as Kratos,
   })
 
   server = app.listen(port, done)

@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.50.0](https://github.com/serlo/api.serlo.org/compare/v0.49.8..v0.50.0) - April 18, 2023
+
+### Added
+
+- Implement single logout endpoint for one oidc provider
+
+## [v0.49.8](https://github.com/serlo/api.serlo.org/compare/v0.49.7..v0.49.8) - April 12, 2023
+
+### Added
+
+- Add support for an empty cache
+
+### Changed
+
+- Update various dependencies
+
+### Fixed
+
+- Make filtering of threads more resource efficient
+
+## [v0.49.7](https://github.com/serlo/api.serlo.org/compare/v0.49.6..v0.49.7) - March 17, 2023
+
+### Added
+
+- Add `subjectId` to allThreads()
+
 ## [v0.49.6](https://github.com/serlo/api.serlo.org/compare/v0.49.5..v0.49.6) - March 6, 2023
 
 ### Fixed
