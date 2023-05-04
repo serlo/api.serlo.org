@@ -2734,10 +2734,8 @@ export type UserActivityByType = {
 export type UserConnection = {
   __typename?: 'UserConnection';
   edges: Array<UserEdge>;
-  inheritance?: Maybe<Array<Role>>;
   nodes: Array<User>;
   pageInfo: PageInfo;
-  permissions: Array<Scalars['String']>;
   totalCount: Scalars['Int'];
 };
 
@@ -2815,7 +2813,7 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
-  usersByRole: UserConnection;
+  usersByRole: UserWithPermissionsConnection;
 };
 
 
@@ -2862,6 +2860,16 @@ export type UserSetEmailResponse = {
   email: Scalars['String'];
   success: Scalars['Boolean'];
   username: Scalars['String'];
+};
+
+export type UserWithPermissionsConnection = {
+  __typename?: 'UserWithPermissionsConnection';
+  edges: Array<UserEdge>;
+  inheritance?: Maybe<Array<Role>>;
+  nodes: Array<User>;
+  pageInfo: PageInfo;
+  permissions: Array<Scalars['String']>;
+  totalCount: Scalars['Int'];
 };
 
 export type UuidMutation = {
