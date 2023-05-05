@@ -152,23 +152,23 @@ export function resolveRolesPayload(
   }
 
   return R.pickBy(R.complement(R.isEmpty), permissions)
+}
 
-  function getPermissionsForRole(role: Role): Permission[] {
-    return roleDefinitions[role].permissions ?? []
-  }
+export function getPermissionsForRole(role: Role): Permission[] {
+  return roleDefinitions[role].permissions ?? []
+}
 
-  function getRolesWithInheritance(initialRoles: Role[] = []): Role[] {
-    const allRoles: Role[] = []
-    const queue = [...initialRoles]
+export function getRolesWithInheritance(initialRoles: Role[] = []): Role[] {
+  const allRoles: Role[] = []
+  const queue = [...initialRoles]
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const role = queue.pop()
-      if (!role) return allRoles
-      if (allRoles.includes(role)) continue
-      allRoles.push(role)
-      const inheritedRoles = roleDefinitions[role].extends ?? []
-      queue.push(...inheritedRoles)
-    }
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const role = queue.pop()
+    if (!role) return allRoles
+    if (allRoles.includes(role)) continue
+    allRoles.push(role)
+    const inheritedRoles = roleDefinitions[role].extends ?? []
+    queue.push(...inheritedRoles)
   }
 }
