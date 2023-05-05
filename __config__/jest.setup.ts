@@ -56,7 +56,7 @@ beforeAll(async () => {
       ) {
         console.error(
           'Found an unhandled request for message %s',
-          JSON.stringify(req.body)
+          req.text()
         )
       } else {
         console.error(
