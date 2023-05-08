@@ -86,8 +86,8 @@ export async function createBeforeEach() {
     // Mock store endpoint of sentry ( https://develop.sentry.dev/sdk/store/ )
     rest.post<Sentry.Event>(
       'https://127.0.0.1/api/0/store/',
-      (req, res, ctx) => {
-        global.sentryEvents.push(req.body)
+      async (req, res, ctx) => {
+        global.sentryEvents.push(await req.json())
 
         return res(ctx.status(200))
       }
