@@ -20,8 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
-import { o as SharedOptions } from 'msw/lib/glossary-de6278a9'
-import { setupServer } from 'msw/node'
+import { SetupServer, setupServer } from 'msw/node'
 
 import {
   defaultSpreadsheetApi,
@@ -73,7 +72,9 @@ export function setup() {
   global.kratos = kratos
 }
 
-export async function createBeforeAll(options: SharedOptions) {
+export async function createBeforeAll(
+  options: Parameters<SetupServer['listen']>[0]
+) {
   await global.cache.ready()
 
   global.server.listen(options)
