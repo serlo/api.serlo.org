@@ -21,8 +21,8 @@
  */
 import { Event } from '@sentry/node'
 
-import type { MockKratos } from '../__tests__/__utils__/services'
 import type { MockTimer } from './setup'
+import type { MockKratos } from '../__tests__/__utils__/services'
 import type { Cache } from '~/internals/cache'
 
 export {}
