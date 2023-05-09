@@ -20,8 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { rest } from 'msw'
-import { SharedOptions } from 'msw/lib/types/sharedOptions'
-import { setupServer } from 'msw/node'
+import { SetupServer, setupServer } from 'msw/node'
 
 import {
   defaultSpreadsheetApi,
@@ -73,7 +72,9 @@ export function setup() {
   global.kratos = kratos
 }
 
-export async function createBeforeAll(options: SharedOptions) {
+export async function createBeforeAll(
+  options: Parameters<SetupServer['listen']>[0]
+) {
   await global.cache.ready()
 
   global.server.listen(options)
@@ -86,8 +87,8 @@ export async function createBeforeEach() {
     // Mock store endpoint of sentry ( https://develop.sentry.dev/sdk/store/ )
     rest.post<Sentry.Event>(
       'https://127.0.0.1/api/0/store/',
-      (req, res, ctx) => {
-        global.sentryEvents.push(req.body)
+      async (req, res, ctx) => {
+        global.sentryEvents.push(await req.json())
 
         return res(ctx.status(200))
       }
