@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.50.1](https://github.com/serlo/api.serlo.org/compare/v0.50.0..v0.50.1) - May 15, 2023
+
+### Internal
+
+- Add logger to track use of Kratos register endpoint
+
 ## [v0.50.0](https://github.com/serlo/api.serlo.org/compare/v0.49.8..v0.50.0) - April 18, 2023
 
 ### Added
