@@ -25,6 +25,7 @@ import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 
 import { Kratos } from '../authentication'
+import { Sentry } from '../sentry'
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
@@ -62,6 +63,15 @@ export function applyKratosMiddleware({
 
 function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
+    // TODO: delete after debugging See # https://github.com/ory/kratos/issues/3258#issuecomment-1535356934
+    Sentry.captureMessage(`/kratos/register reached`, {
+      contexts: {
+        request: {
+          time: new Date().toISOString(),
+          body: request.body,
+        },
+      },
+    })
     if (request.headers['x-kratos-key'] !== process.env.SERVER_KRATOS_SECRET) {
       captureErrorEvent({
         error: new Error('Unauthorized attempt to create user'),
@@ -109,6 +119,15 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
       })
 
       response.json({ status: 'success' }).end()
+      // TODO: delete after debugging See # https://github.com/ory/kratos/issues/3258#issuecomment-1535356934
+      Sentry.captureMessage(`/kratos/register processed`, {
+        contexts: {
+          request: {
+            time: new Date().toISOString(),
+            body: request.body,
+          },
+        },
+      })
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),

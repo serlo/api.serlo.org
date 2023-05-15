@@ -1492,6 +1492,11 @@ async function exec(): Promise<void> {
         date: '2023-04-18',
         added: ['Implement single logout endpoint for one oidc provider'],
       },
+      {
+        tagName: 'v0.50.1',
+        date: '2023-05-15',
+        internal: ['Add logger to track use of Kratos register endpoint'],
+      },
     ],
   })
 
