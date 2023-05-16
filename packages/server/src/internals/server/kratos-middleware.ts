@@ -159,7 +159,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       // TODO: implement validation of jwt token
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
-      if (!sub) {
+      if (!(sub && isValidUuid(sub))) {
         response.statusCode = 400
         response.end('invalid token or sub info missing')
         return
@@ -191,4 +191,9 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       response.status(500).send('Internal Server Error (Illegal state)')
     )
   }
+}
+
+function isValidUuid(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+  return uuidRegex.test(uuid);
 }
