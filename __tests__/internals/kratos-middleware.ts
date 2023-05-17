@@ -124,36 +124,22 @@ describe('Kratos middleware - register endpoint', () => {
 
 describe('Kratos middleware - single-logout endpoint', () => {
   test('fails when payload has not logout_token in body', async () => {
+    const response = await fetchKratosSingleLogout()
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('no logout_token provided')
+  })
+
+  test('fails when user cannot be found in DB', async () => {
     kratosMock.db.getIdByCredentialIdentifier = async () => {
       return Promise.resolve(null)
     }
-    const response = await fetchKratosSingleLogout({
-      body: {},
-    })
+    const response = await fetchKratosSingleLogout(
+      'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNGM2YTM0OC1hYjE3LTRiODItOTVlOS1jNTM1NGE3ZjU4ZWIifQ.H6xBcfKZCc37gpVQNRK_V6o7SAHctW814Mh-UjZ0o0o'
+    )
     expect(response.status).toBe(400)
+    expect(await response.text()).toBe('user not found or not valid')
   })
 })
-
-function fetchKratos(args: {
-  endpoint: string
-  withKratosKey: boolean
-  contentType: 'json' | 'x-www-form-urlencoded'
-  body?: unknown
-}) {
-  const { endpoint, withKratosKey, contentType, body } = args
-
-  return fetch(`http://localhost:${port}/kratos/${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'x-msw-bypass': 'true',
-      'content-type': `application/${contentType}`,
-      ...(withKratosKey
-        ? { 'x-kratos-key': process.env.SERVER_KRATOS_SECRET }
-        : {}),
-    },
-    ...(body != null ? { body: JSON.stringify(body) } : {}),
-  })
-}
 
 function fetchKratosRegister({
   withKratosKey = true,
@@ -162,18 +148,26 @@ function fetchKratosRegister({
   withKratosKey?: boolean
   body?: unknown
 }) {
-  return fetchKratos({
-    endpoint: 'register',
-    contentType: 'json',
-    ...{ withKratosKey, body },
+  return fetch(`http://localhost:${port}/kratos/register`, {
+    method: 'POST',
+    headers: {
+      'x-msw-bypass': 'true',
+      'content-type': `application/json`,
+      ...(withKratosKey
+        ? { 'x-kratos-key': process.env.SERVER_KRATOS_SECRET }
+        : {}),
+    },
+    ...(body != null ? { body: JSON.stringify(body) } : {}),
   })
 }
 
-function fetchKratosSingleLogout({ body }: { body?: unknown }) {
-  return fetchKratos({
-    endpoint: 'single-logout',
-    contentType: 'x-www-form-urlencoded',
-    withKratosKey: false,
-    body,
+function fetchKratosSingleLogout(body?: string | undefined) {
+  return fetch(`http://localhost:${port}/kratos/single-logout`, {
+    method: 'POST',
+    headers: {
+      'x-msw-bypass': 'true',
+      'content-type': `application/x-www-form-urlencoded`,
+    },
+    ...(body != null ? { body } : {}),
   })
 }
