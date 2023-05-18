@@ -55,7 +55,7 @@
     "@inyono/copyright-headers": "^0.2.0",
     "@pact-foundation/pact": "^9.18.1",
     "@pact-foundation/pact-node": "^10.17.7",
-    "@sentry/node": "^6.19.7",
+    "@sentry/node": "^7.52.1",
     "@types/glob": "^8.0.1",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.12",
