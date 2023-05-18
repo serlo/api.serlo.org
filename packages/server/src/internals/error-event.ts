@@ -96,7 +96,7 @@ export function captureErrorEvent(event: ErrorEvent) {
       scope.setFingerprint(event.fingerprint)
     }
 
-    scope.setLevel('debug')
+    scope.setLevel('error')
 
     return scope
   })
