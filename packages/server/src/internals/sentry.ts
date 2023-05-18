@@ -44,13 +44,7 @@ export function initializeSentry({
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
 
-  Sentry.addGlobalEventProcessor((event) => {
-    if (event.contexts) {
-      event.contexts = stringifyContexts(event.contexts)
-    }
-
-    return event
-  })
+  Sentry.addGlobalEventProcessor(event => {return event})
 }
 
 // See https://www.apollographql.com/docs/apollo-server/data/errors/
@@ -89,7 +83,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 scope.addBreadcrumb({
                   category: 'query-path',
                   message: error.path.join(' > '),
-                  level: Sentry.Severity.Debug,
+                  level: 'debug',
                 })
               }
 
