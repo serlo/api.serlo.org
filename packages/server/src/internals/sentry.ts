@@ -44,7 +44,13 @@ export function initializeSentry({
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
 
-  Sentry.addGlobalEventProcessor(event => {return event})
+  Sentry.addGlobalEventProcessor((event) => {
+    if (event.contexts) {
+      event.contexts = stringifyContexts(event.contexts)
+    }
+
+    return event
+  })
 }
 
 // See https://www.apollographql.com/docs/apollo-server/data/errors/
@@ -120,7 +126,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
   }
 }
 
-function stringifyContexts(contexts: Record<string, Record<string, unknown>>) {
+function stringifyContexts(
+  contexts: Record<string, Record<string, unknown> | undefined>
+) {
   return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
 }
 
