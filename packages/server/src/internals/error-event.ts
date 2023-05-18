@@ -96,7 +96,7 @@ export function captureErrorEvent(event: ErrorEvent) {
       scope.setFingerprint(event.fingerprint)
     }
 
-    scope.setLevel(Sentry.Severity.Error)
+    scope.setLevel('debug')
 
     return scope
   })
