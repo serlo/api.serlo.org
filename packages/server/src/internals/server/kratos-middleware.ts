@@ -151,6 +151,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
+      response.set('Cache-Control', 'no-store')
       response.end('no logout_token provided')
       return
     }
@@ -161,6 +162,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
 
       if (!(sub && isValidUuid(sub))) {
         response.statusCode = 400
+        response.set('Cache-Control', 'no-store')
         response.end('invalid token or sub info missing')
         return
       }
@@ -169,6 +171,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
 
       if (!id) {
         response.statusCode = 400
+        response.set('Cache-Control', 'no-store')
         response.end('user not found or not valid')
         return
       }
@@ -183,12 +186,16 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       })
 
       response.statusCode = 500
+      response.set('Cache-Control', 'no-store')
       return response.end('Internal error while attempting single logout')
     }
   }
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state)')
+      response
+        .set('Cache-Control', 'no-store')
+        .status(500)
+        .send('Internal Server Error (Illegal state)')
     )
   }
 }
