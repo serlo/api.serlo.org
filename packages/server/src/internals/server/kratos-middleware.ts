@@ -177,7 +177,10 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       }
 
       await kratos.admin.deleteIdentitySessions({ id })
-      response.json({ status: 'success' }).end()
+      response
+        .json({ status: 'success' })
+        .set('Cache-Control', 'no-store')
+        .send()
       return
     } catch (error: unknown) {
       captureErrorEvent({
