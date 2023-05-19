@@ -123,22 +123,52 @@ describe('Kratos middleware - register endpoint', () => {
   })
 })
 
+const validLogoutToken =
+  'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNGM2YTM0OC1hYjE3LTRiODItOTVlOS1jNTM1NGE3ZjU4ZWIifQ.H6xBcfKZCc37gpVQNRK_V6o7SAHctW814Mh-UjZ0o0o'
+
 describe('Kratos middleware - single-logout endpoint', () => {
+  test('with valid payload and user found in DB', async () => {
+    const response = await fetchKratosSingleLogout(validLogoutToken)
+
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ status: 'success' })
+  })
+
   test('fails when payload has not logout_token in body', async () => {
     const response = await fetchKratosSingleLogout()
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('no logout_token provided')
   })
 
+  test('fails when logout_token.claims.sub is not an UUIDv4', async () => {
+    const response = await fetchKratosSingleLogout(
+      // "sub": "12354567"
+      'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM1NDU2NyJ9.B5O3bv8GckS4GnqhicuRVeYf6Q0Yvael_vxuhX9W5_0'
+    )
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('invalid token or sub info missing')
+  })
+
   test('fails when user cannot be found in DB', async () => {
+    // FIXME: tests are not isolated since kratos.db is modified from this point onwards
     kratosMock.db.getIdByCredentialIdentifier = async () => {
       return Promise.resolve(null)
     }
-    const response = await fetchKratosSingleLogout(
-      'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNGM2YTM0OC1hYjE3LTRiODItOTVlOS1jNTM1NGE3ZjU4ZWIifQ.H6xBcfKZCc37gpVQNRK_V6o7SAHctW814Mh-UjZ0o0o'
-    )
+    const response = await fetchKratosSingleLogout(validLogoutToken)
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('user not found or not valid')
+  })
+
+  test('fails with 400 when Internal Server Error occurs', async () => {
+    kratosMock.db.getIdByCredentialIdentifier = () => {
+      throw new Error('internal server error')
+    }
+    const response = await fetchKratosSingleLogout(validLogoutToken)
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(
+      'Internal error while attempting single logout'
+    )
   })
 })
 
