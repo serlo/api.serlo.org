@@ -131,14 +131,14 @@ describe('Kratos middleware - single-logout endpoint', () => {
 
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ status: 'success' })
-    expect(response.headers['Cache-Control']).toEqual('no-store')
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 
   test('fails when payload has not logout_token in body', async () => {
     const response = await fetchKratosSingleLogout()
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('no logout_token provided')
-    expect(response.headers['Cache-Control']).toEqual('no-store')
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 
   test('fails when logout_token.claims.sub is not an UUIDv4', async () => {
@@ -148,7 +148,7 @@ describe('Kratos middleware - single-logout endpoint', () => {
     )
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('invalid token or sub info missing')
-    expect(response.headers['Cache-Control']).toEqual('no-store')
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 
   test('fails when user cannot be found in DB', async () => {
@@ -159,7 +159,7 @@ describe('Kratos middleware - single-logout endpoint', () => {
     const response = await fetchKratosSingleLogout(validLogoutToken)
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('user not found or not valid')
-    expect(response.headers['Cache-Control']).toEqual('no-store')
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 
   test('fails with 400 when Internal Server Error occurs', async () => {
@@ -172,7 +172,7 @@ describe('Kratos middleware - single-logout endpoint', () => {
     expect(await response.text()).toBe(
       'Internal error while attempting single logout'
     )
-    expect(response.headers['Cache-Control']).toEqual('no-store')
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 })
 
