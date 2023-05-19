@@ -149,6 +149,7 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
 
 function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   function sendErrorResponse(response: Response, message: string) {
+    // see https://openid.net/specs/openid-connect-backchannel-1_0.html#BCResponse
     response.set('Cache-Control', 'no-store').status(400).send(message)
   }
 
