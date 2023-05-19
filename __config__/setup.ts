@@ -84,18 +84,16 @@ export async function createBeforeEach() {
   givenSpreadheetApi(defaultSpreadsheetApi())
 
   global.server.use(
-    // Mock store endpoint of sentry ( https://develop.sentry.dev/sdk/store/ )
     rest.post<Sentry.Event>(
-      'https://127.0.0.1/api/0/store/',
+      'https://127.0.0.1/api/0/envelope',
       async (req, res, ctx) => {
-        global.sentryEvents.push(await req.json())
-
+        global.sentryEvents.push(
+          ...(await req.text())
+            .split('\n')
+            .map((x) => JSON.parse(x) as Sentry.Event)
+        )
         return res(ctx.status(200))
       }
-    ),
-    // https://develop.sentry.dev/sdk/envelopes/
-    rest.post('https://127.0.0.1/api/0/envelope', (_req, res, ctx) =>
-      res(ctx.status(404))
     )
   )
 
