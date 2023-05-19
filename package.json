@@ -53,7 +53,7 @@
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
     "@inyono/copyright-headers": "^0.2.0",
-    "@pact-foundation/pact": "^9.18.1",
+    "@pact-foundation/pact": "^11.0.2",
     "@pact-foundation/pact-node": "^10.17.7",
     "@sentry/node": "^7.52.1",
     "@types/glob": "^8.0.1",
