@@ -163,7 +163,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       // TODO: implement validation of jwt token
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
-      if (!(sub && isValidUuid(sub))) {
+      if (!sub || !isValidUuid(sub)) {
         sendErrorResponse(response, 'invalid token or sub info missing')
         return
       }
