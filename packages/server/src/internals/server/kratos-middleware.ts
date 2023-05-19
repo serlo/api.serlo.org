@@ -185,7 +185,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
         errorContext: { error },
       })
 
-      response.statusCode = 500
+      response.statusCode = 400
       response.set('Cache-Control', 'no-store')
       return response.end('Internal error while attempting single logout')
     }
@@ -194,7 +194,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
     handleRequest(request, response).catch(() =>
       response
         .set('Cache-Control', 'no-store')
-        .status(500)
+        .status(400)
         .send('Internal Server Error (Illegal state)')
     )
   }
