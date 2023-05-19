@@ -148,6 +148,10 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
 }
 
 function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
+  function sendErrorResponse(response: Response, message: string) {
+    response.set('Cache-Control', 'no-store').status(400).send(message)
+  }
+
   async function handleRequest(request: Request, response: Response) {
     if (!t.type({ logout_token: t.string }).is(request.body)) {
       response.statusCode = 400
@@ -192,10 +196,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   }
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response
-        .set('Cache-Control', 'no-store')
-        .status(400)
-        .send('Internal Server Error (Illegal state)')
+      sendErrorResponse(response, 'Internal Server Error (Illegal state)')
     )
   }
 }
