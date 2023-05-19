@@ -4287,7 +4287,6 @@ __metadata:
     "@types/bull-arena": ^3.0.7
     "@types/graphql-modules": ^0.50.0
     "@types/jsonwebtoken": ^9.0.1
-    "@types/node-fetch": ^2.6.2
     "@types/pg": ^8.6.6
     "@types/ramda": ^0.28.23
     "@types/redlock": ^4.0.4
@@ -4319,7 +4318,6 @@ __metadata:
     monocle-ts: ^2.3.13
     msgpack5: ^6.0.2
     newtype-ts: ^0.3.5
-    node-fetch: ^2.6.9
     pg: ^8.9.0
     ramda: ^0.28.0
     redlock: ^5.0.0-beta2
@@ -4820,16 +4818,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: e9bf0d79c73512c8163728de0465240d727d879258562219cbce75d95b6fb99f8b185963ca01bb7c8dd74c967a0cb596558e56102ae58390c1f43bd3890be46e
-  languageName: node
-  linkType: hard
-
-"@types/node-fetch@npm:^2.6.2":
-  version: 2.6.2
-  resolution: "@types/node-fetch@npm:2.6.2"
-  dependencies:
-    "@types/node": "*"
-    form-data: ^3.0.0
-  checksum: 6f73b1470000d303d25a6fb92875ea837a216656cb7474f66cdd67bb014aa81a5a11e7ac9c21fe19bee9ecb2ef87c1962bceeaec31386119d1ac86e4c30ad7a6
   languageName: node
   linkType: hard
 
@@ -15326,7 +15314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7, node-fetch@npm:^2.6.9":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.6.9
   resolution: "node-fetch@npm:2.6.9"
   dependencies:

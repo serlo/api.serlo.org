@@ -20,7 +20,6 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import * as t from 'io-ts'
-import fetch from 'node-fetch'
 
 import { createMutation } from '~/internals/data-source-helper'
 
