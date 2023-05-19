@@ -79,6 +79,7 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 import { isDateString } from '~/utils'
+import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 
 const events = [
   checkoutRevisionNotificationEvent,
@@ -701,13 +702,15 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(arg: {
     withRequest: {
       method: 'POST',
       path: '/',
-      body: { type, payload },
+      // TODO: proper typing
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      body: { type, payload } as AnyTemplate,
       headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
       status: arg.responseStatus,
       headers: arg.responseHeaders ?? {},
-      body: arg.responseBody,
+      body: arg.responseBody as { responseBody: AnyTemplate },
     },
   })
 
