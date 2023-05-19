@@ -23,6 +23,7 @@ import { IdentityState } from '@ory/client'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
+import { validate as uuidValidate } from 'uuid'
 
 import { Kratos } from '../authentication'
 import { Sentry } from '../sentry'
@@ -163,7 +164,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       // TODO: implement validation of jwt token
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
-      if (!sub || !isValidUuid(sub)) {
+      if (!sub || !uuidValidate(sub)) {
         sendErrorResponse(response, 'invalid token or sub info missing')
         return
       }
@@ -196,10 +197,4 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       sendErrorResponse(response, 'Internal Server Error (Illegal state)')
     )
   }
-}
-
-function isValidUuid(uuid: string): boolean {
-  const uuidRegex =
-    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
-  return uuidRegex.test(uuid)
 }
