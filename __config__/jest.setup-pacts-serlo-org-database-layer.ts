@@ -21,10 +21,8 @@
  */
 import { Pact } from '@pact-foundation/pact'
 import { rest } from 'msw'
-import fetch from 'node-fetch'
 import path from 'path'
 
-import { createTestClient } from '../__tests__/__utils__'
 import {
   createAfterAll,
   createAfterEach,
@@ -32,6 +30,7 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
+import { createTestClient } from '../__tests__/__utils__'
 import { Service, createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'

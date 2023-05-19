@@ -22,7 +22,6 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import { rest } from 'msw'
-import fetch from 'node-fetch'
 
 import { createTestEnvironment } from '../../__utils__'
 import { createQuery, Query } from '~/internals/data-source-helper/query'
