@@ -154,9 +154,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
 
   async function handleRequest(request: Request, response: Response) {
     if (!t.type({ logout_token: t.string }).is(request.body)) {
-      response.statusCode = 400
-      response.set('Cache-Control', 'no-store')
-      response.end('no logout_token provided')
+      sendErrorResponse(response, 'no logout_token provided')
       return
     }
 
@@ -165,18 +163,14 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
       if (!(sub && isValidUuid(sub))) {
-        response.statusCode = 400
-        response.set('Cache-Control', 'no-store')
-        response.end('invalid token or sub info missing')
+        sendErrorResponse(response, 'invalid token or sub info missing')
         return
       }
 
       const id = await kratos.db.getIdByCredentialIdentifier(`nbp:${sub}`)
 
       if (!id) {
-        response.statusCode = 400
-        response.set('Cache-Control', 'no-store')
-        response.end('user not found or not valid')
+        sendErrorResponse(response, 'user not found or not valid')
         return
       }
 
@@ -189,9 +183,11 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
         errorContext: { error },
       })
 
-      response.statusCode = 400
-      response.set('Cache-Control', 'no-store')
-      return response.end('Internal error while attempting single logout')
+      sendErrorResponse(
+        response,
+        'Internal error while attempting single logout'
+      )
+      return
     }
   }
   return (request, response) => {
