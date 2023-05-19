@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
+import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 import R from 'ramda'
 
 import {
@@ -79,7 +80,6 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 import { isDateString } from '~/utils'
-import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 
 const events = [
   checkoutRevisionNotificationEvent,

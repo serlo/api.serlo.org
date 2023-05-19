@@ -115,6 +115,7 @@ module.exports = {
       'error',
       {
         allow: [
+          '@pact-foundation/pact/src/dsl/matchers',
           'msw/node',
           'io-ts/lib/*',
           'io-ts-types/lib/*',
