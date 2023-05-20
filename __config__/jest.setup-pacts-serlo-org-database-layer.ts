@@ -62,7 +62,7 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
-        const pactRes = await fetch(`http://localhost:${port}${url.pathname}`)
+        const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`)
         return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
       }
     ),
@@ -70,7 +70,7 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async (req, res, ctx) => {
         const url = req.url
-        const pactRes = await fetch(`http://localhost:${port}${url.pathname}`, {
+        const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`, {
           method: 'POST',
           body:
             typeof req.body === 'object'
