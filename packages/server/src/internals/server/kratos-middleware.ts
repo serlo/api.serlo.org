@@ -23,6 +23,7 @@ import { IdentityState } from '@ory/client'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
+import { validate as uuidValidate } from 'uuid'
 
 import { Kratos } from '../authentication'
 import { Sentry } from '../sentry'
@@ -148,10 +149,14 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
 }
 
 function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
+  function sendErrorResponse(response: Response, message: string) {
+    // see https://openid.net/specs/openid-connect-backchannel-1_0.html#BCResponse
+    response.set('Cache-Control', 'no-store').status(400).send(message)
+  }
+
   async function handleRequest(request: Request, response: Response) {
     if (!t.type({ logout_token: t.string }).is(request.body)) {
-      response.statusCode = 400
-      response.end('no logout_token provided')
+      sendErrorResponse(response, 'no logout_token provided')
       return
     }
 
@@ -159,22 +164,23 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
       // TODO: implement validation of jwt token
       const { sub } = decode(request.body.logout_token) as JwtPayload
 
-      if (!sub) {
-        response.statusCode = 400
-        response.end('invalid token or sub info missing')
+      if (!sub || !uuidValidate(sub)) {
+        sendErrorResponse(response, 'invalid token or sub info missing')
         return
       }
 
       const id = await kratos.db.getIdByCredentialIdentifier(`nbp:${sub}`)
 
       if (!id) {
-        response.statusCode = 400
-        response.end('user not found or not valid')
+        sendErrorResponse(response, 'user not found or not valid')
         return
       }
 
       await kratos.admin.deleteIdentitySessions({ id })
-      response.json({ status: 'success' }).end()
+      response
+        .set('Cache-Control', 'no-store')
+        .json({ status: 'success' })
+        .send()
       return
     } catch (error: unknown) {
       captureErrorEvent({
@@ -182,13 +188,16 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
         errorContext: { error },
       })
 
-      response.statusCode = 500
-      return response.end('Internal error while attempting single logout')
+      sendErrorResponse(
+        response,
+        'Internal error while attempting single logout'
+      )
+      return
     }
   }
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state)')
+      sendErrorResponse(response, 'Internal Server Error (Illegal state)')
     )
   }
 }
