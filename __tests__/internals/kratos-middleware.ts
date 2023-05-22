@@ -30,55 +30,31 @@ import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 const port = 8100
 let app: Express
 let server: Server
+let kratosMock: Kratos
 
 interface IdentityApiGetIdentityRequest {
   id: string
 }
 
-const kratosMock = {
-  admin: {
-    getIdentity: async (requestParameters: IdentityApiGetIdentityRequest) => {
-      return Promise.resolve({
-        data: {
-          id: requestParameters.id,
-          traits: {
-            username: 'user',
-            email: 'user@serlo.dev',
-          },
-        },
-      })
-    },
-    updateIdentity: async () => {
-      return Promise.resolve()
-    },
-    deleteIdentitySessions: async () => {
-      return Promise.resolve()
-    },
-  },
-  db: {
-    getIdByCredentialIdentifier: async () => {
-      return Promise.resolve('23af75f5-009a-4a11-a9d0-d79ac8bc8d34')
-    },
-  },
-} as unknown as Kratos
+describe('Kratos middleware - register endpoint', () => {
+  beforeEach((done) => {
+    app = express()
+    app.use(express.json())
 
-beforeAll((done) => {
-  app = express()
-  app.use(express.json())
+    kratosMock = createKratosMock()
 
-  applyKratosMiddleware({
-    app,
-    kratos: kratosMock,
+    applyKratosMiddleware({
+      app,
+      kratos: kratosMock,
+    })
+
+    server = app.listen(port, done)
   })
 
-  server = app.listen(port, done)
-})
+  afterEach((done) => {
+    server.close(done)
+  })
 
-afterAll((done) => {
-  server.close(done)
-})
-
-describe('Kratos middleware - register endpoint', () => {
   test('fails when secret is not sent', async () => {
     const response = await fetchKratosRegister({ withKratosKey: false })
 
@@ -123,17 +99,27 @@ describe('Kratos middleware - register endpoint', () => {
   })
 })
 
-const validLogoutToken =
-  'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNGM2YTM0OC1hYjE3LTRiODItOTVlOS1jNTM1NGE3ZjU4ZWIifQ.H6xBcfKZCc37gpVQNRK_V6o7SAHctW814Mh-UjZ0o0o'
-
 describe('Kratos middleware - single-logout endpoint', () => {
-  test('with valid payload and user found in DB', async () => {
-    const response = await fetchKratosSingleLogout(validLogoutToken)
+  beforeEach((done) => {
+    app = express()
+    app.use(express.json())
 
-    expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({ status: 'success' })
-    expect(response.headers.get('Cache-Control')).toEqual('no-store')
+    kratosMock = createKratosMock()
+
+    applyKratosMiddleware({
+      app,
+      kratos: kratosMock,
+    })
+
+    server = app.listen(port, done)
   })
+
+  afterEach((done) => {
+    server.close(done)
+  })
+
+  const validLogoutToken =
+    'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNGM2YTM0OC1hYjE3LTRiODItOTVlOS1jNTM1NGE3ZjU4ZWIifQ.H6xBcfKZCc37gpVQNRK_V6o7SAHctW814Mh-UjZ0o0o'
 
   test('fails when payload has not logout_token in body', async () => {
     const response = await fetchKratosSingleLogout()
@@ -153,7 +139,6 @@ describe('Kratos middleware - single-logout endpoint', () => {
   })
 
   test('fails when user cannot be found in DB', async () => {
-    // FIXME: tests are not isolated since kratos.db is modified from this point onwards
     kratosMock.db.getIdByCredentialIdentifier = async () => {
       return Promise.resolve(null)
     }
@@ -173,6 +158,14 @@ describe('Kratos middleware - single-logout endpoint', () => {
     expect(await response.text()).toBe(
       'Internal error while attempting single logout'
     )
+    expect(response.headers.get('Cache-Control')).toEqual('no-store')
+  })
+
+  test('with valid payload and user found in DB', async () => {
+    const response = await fetchKratosSingleLogout(validLogoutToken)
+
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ status: 'success' })
     expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })
 })
@@ -206,4 +199,33 @@ function fetchKratosSingleLogout(body?: string | undefined) {
     },
     ...(body != null ? { body } : {}),
   })
+}
+
+function createKratosMock() {
+  return {
+    admin: {
+      getIdentity: async (requestParameters: IdentityApiGetIdentityRequest) => {
+        return Promise.resolve({
+          data: {
+            id: requestParameters.id,
+            traits: {
+              username: 'user',
+              email: 'user@serlo.dev',
+            },
+          },
+        })
+      },
+      updateIdentity: async () => {
+        return Promise.resolve()
+      },
+      deleteIdentitySessions: async () => {
+        return Promise.resolve()
+      },
+    },
+    db: {
+      getIdByCredentialIdentifier: async () => {
+        return Promise.resolve('23af75f5-009a-4a11-a9d0-d79ac8bc8d34')
+      },
+    },
+  } as unknown as Kratos
 }
