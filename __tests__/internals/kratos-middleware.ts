@@ -37,17 +37,7 @@ interface IdentityApiGetIdentityRequest {
 
 describe('Kratos middleware - register endpoint', () => {
   beforeEach((done) => {
-    app = express()
-    app.use(express.json())
-
-    kratosMock = createKratosMock()
-
-    applyKratosMiddleware({
-      app,
-      kratos: kratosMock,
-    })
-
-    server = app.listen(port, done)
+    createKratosMiddlewareBeforeEach(done)
   })
 
   afterEach((done) => {
@@ -100,17 +90,7 @@ describe('Kratos middleware - register endpoint', () => {
 
 describe('Kratos middleware - single-logout endpoint', () => {
   beforeEach((done) => {
-    app = express()
-    app.use(express.json())
-
-    kratosMock = createKratosMock()
-
-    applyKratosMiddleware({
-      app,
-      kratos: kratosMock,
-    })
-
-    server = app.listen(port, done)
+    createKratosMiddlewareBeforeEach(done)
   })
 
   afterEach((done) => {
@@ -198,6 +178,20 @@ function fetchKratosSingleLogout(body?: string | undefined) {
     },
     ...(body != null ? { body } : {}),
   })
+}
+
+function createKratosMiddlewareBeforeEach(done: jest.DoneCallback) {
+  app = express()
+  app.use(express.json())
+
+  kratosMock = createKratosMock()
+
+  applyKratosMiddleware({
+    app,
+    kratos: kratosMock,
+  })
+
+  server = app.listen(port, done)
 }
 
 function createKratosMock() {
