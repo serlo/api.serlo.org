@@ -21,7 +21,6 @@
  */
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import fetch, { RequestInit } from 'node-fetch'
 import { URL } from 'url'
 
 import { createMutation, createQuery } from '~/internals/data-source-helper'
