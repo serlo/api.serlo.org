@@ -21,7 +21,6 @@
  */
 import express, { Express } from 'express'
 import type { Server } from 'http'
-import fetch from 'node-fetch'
 
 import { given } from '../__utils__'
 import { Kratos } from '~/internals/authentication'

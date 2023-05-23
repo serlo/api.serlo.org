@@ -89,7 +89,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 scope.addBreadcrumb({
                   category: 'query-path',
                   message: error.path.join(' > '),
-                  level: Sentry.Severity.Debug,
+                  level: 'debug',
                 })
               }
 
@@ -126,7 +126,9 @@ export function createSentryPlugin(): ApolloServerPlugin {
   }
 }
 
-function stringifyContexts(contexts: Record<string, Record<string, unknown>>) {
+function stringifyContexts(
+  contexts: Record<string, Record<string, unknown> | undefined>
+) {
   return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
 }
 

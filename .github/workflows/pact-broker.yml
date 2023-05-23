@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           cache: yarn
-          node-version: 16.x
+          node-version: 18.x
       - run: yarn --immutable --immutable-cache
       - run: yarn start:redis
       - run: yarn pacts

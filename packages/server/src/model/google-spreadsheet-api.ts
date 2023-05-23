@@ -24,7 +24,6 @@ import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
 import { formatValidationErrors } from 'io-ts-reporters'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
-import fetch from 'node-fetch'
 import { URL } from 'url'
 
 import { createQuery } from '~/internals/data-source-helper'
