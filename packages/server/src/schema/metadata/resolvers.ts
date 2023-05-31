@@ -74,6 +74,7 @@ export const resolvers: Queries<'metadata'> = {
         nodes: entities,
         payload,
         createCursor: (node) => node.identifier.value.toString(),
+        limit: 1000,
       })
 
       // TODO: Find better implementation for "HasNextPageInfo"
