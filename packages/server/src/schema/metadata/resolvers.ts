@@ -19,6 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
+
+import { UserInputError } from 'apollo-server'
+
 import { version } from '../../../package.json'
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
@@ -56,7 +59,11 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     async entities(_parent, payload, { dataSources }) {
+      const limit = 1000
       const first = payload.first ?? 100
+      if (first > limit) {
+        throw new UserInputError(`first cannot be higher than limit=${limit}`)
+      }
 
       // TODO: There must be a shorter implementation
       const { entities } = await dataSources.model.serlo.getEntitiesMetadata({
@@ -74,7 +81,7 @@ export const resolvers: Queries<'metadata'> = {
         nodes: entities,
         payload,
         createCursor: (node) => node.identifier.value.toString(),
-        limit: 1000,
+        limit,
       })
 
       // TODO: Find better implementation for "HasNextPageInfo"
