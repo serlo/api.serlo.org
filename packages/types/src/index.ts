@@ -1524,13 +1524,23 @@ export type MediaUpload = {
 
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
+  /** @deprecated Please use the `resources` field instead. This property will be deleted. */
   entities: EntityMetadataConnection;
   publisher: Scalars['JSONObject'];
+  resources: EntityMetadataConnection;
   version: Scalars['String'];
 };
 
 
 export type MetadataQueryEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  modifiedAfter?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MetadataQueryResourcesArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   instance?: InputMaybe<Instance>;

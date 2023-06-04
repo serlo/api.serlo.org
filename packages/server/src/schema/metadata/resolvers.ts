@@ -55,7 +55,19 @@ export const resolvers: Queries<'metadata'> = {
         email: 'de@serlo.org',
       }
     },
-    async entities(_parent, payload, { dataSources }) {
+    /**
+     * TODO: Remove when property is not used any more by WLO and Datenraum (NBP).
+     *
+     * @deprecated
+     */
+    entities(parent, args, context, info) {
+      if (typeof resolvers.MetadataQuery.resources === 'function') {
+        return resolvers.MetadataQuery.resources(parent, args, context, info)
+      } else {
+        throw new Error('Illegal State')
+      }
+    },
+    async resources(_parent, payload, { dataSources }) {
       const first = payload.first ?? 100
 
       // TODO: There must be a shorter implementation
