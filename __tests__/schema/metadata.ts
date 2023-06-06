@@ -38,7 +38,7 @@ test('endpoint `publisher` returns publisher', async () => {
     .shouldReturnData({
       metadata: {
         publisher: expect.objectContaining({
-          id: 'https://serlo.org/',
+          id: 'https://serlo.org/organization',
         }) as unknown,
       },
     })
