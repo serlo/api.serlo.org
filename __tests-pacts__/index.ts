@@ -214,7 +214,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact tests for the following two mutations
   EntityCheckoutRevisionMutation: {
     examples: [
       [
@@ -381,7 +380,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact tests for the following two mutations
   PageCheckoutRevisionMutation: {
     examples: [
       [
