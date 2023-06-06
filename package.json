@@ -26,7 +26,6 @@
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
     "format:prettier:staged": "prettier --write $(git diff --name-only --cached)",
-    "license": "ts-node-esm scripts/license-headers",
     "lint": "npm-run-all --parallel lint:prettier lint:tsc lint:eslint",
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
@@ -52,7 +51,6 @@
   },
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
-    "@inyono/copyright-headers": "^0.2.0",
     "@pact-foundation/pact": "^11.0.2",
     "@pact-foundation/pact-node": "^10.17.7",
     "@sentry/node": "^7.52.1",
