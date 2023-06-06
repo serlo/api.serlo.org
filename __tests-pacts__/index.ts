@@ -169,6 +169,7 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
+  // TODO: Add pact-test for the following query
   EntitiesMetadataQuery: { examples: [] },
   EntityAddRevisionMutation: {
     examples: [
@@ -214,8 +215,34 @@ const pactSpec: PactSpec = {
     ],
   },
   // TODO: Add pact tests for the following two mutations
-  EntityCheckoutRevisionMutation: { examples: [] },
-  EntityRejectRevisionMutation: { examples: [] },
+  EntityCheckoutRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: articleRevision.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  EntityRejectRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: articleRevision.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   EntityCreateMutation: {
     examples: [
       [
@@ -355,8 +382,34 @@ const pactSpec: PactSpec = {
     ],
   },
   // TODO: Add pact tests for the following two mutations
-  PageCheckoutRevisionMutation: { examples: [] },
-  PageRejectRevisionMutation: { examples: [] },
+  PageCheckoutRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: pageRevision.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  PageRejectRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: pageRevision.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   PageCreateMutation: {
     examples: [
       [
