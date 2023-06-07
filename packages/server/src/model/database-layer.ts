@@ -74,7 +74,7 @@ export const spec = {
       t.type({ first: t.number }),
       t.partial({ after: t.string }),
       t.partial({ instance: InstanceDecoder }),
-      t.partial({subjectId: t.number})
+      t.partial({ subjectId: t.number }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
