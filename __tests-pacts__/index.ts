@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { Matchers } from '@pact-foundation/pact'
+import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 import R from 'ramda'
 
 import {
@@ -701,13 +702,15 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(arg: {
     withRequest: {
       method: 'POST',
       path: '/',
-      body: { type, payload },
+      // TODO: proper typing
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      body: { type, payload } as AnyTemplate,
       headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
       status: arg.responseStatus,
       headers: arg.responseHeaders ?? {},
-      body: arg.responseBody,
+      body: arg.responseBody as { responseBody: AnyTemplate },
     },
   })
 

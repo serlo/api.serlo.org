@@ -42,7 +42,7 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '/__tests-pacts__/index\\.ts',
   transform: {
-    '^.+\\.graphql$': 'jest-transform-graphql',
+    '^.+\\.graphql$': './transform-graphql-jest-28-shim.js',
   },
   watchPathIgnorePatterns: ['<rootDir>/pacts/'],
 }

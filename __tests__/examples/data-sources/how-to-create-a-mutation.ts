@@ -21,7 +21,6 @@
  */
 import * as t from 'io-ts'
 import { rest } from 'msw'
-import fetch from 'node-fetch'
 
 import {
   createMutation,
