@@ -35,9 +35,9 @@ import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
-const comment4 = { ...comment3, id: nextUuid(comment3.id) }
-
 describe('allThreads', () => {
+  const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+
   beforeEach(() => {
     given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
     given('UuidQuery').for(article, article2)
@@ -136,39 +136,18 @@ describe('allThreads', () => {
 
   test('parameter "subjectId"', async () => {
     given('AllThreadsQuery')
-      .withPayload({ first: 11 })
+      .withPayload({ first: 11, subjectId: article.canonicalSubjectId! })
       .returns({
-        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
+        firstCommentIds: [comment, comment1].map(R.prop('id')),
       })
-
-    await query
-      .withVariables({ subjectId: encodeSubjectId(article.taxonomyTermIds[0]) })
-      .shouldReturnData({
-        thread: {
-          allThreads: { nodes: [comment, comment1].map(getThreadData) },
-        },
-      })
-  })
-
-  test('parameter "subjectId" with small first', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 3 })
-      .returns({
-        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
-      })
-
-    given('AllThreadsQuery')
-      .withPayload({ first: 3, after: comment3.date })
-      .returns({ firstCommentIds: [comment4.id] })
 
     await query
       .withVariables({
-        first: 2,
-        subjectId: encodeSubjectId(article2.taxonomyTermIds[0]),
+        subjectId: encodeSubjectId(article.canonicalSubjectId!),
       })
       .shouldReturnData({
         thread: {
-          allThreads: { nodes: [comment3, comment4].map(getThreadData) },
+          allThreads: { nodes: [comment, comment1].map(getThreadData) },
         },
       })
   })

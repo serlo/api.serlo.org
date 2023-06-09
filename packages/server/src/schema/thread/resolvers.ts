@@ -63,7 +63,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     async allThreads(_parent, input, { dataSources }) {
       const subjectId = input.subjectId
         ? decodeSubjectId(input.subjectId)
-        : null
+        : undefined
       const limit = 50
       const { first = 10, instance } = input
       // TODO: Better solution
@@ -74,12 +74,19 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
+      const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
+        first: first + 1,
+        after,
+        instance,
+        subjectId,
+      })
+
+      const threads = await resolveThreads({ firstCommentIds, dataSources })
+
+      // TODO: The types do not match
+      // TODO: Support for resolving small changes
       return resolveConnection({
-        nodes: await queryThreads({
-          first: first + 1,
-          threadsToFetch: first + 1,
-          after,
-        }),
+        nodes: threads,
         payload: { ...input, first, after },
         createCursor: (node) => {
           const comments = node.commentPayloads
@@ -88,49 +95,6 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           return latestComment.date
         },
       })
-
-      async function queryThreads({
-        first,
-        after,
-        threadsToFetch,
-        loopCount = 0,
-      }: {
-        threadsToFetch: number
-        first: number
-        after: string | undefined
-        loopCount?: number
-      }): Promise<Model<'Thread'>[]> {
-        const { firstCommentIds } = await dataSources.model.serlo.getAllThreads(
-          {
-            first: threadsToFetch,
-            after,
-            instance,
-          }
-        )
-
-        const threads = await resolveThreads({
-          firstCommentIds,
-          dataSources,
-          subjectId,
-        })
-
-        if (
-          threads.length < first &&
-          firstCommentIds.length === threadsToFetch &&
-          loopCount < 3
-        ) {
-          return threads.concat(
-            await queryThreads({
-              first: first - threads.length,
-              after: threads.at(-1)?.commentPayloads?.at(-1)?.date,
-              threadsToFetch,
-              loopCount: loopCount + 1,
-            })
-          )
-        } else {
-          return threads.slice(0, first)
-        }
-      }
     },
   },
   Thread: {
