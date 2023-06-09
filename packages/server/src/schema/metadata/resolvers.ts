@@ -31,10 +31,10 @@ export const resolvers: Queries<'metadata'> = {
     publisher() {
       return {
         '@context': [
-          'https://w3id.org/kim/lrmi-profile/draft/context.jsonld',
+          'https://w3id.org/kim/amb/context.jsonld',
           { '@language': 'de' },
         ],
-        id: 'https://serlo.org/',
+        id: 'https://serlo.org/organization',
         type: ['EducationalOrganization', 'NGO'],
         name: 'Serlo Education e.V.',
         alternateName: 'Serlo',
@@ -46,8 +46,8 @@ export const resolvers: Queries<'metadata'> = {
         logo: 'https://de.serlo.org/_assets/img/serlo-logo.svg',
         address: {
           type: 'PostalAddress',
-          streetAddress: 'Daiserstraße 15 (RGB)',
-          postalCode: '81371',
+          streetAddress: 'Rosenheimerstraße 139',
+          postalCode: '81671',
           addressLocality: 'München',
           addressRegion: 'Bayern',
           addressCountry: 'Germany',
