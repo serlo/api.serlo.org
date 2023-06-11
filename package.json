@@ -44,7 +44,7 @@
     "redis:empty": "docker-compose exec redis redis-cli FLUSHDB",
     "show-unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport=packages/types/ --excludePathsFromReport=packages/server/src/types.ts --ignoreFiles=/dist/",
     "stop:redis": "docker-compose stop",
-    "test": "jest --config jest.config.js --runInBand --forceExit --no-compilation-cache",
+    "test": "jest --config jest.config.js --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
