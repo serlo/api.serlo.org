@@ -121,6 +121,12 @@ describe('endpoint "resources"', () => {
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
+  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
+    await query
+      .withVariables({ first: 1001 })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('with parameter "modifiedAfter"', async () => {
     given('EntitiesMetadataQuery')
       .withPayload({ first: 101, modifiedAfter: '2019-12-01' })
