@@ -169,8 +169,14 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact-test for the following query
-  EntitiesMetadataQuery: { examples: [] },
+  EntitiesMetadataQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { entities: [{ identifier: { value: 1495 } }] },
+      ],
+    ],
+  },
   EntityAddRevisionMutation: {
     examples: [
       [
