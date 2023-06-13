@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.51.0](https://github.com/serlo/api.serlo.org/compare/v0.50.1..v0.51.0) - June 13, 2023
+
+### Added
+
+- Set metadata version to 1.0.0
+
+### Internal
+
+- Upgrade node to v18 and many dependencies
+
 ## [v0.50.1](https://github.com/serlo/api.serlo.org/compare/v0.50.0..v0.50.1) - May 15, 2023
 
 ### Internal
