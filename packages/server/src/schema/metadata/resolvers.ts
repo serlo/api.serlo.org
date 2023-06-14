@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { version } from '../../../package.json'
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
@@ -99,7 +98,7 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return version
+      return '1.0.0'
     },
   },
 }
