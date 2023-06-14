@@ -1503,6 +1503,11 @@ async function exec(): Promise<void> {
         added: ['Set metadata version to 1.0.0'],
         internal: ['Upgrade node to v18 and many dependencies'],
       },
+      {
+        tagName: 'v0.51.1',
+        date: '2023-06-14',
+        fixed: ['Fix missing fetch by upgrade docker base image'],
+      },
     ],
   })
 
