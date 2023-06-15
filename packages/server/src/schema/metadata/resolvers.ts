@@ -22,7 +22,6 @@
 
 import { UserInputError } from 'apollo-server'
 
-import { version } from '../../../package.json'
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
@@ -107,7 +106,7 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return version
+      return '1.0.0'
     },
   },
 }
