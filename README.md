@@ -22,14 +22,24 @@ $ cd api.serlo.org
 
 ## Development
 
-### Install dependencies
+### Initial setup
 
-Run `yarn` to install the dependencies of all packages and
-run `yarn build` to build also the packages 'authorization' and 'types'.
+Run `yarn` to install the dependencies of all packages.
+
+Run `yarn build` to build the packages 'authorization' and 'types'.
 
 ### Start
 
 Make sure Docker is running and then run `yarn start` to start Redis.
+
+#### Setup NODE_OPTIONS
+
+If in the `/etc/hosts` file of your host you have the `::1` (IPv6) mapped to `localhost`, you will additionally need
+to set: `--dns-result-order=ipv4first` in the `NODE_OPTIONS` environment variable:
+
+```bash
+export NODE_OPTIONS=--dns-result-order=ipv4first
+```
 
 ### Run tests
 
@@ -39,7 +49,7 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 
 ### Use the GraphQL playground
 
-After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).  
+After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).
 Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment.
 
 If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to choose a specific user.

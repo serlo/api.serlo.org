@@ -19,7 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { version } from '../../../package.json'
+
+import { UserInputError } from 'apollo-server'
+
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
@@ -31,10 +33,10 @@ export const resolvers: Queries<'metadata'> = {
     publisher() {
       return {
         '@context': [
-          'https://w3id.org/kim/lrmi-profile/draft/context.jsonld',
+          'https://w3id.org/kim/amb/context.jsonld',
           { '@language': 'de' },
         ],
-        id: 'https://serlo.org/',
+        id: 'https://serlo.org/organization',
         type: ['EducationalOrganization', 'NGO'],
         name: 'Serlo Education e.V.',
         alternateName: 'Serlo',
@@ -46,8 +48,8 @@ export const resolvers: Queries<'metadata'> = {
         logo: 'https://de.serlo.org/_assets/img/serlo-logo.svg',
         address: {
           type: 'PostalAddress',
-          streetAddress: 'Daiserstraße 15 (RGB)',
-          postalCode: '81371',
+          streetAddress: 'Rosenheimerstraße 139',
+          postalCode: '81671',
           addressLocality: 'München',
           addressRegion: 'Bayern',
           addressCountry: 'Germany',
@@ -55,8 +57,25 @@ export const resolvers: Queries<'metadata'> = {
         email: 'de@serlo.org',
       }
     },
-    async entities(_parent, payload, { dataSources }) {
+    /**
+     * TODO: Remove when property is not used any more by WLO and Datenraum (NBP).
+     *
+     * @deprecated
+     */
+    entities(parent, args, context, info) {
+      if (typeof resolvers.MetadataQuery.resources === 'function') {
+        return resolvers.MetadataQuery.resources(parent, args, context, info)
+      } else {
+        throw new Error('Illegal State')
+      }
+    },
+    async resources(_parent, payload, { dataSources }) {
+      const limit = 1000
+
       const first = payload.first ?? 100
+      if (first > limit) {
+        throw new UserInputError(`first cannot be higher than limit=${limit}`)
+      }
 
       // TODO: There must be a shorter implementation
       const { entities } = await dataSources.model.serlo.getEntitiesMetadata({
@@ -74,7 +93,7 @@ export const resolvers: Queries<'metadata'> = {
         nodes: entities,
         payload,
         createCursor: (node) => node.identifier.value.toString(),
-        limit: 1000,
+        limit,
       })
 
       // TODO: Find better implementation for "HasNextPageInfo"
@@ -87,7 +106,7 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return version
+      return '1.0.0'
     },
   },
 }
