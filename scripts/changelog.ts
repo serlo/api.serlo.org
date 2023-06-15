@@ -1497,6 +1497,17 @@ async function exec(): Promise<void> {
         date: '2023-05-15',
         internal: ['Add logger to track use of Kratos register endpoint'],
       },
+      {
+        tagName: 'v0.51.0',
+        date: '2023-06-13',
+        added: ['Set metadata version to 1.0.0'],
+        internal: ['Upgrade node to v18 and many dependencies'],
+      },
+      {
+        tagName: 'v0.51.1',
+        date: '2023-06-14',
+        fixed: ['Fix missing fetch by upgrade docker base image'],
+      },
     ],
   })
 
