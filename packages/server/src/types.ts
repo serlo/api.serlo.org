@@ -1528,13 +1528,23 @@ export type MediaUpload = {
 
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
+  /** @deprecated Please use the `resources` field instead. This property will be deleted. */
   entities: EntityMetadataConnection;
   publisher: Scalars['JSONObject'];
+  resources: EntityMetadataConnection;
   version: Scalars['String'];
 };
 
 
 export type MetadataQueryEntitiesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  instance?: InputMaybe<Instance>;
+  modifiedAfter?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MetadataQueryResourcesArgs = {
   after?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   instance?: InputMaybe<Instance>;
@@ -3090,6 +3100,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AbstractEntity: ResolversTypes['Applet'] | ResolversTypes['Article'] | ResolversTypes['Course'] | ResolversTypes['CoursePage'] | ResolversTypes['Event'] | ResolversTypes['Exercise'] | ResolversTypes['ExerciseGroup'] | ResolversTypes['GroupedExercise'] | ResolversTypes['Solution'] | ResolversTypes['Video'];
@@ -4337,6 +4349,7 @@ export type MediaUploadResolvers<ContextType = Context, ParentType extends Resol
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  resources?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
