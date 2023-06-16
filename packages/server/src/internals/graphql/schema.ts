@@ -192,8 +192,7 @@ export type PickResolvers<
   F = O.OptionalKeys<GetResolver<R>>
 > = Required<PickKeys<GetResolver<R>, F>>
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
+export type ResolverFunction<Result, Parent, Args = object> = Resolver<
   Result,
   Parent,
   Context,
