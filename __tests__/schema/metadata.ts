@@ -23,7 +23,7 @@ test('endpoint `publisher` returns publisher', async () => {
     })
 })
 
-describe('endpoint "entities"', () => {
+describe('endpoint "resources"', () => {
   const query = new Client().prepareQuery({
     query: gql`
       query (
@@ -33,7 +33,7 @@ describe('endpoint "entities"', () => {
         $modifiedAfter: String
       ) {
         metadata {
-          entities(
+          resources(
             first: $first
             after: $after
             instance: $instance
@@ -46,7 +46,7 @@ describe('endpoint "entities"', () => {
     `,
   })
 
-  test('returns list of metadata for entities', async () => {
+  test('returns list of metadata for resources', async () => {
     given('EntitiesMetadataQuery')
       .withPayload({ first: 101 })
       .returns({
@@ -55,7 +55,7 @@ describe('endpoint "entities"', () => {
 
     await query.shouldReturnData({
       metadata: {
-        entities: {
+        resources: {
           nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
         },
       },
@@ -71,7 +71,7 @@ describe('endpoint "entities"', () => {
 
     await query.withVariables({ first: 10 }).shouldReturnData({
       metadata: {
-        entities: {
+        resources: {
           nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
         },
       },
@@ -87,7 +87,7 @@ describe('endpoint "entities"', () => {
 
     await query.withVariables({ after: 'MTUxMw==' }).shouldReturnData({
       metadata: {
-        entities: {
+        resources: {
           nodes: [{ identifier: { value: 11 }, id: 'https://serlo.org/11' }],
         },
       },
@@ -97,6 +97,12 @@ describe('endpoint "entities"', () => {
   test('fails when "after" parameter is invalid', async () => {
     await query
       .withVariables({ after: 'foo' })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
+    await query
+      .withVariables({ first: 1001 })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
@@ -111,7 +117,7 @@ describe('endpoint "entities"', () => {
       .withVariables({ modifiedAfter: '2019-12-01' })
       .shouldReturnData({
         metadata: {
-          entities: {
+          resources: {
             nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
           },
         },
@@ -127,7 +133,7 @@ describe('endpoint "entities"', () => {
 
     await query.withVariables({ instance: Instance.De }).shouldReturnData({
       metadata: {
-        entities: {
+        resources: {
           nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
         },
       },

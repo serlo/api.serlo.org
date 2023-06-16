@@ -1,4 +1,4 @@
-import { article } from './article'
+import { article, article2 } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
@@ -59,6 +59,6 @@ export const comment3: Model<'Comment'> = {
   archived: false,
   content:
     'Das obere Beispiel ist "ungut". Denn man hat da Kettenrechnungen hintereinander gestellt und mehrere Gleichzeitszeichen in einer Zeile, aber am Anfang ist die Rechnung 1+2 und am Ende ist die Lösung 6. Mathematisch ist das eine falsche Schreibweise, auch wenn man üblicherweise so rechnet. Bei der zweiten Variante ist das besser gelöst, denn da wird diese Nebenrechnung nicht in die Zeile der Endlösung reingeschrieben.',
-  parentId: castToUuid(1495),
+  parentId: article2.id,
   childrenIds: [],
 }
