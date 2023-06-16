@@ -21,7 +21,14 @@
  */
 import { gql } from 'apollo-server'
 
-import { article, comment, user } from '../../../__fixtures__'
+import {
+  article,
+  comment,
+  comment1,
+  comment2,
+  user,
+  user2,
+} from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 
 const mutation = new Client({ userId: user.id })
@@ -39,7 +46,7 @@ const mutation = new Client({ userId: user.id })
   .withInput({ id: comment.id, trashed: true })
 
 beforeEach(() => {
-  given('UuidQuery').for(article, comment, user)
+  given('UuidQuery').for(article, comment, comment1, comment2, user, user2)
 })
 
 // TODO: this is actually wrong since the provided comment is a thread
@@ -51,6 +58,19 @@ test('trashing comment returns success', async () => {
   await mutation.shouldReturnData({
     thread: { setCommentState: { success: true } },
   })
+})
+
+test('trashing own comment returns success', async () => {
+  given('UuidSetStateMutation')
+    .withPayload({ ids: [comment2.id], userId: user2.id, trashed: true })
+    .returns(undefined)
+
+  await mutation
+    .withContext({ userId: user2.id })
+    .withInput({ id: comment2.id, trashed: true })
+    .shouldReturnData({
+      thread: { setCommentState: { success: true } },
+    })
 })
 
 test('unauthenticated user gets error', async () => {
