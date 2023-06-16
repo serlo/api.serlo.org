@@ -32,6 +32,15 @@ Run `yarn build` to build the packages 'authorization' and 'types'.
 
 Make sure Docker is running and then run `yarn start` to start Redis.
 
+#### Setup NODE_OPTIONS
+
+If in the `/etc/hosts` file of your host you have the `::1` (IPv6) mapped to `localhost`, you will additionally need
+to set: `--dns-result-order=ipv4first` in the `NODE_OPTIONS` environment variable:
+
+```bash
+export NODE_OPTIONS=--dns-result-order=ipv4first
+```
+
 ### Run tests
 
 - `yarn test` runs the unit tests (requires `yarn start:redis` beforehand)
