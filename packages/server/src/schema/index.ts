@@ -14,6 +14,7 @@ import { subjectsSchema } from './subject'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
 import { uuidSchema } from './uuid'
+import { versionSchema } from './version'
 import { mergeSchemas } from '~/internals/graphql'
 
 export const schema = mergeSchemas(
@@ -32,5 +33,6 @@ export const schema = mergeSchemas(
   subjectsSchema,
   subscriptionSchema,
   threadSchema,
-  uuidSchema
+  uuidSchema,
+  versionSchema
 )
