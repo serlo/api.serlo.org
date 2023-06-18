@@ -4,39 +4,39 @@ version: 2
 updates:
   # repetitive because unfortunately Dependabot ticket for wildcard support still open:
   # https://github.com/dependabot/dependabot-core/issues/2178
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
-  - package-ecosystem: "npm"
-    directory: "packages/authorization"
+  - package-ecosystem: 'npm'
+    directory: 'packages/authorization'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
-  - package-ecosystem: "npm"
-    directory: "packages/graphql-modules"
+  - package-ecosystem: 'npm'
+    directory: 'packages/graphql-modules'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
-  - package-ecosystem: "npm"
-    directory: "packages/server"
+  - package-ecosystem: 'npm'
+    directory: 'packages/server'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
-  - package-ecosystem: "npm"
-    directory: "packages/types"
+  - package-ecosystem: 'npm'
+    directory: 'packages/types'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
 
-  - package-ecosystem: "docker"
-    directory: "packages/server/docker/server"
+  - package-ecosystem: 'docker'
+    directory: 'packages/server/docker/server'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
-  - package-ecosystem: "docker"
-    directory: "packages/server/docker/swr-queue-worker"
+  - package-ecosystem: 'docker'
+    directory: 'packages/server/docker/swr-queue-worker'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 5
