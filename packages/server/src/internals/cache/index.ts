@@ -143,6 +143,10 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       await client.flushdb()
     },
     async quit() {
+      for (const lockManager of Object.values(lockManagers)) {
+        await lockManager.quit()
+      }
+
       await client.quit()
     },
   }
