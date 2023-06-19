@@ -6,15 +6,19 @@ env:
   PR_NUMBER: ${{ github.event.number }}
 
 jobs:
-  build:
-    name: Build
+  build-docker-images:
+    name: Build docker images
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ api-server, api-swr-queue-worker ]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build the api-server Image
+      - name: Build the ${{ matrix.image }} image
         uses: docker/build-push-action@v4
         with:
           push: false
@@ -24,14 +28,3 @@ jobs:
 
       - name: Test for node api-server
         run: docker run --entrypoint='' --rm api-server:PR-${{ env.PR_NUMBER }} node --version
-
-      - name: Build the api-swr-queue-worker Image
-        uses: docker/build-push-action@v3
-        with:
-          push: false
-          load: true
-          file: packages/server/docker/swr-queue-worker/Dockerfile
-          tags: api-swr-queue-worker:PR-${{ env.PR_NUMBER }}
-
-      - name: Test for node in api-swr-queue-worker
-        run: docker run --entrypoint='' --rm api-swr-queue-worker:PR-${{ env.PR_NUMBER }} node --version
