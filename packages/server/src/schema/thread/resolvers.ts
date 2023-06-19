@@ -288,7 +288,10 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         )
       )
 
-      if (!isUserTrashingOwnComments(comments, userId)) {
+      const authorIds: number[] = comments.map((comment) => comment.authorId)
+      const uniqueAuthorIds = [...new Set(authorIds)]
+
+      if (!isUserTrashingOwnComments(uniqueAuthorIds, userId)) {
         await assertUserIsAuthorized({
           userId,
           guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
@@ -319,12 +322,9 @@ async function resolveObject(
     : obj
 }
 
-function isUserTrashingOwnComments(
-  comments: Model<'Comment'>[],
-  userId: number
-) {
-  for (const comment of comments) {
-    if (comment.authorId != userId) {
+function isUserTrashingOwnComments(authorIds: number[], userId: number) {
+  for (const authorId of authorIds) {
+    if (authorId != userId) {
       return false
     }
   }
