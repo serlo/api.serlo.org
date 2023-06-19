@@ -18,7 +18,12 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
+import {
+  CommentDecoder,
+  DiscriminatorType,
+  UserDecoder,
+  UuidDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
@@ -232,6 +237,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       )
 
       assertUserIsAuthenticated(userId)
+
       await assertUserIsAuthorized({
         userId,
         guards: scopes.map((scope) => auth.Thread.setThreadState(scope)),
@@ -252,13 +258,27 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       )
 
       assertUserIsAuthenticated(userId)
-      await assertUserIsAuthorized({
-        userId,
-        guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
-        message:
-          'You are not allowed to set the state of the provided comments(s).',
-        dataSources,
-      })
+      const comments = await Promise.all(
+        ids.map((id) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: CommentDecoder,
+          })
+        )
+      )
+
+      const authorIds: number[] = comments.map((comment) => comment.authorId)
+      const uniqueAuthorIds = [...new Set(authorIds)]
+
+      if (!isUserTrashingOwnComments(uniqueAuthorIds, userId)) {
+        await assertUserIsAuthorized({
+          userId,
+          guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
+          message:
+            'You are not allowed to set the state of the provided comments(s).',
+          dataSources,
+        })
+      }
 
       await dataSources.model.serlo.setUuidState({ ids, trashed, userId })
 
@@ -279,4 +299,13 @@ async function resolveObject(
   return obj.__typename === DiscriminatorType.Comment
     ? resolveObject(obj, dataSources)
     : obj
+}
+
+function isUserTrashingOwnComments(authorIds: number[], userId: number) {
+  for (const authorId of authorIds) {
+    if (authorId != userId) {
+      return false
+    }
+  }
+  return true
 }
