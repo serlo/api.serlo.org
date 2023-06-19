@@ -1,0 +1,42 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+
+version: 2
+updates:
+  # repetitive because unfortunately Dependabot ticket for wildcard support still open:
+  # https://github.com/dependabot/dependabot-core/issues/2178
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+  - package-ecosystem: 'npm'
+    directory: 'packages/authorization'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+  - package-ecosystem: 'npm'
+    directory: 'packages/graphql-modules'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+  - package-ecosystem: 'npm'
+    directory: 'packages/server'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+  - package-ecosystem: 'npm'
+    directory: 'packages/types'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: 'docker'
+    directory: 'packages/server/docker/server'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+  - package-ecosystem: 'docker'
+    directory: 'packages/server/docker/swr-queue-worker'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
