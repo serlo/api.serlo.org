@@ -1,4 +1,4 @@
-FROM node:18 as dependencies
+FROM node:20 as dependencies
 WORKDIR /usr/src/app
 COPY .yarn .yarn
 COPY packages/authorization/package.json packages/authorization/package.json
