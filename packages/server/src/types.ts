@@ -1847,6 +1847,7 @@ export type Query = {
   thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision>;
+  version: Scalars['String'];
 };
 
 
@@ -4530,6 +4531,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   thread?: Resolver<ResolversTypes['ThreadQuery'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['UserQuery'], ParentType, ContextType>;
   uuid?: Resolver<Maybe<ResolversTypes['AbstractUuid']>, ParentType, ContextType, Partial<QueryUuidArgs>>;
+  version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type RejectRevisionNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionNotificationEvent'] = ResolversParentTypes['RejectRevisionNotificationEvent']> = {
