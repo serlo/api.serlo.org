@@ -1,10 +1,9 @@
 name: Docker
 on:
   pull_request:
-
+  merge_group:
 env:
   PR_NUMBER: ${{ github.event.number }}
-
 jobs:
   build-docker-images:
     name: Build docker images
@@ -17,7 +16,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
       - name: Build the ${{ matrix.image }} image
         uses: docker/build-push-action@v4
         with:
@@ -25,6 +23,5 @@ jobs:
           load: true
           file: packages/server/docker/server/Dockerfile
           tags: api-server:PR-${{ env.PR_NUMBER }}
-
       - name: Test for node api-server
         run: docker run --entrypoint='' --rm api-server:PR-${{ env.PR_NUMBER }} node --version
