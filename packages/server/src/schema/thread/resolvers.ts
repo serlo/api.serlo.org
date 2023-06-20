@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import * as auth from '@serlo/authorization'
 import { UserInputError } from 'apollo-server-core'
 
@@ -39,7 +18,12 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
-import { DiscriminatorType, UserDecoder, UuidDecoder } from '~/model/decoder'
+import {
+  CommentDecoder,
+  DiscriminatorType,
+  UserDecoder,
+  UuidDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
@@ -253,6 +237,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       )
 
       assertUserIsAuthenticated(userId)
+
       await assertUserIsAuthorized({
         userId,
         guards: scopes.map((scope) => auth.Thread.setThreadState(scope)),
@@ -273,13 +258,27 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       )
 
       assertUserIsAuthenticated(userId)
-      await assertUserIsAuthorized({
-        userId,
-        guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
-        message:
-          'You are not allowed to set the state of the provided comments(s).',
-        dataSources,
-      })
+      const comments = await Promise.all(
+        ids.map((id) =>
+          dataSources.model.serlo.getUuidWithCustomDecoder({
+            id,
+            decoder: CommentDecoder,
+          })
+        )
+      )
+
+      const authorIds: number[] = comments.map((comment) => comment.authorId)
+      const uniqueAuthorIds = [...new Set(authorIds)]
+
+      if (!isUserTrashingOwnComments(uniqueAuthorIds, userId)) {
+        await assertUserIsAuthorized({
+          userId,
+          guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
+          message:
+            'You are not allowed to set the state of the provided comments(s).',
+          dataSources,
+        })
+      }
 
       await dataSources.model.serlo.setUuidState({ ids, trashed, userId })
 
@@ -300,4 +299,13 @@ async function resolveObject(
   return obj.__typename === DiscriminatorType.Comment
     ? resolveObject(obj, dataSources)
     : obj
+}
+
+function isUserTrashingOwnComments(authorIds: number[], userId: number) {
+  for (const authorId of authorIds) {
+    if (authorId != userId) {
+      return false
+    }
+  }
+  return true
 }

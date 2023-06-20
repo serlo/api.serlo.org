@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.51.1](https://github.com/serlo/api.serlo.org/compare/v0.51.0..v0.51.1) - June 14, 2023
+
+### Fixed
+
+- Fix missing fetch by upgrade docker base image
+
 ## [v0.51.0](https://github.com/serlo/api.serlo.org/compare/v0.50.1..v0.51.0) - June 13, 2023
 
 ### Added

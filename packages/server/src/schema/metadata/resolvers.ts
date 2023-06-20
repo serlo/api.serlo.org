@@ -1,24 +1,5 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
+import { UserInputError } from 'apollo-server'
+
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
@@ -67,7 +48,12 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     async resources(_parent, payload, { dataSources }) {
+      const limit = 1000
+
       const first = payload.first ?? 100
+      if (first > limit) {
+        throw new UserInputError(`first cannot be higher than limit=${limit}`)
+      }
 
       // TODO: There must be a shorter implementation
       const { entities } = await dataSources.model.serlo.getEntitiesMetadata({
@@ -85,7 +71,7 @@ export const resolvers: Queries<'metadata'> = {
         nodes: entities,
         payload,
         createCursor: (node) => node.identifier.value.toString(),
-        limit: 1000,
+        limit,
       })
 
       // TODO: Find better implementation for "HasNextPageInfo"
