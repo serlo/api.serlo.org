@@ -52,3 +52,18 @@ export const articleRevision: Model<'ArticleRevision'> = {
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',
 }
+
+export const articleRevision2: Model<'ArticleRevision'> = {
+  __typename: EntityRevisionType.ArticleRevision,
+  id: castToUuid(30672),
+  trashed: false,
+  alias: castToAlias('/mathe/30672/parabel'),
+  date: '2014-03-01 20:45:56Z',
+  authorId: user.id,
+  repositoryId: article.id,
+  title: 'title',
+  content: castToNonEmptyString('content'),
+  changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
+}
