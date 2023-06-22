@@ -22,6 +22,7 @@ import {
   appletRevision,
   article,
   articleRevision,
+  articleRevision2,
   checkoutRevisionNotificationEvent,
   comment,
   comment3,
@@ -37,6 +38,7 @@ import {
   groupedExerciseRevision,
   page,
   pageRevision,
+  pageRevision2,
   solution,
   solutionRevision,
   taxonomyTermCurriculumTopic,
@@ -203,7 +205,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          revisionId: articleRevision.id,
+          revisionId: articleRevision2.id,
           userId: user.id,
           reason: '',
         },
@@ -217,7 +219,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          revisionId: articleRevision.id,
+          revisionId: articleRevision2.id,
           userId: user.id,
           reason: '',
         },
@@ -369,7 +371,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          revisionId: pageRevision.id,
+          revisionId: pageRevision2.id,
           userId: user.id,
           reason: '',
         },
@@ -383,7 +385,7 @@ const pactSpec: PactSpec = {
     examples: [
       [
         {
-          revisionId: pageRevision.id,
+          revisionId: pageRevision2.id,
           userId: user.id,
           reason: '',
         },
