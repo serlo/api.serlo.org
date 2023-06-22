@@ -27,3 +27,15 @@ export const pageRevision: Model<'PageRevision'> = {
   authorId: user.id,
   repositoryId: page.id,
 }
+
+export const pageRevision2: Model<'PageRevision'> = {
+  __typename: DiscriminatorType.PageRevision,
+  id: castToUuid(33220),
+  trashed: false,
+  alias: castToAlias('/entity/repository/compare/0/33220'),
+  title: 'title',
+  content: 'content',
+  date: '2014-11-26 15:08:48Z',
+  authorId: user.id,
+  repositoryId: page.id,
+}
