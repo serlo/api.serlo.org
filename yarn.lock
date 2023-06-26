@@ -3571,15 +3571,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ory/hydra-client@npm:^2.0.2":
-  version: 2.1.1
-  resolution: "@ory/hydra-client@npm:2.1.1"
-  dependencies:
-    axios: ^0.21.4
-  checksum: b8759760b6902e57d9e48f8544ffdf449fc2faeadd6d4e29bfa73de0a26e46653cec0729580f70a18c7b8e2cccaf11a61436d9766524e3a792e1d5e722984a69
-  languageName: node
-  linkType: hard
-
 "@pact-foundation/pact-core@npm:^13.13.5":
   version: 13.13.8
   resolution: "@pact-foundation/pact-core@npm:13.13.8"
@@ -4027,7 +4018,6 @@ __metadata:
     "@graphql-codegen/typescript": ^3.0.4
     "@graphql-codegen/typescript-resolvers": ^3.2.1
     "@ory/client": ^1.1.21
-    "@ory/hydra-client": ^2.0.2
     "@sentry/node": ^7.52.1
     "@serlo/authorization": ^0.51.0
     "@types/basic-auth": ^1.1.3
