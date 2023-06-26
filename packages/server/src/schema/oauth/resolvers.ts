@@ -31,12 +31,15 @@ export const resolvers: Mutations<'oauth'> = {
       const { hydra } = dataSources.model.authServices
 
       return await hydra
-        .getOAuth2LoginRequest(challenge)
+        .getOAuth2LoginRequest({ loginChallenge: challenge })
         .then(async () => {
           return await hydra
-            .acceptOAuth2LoginRequest(challenge, {
-              subject: String(legacyId),
-              context: session as Session,
+            .acceptOAuth2LoginRequest({
+              loginChallenge: challenge,
+              acceptOAuth2LoginRequest: {
+                subject: String(legacyId),
+                context: session as Session,
+              },
             })
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
@@ -86,26 +89,30 @@ export const resolvers: Mutations<'oauth'> = {
       const { hydra } = dataSources.model.authServices
 
       return hydra
-        .getOAuth2ConsentRequest(challenge)
+        .getOAuth2ConsentRequest({ consentChallenge: challenge })
         .then(async ({ data: body }) => {
           const scopes = body.requested_scope
 
           return await hydra
-            .acceptOAuth2ConsentRequest(challenge, {
-              grant_scope: body.requested_scope,
+            .acceptOAuth2ConsentRequest({
+              consentChallenge: challenge,
+              acceptOAuth2ConsentRequest: {
+                grant_scope: body.requested_scope,
 
-              grant_access_token_audience: body.requested_access_token_audience,
+                grant_access_token_audience:
+                  body.requested_access_token_audience,
 
-              session: {
-                id_token: {
-                  id: legacyId,
-                  username,
-                  ...(scopes?.includes('email')
-                    ? {
-                        email,
-                        email_verified: true,
-                      }
-                    : {}),
+                session: {
+                  id_token: {
+                    id: legacyId,
+                    username,
+                    ...(scopes?.includes('email')
+                      ? {
+                          email,
+                          email_verified: true,
+                        }
+                      : {}),
+                  },
                 },
               },
             })
@@ -135,10 +142,10 @@ export const resolvers: Mutations<'oauth'> = {
     async acceptLogout(_parent, { challenge }, { dataSources }) {
       const { hydra } = dataSources.model.authServices
       return await hydra
-        .getOAuth2LogoutRequest(challenge)
+        .getOAuth2LogoutRequest({ logoutChallenge: challenge })
         .then(async () => {
           return await hydra
-            .acceptOAuth2LogoutRequest(challenge)
+            .acceptOAuth2LogoutRequest({ logoutChallenge: challenge })
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
             })
