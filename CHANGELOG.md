@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.52.0](https://github.com/serlo/api.serlo.org/compare/v0.51.1..v0.52.0) - June 26, 2023
+
+### Added
+
+- Add endpoint version for frontend repo
+
+- Enable users to delete their own comments
+
+### Internal
+
+- Update various dependencies
+
+- Enable dependabot version updates
+
+- Add pact tests for entity revision and page revision
+
 ## [v0.51.1](https://github.com/serlo/api.serlo.org/compare/v0.51.0..v0.51.1) - June 14, 2023
 
 ### Fixed
