@@ -1487,6 +1487,19 @@ async function exec(): Promise<void> {
         date: '2023-06-14',
         fixed: ['Fix missing fetch by upgrade docker base image'],
       },
+      {
+        tagName: 'v0.52.0',
+        date: '2023-06-26',
+        added: [
+          'Add endpoint version for frontend repo',
+          'Enable users to delete their own comments',
+        ],
+        internal: [
+          'Update various dependencies',
+          'Enable dependabot version updates',
+          'Add pact tests for entity revision and page revision',
+        ],
+      },
     ],
   })
 
