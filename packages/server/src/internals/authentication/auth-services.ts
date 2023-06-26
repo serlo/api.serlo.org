@@ -1,12 +1,9 @@
 import {
-  Configuration as KratosConfig,
+  Configuration,
   IdentityApi,
   FrontendApi,
+  OAuth2Api,
 } from '@ory/client'
-import {
-  OAuth2Api as HydraOAuth2Api,
-  Configuration as HydraConfig,
-} from '@ory/hydra-client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, DatabaseError } from 'pg'
@@ -21,7 +18,7 @@ export interface Kratos {
 
 export interface AuthServices {
   kratos: Kratos
-  hydra: HydraOAuth2Api
+  hydra: OAuth2Api
 }
 
 export interface Identity {
@@ -117,13 +114,13 @@ export function createAuthServices(): AuthServices {
   return {
     kratos: {
       public: new FrontendApi(
-        new KratosConfig({
+        new Configuration({
           basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
         })
       ),
 
       admin: new IdentityApi(
-        new KratosConfig({
+        new Configuration({
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
         })
       ),
@@ -131,8 +128,8 @@ export function createAuthServices(): AuthServices {
         connectionString: process.env.SERVER_KRATOS_DB_URI,
       }),
     },
-    hydra: new HydraOAuth2Api(
-      new HydraConfig({
+    hydra: new OAuth2Api(
+      new Configuration({
         basePath: process.env.SERVER_HYDRA_HOST,
         baseOptions: {
           headers: { 'X-Forwarded-Proto': 'https' },
