@@ -1,9 +1,4 @@
-import {
-  Configuration,
-  IdentityApi,
-  FrontendApi,
-  OAuth2Api,
-} from '@ory/client'
+import { Configuration, IdentityApi, FrontendApi, OAuth2Api } from '@ory/client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, DatabaseError } from 'pg'
