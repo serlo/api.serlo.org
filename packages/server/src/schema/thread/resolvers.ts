@@ -258,6 +258,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       )
 
       assertUserIsAuthenticated(userId)
+
       const comments = await Promise.all(
         ids.map((id) =>
           dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -267,10 +268,11 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         )
       )
 
-      const authorIds: number[] = comments.map((comment) => comment.authorId)
-      const uniqueAuthorIds = [...new Set(authorIds)]
+      const currentUserHasCreatedAllComments = comments.every(
+        (comment) => comment.authorId === userId
+      )
 
-      if (!isUserTrashingOwnComments(uniqueAuthorIds, userId)) {
+      if (!currentUserHasCreatedAllComments) {
         await assertUserIsAuthorized({
           userId,
           guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
@@ -299,13 +301,4 @@ async function resolveObject(
   return obj.__typename === DiscriminatorType.Comment
     ? resolveObject(obj, dataSources)
     : obj
-}
-
-function isUserTrashingOwnComments(authorIds: number[], userId: number) {
-  for (const authorId of authorIds) {
-    if (authorId != userId) {
-      return false
-    }
-  }
-  return true
 }
