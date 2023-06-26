@@ -70,7 +70,6 @@
     "@zerollup/ts-transform-paths": "^1.7.18",
     "babel-plugin-import-graphql": "^2.8.1",
     "babel-plugin-module-resolver": "^5.0.0",
-    "semver": "^7.3.8",
-    "ttypescript": "^1.5.15"
+    "semver": "^7.3.8"
   }
 }

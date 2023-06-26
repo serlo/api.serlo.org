@@ -9,6 +9,7 @@ import {
   rest,
   restContext,
   PathParams,
+  DefaultBodyType,
 } from 'msw'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -121,7 +122,7 @@ export function hasInternalServerError(): RestResolver {
 }
 
 export type RestResolver<
-  RequestBodyType = RestRequest['body'],
+  RequestBodyType extends DefaultBodyType = DefaultBodyType,
   RequestParamsType extends PathParams = PathParams
 > = ResponseResolver<
   RestRequest<RequestBodyType, RequestParamsType>,
