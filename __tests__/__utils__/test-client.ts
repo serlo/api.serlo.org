@@ -1,4 +1,4 @@
-import type { OAuth2Api } from '@ory/hydra-client'
+import type { OAuth2Api } from '@ory/client'
 import { ApolloServer } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
