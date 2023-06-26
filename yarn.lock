@@ -3572,11 +3572,11 @@ __metadata:
   linkType: hard
 
 "@ory/hydra-client@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@ory/hydra-client@npm:2.0.2"
+  version: 2.1.1
+  resolution: "@ory/hydra-client@npm:2.1.1"
   dependencies:
     axios: ^0.21.4
-  checksum: ceef4b3802fbdb4bad22c906150d22c8fc2790aa7eb60cda213562a37d55c3db3c9394448f7953984f0bb14a0d42254e6037de6f2d26537c07c5557f405920c8
+  checksum: b8759760b6902e57d9e48f8544ffdf449fc2faeadd6d4e29bfa73de0a26e46653cec0729580f70a18c7b8e2cccaf11a61436d9766524e3a792e1d5e722984a69
   languageName: node
   linkType: hard
 
