@@ -23,10 +23,13 @@ export function createEntityResolvers<
 > &
   // TODO: Add threads to "AbstractEntity"
   PickResolvers<'AbstractRepository', 'threads'> & {
-    currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
+    currentRevision: ResolverFunction<
+      R | null,
+      Repository<Model<'AbstractEntityRevision'>['__typename']>
+    >
     revisions: ResolverFunction<
       Connection<R>,
-      Repository<R['__typename']>,
+      Repository<Model<'AbstractEntityRevision'>['__typename']>,
       VideoRevisionsArgs
     >
   } {

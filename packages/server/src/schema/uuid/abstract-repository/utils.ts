@@ -26,10 +26,13 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   'AbstractRepository',
   'alias' | 'threads' | 'license' | 'events' | 'title'
 > & {
-  currentRevision: ResolverFunction<R | null, Repository<R['__typename']>>
+  currentRevision: ResolverFunction<
+    R | null,
+    Repository<Model<'AbstractRevision'>['__typename']>
+  >
   revisions: ResolverFunction<
     Connection<R>,
-    Repository<R['__typename']>,
+    Repository<Model<'AbstractRevision'>['__typename']>,
     VideoRevisionsArgs
   >
 } {
@@ -102,7 +105,10 @@ export function createRevisionResolvers<E extends Model<'AbstractRepository'>>({
   'AbstractRevision',
   'alias' | 'threads' | 'author' | 'events' | 'title'
 > & {
-  repository: ResolverFunction<E, Revision<E['__typename']>>
+  repository: ResolverFunction<
+    E,
+    Revision<Model<'AbstractRepository'>['__typename']>
+  >
 } {
   return {
     ...createUuidResolvers(),
