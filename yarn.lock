@@ -20043,8 +20043,8 @@ __metadata:
   linkType: hard
 
 "ts-unused-exports@npm:^9.0.4":
-  version: 9.0.4
-  resolution: "ts-unused-exports@npm:9.0.4"
+  version: 9.0.5
+  resolution: "ts-unused-exports@npm:9.0.5"
   dependencies:
     chalk: ^4.0.0
     tsconfig-paths: ^3.9.0
@@ -20055,7 +20055,7 @@ __metadata:
       optional: false
   bin:
     ts-unused-exports: bin/ts-unused-exports
-  checksum: 9ab29c518df145742403add309813789b14106d4a4882867e2133cea7344194bb76838304cc32a8ca3a383a7ea7d2183a235997c444792ee658fe2ef11683b01
+  checksum: 67aefd95c14082189e591ee656cb89d9339cd7ee07ea1c56f3aa080b6434fa79ff1750d0e292fa62dffd197acfd0f8a46974647f91eb1a3f7b9a5cfd5acf6c19
   languageName: node
   linkType: hard
 
