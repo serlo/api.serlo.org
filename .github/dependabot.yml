@@ -2,11 +2,6 @@
 
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-
   # repetitive because unfortunately Dependabot ticket for wildcard support still open:
   # https://github.com/dependabot/dependabot-core/issues/2178
   - package-ecosystem: 'npm'
@@ -46,3 +41,8 @@ updates:
     ignore:
       - dependency-name: 'node'
         update-types: ['version-update:semver-major']
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
