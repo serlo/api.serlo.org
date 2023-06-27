@@ -8,7 +8,6 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -16,7 +15,6 @@ updates:
     directory: 'packages/authorization'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -24,7 +22,6 @@ updates:
     directory: 'packages/graphql-modules'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -32,7 +29,6 @@ updates:
     directory: 'packages/server'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -40,7 +36,6 @@ updates:
     directory: 'packages/types'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -49,7 +44,6 @@ updates:
     directory: 'packages/server/docker/server'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -57,7 +51,6 @@ updates:
     directory: 'packages/server/docker/swr-queue-worker'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
@@ -66,4 +59,3 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    open-pull-requests-limit: 5
