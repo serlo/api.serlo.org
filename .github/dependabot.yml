@@ -2,60 +2,47 @@
 
 version: 2
 updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+
   # repetitive because unfortunately Dependabot ticket for wildcard support still open:
   # https://github.com/dependabot/dependabot-core/issues/2178
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'weekly'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
   - package-ecosystem: 'npm'
     directory: 'packages/authorization'
     schedule:
       interval: 'weekly'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
   - package-ecosystem: 'npm'
     directory: 'packages/graphql-modules'
     schedule:
       interval: 'weekly'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
   - package-ecosystem: 'npm'
     directory: 'packages/server'
     schedule:
       interval: 'weekly'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
   - package-ecosystem: 'npm'
     directory: 'packages/types'
     schedule:
       interval: 'weekly'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
 
   - package-ecosystem: 'docker'
     directory: 'packages/server/docker/server'
     schedule:
       interval: 'weekly'
+    # we want LTS version of NodeJS and not suggested current version
     ignore:
-      - dependency-name: '*'
+      - dependency-name: 'node'
         update-types: ['version-update:semver-major']
   - package-ecosystem: 'docker'
     directory: 'packages/server/docker/swr-queue-worker'
     schedule:
       interval: 'weekly'
+    # we want LTS version of NodeJS and not suggested current version
     ignore:
-      - dependency-name: '*'
+      - dependency-name: 'node'
         update-types: ['version-update:semver-major']
-
-  - package-ecosystem: 'github-actions'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
