@@ -23,5 +23,5 @@ jobs:
           load: true
           file: packages/server/docker/server/Dockerfile
           tags: api-server:PR-${{ env.PR_NUMBER }}
-      - name: Test for node api-server
+      - name: Test for node in the ${{ matrix.image }} image
         run: docker run --entrypoint='' --rm api-server:PR-${{ env.PR_NUMBER }} node --version
