@@ -53,7 +53,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@graphql-codegen/add": "^4.0.1",
+    "@graphql-codegen/add": "^5.0.0",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-resolvers": "^3.2.1",
