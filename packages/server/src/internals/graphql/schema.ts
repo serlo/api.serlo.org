@@ -219,7 +219,7 @@ export type ResolverFunction<Result, Parent, Args = object> = Resolver<
 export type TypeResolvers<T extends { __typename?: keyof Resolvers }> =
   Typename<T> extends keyof Resolvers
     ? A.Compute<
-        O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
+        O.Merge<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
         'deep'
       >
     : never
