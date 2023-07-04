@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.52.0",
+  "version": "0.52.1",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -22,7 +22,7 @@
     "@google-cloud/storage": "^6.10.0",
     "@ory/client": "^1.1.21",
     "@sentry/node": "^7.52.1",
-    "@serlo/authorization": "^0.52.0",
+    "@serlo/authorization": "^0.52.1",
     "apollo-datasource-rest": "^3.7.0",
     "apollo-server": "^3.11.1",
     "apollo-server-core": "^3.11.1",
