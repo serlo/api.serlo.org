@@ -12,6 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         image: [api-server, api-swr-queue-worker]
+        include:
+          - image: api-server
+            dockerfile: packages/server/docker/server/Dockerfile
+          - image: api-swr-queue-worker
+            dockerfile: packages/server/docker/swr-queue-worker/Dockerfile
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -21,7 +26,7 @@ jobs:
         with:
           push: false
           load: true
-          file: packages/server/docker/server/Dockerfile
-          tags: api-server:PR-${{ env.PR_NUMBER }}
+          file: ${{ matrix.dockerfile }}
+          tags: ${{ matrix.image }}:PR-${{ env.PR_NUMBER }}
       - name: Test for node in the ${{ matrix.image }} image
-        run: docker run --entrypoint='' --rm api-server:PR-${{ env.PR_NUMBER }} node --version
+        run: docker run --entrypoint='' --rm ${{ matrix.image }}:PR-${{ env.PR_NUMBER }} node --version
