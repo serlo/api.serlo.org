@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.52.1](https://github.com/serlo/api.serlo.org/compare/v0.52.0..v0.52.1) - July 4, 2023
+
+### Internal
+
+- Update various dependencies
+
+- Update dependabot configuration
+
 ## [v0.52.0](https://github.com/serlo/api.serlo.org/compare/v0.51.1..v0.52.0) - June 26, 2023
 
 ### Added
