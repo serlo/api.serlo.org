@@ -1500,6 +1500,14 @@ async function exec(): Promise<void> {
           'Add pact tests for entity revision and page revision',
         ],
       },
+      {
+        tagName: 'v0.52.1',
+        date: '2023-07-04',
+        internal: [
+          'Update various dependencies',
+          'Update dependabot configuration',
+        ],
+      },
     ],
   })
 
