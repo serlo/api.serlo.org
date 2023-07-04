@@ -49,7 +49,7 @@ export type AllPayloads = {
 export type Payloads<M> = {
   [F in keyof M]: NonNullable<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    A.PromiseOf<M[F] extends (...args: any) => infer R ? R : never>
+    A.Await<M[F] extends (...args: any) => infer R ? R : never>
   >
 }
 
