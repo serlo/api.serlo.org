@@ -19733,22 +19733,22 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^3.7.3":
-  version: 3.9.10
-  resolution: "typescript@npm:3.9.10"
+  version: 4.5.4
+  resolution: "typescript@npm:4.5.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 46c842e2cd4797b88b66ef06c9c41dd21da48b95787072ccf39d5f2aa3124361bc4c966aa1c7f709fae0509614d76751455b5231b12dbb72eb97a31369e1ff92
+  checksum: 59f3243f9cd6fe3161e6150ff6bf795fc843b4234a655dbd938a310515e0d61afd1ac942799e7415e4334255e41c2c49b7dd5d9fd38a17acd25a6779ca7e0961
   languageName: node
   linkType: hard
 
 "typescript@npm:^5.1.3":
-  version: 5.1.6
-  resolution: "typescript@npm:5.1.6"
+  version: 5.1.3
+  resolution: "typescript@npm:5.1.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
+  checksum: d9d51862d98efa46534f2800a1071a613751b1585dc78884807d0c179bcd93d6e9d4012a508e276742f5f33c480adefc52ffcafaf9e0e00ab641a14cde9a31c7
   languageName: node
   linkType: hard
 
@@ -19763,22 +19763,22 @@ __metadata:
   linkType: hard
 
 "typescript@patch:typescript@^3.7.3#~builtin<compat/typescript>":
-  version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"
+  version: 4.5.4
+  resolution: "typescript@patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=bcec9a"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: dc7141ab555b23a8650a6787f98845fc11692063d02b75ff49433091b3af2fe3d773650dea18389d7c21f47d620fb3b110ea363dab4ab039417a6ccbbaf96fc2
+  checksum: eda87927f9cfb94aca9b5e47842daf37347ad3073133e17f556fbb6c18f3493c5b551eedab0f4b26774235ddb7acbe0087250d5285f72ce6819a0891dd5a74ed
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^5.1.3#~builtin<compat/typescript>":
-  version: 5.1.6
-  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=77c9e2"
+  version: 5.1.3
+  resolution: "typescript@patch:typescript@npm%3A5.1.3#~builtin<compat/typescript>::version=5.1.3&hash=77c9e2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 21e88b0a0c0226f9cb9fd25b9626fb05b4c0f3fddac521844a13e1f30beb8f14e90bd409a9ac43c812c5946d714d6e0dee12d5d02dfc1c562c5aacfa1f49b606
+  checksum: 32a25b2e128a4616f999d4ee502aabb1525d5647bc8955e6edf05d7fbc53af8aa98252e2f6ba80bcedfc0260c982b885f3c09cfac8bb65d2924f3133ad1e1e62
   languageName: node
   linkType: hard
 
