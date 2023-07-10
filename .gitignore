@@ -89,6 +89,3 @@ dist/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# asdf version file
-.tool-versions
