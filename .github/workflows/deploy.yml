@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18.x
+          node-version-file: .tool-versions
       - uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
@@ -44,7 +44,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18.x
+          node-version-file: .tool-versions
           registry-url: 'https://registry.npmjs.org'
       - run: yarn --immutable --immutable-cache
       - run: yarn build
