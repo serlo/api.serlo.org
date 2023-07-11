@@ -11,8 +11,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18.x
-      - run: yarn --immutable --immutable-cache
+          node-version-file: .tool-versions
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn start:redis
       - run: yarn pacts
       - run: yarn pacts:publish
