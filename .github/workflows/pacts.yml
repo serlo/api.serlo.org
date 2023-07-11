@@ -11,6 +11,6 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn start:redis
       - run: yarn pacts

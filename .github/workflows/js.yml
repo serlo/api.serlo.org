@@ -23,7 +23,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn build
       - run: yarn build:server
       - run: yarn build:swr-queue-worker
@@ -35,7 +35,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:eslint
   prettier:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:prettier
   tsc:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:tsc
   test:
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn start:redis
       - run: yarn test
   codegen:
@@ -76,7 +76,7 @@ jobs:
         with:
           cache: yarn
           node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn codegen
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.12
