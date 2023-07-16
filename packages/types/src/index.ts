@@ -1843,6 +1843,7 @@ export type Query = {
   thread: ThreadQuery;
   user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
+  version: Scalars['String'];
 };
 
 
