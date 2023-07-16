@@ -15,7 +15,7 @@
     "@graphql-codegen/add": "^5.0.0",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/typescript": "^3.0.4",
-    "graphql": "^16.6.0"
+    "graphql": "^16.7.1"
   },
   "publishConfig": {
     "access": "public"
