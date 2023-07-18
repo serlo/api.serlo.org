@@ -24,16 +24,12 @@ jobs:
     if: ${{ needs.update-version.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
+      - uses: ./.github/actions/setup-node
       - uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - run: gcloud auth configure-docker
       - uses: google-github-actions/setup-gcloud@v1
-      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn deploy:images
   npm-package:
     runs-on: ubuntu-latest
