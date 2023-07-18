@@ -34,7 +34,7 @@ describe('ExerciseGroup', () => {
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
-          exerciseGroup
+          exerciseGroup,
         ),
       })
   })
@@ -96,7 +96,7 @@ describe('ExerciseGroup', () => {
             'content',
             'changes',
           ],
-          exerciseGroupRevision
+          exerciseGroupRevision,
         ),
       })
   })

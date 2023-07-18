@@ -1513,6 +1513,6 @@ async function exec(): Promise<void> {
 
   await fs.promises.writeFile(
     path.join(__dirname, '..', 'CHANGELOG.md'),
-    content
+    content,
   )
 }

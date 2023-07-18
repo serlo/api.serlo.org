@@ -31,7 +31,7 @@ describe('Course', () => {
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
-          course
+          course,
         ),
       })
   })
@@ -232,7 +232,7 @@ test('CourseRevision', async () => {
           'changes',
           'metaDescription',
         ],
-        courseRevision
+        courseRevision,
       ),
     })
 })

@@ -42,7 +42,7 @@ beforeEach(() => {
       [...taxonomyTerm.childrenIds].sort().join(',')
     ) {
       throw new UserInputError(
-        'children_ids have to match the current entities ids linked to the taxonomy_term_id'
+        'children_ids have to match the current entities ids linked to the taxonomy_term_id',
       )
     }
 
@@ -93,7 +93,7 @@ test('updates the cache', async () => {
   given('UuidQuery').for(
     { ...article, id: castToUuid(1394) },
     { ...taxonomyTermSubject, id: castToUuid(23453) },
-    { ...article, id: castToUuid(1454) }
+    { ...article, id: castToUuid(1454) },
   )
 
   const query = new Client({ userId: user.id })

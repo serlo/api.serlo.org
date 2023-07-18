@@ -48,7 +48,7 @@ export function createGoogleSpreadsheetApiModel({
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
         const url = new URL(
-          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
         )
         url.searchParams.append('majorDimension', majorDimension)
         const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
@@ -58,7 +58,7 @@ export function createGoogleSpreadsheetApiModel({
           addContext({
             location: 'googleSpreadSheetApi',
             locationContext: { ...args },
-          })
+          }),
         )
 
         try {
@@ -76,7 +76,7 @@ export function createGoogleSpreadsheetApiModel({
             }),
             E.map((v) => v.values),
             E.chain(E.fromNullable({ error: new Error('range is empty') })),
-            specifyErrorLocation
+            specifyErrorLocation,
           )
         } catch (error) {
           return specifyErrorLocation(E.left({ error: E.toError(error) }))
@@ -104,7 +104,7 @@ export function createGoogleSpreadsheetApiModel({
         majorDimension: MajorDimension.Rows,
       },
     },
-    environment
+    environment,
   )
 
   return {

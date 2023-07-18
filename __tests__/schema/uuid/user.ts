@@ -71,7 +71,7 @@ describe('User', () => {
             'lastLogin',
             'description',
           ],
-          user
+          user,
         ),
       })
   })
@@ -437,7 +437,7 @@ describe('User', () => {
   describe('property "chatUrl"', () => {
     test('when user is registered at community.serlo.org', async () => {
       global.server.use(
-        createChatUsersInfoHandler({ username: user.username, success: true })
+        createChatUsersInfoHandler({ username: user.username, success: true }),
       )
 
       await client
@@ -460,7 +460,7 @@ describe('User', () => {
 
     test('when user is registered at community.serlo.org', async () => {
       global.server.use(
-        createChatUsersInfoHandler({ username: user.username, success: false })
+        createChatUsersInfoHandler({ username: user.username, success: false }),
       )
 
       await client
@@ -506,7 +506,7 @@ describe('User', () => {
       unrevisedRevisionByUser,
       unrevisedRevisionByAnotherUser,
       articleByAnotherUser,
-      articleByUser
+      articleByUser,
     )
     given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
 

@@ -23,7 +23,7 @@ export const resolvers: TypeResolvers<ExerciseGroup> &
             id,
             decoder: GroupedExerciseDecoder,
           })
-        })
+        }),
       )
     },
   },

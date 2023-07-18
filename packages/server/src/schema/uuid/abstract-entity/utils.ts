@@ -12,7 +12,7 @@ import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/uti
 import { VideoRevisionsArgs } from '~/types'
 
 export function createEntityResolvers<
-  R extends Model<'AbstractEntityRevision'>
+  R extends Model<'AbstractEntityRevision'>,
 >({
   revisionDecoder,
 }: {
@@ -44,7 +44,7 @@ export function createEntityResolvers<
 }
 
 export function fromEntityTypeToEntityRevisionType(
-  entityType: EntityType
+  entityType: EntityType,
 ): EntityRevisionType {
   switch (entityType) {
     case EntityType.Applet:

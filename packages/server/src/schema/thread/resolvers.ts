@@ -210,7 +210,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       const ids = decodeThreadIds(id)
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
       )
 
       assertUserIsAuthenticated(userId)
@@ -233,7 +233,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       const ids = decodeThreadIds(payload.input.id)
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
       )
 
       assertUserIsAuthenticated(userId)
@@ -254,7 +254,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       const { id: ids, trashed } = payload.input
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
       )
 
       assertUserIsAuthenticated(userId)
@@ -264,12 +264,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
             decoder: CommentDecoder,
-          })
-        )
+          }),
+        ),
       )
 
       const currentUserHasCreatedAllComments = comments.every(
-        (comment) => comment.authorId === userId
+        (comment) => comment.authorId === userId,
       )
 
       if (!currentUserHasCreatedAllComments) {
@@ -291,7 +291,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
 
 async function resolveObject(
   comment: Model<'Comment'>,
-  dataSources: Context['dataSources']
+  dataSources: Context['dataSources'],
 ): Promise<Model<'AbstractUuid'>> {
   const obj = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: comment.parentId,

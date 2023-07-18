@@ -43,7 +43,7 @@ const ForDefinitions = {
     given('UuidQuery').for(
       entities.map((entity) => {
         return { ...entity, trashed: true }
-      })
+      }),
     )
     given('DeletedEntitiesQuery').isDefinedBy((req, res, ctx) => {
       const { first, after, instance } = req.body.payload
@@ -54,7 +54,7 @@ const ForDefinitions = {
 
       const entitiesByAfter = after
         ? entitiesByInstance.filter(
-            (entity) => new Date(entity.date) > new Date(after)
+            (entity) => new Date(entity.date) > new Date(after),
           )
         : entitiesByInstance
 
@@ -85,7 +85,7 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
               message: { type, payload },
               statusCode: 200,
               body: response,
-            })
+            }),
           )
         },
         returnsNotFound() {
@@ -94,7 +94,7 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
               message: { type, payload },
               statusCode: 404,
               body: null,
-            })
+            }),
           )
         },
         hasInternalServerError() {
@@ -103,7 +103,7 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
               message: { type, payload },
               statusCode: 500,
               body: null,
-            })
+            }),
           )
         },
         isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
@@ -112,14 +112,14 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
               matchType: type,
               matchPayloads: [payload],
               resolver,
-            })
+            }),
           )
         },
       }
     },
     isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
       global.server.use(
-        createDatabaseLayerHandler({ matchType: type, resolver })
+        createDatabaseLayerHandler({ matchType: type, resolver }),
       )
     },
     for(...args: (ForArg<M> | ForArg<M>[])[]) {
@@ -137,17 +137,21 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
           message: { type },
           statusCode: 200,
           body: response,
-        })
+        }),
       )
     },
     returnsNotFound() {
       global.server.use(
-        createMessageHandler({ message: { type }, statusCode: 404, body: null })
+        createMessageHandler({
+          message: { type },
+          statusCode: 404,
+          body: null,
+        }),
       )
     },
     hasInternalServerError() {
       global.server.use(
-        createMessageHandler({ message: { type }, statusCode: 500 })
+        createMessageHandler({ message: { type }, statusCode: 500 }),
       )
     },
     returnsBadRequest() {
@@ -156,7 +160,7 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
           message: { type },
           statusCode: 400,
           body: { reason: 'bad request' },
-        })
+        }),
       )
     },
   }
@@ -178,7 +182,7 @@ export function givenThreads({
   const otherComments = threads.flatMap((thread) =>
     thread.slice(1).map((comment) => {
       return { ...comment, parentId: thread[0].id, childrenIds: [] }
-    })
+    }),
   )
 
   given('ThreadsQuery')
@@ -194,7 +198,7 @@ function createMessageHandler(
     body?: unknown
     statusCode?: number
   },
-  once = false
+  once = false,
 ) {
   const { message, body, statusCode } = args
 
@@ -207,7 +211,7 @@ function createMessageHandler(
         ctx.status(statusCode ?? 200),
         ...(body === undefined
           ? []
-          : [ctx.json(body as Record<string, unknown>)])
+          : [ctx.json(body as Record<string, unknown>)]),
       )
     },
   })
@@ -215,7 +219,7 @@ function createMessageHandler(
 
 function createDatabaseLayerHandler<
   MessageType extends string = string,
-  Payload = DefaultPayloadType
+  Payload = DefaultPayloadType,
 >(args: {
   matchType: MessageType
   matchPayloads?: Partial<Payload>[]
@@ -230,7 +234,7 @@ function createDatabaseLayerHandler<
     req?.body?.type === matchType &&
     (matchPayloads === undefined ||
       matchPayloads.some((payload) =>
-        R.equals({ ...req.body.payload, ...payload }, req.body.payload)
+        R.equals({ ...req.body.payload, ...payload }, req.body.payload),
       ))
 
   return handler
@@ -242,16 +246,16 @@ function getDatabaseLayerUrl({ path }: { path: string }) {
 
 type MessageResolver<
   MessageType extends string = string,
-  Payload = DefaultPayloadType
+  Payload = DefaultPayloadType,
 > = RestResolver<BodyType<MessageType, Payload>>
 type BodyType<
   MessageType extends string = string,
-  Payload = DefaultPayloadType
+  Payload = DefaultPayloadType,
 > = Required<MessagePayload<MessageType, Payload>>
 
 interface MessagePayload<
   MessageType extends string = string,
-  Payload = DefaultPayloadType
+  Payload = DefaultPayloadType,
 > {
   type: MessageType
   payload?: Payload
@@ -295,7 +299,7 @@ function createCommunityChatHandler({
 
   handler.predicate = (req: MockedRequest) => {
     return R.toPairs(parameters).every(
-      ([name, value]) => req.url.searchParams.get(name) === value
+      ([name, value]) => req.url.searchParams.get(name) === value,
     )
   }
 

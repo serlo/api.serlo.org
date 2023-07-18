@@ -32,7 +32,7 @@ beforeEach(() => {
   given('UuidQuery').for(
     { ...article, taxonomyTermIds: [taxonomyTermCurriculumTopic.id] },
     taxonomyTermCurriculumTopic,
-    user
+    user,
   )
 
   given('TaxonomyDeleteEntityLinksMutation')

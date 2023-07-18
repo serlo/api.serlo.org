@@ -54,7 +54,7 @@ describe('TaxonomyTerm root', () => {
             'description',
             'weight',
           ],
-          taxonomyTermRoot
+          taxonomyTermRoot,
         ),
       })
   })

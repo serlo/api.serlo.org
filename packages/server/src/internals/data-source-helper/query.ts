@@ -15,11 +15,11 @@ import { captureErrorEvent } from '~/internals/error-event'
  */
 export function createQuery<P, R>(
   spec: QuerySpec<P, R>,
-  environment: Environment
+  environment: Environment,
 ): Query<P, R> {
   async function queryWithDecoder<S extends R>(
     payload: P,
-    customDecoder?: t.Type<S, unknown>
+    customDecoder?: t.Type<S, unknown>,
   ): Promise<S> {
     const key = spec.getKey(payload)
     const cacheValue = await environment.cache.get<R>({
@@ -52,7 +52,7 @@ export function createQuery<P, R>(
       } else {
         invalidCacheValueErrorContext = {
           timeInvalidCacheSaved: new Date(
-            cacheEntry.lastModified
+            cacheEntry.lastModified,
           ).toISOString(),
           invalidCacheValue: cacheEntry.value,
           source: cacheEntry.source,
@@ -75,7 +75,7 @@ export function createQuery<P, R>(
       if (invalidCacheValueErrorContext) {
         captureErrorEvent({
           error: new Error(
-            'Invalid cached value received that could be repaired automatically by data source.'
+            'Invalid cached value received that could be repaired automatically by data source.',
           ),
           fingerprint: ['invalid-value', 'cache', key],
           errorContext: {
@@ -111,8 +111,8 @@ export function createQuery<P, R>(
     async removeCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          environment.cache.remove({ key: spec.getKey(payload) })
-        )
+          environment.cache.remove({ key: spec.getKey(payload) }),
+        ),
       )
     },
     async setCache(args) {
@@ -122,8 +122,8 @@ export function createQuery<P, R>(
             key: spec.getKey(payload),
             ...args,
             source: 'API: Cache update function after a mutation',
-          })
-        )
+          }),
+        ),
       )
     },
   }
@@ -152,7 +152,7 @@ export interface QuerySpec<Payload, Result> {
    */
   getCurrentValue: (
     payload: Payload,
-    previousValue: Result | null
+    previousValue: Result | null,
   ) => Promise<unknown>
 
   /**
@@ -203,7 +203,7 @@ export interface QuerySpecWithHelpers<Payload, Result>
    * Function to update the cache of one or many values.
    */
   setCache(
-    args: PayloadArrayOrPayload<Payload> & FunctionOrValue<Result>
+    args: PayloadArrayOrPayload<Payload> & FunctionOrValue<Result>,
   ): Promise<void>
 
   /**
@@ -216,7 +216,7 @@ export interface QuerySpecWithHelpers<Payload, Result>
    */
   queryWithDecoder<S extends Result>(
     payload: Payload,
-    customDecoder: t.Type<S, unknown>
+    customDecoder: t.Type<S, unknown>,
   ): Promise<S>
 }
 

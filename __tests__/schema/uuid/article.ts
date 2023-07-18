@@ -28,7 +28,7 @@ test('Article', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['id', '__typename', 'instance', 'alias', 'trashed', 'date'],
-        article
+        article,
       ),
     })
 })
@@ -70,7 +70,7 @@ test('ArticleRevision', async () => {
           'metaTitle',
           'metaDescription',
         ],
-        articleRevision
+        articleRevision,
       ),
     })
 })

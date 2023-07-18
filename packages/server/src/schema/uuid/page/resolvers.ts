@@ -143,7 +143,7 @@ export const resolvers: TypeResolvers<Page> &
             id: id,
             decoder: PageDecoder,
           })
-        })
+        }),
       )
     },
   },

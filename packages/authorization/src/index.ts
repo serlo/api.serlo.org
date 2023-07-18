@@ -80,13 +80,13 @@ export type AuthorizationPayload = {
 }
 
 export type AuthorizationGuard = (
-  authorizationPayload: AuthorizationPayload
+  authorizationPayload: AuthorizationPayload,
 ) => boolean
 
 export type GenericAuthorizationGuard = (scope: Scope) => AuthorizationGuard
 
 function createPermissionGuard(
-  permission: Permission
+  permission: Permission,
 ): GenericAuthorizationGuard {
   return (scope) => (authorizationPayload) => {
     return authorizationPayload[scope]?.includes(permission) === true

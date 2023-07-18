@@ -70,7 +70,7 @@ export class KratosDB extends Pool {
   }
 
   async getIdByCredentialIdentifier(
-    identifier: string
+    identifier: string,
   ): Promise<string | null> {
     const identities = await this.executeSingleQuery({
       query: `SELECT identity_credentials.identity_id
@@ -111,13 +111,13 @@ export function createAuthServices(): AuthServices {
       public: new FrontendApi(
         new Configuration({
           basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-        })
+        }),
       ),
 
       admin: new IdentityApi(
         new Configuration({
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
-        })
+        }),
       ),
       db: new KratosDB({
         connectionString: process.env.SERVER_KRATOS_DB_URI,
@@ -129,7 +129,7 @@ export function createAuthServices(): AuthServices {
         baseOptions: {
           headers: { 'X-Forwarded-Proto': 'https' },
         },
-      })
+      }),
     ),
   }
 }

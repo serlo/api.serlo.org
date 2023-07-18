@@ -8,7 +8,7 @@ import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
 export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'userId'>>
+  args?: Partial<Pick<Context, 'service' | 'userId'>>,
 ) {
   return new ApolloServer({
     ...getGraphQLOptions(createTestEnvironment()),

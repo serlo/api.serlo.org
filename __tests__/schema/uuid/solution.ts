@@ -30,7 +30,7 @@ describe('Solution', () => {
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
-          solution
+          solution,
         ),
       })
   })
@@ -86,7 +86,7 @@ test('SolutionRevision', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
-        solutionRevision
+        solutionRevision,
       ),
     })
 })

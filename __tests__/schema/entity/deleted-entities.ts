@@ -76,7 +76,7 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
         JSON.stringify({
           id: article.id,
           dateOfDeletion: article.date,
-        })
+        }),
       ).toString('base64'),
     })
     .shouldReturnData({
@@ -120,7 +120,7 @@ test('fails when `after` is malformed', async () => {
         JSON.stringify({
           id: article.id,
           dateOfDeletion: 'foo',
-        })
+        }),
       ).toString('base64'),
     })
     .shouldFailWithError('BAD_USER_INPUT')

@@ -68,7 +68,7 @@ test('AppletRevision', async () => {
           'metaTitle',
           'metaDescription',
         ],
-        appletRevision
+        appletRevision,
       ),
     })
 })

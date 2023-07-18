@@ -14,7 +14,7 @@ export function createTaxonomyTermChildResolvers(): PickResolvers<
             id,
             decoder: TaxonomyTermDecoder,
           })
-        })
+        }),
       )
       return resolveConnection({
         nodes: taxonomyTerms,

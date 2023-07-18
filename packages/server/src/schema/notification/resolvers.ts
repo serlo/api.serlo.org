@@ -43,7 +43,7 @@ export const resolvers: TypeResolvers<Notification> &
     async notifications(
       _parent,
       { userId: requestedUserId, unread, emailSent, email, ...cursorPayload },
-      { dataSources, service, userId: authUserId }
+      { dataSources, service, userId: authUserId },
     ) {
       let userId: number
 
@@ -53,7 +53,7 @@ export const resolvers: TypeResolvers<Notification> &
       } else {
         if (service !== Service.NotificationEmailService) {
           throw new UserInputError(
-            "Service is not allowed to query user's notifications"
+            "Service is not allowed to query user's notifications",
           )
         }
         userId = requestedUserId
@@ -67,7 +67,7 @@ export const resolvers: TypeResolvers<Notification> &
         (notification) =>
           (unread == null || notification.unread === unread) &&
           (email == null || notification.email === email) &&
-          (emailSent == null || notification.emailSent === emailSent)
+          (emailSent == null || notification.emailSent === emailSent),
       )
 
       return resolveConnection({
@@ -98,14 +98,16 @@ export const resolvers: TypeResolvers<Notification> &
         const notification = notifications.find((n) => n.id === id)
         if (!notification) {
           throw new ForbiddenError(
-            'You are only allowed to set your own notification states.'
+            'You are only allowed to set your own notification states.',
           )
         }
         return notification.eventId
       })
 
       const scopes = await Promise.all(
-        eventIds.map((id) => fetchScopeOfNotificationEvent({ id, dataSources }))
+        eventIds.map((id) =>
+          fetchScopeOfNotificationEvent({ id, dataSources }),
+        ),
       )
 
       await assertUserIsAuthorized({

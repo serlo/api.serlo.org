@@ -57,8 +57,8 @@ describe('How to create a mutation in a data source: update the content of an ar
           } else {
             return res(ctx.json({ success: false as boolean }))
           }
-        }
-      )
+        },
+      ),
     )
 
     dataSources = {
