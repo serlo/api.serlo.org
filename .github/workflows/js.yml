@@ -10,20 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn build
       - run: yarn build:server
       - run: yarn build:swr-queue-worker
@@ -31,52 +23,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:eslint
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:prettier
   tsc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:tsc
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn start:redis
       - run: yarn test
   codegen:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn codegen
       - id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.12

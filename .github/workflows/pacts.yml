@@ -7,10 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: yarn
-          node-version-file: .tool-versions
-      - run: yarn --immutable --immutable-cache --check-cache
+      - uses: ./.github/actions/setup-node
       - run: yarn start:redis
       - run: yarn pacts
