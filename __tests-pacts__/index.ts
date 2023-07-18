@@ -109,7 +109,7 @@ const uuids = [
 ]
 const abstractEvent = R.pick(
   ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
-  checkoutRevisionNotificationEvent
+  checkoutRevisionNotificationEvent,
 ) as Model<'AbstractNotificationEvent'>
 
 const pactSpec: PactSpec = {
@@ -763,7 +763,7 @@ function toMatcher(value: unknown): unknown {
   } else if (Array.isArray(value)) {
     return value.length > 0
       ? Matchers.eachLike(
-          typeof value[0] === 'object' ? toMatcher(value[0]) : value[0]
+          typeof value[0] === 'object' ? toMatcher(value[0]) : value[0],
         )
       : []
   } else if (typeof value === 'object') {
@@ -777,7 +777,7 @@ function toMatcher(value: unknown): unknown {
 
 function generalMap(
   func: (x: unknown) => unknown,
-  value: Record<string, unknown> | Array<unknown>
+  value: Record<string, unknown> | Array<unknown>,
 ): unknown {
   return Array.isArray(value)
     ? func(value)

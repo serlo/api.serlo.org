@@ -36,7 +36,7 @@ describe('GroupedExercise', () => {
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
-          groupedExercise
+          groupedExercise,
         ),
       })
   })
@@ -90,7 +90,7 @@ test('GroupedExerciseRevision', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
-        groupedExerciseRevision
+        groupedExerciseRevision,
       ),
     })
 })

@@ -66,7 +66,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         taxonomyTerm.childrenIds.map((id) => {
           // TODO: Use getUuidWithCustomDecoder()
           return dataSources.model.serlo.getUuid({ id })
-        })
+        }),
       )
       return resolveConnection({
         nodes: children.filter(isDefined),
@@ -211,7 +211,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
         message:
           'You are not allowed to sort children of taxonomy terms in this instance.',
         guard: serloAuth.TaxonomyTerm.change(
-          serloAuth.instanceToScope(taxonomyTerm.instance)
+          serloAuth.instanceToScope(taxonomyTerm.instance),
         ),
       })
 

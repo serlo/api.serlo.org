@@ -32,7 +32,7 @@ describe('CoursePage', () => {
       .shouldReturnData({
         uuid: R.pick(
           ['__typename', 'id', 'trashed', 'instance', 'date'],
-          coursePage
+          coursePage,
         ),
       })
   })
@@ -92,7 +92,7 @@ describe('CoursePage', () => {
             'content',
             'changes',
           ],
-          coursePageRevision
+          coursePageRevision,
         ),
       })
   })

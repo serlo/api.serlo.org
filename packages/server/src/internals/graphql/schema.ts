@@ -17,7 +17,7 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
     R.mergeDeepRight,
     {},
-    subResolvers
+    subResolvers,
   )
   const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
   const typeDefs = R.flatten(subTypeDefs)
@@ -189,7 +189,7 @@ export type InterfaceResolvers<I extends keyof Resolvers> = Required<
  */
 export type PickResolvers<
   R extends keyof Resolvers,
-  F = O.OptionalKeys<GetResolver<R>>
+  F = O.OptionalKeys<GetResolver<R>>,
 > = Required<PickKeys<GetResolver<R>, F>>
 
 export type ResolverFunction<Result, Parent, Args = object> = Resolver<

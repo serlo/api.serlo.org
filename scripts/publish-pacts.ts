@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const { version } = JSON.parse(
-  (await readFile(new URL('../lerna.json', import.meta.url))).toString()
+  (await readFile(new URL('../lerna.json', import.meta.url))).toString(),
 ) as { version: string }
 
 const result = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {

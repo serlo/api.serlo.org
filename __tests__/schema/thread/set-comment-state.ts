@@ -33,7 +33,7 @@ beforeEach(() => {
     comment2,
     comment3,
     user,
-    user2
+    user2,
   )
 })
 

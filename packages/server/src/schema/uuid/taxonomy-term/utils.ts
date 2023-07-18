@@ -7,7 +7,7 @@ import { TaxonomyTermDecoder } from '~/model/decoder'
 
 export async function resolveTaxonomyTermPath(
   parent: Model<'TaxonomyTerm'>,
-  { dataSources }: Context
+  { dataSources }: Context,
 ) {
   const path = [parent]
   let current = parent
@@ -27,7 +27,7 @@ export async function resolveTaxonomyTermPath(
 
 export async function assertIsTaxonomyTerm(
   id: number,
-  dataSources: Context['dataSources']
+  dataSources: Context['dataSources'],
 ) {
   try {
     await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -37,7 +37,7 @@ export async function assertIsTaxonomyTerm(
   } catch (error) {
     if (error instanceof InvalidCurrentValueError) {
       throw new UserInputError(
-        `No taxonomy term found for the provided id ${id}`
+        `No taxonomy term found for the provided id ${id}`,
       )
     } else {
       throw error

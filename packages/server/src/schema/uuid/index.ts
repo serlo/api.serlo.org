@@ -40,5 +40,5 @@ export const uuidSchema = mergeSchemas(
   solutionSchema,
   taxonomyTermSchema,
   userSchema,
-  videoSchema
+  videoSchema,
 )

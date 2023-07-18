@@ -77,7 +77,7 @@ export interface Brands {
 export const Uuid = t.brand(
   t.number,
   (id): id is t.Branded<number, Brands> => id < MAX_UUID,
-  'Uuid'
+  'Uuid',
 )
 export type Uuid = t.TypeOf<typeof Uuid>
 
@@ -96,7 +96,7 @@ export function castToUuid(value: number): Uuid {
 export const Alias = t.brand(
   t.string,
   (text): text is t.Branded<string, Brands> => !text.includes('\0'),
-  'Alias'
+  'Alias',
 )
 export type Alias = t.TypeOf<typeof Alias>
 
@@ -107,7 +107,7 @@ export function castToAlias(alias: string): Alias {
 export const NonEmptyString = t.brand(
   t.string,
   (text): text is t.Branded<string, Brands> => text.length > 0,
-  'NonEmptyString'
+  'NonEmptyString',
 )
 export type NonEmptyString = t.TypeOf<typeof NonEmptyString>
 
@@ -191,7 +191,7 @@ export const NavigationNodeDecoder: t.Type<NavigationNode> = t.recursion(
         url: t.string,
         children: t.array(NavigationNodeDecoder),
       }),
-    ])
+    ]),
 )
 
 export const NavigationDecoder = t.type({
@@ -209,7 +209,7 @@ export const NavigationDataDecoder = t.type({
         id: t.union([t.number, t.null]),
         url: t.union([t.string, t.null]),
       }),
-    ])
+    ]),
   ),
 })
 
@@ -224,7 +224,7 @@ export const PageDecoder = t.exact(
       date: t.string,
       licenseId: t.number,
     }),
-  ])
+  ]),
 )
 
 export const PageRevisionDecoder = t.exact(
@@ -238,7 +238,7 @@ export const PageRevisionDecoder = t.exact(
       authorId: Uuid,
       repositoryId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const TaxonomyTermTypeDecoder = t.union([
@@ -272,7 +272,7 @@ export const TaxonomyTermDecoder = t.exact(
     t.partial({
       description: t.union([t.string, t.null]),
     }),
-  ])
+  ]),
 )
 
 export const CommentDecoder = t.exact(
@@ -288,7 +288,7 @@ export const CommentDecoder = t.exact(
       parentId: Uuid,
       childrenIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const ArticleDecoder = t.exact(
@@ -298,7 +298,7 @@ export const ArticleDecoder = t.exact(
       __typename: t.literal(EntityType.Article),
       taxonomyTermIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const ArticleRevisionDecoder = t.exact(
@@ -310,7 +310,7 @@ export const ArticleRevisionDecoder = t.exact(
       metaTitle: t.string,
       metaDescription: t.string,
     }),
-  ])
+  ]),
 )
 
 export const AppletDecoder = t.exact(
@@ -320,7 +320,7 @@ export const AppletDecoder = t.exact(
       __typename: t.literal(EntityType.Applet),
       taxonomyTermIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const AppletRevisionDecoder = t.exact(
@@ -333,7 +333,7 @@ export const AppletRevisionDecoder = t.exact(
       metaTitle: t.string,
       metaDescription: t.string,
     }),
-  ])
+  ]),
 )
 
 export const CourseDecoder = t.exact(
@@ -344,7 +344,7 @@ export const CourseDecoder = t.exact(
       taxonomyTermIds: t.array(Uuid),
       pageIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const CourseRevisionDecoder = t.exact(
@@ -355,7 +355,7 @@ export const CourseRevisionDecoder = t.exact(
       title: t.string,
       metaDescription: t.string,
     }),
-  ])
+  ]),
 )
 
 export const CoursePageDecoder = t.exact(
@@ -365,7 +365,7 @@ export const CoursePageDecoder = t.exact(
       __typename: t.literal(EntityType.CoursePage),
       parentId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CoursePageRevisionDecoder = t.exact(
@@ -375,7 +375,7 @@ export const CoursePageRevisionDecoder = t.exact(
       __typename: t.literal(EntityRevisionType.CoursePageRevision),
       title: t.string,
     }),
-  ])
+  ]),
 )
 
 export const ExerciseDecoder = t.exact(
@@ -386,7 +386,7 @@ export const ExerciseDecoder = t.exact(
       taxonomyTermIds: t.array(Uuid),
       solutionId: t.union([Uuid, t.null]),
     }),
-  ])
+  ]),
 )
 
 export const ExerciseRevisionDecoder = t.exact(
@@ -395,7 +395,7 @@ export const ExerciseRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.ExerciseRevision),
     }),
-  ])
+  ]),
 )
 
 export const ExerciseGroupDecoder = t.exact(
@@ -406,7 +406,7 @@ export const ExerciseGroupDecoder = t.exact(
       taxonomyTermIds: t.array(Uuid),
       exerciseIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const ExerciseGroupRevisionDecoder = t.exact(
@@ -416,7 +416,7 @@ export const ExerciseGroupRevisionDecoder = t.exact(
       __typename: t.literal(EntityRevisionType.ExerciseGroupRevision),
       cohesive: t.boolean,
     }),
-  ])
+  ]),
 )
 
 export const EventDecoder = t.exact(
@@ -426,7 +426,7 @@ export const EventDecoder = t.exact(
       __typename: t.literal(EntityType.Event),
       taxonomyTermIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const EventRevisionDecoder = t.exact(
@@ -438,7 +438,7 @@ export const EventRevisionDecoder = t.exact(
       metaTitle: t.string,
       metaDescription: t.string,
     }),
-  ])
+  ]),
 )
 
 export const GroupedExerciseDecoder = t.exact(
@@ -449,7 +449,7 @@ export const GroupedExerciseDecoder = t.exact(
       parentId: Uuid,
       solutionId: t.union([Uuid, t.null]),
     }),
-  ])
+  ]),
 )
 
 export const GroupedExerciseRevisionDecoder = t.exact(
@@ -458,7 +458,7 @@ export const GroupedExerciseRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.GroupedExerciseRevision),
     }),
-  ])
+  ]),
 )
 
 export const SolutionDecoder = t.exact(
@@ -468,7 +468,7 @@ export const SolutionDecoder = t.exact(
       __typename: t.literal(EntityType.Solution),
       parentId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const SolutionRevisionDecoder = t.exact(
@@ -477,7 +477,7 @@ export const SolutionRevisionDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityRevisionType.SolutionRevision),
     }),
-  ])
+  ]),
 )
 
 export const VideoDecoder = t.exact(
@@ -487,7 +487,7 @@ export const VideoDecoder = t.exact(
       __typename: t.literal(EntityType.Video),
       taxonomyTermIds: t.array(Uuid),
     }),
-  ])
+  ]),
 )
 
 export const VideoRevisionDecoder = t.exact(
@@ -498,7 +498,7 @@ export const VideoRevisionDecoder = t.exact(
       url: t.string,
       title: t.string,
     }),
-  ])
+  ]),
 )
 
 export const UserDecoder = t.exact(
@@ -515,7 +515,7 @@ export const UserDecoder = t.exact(
       description: t.union([t.string, t.null]),
       language: t.union([InstanceDecoder, t.null]),
     }),
-  ])
+  ]),
 )
 
 export const AbstractExerciseDecoder = t.union([
@@ -598,7 +598,7 @@ export const SetThreadStateNotificationEventDecoder = t.exact(
       threadId: Uuid,
       archived: t.boolean,
     }),
-  ])
+  ]),
 )
 
 export const RemoveTaxonomyLinkNotificationEventDecoder = t.exact(
@@ -609,7 +609,7 @@ export const RemoveTaxonomyLinkNotificationEventDecoder = t.exact(
       parentId: Uuid,
       childId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CheckoutRevisionNotificationEventDecoder = t.exact(
@@ -621,7 +621,7 @@ export const CheckoutRevisionNotificationEventDecoder = t.exact(
       revisionId: Uuid,
       reason: t.string,
     }),
-  ])
+  ]),
 )
 
 export const RejectRevisionNotificationEventDecoder = t.exact(
@@ -633,7 +633,7 @@ export const RejectRevisionNotificationEventDecoder = t.exact(
       revisionId: Uuid,
       reason: t.string,
     }),
-  ])
+  ]),
 )
 
 export const CreateCommentNotificationEventDecoder = t.exact(
@@ -644,7 +644,7 @@ export const CreateCommentNotificationEventDecoder = t.exact(
       threadId: Uuid,
       commentId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateEntityNotificationEventDecoder = t.exact(
@@ -654,7 +654,7 @@ export const CreateEntityNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.CreateEntity),
       entityId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateEntityLinkNotificationEventDecoder = t.exact(
@@ -665,7 +665,7 @@ export const CreateEntityLinkNotificationEventDecoder = t.exact(
       parentId: Uuid,
       childId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const RemoveEntityLinkNotificationEventDecoder = t.exact(
@@ -676,7 +676,7 @@ export const RemoveEntityLinkNotificationEventDecoder = t.exact(
       parentId: Uuid,
       childId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateEntityRevisionNotificationEventDecoder = t.exact(
@@ -687,7 +687,7 @@ export const CreateEntityRevisionNotificationEventDecoder = t.exact(
       entityId: Uuid,
       entityRevisionId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateTaxonomyTermNotificationEventDecoder = t.exact(
@@ -697,7 +697,7 @@ export const CreateTaxonomyTermNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.CreateTaxonomyTerm),
       taxonomyTermId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const SetTaxonomyTermNotificationEventDecoder = t.exact(
@@ -707,7 +707,7 @@ export const SetTaxonomyTermNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.SetTaxonomyTerm),
       taxonomyTermId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateTaxonomyLinkNotificationEventDecoder = t.exact(
@@ -718,7 +718,7 @@ export const CreateTaxonomyLinkNotificationEventDecoder = t.exact(
       parentId: Uuid,
       childId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const SetTaxonomyParentNotificationEventDecoder = t.exact(
@@ -730,7 +730,7 @@ export const SetTaxonomyParentNotificationEventDecoder = t.exact(
       parentId: t.union([Uuid, t.null]),
       childId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const CreateThreadNotificationEventDecoder = t.exact(
@@ -740,7 +740,7 @@ export const CreateThreadNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.CreateThread),
       threadId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const SetLicenseNotificationEventDecoder = t.exact(
@@ -750,7 +750,7 @@ export const SetLicenseNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.SetLicense),
       repositoryId: Uuid,
     }),
-  ])
+  ]),
 )
 
 export const SetUuidStateNotificationEventDecoder = t.exact(
@@ -760,7 +760,7 @@ export const SetUuidStateNotificationEventDecoder = t.exact(
       __typename: t.literal(NotificationEventType.SetUuidState),
       trashed: t.boolean,
     }),
-  ])
+  ]),
 )
 
 export const NotificationEventDecoder = t.union([
@@ -789,7 +789,7 @@ export const NotificationDecoder = t.exact(
     email: t.boolean,
     emailSent: t.boolean,
     eventId: t.number,
-  })
+  }),
 )
 
 export const SubscriptionsDecoder = t.strict({

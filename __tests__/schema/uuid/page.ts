@@ -83,7 +83,7 @@ test('PageRevision', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'title', 'content', 'date'],
-        pageRevision
+        pageRevision,
       ),
     })
 })

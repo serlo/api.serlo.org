@@ -61,7 +61,7 @@ describe('Kratos middleware - register endpoint', () => {
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
-      'application/json; charset=utf-8'
+      'application/json; charset=utf-8',
     )
     expect(await response.json()).toEqual({ status: 'success' })
   })
@@ -89,7 +89,7 @@ describe('Kratos middleware - single-logout endpoint', () => {
   test('fails when logout_token.claims.sub is not an UUIDv4', async () => {
     const response = await fetchKratosSingleLogout(
       // "sub": "12354567"
-      'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM1NDU2NyJ9.B5O3bv8GckS4GnqhicuRVeYf6Q0Yvael_vxuhX9W5_0'
+      'logout_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM1NDU2NyJ9.B5O3bv8GckS4GnqhicuRVeYf6Q0Yvael_vxuhX9W5_0',
     )
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('invalid token or sub info missing')
@@ -114,7 +114,7 @@ describe('Kratos middleware - single-logout endpoint', () => {
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(
-      'Internal error while attempting single logout'
+      'Internal error while attempting single logout',
     )
     expect(response.headers.get('Cache-Control')).toEqual('no-store')
   })

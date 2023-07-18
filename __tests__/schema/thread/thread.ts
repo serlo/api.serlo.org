@@ -106,7 +106,7 @@ describe('uuid["threads"]', () => {
                 },
               },
             })
-        }
+        },
       )
     })
 
@@ -138,7 +138,7 @@ describe('uuid["threads"]', () => {
                 },
               },
             })
-        }
+        },
       )
     })
 

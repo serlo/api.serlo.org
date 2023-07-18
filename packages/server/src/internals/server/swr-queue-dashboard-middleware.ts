@@ -49,6 +49,6 @@ function createDashboardMiddleware(): RequestHandler {
     {
       disableListen: true,
       useCdn: false,
-    }
+    },
   )
 }

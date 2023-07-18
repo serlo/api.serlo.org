@@ -322,7 +322,7 @@ describe('Taxonomy Term', () => {
 })
 
 function createSetNavigationMutation(
-  navigation: Payload<'serlo', 'getNavigationPayload'>
+  navigation: Payload<'serlo', 'getNavigationPayload'>,
 ) {
   return client
     .prepareQuery({

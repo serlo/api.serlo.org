@@ -64,7 +64,7 @@ test('VideoRevision', async () => {
           'url',
           'changes',
         ],
-        videoRevision
+        videoRevision,
       ),
     })
 })

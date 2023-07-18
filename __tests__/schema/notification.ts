@@ -225,7 +225,7 @@ describe('notifications', () => {
               unread: false,
               event: R.pick(
                 ['__typename', 'id', 'instance', 'date', 'objectId', 'reason'],
-                checkoutRevisionNotificationEvent
+                checkoutRevisionNotificationEvent,
               ),
             },
           ],
@@ -263,7 +263,7 @@ describe('notificationEvent', () => {
         .withVariables(checkoutRevisionNotificationEvent)
         .shouldReturnData({
           notificationEvent: getTypenameAndId(
-            checkoutRevisionNotificationEvent
+            checkoutRevisionNotificationEvent,
           ),
         })
     })
@@ -370,7 +370,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'reason', 'objectId'],
-            rejectRevisionNotificationEvent
+            rejectRevisionNotificationEvent,
           ),
         })
     })
@@ -476,7 +476,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createCommentNotificationEvent
+            createCommentNotificationEvent,
           ),
         })
     })
@@ -588,7 +588,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createEntityNotificationEvent
+            createEntityNotificationEvent,
           ),
         })
     })
@@ -670,7 +670,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createEntityLinkNotificationEvent
+            createEntityLinkNotificationEvent,
           ),
         })
     })
@@ -784,7 +784,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            removeEntityLinkNotificationEvent
+            removeEntityLinkNotificationEvent,
           ),
         })
     })
@@ -898,7 +898,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createEntityRevisionNotificationEvent
+            createEntityRevisionNotificationEvent,
           ),
         })
     })
@@ -1006,7 +1006,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createTaxonomyTermNotificationEvent
+            createTaxonomyTermNotificationEvent,
           ),
         })
     })
@@ -1090,7 +1090,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            setTaxonomyTermNotificationEvent
+            setTaxonomyTermNotificationEvent,
           ),
         })
     })
@@ -1174,7 +1174,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createTaxonomyLinkNotificationEvent
+            createTaxonomyLinkNotificationEvent,
           ),
         })
     })
@@ -1282,7 +1282,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            removeTaxonomyLinkNotificationEvent
+            removeTaxonomyLinkNotificationEvent,
           ),
         })
     })
@@ -1390,7 +1390,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            setTaxonomyParentNotificationEvent
+            setTaxonomyParentNotificationEvent,
           ),
         })
     })
@@ -1526,7 +1526,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            createThreadNotificationEvent
+            createThreadNotificationEvent,
           ),
         })
     })
@@ -1635,7 +1635,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId'],
-            setLicenseNotificationEvent
+            setLicenseNotificationEvent,
           ),
         })
     })
@@ -1718,7 +1718,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'archived'],
-            setThreadStateNotificationEvent
+            setThreadStateNotificationEvent,
           ),
         })
     })
@@ -1804,7 +1804,7 @@ describe('notificationEvent', () => {
         .shouldReturnData({
           notificationEvent: R.pick(
             ['__typename', 'id', 'instance', 'date', 'objectId', 'trashed'],
-            setUuidStateNotificationEvent
+            setUuidStateNotificationEvent,
           ),
         })
     })

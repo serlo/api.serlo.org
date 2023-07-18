@@ -19,15 +19,15 @@ describe('getPayload() is always inverse to getKey()', () => {
         const { getKey, getPayload, examplePayload } = queryFunction._querySpec
 
         expect(getPayload(getKey(examplePayload))).toEqual(
-          O.some(examplePayload)
+          O.some(examplePayload),
         )
       })
-    }
+    },
   )
 })
 
 function isQueryEntry(
-  arg: [string, object]
+  arg: [string, object],
 ): arg is [string, Query<unknown, unknown>] {
   return isQuery(arg[1])
 }

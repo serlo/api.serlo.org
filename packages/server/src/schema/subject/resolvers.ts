@@ -43,8 +43,8 @@ export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
           dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
             decoder: EntityDecoder,
-          })
-        )
+          }),
+        ),
       )
 
       return resolveConnection({

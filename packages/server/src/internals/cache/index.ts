@@ -35,7 +35,7 @@ export interface Cache {
       key: string
       source: string
       priority?: Priority
-    } & FunctionOrValue<T>
+    } & FunctionOrValue<T>,
   ): Promise<void>
   remove(args: { key: string }): Promise<void>
   ready(): Promise<void>
@@ -62,7 +62,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       key: string
       source: string
       priority?: Priority
-    } & FunctionOrValue<T>
+    } & FunctionOrValue<T>,
   ) {
     const { key, priority = Priority.High, source } = payload
     const lockManager = lockManagers[priority]
@@ -75,7 +75,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
         const current = F.pipe(
           await this.get<T>({ key }),
           O.map((entry) => entry.value),
-          O.toUndefined
+          O.toUndefined,
         )
 
         value = await payload.getValue(current)
@@ -108,7 +108,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     }: {
       key: string
       maxAge?: Time
-    }
+    },
   ): Promise<O.Option<CacheEntry<T>>> {
     const packedValue = await client.getBuffer(key)
     if (packedValue === null) return O.none

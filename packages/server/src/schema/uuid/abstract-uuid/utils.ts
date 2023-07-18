@@ -18,7 +18,7 @@ const validTypes = [
 ]
 
 export function isSupportedUuid(
-  value: unknown
+  value: unknown,
 ): value is { __typename: (typeof validTypes)[number] } {
   return (
     R.has('__typename', value) &&
@@ -51,7 +51,7 @@ export function createUuidResolvers(): PickResolvers<
 
 async function getTitle(
   uuid: Model<'AbstractUuid'>,
-  dataSources: Context['dataSources']
+  dataSources: Context['dataSources'],
 ): Promise<string> {
   if (uuid.__typename === 'User') return uuid.username
   if (uuid.__typename === 'TaxonomyTerm') return uuid.name

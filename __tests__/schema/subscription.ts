@@ -113,7 +113,7 @@ describe('subscription mutation set', () => {
       user,
       article,
       { ...article, id: castToUuid(1555) },
-      { ...article, id: castToUuid(1565) }
+      { ...article, id: castToUuid(1565) },
     )
     given('SubscriptionsQuery')
       .withPayload({ userId: user.id })

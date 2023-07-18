@@ -9,7 +9,7 @@ export class InvalidCurrentValueError extends Error {
       decoder: string
       validationErrors: string[]
       key?: string
-    }
+    },
   ) {
     super('Invalid value received from data source.')
   }
