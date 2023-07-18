@@ -100,7 +100,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
 export type RolesPayload = { [scope in Scope]?: Role[] }
 
 export function resolveRolesPayload(
-  payload: RolesPayload
+  payload: RolesPayload,
 ): AuthorizationPayload {
   const permissions: AuthorizationPayload = {}
 
@@ -111,7 +111,7 @@ export function resolveRolesPayload(
   for (const globalRole of globalRoles) {
     globalPermissions = R.union(
       globalPermissions,
-      getPermissionsForRole(globalRole)
+      getPermissionsForRole(globalRole),
     )
   }
   permissions[Scope.Serlo] = globalPermissions
@@ -124,7 +124,7 @@ export function resolveRolesPayload(
     for (const role of roles) {
       instancedPermissions = R.union(
         instancedPermissions,
-        getPermissionsForRole(role)
+        getPermissionsForRole(role),
       )
     }
     permissions[scope] = instancedPermissions

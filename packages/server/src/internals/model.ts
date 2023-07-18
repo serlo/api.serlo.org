@@ -40,7 +40,7 @@ export type Typename<T> = T extends { __typename?: infer U }
 
 export type Payload<
   M extends keyof AllPayloads,
-  P extends keyof AllPayloads[M]
+  P extends keyof AllPayloads[M],
 > = AllPayloads[M][P]
 
 export type AllPayloads = {

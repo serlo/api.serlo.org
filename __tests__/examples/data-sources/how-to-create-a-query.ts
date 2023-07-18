@@ -53,8 +53,8 @@ describe('How to create a query in a data source: Fetching the content of an art
             // No article found -> return "404 Not Found"
             return res(ctx.status(404))
           }
-        }
-      )
+        },
+      ),
     )
 
     // We assume that the cache is empty in each of the following test cases
@@ -110,7 +110,7 @@ describe('How to create a query in a data source: Fetching the content of an art
             examplePayload: { id: 1 },
           },
           // In the actual code you will pass the `environment` variable here
-          createTestEnvironment()
+          createTestEnvironment(),
         ),
       },
     }

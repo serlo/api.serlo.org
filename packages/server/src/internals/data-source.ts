@@ -83,7 +83,7 @@ export class InvalidValueFromListener extends Error {
       invalidValueFromListener: unknown
       decoder: string
       validationErrors: string[]
-    }
+    },
   ) {
     super('Invalid value received from listener.')
   }

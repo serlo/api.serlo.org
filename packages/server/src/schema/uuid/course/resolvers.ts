@@ -23,7 +23,7 @@ export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
               id,
               decoder: CoursePageDecoder,
             })
-          })
+          }),
         )
 
         return pages.filter((page) => {

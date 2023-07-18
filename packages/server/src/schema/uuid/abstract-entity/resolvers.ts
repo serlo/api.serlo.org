@@ -70,7 +70,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
             }),
             dateOfDeletion: node.dateOfDeletion,
           }
-        })
+        }),
       )
 
       return resolveConnection({
@@ -156,7 +156,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         message:
           'You are not allowed to sort children of entities in this instance.',
         guard: serloAuth.Entity.orderChildren(
-          serloAuth.instanceToScope(entity.instance)
+          serloAuth.instanceToScope(entity.instance),
         ),
       })
 
@@ -200,7 +200,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       if (entity.instance !== newLicense.instance) {
         throw new UserInputError(
-          'The instance of the entity does not match the instance of the license.'
+          'The instance of the entity does not match the instance of the license.',
         )
       }
 
@@ -258,7 +258,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
 function decodeDateOfDeletion(after: string) {
   const afterParsed = JSON.parse(
-    Buffer.from(after, 'base64').toString()
+    Buffer.from(after, 'base64').toString(),
   ) as unknown
 
   const dateOfDeletion = t.type({ dateOfDeletion: t.string }).is(afterParsed)
@@ -267,12 +267,12 @@ function decodeDateOfDeletion(after: string) {
 
   if (!dateOfDeletion)
     throw new UserInputError(
-      'Field `dateOfDeletion` as string is missing in `after`'
+      'Field `dateOfDeletion` as string is missing in `after`',
     )
 
   if (!isDateString(dateOfDeletion))
     throw new UserInputError(
-      'The encoded dateOfDeletion in `after` should be a string in date format'
+      'The encoded dateOfDeletion in `after` should be a string in date format',
     )
 
   return new Date(dateOfDeletion).toISOString()

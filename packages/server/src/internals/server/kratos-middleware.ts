@@ -35,7 +35,7 @@ export function applyKratosMiddleware({
   ) {
     app.post(
       `${basePath}/single-logout`,
-      createKratosRevokeSessionsHandler(kratos)
+      createKratosRevokeSessionsHandler(kratos),
     )
   }
   return basePath
@@ -122,7 +122,7 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state)')
+      response.status(500).send('Internal Server Error (Illegal state)'),
     )
   }
 }
@@ -169,14 +169,14 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
 
       sendErrorResponse(
         response,
-        'Internal error while attempting single logout'
+        'Internal error while attempting single logout',
       )
       return
     }
   }
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      sendErrorResponse(response, 'Internal Server Error (Illegal state)')
+      sendErrorResponse(response, 'Internal Server Error (Illegal state)'),
     )
   }
 }

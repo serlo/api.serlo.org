@@ -23,7 +23,7 @@ describe('media.upload', () => {
         newUpload: {
           uploadUrl: 'http://google.com/upload',
           urlAfterUpload: expect.stringMatching(
-            /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/
+            /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/,
           ) as unknown,
         },
       },

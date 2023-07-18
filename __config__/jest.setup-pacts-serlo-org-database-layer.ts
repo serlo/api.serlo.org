@@ -43,7 +43,7 @@ beforeEach(async () => {
         const url = req.url
         const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`)
         return res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
-      }
+      },
     ),
     rest.post(
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
@@ -62,8 +62,8 @@ beforeEach(async () => {
         return pactRes.headers.get('Content-Type')
           ? res(ctx.status(pactRes.status), ctx.json(await pactRes.json()))
           : res(ctx.status(pactRes.status))
-      }
-    )
+      },
+    ),
   )
   global.client = createTestClient({
     service: Service.SerloCloudflareWorker,

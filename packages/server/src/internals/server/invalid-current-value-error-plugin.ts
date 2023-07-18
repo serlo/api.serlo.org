@@ -60,7 +60,7 @@ export function createInvalidCurrentValueErrorPlugin({
                   ids,
                 })
                 return scope
-              }
+              },
             )
           }
         },

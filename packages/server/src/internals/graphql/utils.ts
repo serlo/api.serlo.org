@@ -12,7 +12,7 @@ import { isInstance } from '~/schema/instance/utils'
 import { Instance, Role } from '~/types'
 
 export function assertUserIsAuthenticated(
-  userId: number | null
+  userId: number | null,
 ): asserts userId is number {
   if (userId === null) {
     throw new AuthenticationError('You are not logged in')
@@ -89,13 +89,13 @@ export function decodeFromBase64(text: string) {
 export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
   const emptyArgs: string[] = Object.entries(args)
     .filter(
-      ([_, value]) => typeof value === 'string' && value.trim().length === 0
+      ([_, value]) => typeof value === 'string' && value.trim().length === 0,
     )
     .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
     throw new UserInputError(
-      `Arguments ${emptyArgs.join(', ')} may not be empty`
+      `Arguments ${emptyArgs.join(', ')} may not be empty`,
     )
   }
 }

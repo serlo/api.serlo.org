@@ -37,5 +37,5 @@ export const notificationSchema = mergeSchemas(
   setTaxonomyParentNotificationSchema,
   setTaxonomyTermNotificationEventSchema,
   setThreadStateNotificationEventSchema,
-  setUuidStateNotificationEventSchema
+  setUuidStateNotificationEventSchema,
 )

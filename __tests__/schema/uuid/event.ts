@@ -66,7 +66,7 @@ test('EventRevision', async () => {
           'metaTitle',
           'metaDescription',
         ],
-        eventRevision
+        eventRevision,
       ),
     })
 })

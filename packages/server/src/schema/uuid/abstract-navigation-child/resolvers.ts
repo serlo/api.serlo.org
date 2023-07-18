@@ -24,7 +24,7 @@ export const resolvers: TypeResolvers<Navigation> &
           createCursor(node) {
             return node.index.toString()
           },
-        })
+        }),
       )
     },
   },

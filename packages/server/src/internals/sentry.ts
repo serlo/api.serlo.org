@@ -106,7 +106,7 @@ export function createSentryPlugin(): ApolloServerPlugin {
 }
 
 function stringifyContexts(
-  contexts: Record<string, Record<string, unknown> | undefined>
+  contexts: Record<string, Record<string, unknown> | undefined>,
 ) {
   return R.mapObjIndexed(R.mapObjIndexed(stringifyContextValue), contexts)
 }

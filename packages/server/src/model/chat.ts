@@ -29,7 +29,7 @@ export function createChatModel({ environment }: { environment: Environment }) {
       },
       examplePayload: { username: 'aeneas' },
     },
-    environment
+    environment,
   )
 
   const deleteUser = createMutation({

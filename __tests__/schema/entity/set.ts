@@ -364,7 +364,7 @@ testCases.forEach((testCase) => {
           testCase.entity,
           testCase.revision,
           anotherEntity,
-          taxonomyTermSubject
+          taxonomyTermSubject,
         )
 
         given('EntityAddRevisionMutation')
@@ -390,7 +390,7 @@ testCases.forEach((testCase) => {
           .isDefinedBy((_, res, ctx) => {
             given('UuidQuery').for(
               { ...testCase.entity, currentRevisionId: newRevision.id },
-              newRevision
+              newRevision,
             )
 
             return res(ctx.json({ success: true, revisionId: newRevision.id }))
@@ -589,7 +589,7 @@ describe('Autoreview entities', () => {
       solutionRevision,
       article,
       { ...exerciseGroup, taxonomyTermIds: [106082].map(castToUuid) },
-      { ...taxonomyTermSubject, id: castToUuid(106082) }
+      { ...taxonomyTermSubject, id: castToUuid(106082) },
     )
 
     given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
@@ -610,7 +610,7 @@ describe('Autoreview entities', () => {
           currentRevisionId: req.body.payload.input.needsReview
             ? oldRevisionId
             : newRevisionId,
-        })
+        }),
       )
     })
   })
@@ -639,12 +639,12 @@ describe('Autoreview entities', () => {
 
   test('autoreview is ignored when entity is also in non-autoreview taxonomy term', async () => {
     const taxonomyTermIds = [autoreviewTaxonomyIds[0], taxonomyTermRoot.id].map(
-      castToUuid
+      castToUuid,
     )
     given('UuidQuery').for(
       { ...exerciseGroup, taxonomyTermIds },
       { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
-      taxonomyTermRoot
+      taxonomyTermRoot,
     )
 
     await mutation

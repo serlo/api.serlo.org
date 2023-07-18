@@ -69,7 +69,7 @@ export const spec = {
         t.type({
           id: t.number,
           dateOfDeletion: t.string,
-        })
+        }),
       ),
     }),
     canBeNull: false,
@@ -90,7 +90,7 @@ export const spec = {
         t.intersection([
           t.type({ identifier: t.type({ value: t.number }) }),
           t.UnknownRecord,
-        ])
+        ]),
       ),
     }),
     canBeNull: false,
@@ -273,7 +273,7 @@ export const spec = {
     payload: t.type({}),
     response: t.strict({
       subjects: t.array(
-        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number }),
       ),
     }),
     canBeNull: false,
@@ -479,7 +479,7 @@ export const spec = {
 
 export async function makeRequest<M extends MessageType>(
   type: M,
-  payload: Payload<M>
+  payload: Payload<M>,
 ) {
   const databaseLayerUrl = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
   const body = JSON.stringify({
@@ -506,7 +506,7 @@ export async function makeRequest<M extends MessageType>(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
       O.map((json) => json.reason),
-      O.getOrElse(() => 'Bad Request')
+      O.getOrElse(() => 'Bad Request'),
     )
 
     throw new UserInputError(reason)
@@ -516,10 +516,10 @@ export async function makeRequest<M extends MessageType>(
 }
 
 export function getDecoderFor<M extends NullableMessageType>(
-  message: M
+  message: M,
 ): t.UnionC<[ResponseDecoder<M>, t.NullC]>
 export function getDecoderFor<M extends NotNullableMessageType>(
-  message: M
+  message: M,
 ): ResponseDecoder<M>
 export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
   const messageSpec = spec[message]
@@ -530,7 +530,7 @@ export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
 }
 
 export function getPayloadDecoderFor<M extends MessageType>(
-  message: M
+  message: M,
 ): PayloadDecoder<M> {
   return spec[message]['payload']
 }

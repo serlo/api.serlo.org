@@ -55,7 +55,7 @@ beforeEach(() => {
       ctx.json({
         success: true,
         emailHashes: botIds.map((id) => emailHash({ id })),
-      })
+      }),
     )
   })
 
@@ -149,7 +149,7 @@ describe('community chat', () => {
 
   test('send a sentry event when the user cannot be deleted from the community chat', async () => {
     givenChatDeleteUserEndpoint(
-      returnsJson({ json: { success: false, errorType: 'unknown' } })
+      returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
 
     await mutation.withInput({ botIds: [user2.id] }).execute()
@@ -182,7 +182,7 @@ describe('mailchimp', () => {
 
   test('send a sentry event when the user cannot be deleted', async () => {
     givenMailchimpDeleteEmailEndpoint(
-      returnsJson({ status: 405, json: { errorType: 'unknown' } })
+      returnsJson({ status: 405, json: { errorType: 'unknown' } }),
     )
 
     await mutation.execute()
@@ -233,15 +233,15 @@ test('fails when kratos has an error', async () => {
 })
 
 function givenChatDeleteUserEndpoint(
-  resolver: RestResolver<{ username: string }>
+  resolver: RestResolver<{ username: string }>,
 ) {
   global.server.use(
-    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver)
+    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver),
   )
 }
 
 function givenMailchimpDeleteEmailEndpoint(
-  resolver: RestResolver<never, { emailHash: string }>
+  resolver: RestResolver<never, { emailHash: string }>,
 ) {
   const url =
     `https://us5.api.mailchimp.com/3.0/` +

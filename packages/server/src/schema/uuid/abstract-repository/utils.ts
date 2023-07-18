@@ -65,12 +65,12 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
                 id,
                 decoder: revisionDecoder,
               })
-            })
-          )
+            }),
+          ),
         ),
         A.filter(
-          (revision) => R.isNil(cursorPayload.unrevised) || !revision.trashed
-        )
+          (revision) => R.isNil(cursorPayload.unrevised) || !revision.trashed,
+        ),
       )
       return resolveConnection<R>({
         nodes: revisions,

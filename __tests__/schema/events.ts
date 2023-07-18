@@ -88,8 +88,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, actorId: castToUuid(23) }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -109,7 +109,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -123,8 +123,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, instance: Instance.De }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -144,7 +144,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -158,8 +158,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, objectId: castToUuid(23) }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -179,7 +179,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -187,7 +187,7 @@ describe('query endpoint "events"', () => {
 
   test('with filter `after`', async () => {
     const events = assignSequentialIds(
-      R.range(0, 200).flatMap(R.always(allEvents))
+      R.range(0, 200).flatMap(R.always(allEvents)),
     )
     const afterId = R.reverse(events)[1000].id
     setupEvents(events)
@@ -221,7 +221,7 @@ describe('query endpoint "events"', () => {
 
   test('`hasNextPage` is always true when database layer responses with hasNextPage == true', async () => {
     const events = assignSequentialIds(
-      R.range(0, 105).flatMap(R.always(allEvents))
+      R.range(0, 105).flatMap(R.always(allEvents)),
     )
     const afterId = R.reverse(events)[1039].id
     setupEvents(events)
@@ -248,7 +248,7 @@ describe('query endpoint "events"', () => {
 
   test('number of returned events is bounded to 500 when `first` is undefined', async () => {
     const events = assignSequentialIds(
-      R.range(0, 50).flatMap(R.always(allEvents))
+      R.range(0, 50).flatMap(R.always(allEvents)),
     )
     setupEvents(events)
 
@@ -302,8 +302,8 @@ test('User.eventsByUser returns events of this user', async () => {
       }),
       allEvents.map((event) => {
         return { ...event, actorId: castToUuid(23) }
-      })
-    )
+      }),
+    ),
   )
   setupEvents(events)
   given('UuidQuery').for(user)
@@ -330,7 +330,7 @@ test('User.eventsByUser returns events of this user', async () => {
       uuid: {
         eventsByUser: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       },
@@ -345,8 +345,8 @@ test('AbstractEntity.events returns events for this entity', async () => {
       }),
       allEvents.map((event) => {
         return { ...event, objectId: castToUuid(23) }
-      })
-    )
+      }),
+    ),
   )
   setupEvents(events)
   given('UuidQuery').for(article)
@@ -373,7 +373,7 @@ test('AbstractEntity.events returns events for this entity', async () => {
       uuid: {
         events: {
           nodes: R.reverse(
-            events.slice(0, events.length / 2).map(getTypenameAndId)
+            events.slice(0, events.length / 2).map(getTypenameAndId),
           ),
         },
       },
@@ -397,13 +397,13 @@ function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
       ctx.json({
         events: filteredEvents.slice(0, first),
         hasNextPage: filteredEvents.length > first,
-      })
+      }),
     )
   })
 }
 
 function assignSequentialIds(
-  events: Model<'AbstractNotificationEvent'>[]
+  events: Model<'AbstractNotificationEvent'>[],
 ): Model<'AbstractNotificationEvent'>[] {
   return events.map((event, id) => {
     return { ...event, id: castToUuid(id + 1) }

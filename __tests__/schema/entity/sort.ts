@@ -60,7 +60,7 @@ test('updates the cache of groupedExercise', async () => {
 
   given('UuidQuery').for(
     { ...groupedExercise, id: castToUuid(2219) },
-    { ...groupedExercise, id: castToUuid(2220) }
+    { ...groupedExercise, id: castToUuid(2220) },
   )
 
   const query = new Client({ userId: user.id })
@@ -104,7 +104,7 @@ test('updates the cache of Course', async () => {
 
   given('UuidQuery').for(
     { ...coursePage, id: castToUuid(18521) },
-    { ...coursePage, id: castToUuid(30713) }
+    { ...coursePage, id: castToUuid(30713) },
   )
 
   const query = new Client({ userId: user.id })

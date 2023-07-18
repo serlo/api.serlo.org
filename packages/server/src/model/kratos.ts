@@ -19,7 +19,7 @@ export function createKratosModel({
       async getCurrentValue({ userLegacyId }: { userLegacyId: number }) {
         const kratosIdentity =
           await environment.authServices.kratos.db.getIdentityByLegacyId(
-            userLegacyId
+            userLegacyId,
           )
         const language = kratosIdentity?.traits?.language
 
@@ -31,18 +31,18 @@ export function createKratosModel({
       getPayload: (key) => {
         if (!key.startsWith('kratos.serlo.org/user-language/')) return O.none
         const userLegacyId = parseInt(
-          key.replace('kratos.serlo.org/user-language/', '')
+          key.replace('kratos.serlo.org/user-language/', ''),
         )
         return F.pipe(
           O.some({ userLegacyId }),
           O.filter(
-            ({ userLegacyId }) => !isNaN(userLegacyId) && userLegacyId > 0
-          )
+            ({ userLegacyId }) => !isNaN(userLegacyId) && userLegacyId > 0,
+          ),
         )
       },
       examplePayload: { userLegacyId: 1 },
     },
-    environment
+    environment,
   )
 
   return {
