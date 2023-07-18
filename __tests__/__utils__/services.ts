@@ -25,7 +25,7 @@ export class MockKratos {
   admin = {
     deleteIdentity: (requestParameters: IdentityApiDeleteIdentityRequest) => {
       const identity = this.identities.find(
-        (identity) => identity.id === requestParameters.id
+        (identity) => identity.id === requestParameters.id,
       )
       if (identity) {
         const identityIndex = this.identities.indexOf(identity)
@@ -36,10 +36,10 @@ export class MockKratos {
 
   db = {
     getIdentityByLegacyId: (
-      legacyId: number
+      legacyId: number,
     ): Partial<Identity> | undefined => {
       return this.identities.find(
-        (identity) => identity.metadata_public.legacy_id === legacyId
+        (identity) => identity.metadata_public.legacy_id === legacyId,
       )
     },
   } as unknown as KratosDB
@@ -97,7 +97,7 @@ export function defaultSpreadsheetApi(): SpreadsheetApiResolver {
 }
 
 export function givenSpreadsheet(
-  args: SpreadsheetQuery & { values: string[][] }
+  args: SpreadsheetQuery & { values: string[][] },
 ) {
   spreadsheets[toKey(args)] = args.values
 }
@@ -123,7 +123,7 @@ export function hasInternalServerError(): RestResolver {
 
 export type RestResolver<
   RequestBodyType extends DefaultBodyType = DefaultBodyType,
-  RequestParamsType extends PathParams = PathParams
+  RequestParamsType extends PathParams = PathParams,
 > = ResponseResolver<
   RestRequest<RequestBodyType, RequestParamsType>,
   typeof restContext

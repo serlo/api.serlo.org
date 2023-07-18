@@ -52,7 +52,7 @@ export function setup() {
 }
 
 export async function createBeforeAll(
-  options: Parameters<SetupServer['listen']>[0]
+  options: Parameters<SetupServer['listen']>[0],
 ) {
   await global.cache.ready()
 
@@ -69,11 +69,11 @@ export async function createBeforeEach() {
         global.sentryEvents.push(
           ...(await req.text())
             .split('\n')
-            .map((x) => JSON.parse(x) as Sentry.Event)
+            .map((x) => JSON.parse(x) as Sentry.Event),
         )
         return res(ctx.status(200))
-      }
-    )
+      },
+    ),
   )
 
   await global.cache.flush()

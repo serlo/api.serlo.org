@@ -87,7 +87,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
                 return 'unknown'
             }
           }
-        })
+        }),
       )
 
       assertUserIsAuthenticated(userId)
@@ -108,7 +108,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 
 async function resolveIdFromPayload(
   dataSources: Context['dataSources'],
-  payload: QueryUuidArgs
+  payload: QueryUuidArgs,
 ) {
   if (payload.alias) {
     return await resolveIdFromAlias(dataSources, payload.alias)
@@ -121,13 +121,13 @@ async function resolveIdFromPayload(
 
 async function resolveIdFromAlias(
   dataSources: Context['dataSources'],
-  alias: NonNullable<QueryUuidArgs['alias']>
+  alias: NonNullable<QueryUuidArgs['alias']>,
 ): Promise<number | null> {
   const cleanPath = encodePath(decodePath(alias.path))
 
   if (!cleanPath.startsWith('/')) {
     throw new UserInputError(
-      "First is the worst, please add a '/' at the beginning of your path"
+      "First is the worst, please add a '/' at the beginning of your path",
     )
   }
 

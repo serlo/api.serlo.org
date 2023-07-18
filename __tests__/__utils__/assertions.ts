@@ -16,7 +16,7 @@ export class Client {
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
-    query: QuerySpec<V>
+    query: QuerySpec<V>,
   ) {
     return new Query(this, query)
   }
@@ -28,9 +28,12 @@ export class Client {
 
 export class Query<
   I extends Input = Input,
-  V extends Variables<I> = Variables<I>
+  V extends Variables<I> = Variables<I>,
 > {
-  constructor(private client: Client, private query: QuerySpec<V>) {}
+  constructor(
+    private client: Client,
+    private query: QuerySpec<V>,
+  ) {}
 
   withInput(input: I) {
     return new Query(this.client, { ...this.query, variables: { input } })
@@ -39,7 +42,7 @@ export class Query<
   changeInput(input: Partial<I>) {
     return new Query(
       this.client,
-      R.mergeDeepRight(this.query, { variables: { input } })
+      R.mergeDeepRight(this.query, { variables: { input } }),
     )
   }
 
@@ -83,7 +86,7 @@ export class Query<
       | 'BAD_USER_INPUT'
       | 'FORBIDDEN'
       | 'INTERNAL_SERVER_ERROR'
-      | 'UNAUTHENTICATED'
+      | 'UNAUTHENTICATED',
   ) {
     const response = await this.execute()
     expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)

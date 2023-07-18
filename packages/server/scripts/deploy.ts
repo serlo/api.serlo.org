@@ -62,13 +62,13 @@ function buildDockerImage({
       '--format',
       'json',
     ],
-    { stdio: 'pipe' }
+    { stdio: 'pipe' },
   )
   const images = JSON.parse(String(result.stdout)) as unknown[]
 
   if (images.length > 0) {
     console.log(
-      `Skipping deployment: ${remoteName}:${version} already present in registry`
+      `Skipping deployment: ${remoteName}:${version} already present in registry`,
     )
     return
   }
@@ -80,7 +80,7 @@ function buildDockerImage({
   spawnSync(
     'docker',
     ['build', '-f', Dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
-    { stdio: 'inherit' }
+    { stdio: 'inherit' },
   )
 
   remoteTags.forEach((remoteTag) => {
@@ -97,7 +97,9 @@ function getTargetVersions(version: semver.SemVer) {
         'next',
         ...R.range(0, prerelease.length).map(
           (i) =>
-            `${major}.${minor}.${patch}-${prerelease.slice(0, i + 1).join('.')}`
+            `${major}.${minor}.${patch}-${prerelease
+              .slice(0, i + 1)
+              .join('.')}`,
         ),
       ]
     : ['latest', `${major}`, `${major}.${minor}`, `${major}.${minor}.${patch}`]

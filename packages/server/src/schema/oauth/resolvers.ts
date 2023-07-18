@@ -24,7 +24,7 @@ export const resolvers: Mutations<'oauth'> = {
 
       if (legacyId !== userId) {
         throw new ForbiddenError(
-          'OAuth: You can only accept login for yourself'
+          'OAuth: You can only accept login for yourself',
         )
       }
 
@@ -50,7 +50,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the login request'
+                'Something went wrong while accepting the login request',
               )
             })
         })
@@ -60,7 +60,7 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the login request'
+            'Something went wrong while getting the login request',
           )
         })
     },
@@ -78,7 +78,7 @@ export const resolvers: Mutations<'oauth'> = {
 
       if (legacyId !== userId) {
         throw new ForbiddenError(
-          'OAuth: You can only accept consent for yourself'
+          'OAuth: You can only accept consent for yourself',
         )
       }
 
@@ -125,7 +125,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the consent request'
+                'Something went wrong while accepting the consent request',
               )
             })
         })
@@ -135,7 +135,7 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the consent request'
+            'Something went wrong while getting the consent request',
           )
         })
     },
@@ -155,7 +155,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the logout request'
+                'Something went wrong while accepting the logout request',
               )
             })
         })
@@ -165,7 +165,7 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the logout request'
+            'Something went wrong while getting the logout request',
           )
         })
     },

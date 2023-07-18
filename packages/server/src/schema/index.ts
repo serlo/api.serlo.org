@@ -34,5 +34,5 @@ export const schema = mergeSchemas(
   subscriptionSchema,
   threadSchema,
   uuidSchema,
-  versionSchema
+  versionSchema,
 )

@@ -38,7 +38,7 @@ beforeEach(() => {
     video,
     taxonomyTermSubject,
     taxonomyTermCurriculumTopic,
-    user
+    user,
   )
 
   given('TaxonomyCreateEntityLinksMutation')

@@ -6,7 +6,7 @@ import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(
   authorizationHeader: string,
-  userAuthenticator: () => Promise<number | null>
+  userAuthenticator: () => Promise<number | null>,
 ): Promise<Pick<Context, 'service' | 'userId'>> {
   const parts = authorizationHeader.split(' ')
   if (parts.length !== 2 || parts[0] !== 'Serlo') {
@@ -31,7 +31,7 @@ function validateServiceToken(token: string): Service {
   const serviceTokenParts = token.split('=')
   if (serviceTokenParts.length !== 2 || serviceTokenParts[0] !== 'Service') {
     throw new AuthenticationError(
-      'Invalid authorization header: invalid service token part'
+      'Invalid authorization header: invalid service token part',
     )
   }
   const serviceToken = serviceTokenParts[1]
@@ -39,7 +39,7 @@ function validateServiceToken(token: string): Service {
 
   if (error || service === null) {
     throw new AuthenticationError(
-      `Invalid service token${error ? `: ${error.message}` : ''}`
+      `Invalid service token${error ? `: ${error.message}` : ''}`,
     )
   }
   return service

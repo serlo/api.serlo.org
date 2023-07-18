@@ -66,7 +66,7 @@ export async function resolveThreads({
         entity.canonicalSubjectId === subjectId
         ? comment
         : null
-    })
+    }),
   )
   const filteredFirstComments =
     firstCommentsAfterSubjectFilter.filter(isDefined)
@@ -75,22 +75,22 @@ export async function resolveThreads({
     filteredFirstComments.map(async (firstComment) => {
       const remainingComments = await resolveComments(
         dataSources,
-        firstComment.childrenIds
+        firstComment.childrenIds,
       )
       const filteredComments = remainingComments.filter(
-        (comment) => trashed === undefined || trashed === comment.trashed
+        (comment) => trashed === undefined || trashed === comment.trashed,
       )
       return {
         __typename: 'Thread' as const,
         commentPayloads: [firstComment, ...filteredComments],
       }
-    })
+    }),
   )
 }
 
 export async function resolveThread(
   firstCommentId: number,
-  dataSources: Context['dataSources']
+  dataSources: Context['dataSources'],
 ): Promise<Model<'Thread'>> {
   const firstComment = await dataSources.model.serlo.getUuidWithCustomDecoder({
     id: firstCommentId,
@@ -99,7 +99,7 @@ export async function resolveThread(
 
   const remainingComments = await resolveComments(
     dataSources,
-    firstComment.childrenIds
+    firstComment.childrenIds,
   )
 
   return {
@@ -114,7 +114,7 @@ export function encodeThreadId(firstCommentId: number) {
 
 export function decodeThreadId(threadId: string): number {
   const result = parseInt(
-    Buffer.from(threadId, 'base64').toString('utf-8').substring(1)
+    Buffer.from(threadId, 'base64').toString('utf-8').substring(1),
   )
   if (Number.isNaN(result) || result <= 0) {
     throw new UserInputError('you need to provide a valid thread id (string)')
@@ -128,15 +128,15 @@ export function decodeThreadIds(ids: string[]): number[] {
 
 async function resolveComments(
   dataSources: Context['dataSources'],
-  ids: number[]
+  ids: number[],
 ) {
   const comments = await Promise.all(
     ids.map((id) =>
       dataSources.model.serlo.getUuidWithCustomDecoder({
         id,
         decoder: t.union([CommentDecoder, t.null]),
-      })
-    )
+      }),
+    ),
   )
 
   return comments.filter(isDefined)

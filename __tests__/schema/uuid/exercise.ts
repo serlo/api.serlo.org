@@ -27,7 +27,7 @@ test('Exercise', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'instance', 'date'],
-        exercise
+        exercise,
       ),
     })
 })
@@ -56,7 +56,7 @@ test('ExerciseRevision', async () => {
     .shouldReturnData({
       uuid: R.pick(
         ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
-        exerciseRevision
+        exerciseRevision,
       ),
     })
 })

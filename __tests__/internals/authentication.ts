@@ -13,8 +13,8 @@ describe('Service token only', () => {
     expect(
       await handleAuthentication(
         header,
-        createFakeUserAuthenticator({ userId: null })
-      )
+        createFakeUserAuthenticator({ userId: null }),
+      ),
     ).toEqual({
       service: Service.Serlo,
       userId: null,
@@ -29,9 +29,9 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow(
-      'Invalid service token: jwt audience invalid. expected: api.serlo.org'
+      'Invalid service token: jwt audience invalid. expected: api.serlo.org',
     )
   })
 
@@ -43,7 +43,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow('Invalid service token: invalid signature')
   })
 
@@ -57,12 +57,12 @@ describe('Service token only', () => {
         audience: 'api.serlo.org',
         issuer: Service.Serlo,
         expiresIn: '1h',
-      }
+      },
     )
     const header = `Serlo Service=${token}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow('Invalid service token: jwt expired')
   })
 
@@ -74,7 +74,7 @@ describe('Service token only', () => {
     const header = `Bearer Service=${token}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow('Invalid authorization header')
   })
 
@@ -88,7 +88,7 @@ describe('Service token only', () => {
     const header = `Serlo Service=${token};User=${userToken}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow('Invalid authorization header')
   })
 })
@@ -104,8 +104,8 @@ describe('Service & User', () => {
     expect(
       await handleAuthentication(
         header,
-        createFakeUserAuthenticator({ userId: 1 })
-      )
+        createFakeUserAuthenticator({ userId: 1 }),
+      ),
     ).toEqual({
       service: Service.Serlo,
       userId: 1,
@@ -118,7 +118,7 @@ describe('Service & User', () => {
     const header = `Serlo Service=${serviceToken}`
 
     await expect(
-      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 }))
+      handleAuthentication(header, createFakeUserAuthenticator({ userId: 1 })),
     ).rejects.toThrow('Invalid service token')
   })
 })

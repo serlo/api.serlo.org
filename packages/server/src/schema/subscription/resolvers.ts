@@ -60,7 +60,7 @@ export const resolvers: TypeResolvers<SubscriptionInfo> &
       const ids = id.map(castToUuid)
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources }))
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
       )
 
       assertUserIsAuthenticated(userId)

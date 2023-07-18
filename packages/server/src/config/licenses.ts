@@ -209,7 +209,7 @@ export const licenses = <License[]>[
 export function getDefaultLicense(instance: Instance): License {
   return (
     licenses.find(
-      (license) => license.default && license.instance == instance
+      (license) => license.default && license.instance == instance,
     ) ?? defaultLicense
   )
 }

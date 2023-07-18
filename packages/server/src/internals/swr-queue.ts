@@ -18,7 +18,7 @@ const INVALID_VALUE_RECEIVED =
 
 export interface SwrQueue {
   queue(
-    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> }
+    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> },
   ): Promise<never>
   ready(): Promise<void>
   healthy(): Promise<void>
@@ -63,7 +63,7 @@ export function createSwrQueue({
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args)
+    createModel(args),
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
@@ -113,7 +113,7 @@ export function createSwrQueue({
       job.on('retrying', (error) => {
         reportError({ jobStatus: 'retrying', error })
         log.debug(
-          `Job ${job.id} failed with error ${error.message} but is being retried!`
+          `Job ${job.id} failed with error ${error.message} but is being retried!`,
         )
       })
 
@@ -158,7 +158,7 @@ export function createSwrQueueWorker({
     },
   }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args)
+    createModel(args),
   )
 
   const queue = new Queue<UpdateJob>(queueName, {

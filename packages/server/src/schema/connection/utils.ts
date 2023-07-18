@@ -26,7 +26,7 @@ export function resolveConnection<T>({
   }
   if (first != null && last != null) {
     throw new UserInputError(
-      '`first` and `last` cannot be set at the same time'
+      '`first` and `last` cannot be set at the same time',
     )
   }
   if (first == null && last == null) {

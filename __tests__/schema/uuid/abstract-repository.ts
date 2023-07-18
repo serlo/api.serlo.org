@@ -162,7 +162,7 @@ describe('Repository', () => {
           alias: { instance: repository.instance, path: '/%C3%BC' },
         })
         .shouldReturnData({ uuid: getTypenameAndId(repository) })
-    }
+    },
   )
 
   test.each(repositoryCases)(
@@ -182,7 +182,7 @@ describe('Repository', () => {
           alias: { instance: repository.instance, path: `/${repository.id}` },
         })
         .shouldReturnData({ uuid: getTypenameAndId(repository) })
-    }
+    },
   )
 
   test.each(repositoryCases)(
@@ -212,11 +212,11 @@ describe('Repository', () => {
           uuid: {
             currentRevision: R.pick(
               ['__typename', 'id', 'trashed', 'date'],
-              revision
+              revision,
             ),
           },
         })
-    }
+    },
   )
 
   test.each(repositoryCases)(
@@ -247,7 +247,7 @@ describe('Repository', () => {
         })
         .withVariables({ id: repository.id })
         .shouldReturnData({ uuid: { license } })
-    }
+    },
   )
 
   test.each(repositoryCases)(
@@ -273,7 +273,7 @@ describe('Repository', () => {
         .shouldReturnData({
           uuid: { license: { id: getDefaultLicense(repository.instance).id } },
         })
-    }
+    },
   )
 
   describe.each(repositoryCases)(
@@ -311,7 +311,7 @@ describe('Repository', () => {
           },
           unrevisedRevision,
           revision,
-          revisedRevision
+          revisedRevision,
         )
       })
 
@@ -384,7 +384,7 @@ describe('Repository', () => {
             },
           })
       })
-    }
+    },
   )
 })
 
@@ -411,7 +411,7 @@ describe('Revision', () => {
         })
         .withVariables(revision)
         .shouldReturnData({ uuid: { author: getTypenameAndId(user) } })
-    }
+    },
   )
 
   test.each(repositoryCases)(
@@ -438,6 +438,6 @@ describe('Revision', () => {
         .shouldReturnData({
           uuid: { repository: getTypenameAndId(repository) },
         })
-    }
+    },
   )
 })

@@ -47,7 +47,7 @@ export const resolvers: Mutations<'_cache'> = {
         allowedServices: [Service.Serlo, Service.SerloCacheWorker],
       })
       await Promise.all(
-        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
+        input.keys.map((key) => dataSources.model.updateCacheValue({ key })),
       )
       return { success: true }
     },
@@ -71,7 +71,7 @@ function checkPermission({
     (userId === null || !allowedUserIds.includes(userId))
   ) {
     throw new ForbiddenError(
-      `You do not have the permissions to ${operation} the cache`
+      `You do not have the permissions to ${operation} the cache`,
     )
   }
 }

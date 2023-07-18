@@ -41,7 +41,7 @@ export async function start() {
 }
 
 async function initCheckStalledJobsRegularly(
-  swrQueueWorker: ReturnType<typeof createSwrQueueWorker>
+  swrQueueWorker: ReturnType<typeof createSwrQueueWorker>,
 ) {
   const delayFromEnv = parseInt(process.env.CHECK_STALLED_JOBS_DELAY)
   const delay = Number.isNaN(delayFromEnv) ? 60 * 60 * 1000 : delayFromEnv

@@ -61,5 +61,5 @@ test.each(taxonomyTermChildCases)(
           },
         },
       })
-  }
+  },
 )

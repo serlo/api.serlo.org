@@ -51,7 +51,7 @@ export async function applyGraphQLMiddleware({
       onHealthCheck: async () => {
         await swrQueue.healthy()
       },
-    })
+    }),
   )
   app.get('/___graphql', (...args) => {
     const headers =
@@ -65,7 +65,7 @@ export async function applyGraphQLMiddleware({
 }
 
 export function getGraphQLOptions(
-  environment: Environment
+  environment: Environment,
 ): ApolloServerExpressConfig {
   return {
     typeDefs: schema.typeDefs,
