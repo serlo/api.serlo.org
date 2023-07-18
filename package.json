@@ -52,7 +52,7 @@
     "@inyono/changelog": "^0.5.2",
     "@pact-foundation/pact": "^11.0.2",
     "@pact-foundation/pact-node": "^10.17.7",
-    "@sentry/node": "^7.58.1",
+    "@sentry/node": "^7.59.2",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^18.16.19",
