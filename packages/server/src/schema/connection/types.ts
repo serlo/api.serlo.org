@@ -1,4 +1,4 @@
-import { Maybe, Scalars, PageInfo } from '../../types'
+import { PageInfo } from '../../types'
 
 export interface Connection<T> {
   edges: Array<{ node: T; cursor: string }>
@@ -8,8 +8,8 @@ export interface Connection<T> {
 }
 
 export interface ConnectionPayload {
-  after?: Maybe<Scalars['String']>
-  before?: Maybe<Scalars['String']>
-  first?: Maybe<Scalars['Int']>
-  last?: Maybe<Scalars['Int']>
+  after?: string
+  before?: string
+  first?: number
+  last?: number
 }
