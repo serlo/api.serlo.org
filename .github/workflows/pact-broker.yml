@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
+      - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start:redis
       - run: yarn pacts
       - run: yarn pacts:publish
