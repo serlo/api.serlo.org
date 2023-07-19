@@ -9,7 +9,7 @@ declare namespace NodeJS {
     GOOGLE_SPREADSHEET_API_ACTIVE_DONORS: string
     GOOGLE_SPREADSHEET_API_MOTIVATION: string
     GOOGLE_SPREADSHEET_API_SECRET: string
-    LOG_LEVEL: LogLevelDesc | undefined
+    LOG_LEVEL: LogLevelDesc
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
     ROCKET_CHAT_API_AUTH_TOKEN: string
