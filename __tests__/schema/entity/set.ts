@@ -30,7 +30,7 @@ import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { castToUuid, EntityType } from '~/model/decoder'
+import { castToUuid, DiscriminatorType, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
 import { Instance } from '~/types'
@@ -233,10 +233,10 @@ testCases.forEach((testCase) => {
         subscribeThis,
         subscribeThisByEmail,
         fields: testCase.fieldsToDBLayer,
-        ...(testCase.parent.__typename == 'TaxonomyTerm'
+        ...(testCase.parent.__typename == DiscriminatorType.TaxonomyTerm
           ? { taxonomyTermId: testCase.parent.id }
           : {}),
-        ...(testCase.parent.__typename != 'TaxonomyTerm'
+        ...(testCase.parent.__typename != DiscriminatorType.TaxonomyTerm
           ? { parentId: testCase.parent.id }
           : {}),
       },
