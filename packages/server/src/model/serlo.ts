@@ -6,6 +6,7 @@ import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
   CommentDecoder,
+  DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
   NavigationDataDecoder,
@@ -621,7 +622,8 @@ export function createSerloModel({
         await getUuid._querySpec.setCache({
           payload: { id: payload.threadId },
           getValue(current) {
-            if (!current || current.__typename !== 'Comment') return
+            if (!current || current.__typename !== DiscriminatorType.Comment)
+              return
             current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
           },
@@ -670,7 +672,8 @@ export function createSerloModel({
           return { id }
         }),
         getValue(current) {
-          if (!current || current.__typename !== 'Comment') return
+          if (!current || current.__typename !== DiscriminatorType.Comment)
+            return
           return {
             ...current,
             archived: ids.includes(current.id) ? archived : current.archived,

@@ -160,7 +160,7 @@ export type UuidType =
   | 'PageRevision'
   | 'TaxonomyTerm'
   | 'User'
-  | string
+  | 'unknown'
 
 export const Uuid = {
   create: (type: UuidType): GenericAuthorizationGuard => {

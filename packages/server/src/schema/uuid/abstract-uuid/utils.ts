@@ -53,17 +53,17 @@ async function getTitle(
   uuid: Model<'AbstractUuid'>,
   dataSources: Context['dataSources'],
 ): Promise<string> {
-  if (uuid.__typename === 'User') return uuid.username
-  if (uuid.__typename === 'TaxonomyTerm') return uuid.name
+  if (uuid.__typename === DiscriminatorType.User) return uuid.username
+  if (uuid.__typename === DiscriminatorType.TaxonomyTerm) return uuid.name
   if (t.type({ title: t.string }).is(uuid)) return uuid.title
   if (
-    uuid.__typename === 'Applet' ||
-    uuid.__typename === 'Article' ||
-    uuid.__typename === 'Course' ||
-    uuid.__typename === 'CoursePage' ||
-    uuid.__typename === 'Event' ||
-    uuid.__typename === 'Page' ||
-    uuid.__typename === 'Video'
+    uuid.__typename === EntityType.Applet ||
+    uuid.__typename === EntityType.Article ||
+    uuid.__typename === EntityType.Course ||
+    uuid.__typename === EntityType.CoursePage ||
+    uuid.__typename === EntityType.Event ||
+    uuid.__typename === DiscriminatorType.Page ||
+    uuid.__typename === EntityType.Video
   ) {
     const revisionId = uuid.currentRevisionId ?? R.head(uuid.revisionIds)
 
@@ -93,7 +93,8 @@ function getParentId(uuid: Model<'AbstractUuid'>) {
   if (t.type({ parentId: t.number }).is(uuid)) return uuid.parentId
   if (t.type({ repositoryId: t.number }).is(uuid)) return uuid.repositoryId
   if (
-    (uuid.__typename === 'Exercise' || uuid.__typename === 'ExerciseGroup') &&
+    (uuid.__typename === EntityType.Exercise ||
+      uuid.__typename === EntityType.ExerciseGroup) &&
     uuid.taxonomyTermIds.length > 0
   )
     return uuid.taxonomyTermIds[0]
