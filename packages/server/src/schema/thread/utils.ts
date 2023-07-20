@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
 import { Context, Model, PickResolvers } from '~/internals/graphql'
@@ -117,7 +117,11 @@ export function decodeThreadId(threadId: string): number {
     Buffer.from(threadId, 'base64').toString('utf-8').substring(1),
   )
   if (Number.isNaN(result) || result <= 0) {
-    throw new UserInputError('you need to provide a valid thread id (string)')
+    throw new GraphQLError('you need to provide a valid thread id (string)', {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
   }
   return result
 }

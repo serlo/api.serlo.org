@@ -1,4 +1,3 @@
-import { UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
 import { ConnectionPayload } from '~/schema/connection/types'
@@ -111,7 +110,7 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(UserInputError)
+    }).toThrowError('BAD_USER_INPUT')
   })
 
   test('when last > limit', () => {
@@ -122,7 +121,7 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(UserInputError)
+    }).toThrowError('BAD_USER_INPUT')
   })
 
   test('when first and last is set (because then the behavior is ambiguous)', () => {
@@ -133,6 +132,6 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(UserInputError)
+    }).toThrowError('BAD_USER_INPUT')
   })
 })

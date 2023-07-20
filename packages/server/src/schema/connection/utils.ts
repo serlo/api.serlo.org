@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
 import { Connection, ConnectionPayload } from './types'
@@ -19,14 +19,27 @@ export function resolveConnection<T>({
   let { first } = payload
 
   if (first != null && first > limit) {
-    throw new UserInputError(`first cannot be higher than limit=${limit}`)
+    throw new GraphQLError(`first cannot be higher than limit=${limit}`, {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
   }
   if (last != null && last > limit) {
-    throw new UserInputError(`last cannot be higher than limit=${limit}`)
+    throw new GraphQLError(`last cannot be higher than limit=${limit}`, {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
   }
   if (first != null && last != null) {
-    throw new UserInputError(
+    throw new GraphQLError(
       '`first` and `last` cannot be set at the same time',
+      {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+        },
+      },
     )
   }
   if (first == null && last == null) {

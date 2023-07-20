@@ -1,4 +1,5 @@
-import { gql, UserInputError } from 'apollo-server'
+import { gql } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 
 import {
   article,
@@ -41,8 +42,13 @@ beforeEach(() => {
       [...childrenIds].sort().join(',') !==
       [...taxonomyTerm.childrenIds].sort().join(',')
     ) {
-      throw new UserInputError(
+      throw new GraphQLError(
         'children_ids have to match the current entities ids linked to the taxonomy_term_id',
+        {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        },
       )
     }
 
