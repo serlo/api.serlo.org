@@ -1,5 +1,5 @@
-import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
+import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
 import {
@@ -509,7 +509,11 @@ export async function makeRequest<M extends MessageType>(
       O.getOrElse(() => 'Bad Request'),
     )
 
-    throw new UserInputError(reason)
+    throw new GraphQLError(reason, {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
   } else {
     throw new Error(`${response.status}: ${body}`)
   }

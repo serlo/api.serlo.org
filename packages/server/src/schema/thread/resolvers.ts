@@ -1,5 +1,5 @@
 import * as auth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server-core'
+import { GraphQLError } from 'graphql'
 
 import {
   decodeThreadId,
@@ -56,7 +56,11 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         : undefined
 
       if (first && first > limit)
-        throw new UserInputError(`"first" cannot be larger than ${limit}`)
+        throw new GraphQLError(`"first" cannot be larger than ${limit}`, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
 
       const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
         first: first + 1,

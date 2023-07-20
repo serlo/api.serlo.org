@@ -1,5 +1,5 @@
 import * as auth from '@serlo/authorization'
-import { ForbiddenError, UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 
 import { Service } from '~/internals/authentication'
 import {
@@ -52,8 +52,13 @@ export const resolvers: TypeResolvers<Notification> &
         userId = authUserId
       } else {
         if (service !== Service.NotificationEmailService) {
-          throw new UserInputError(
+          throw new GraphQLError(
             "Service is not allowed to query user's notifications",
+            {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+              },
+            },
           )
         }
         userId = requestedUserId
@@ -97,8 +102,13 @@ export const resolvers: TypeResolvers<Notification> &
       const eventIds = ids.map((id) => {
         const notification = notifications.find((n) => n.id === id)
         if (!notification) {
-          throw new ForbiddenError(
+          throw new GraphQLError(
             'You are only allowed to set your own notification states.',
+            {
+              extensions: {
+                code: 'FORBIDDEN',
+              },
+            },
           )
         }
         return notification.eventId
@@ -139,7 +149,12 @@ export async function resolveEvents({
   const first = payload.first ?? limit
   const { after, objectId, actorId, instance } = payload
 
-  if (first > limit) throw new UserInputError('first cannot be higher than 500')
+  if (first > limit)
+    throw new GraphQLError('first cannot be higher than 500', {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
 
   const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
     first: 2 * limit + 50,

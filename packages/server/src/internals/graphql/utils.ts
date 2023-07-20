@@ -1,9 +1,5 @@
 import { AuthorizationGuard } from '@serlo/authorization'
-import {
-  AuthenticationError,
-  ForbiddenError,
-  UserInputError,
-} from 'apollo-server'
+import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
 import { Context } from '~/internals/graphql/context'
@@ -15,7 +11,11 @@ export function assertUserIsAuthenticated(
   userId: number | null,
 ): asserts userId is number {
   if (userId === null) {
-    throw new AuthenticationError('You are not logged in')
+    throw new GraphQLError('You are not logged in', {
+      extensions: {
+        code: 'UNAUTHENTICATED',
+      },
+    })
   }
 }
 
@@ -36,7 +36,11 @@ export async function assertUserIsAuthorized({
   const guards = fromGuardRequest(guardRequest)
   guards.forEach((guard) => {
     if (!guard(authorizationPayload)) {
-      throw new ForbiddenError(message)
+      throw new GraphQLError(message, {
+        extensions: {
+          code: 'FORBIDDEN',
+        },
+      })
     }
   })
 }
@@ -74,7 +78,11 @@ export function decodeId({
   if (!Number.isNaN(id) && decodedId.substring(0, prefix.length) === prefix) {
     return id
   } else {
-    throw new UserInputError('id `${textId}` is invalid')
+    throw new GraphQLError('id `${textId}` is invalid', {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
   }
 }
 
@@ -94,8 +102,13 @@ export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
     .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
-    throw new UserInputError(
+    throw new GraphQLError(
       `Arguments ${emptyArgs.join(', ')} may not be empty`,
+      {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+        },
+      },
     )
   }
 }
@@ -107,5 +120,10 @@ export function isGlobalRole(role: Role): boolean {
 export function generateRole(role: Role, instance: Instance | null) {
   if (isGlobalRole(role)) return role
   if (isInstance(instance)) return `${instance}_${role}`
-  else throw new UserInputError('This role needs an instance')
+  else
+    throw new GraphQLError('This role needs an instance', {
+      extensions: {
+        code: 'BAD_USER_INPUT',
+      },
+    })
 }

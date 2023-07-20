@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
@@ -52,7 +52,11 @@ export const resolvers: Queries<'metadata'> = {
 
       const first = payload.first ?? 100
       if (first > limit) {
-        throw new UserInputError(`first cannot be higher than limit=${limit}`)
+        throw new GraphQLError(`first cannot be higher than limit=${limit}`, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
       }
 
       // TODO: There must be a shorter implementation

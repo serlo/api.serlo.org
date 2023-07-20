@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
@@ -36,8 +36,13 @@ export async function assertIsTaxonomyTerm(
     })
   } catch (error) {
     if (error instanceof InvalidCurrentValueError) {
-      throw new UserInputError(
+      throw new GraphQLError(
         `No taxonomy term found for the provided id ${id}`,
+        {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        },
       )
     } else {
       throw error

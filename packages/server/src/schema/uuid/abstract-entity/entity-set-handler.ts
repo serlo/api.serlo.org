@@ -1,5 +1,5 @@
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
@@ -70,7 +70,11 @@ export function createSetEntityResolver({
     )
 
     if (!checkInput(input))
-      throw new UserInputError('Either entityId or parentId must be provided')
+      throw new GraphQLError('Either entityId or parentId must be provided', {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+        },
+      })
 
     assertUserIsAuthenticated(userId)
 
@@ -136,8 +140,13 @@ export function createSetEntityResolver({
       const isParentEntity = EntityDecoder.is(parent)
 
       if (!isParentTaxonomyTerm && !isParentEntity)
-        throw new UserInputError(
+        throw new GraphQLError(
           `No entity or taxonomy term found for the provided id ${input.parentId}`,
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+            },
+          },
         )
 
       const entity = await dataSources.model.serlo.createEntity({

@@ -1,7 +1,7 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope, Scope } from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
+import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 import R from 'ramda'
 
@@ -83,10 +83,18 @@ export const resolvers: LegacyQueries<
         : null
 
       if (Number.isNaN(after))
-        throw new UserInputError('`after` is an illegal id')
+        throw new GraphQLError('`after` is an illegal id', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
 
       if (first > 500)
-        throw new UserInputError('`first` must be smaller than 500')
+        throw new GraphQLError('`first` must be smaller than 500', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
 
       const { userIds } = await dataSources.model.serlo.getPotentialSpamUsers({
         first: first + 1,
@@ -132,7 +140,11 @@ export const resolvers: LegacyQueries<
         : undefined
 
       if (Number.isNaN(after))
-        throw new UserInputError('`after` is an illegal id')
+        throw new GraphQLError('`after` is an illegal id', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
 
       const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
         roleName: generateRole(role, instance),
@@ -325,7 +337,11 @@ export const resolvers: LegacyQueries<
       )
 
       if (!t.array(UserDecoder).is(users))
-        throw new UserInputError('not all bots are users')
+        throw new GraphQLError('not all bots are users', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        })
 
       const activities = await Promise.all(
         botIds.map((userId) =>
@@ -334,8 +350,13 @@ export const resolvers: LegacyQueries<
       )
 
       if (activities.some((activity) => activity.edits >= 5))
-        throw new UserInputError(
+        throw new GraphQLError(
           'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+            },
+          },
         )
 
       if (process.env.ENVIRONMENT === 'production') {
@@ -404,8 +425,13 @@ export const resolvers: LegacyQueries<
       )
 
       if (!t.array(UserDecoder).is(users))
-        throw new UserInputError(
+        throw new GraphQLError(
           'Either one id does not belong to a user or one username / id combination is wrong',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+            },
+          },
         )
 
       return await Promise.all(
@@ -539,8 +565,13 @@ function extractIDsFromFirstColumn(
 
 function assertInstanceIsSet(instance: Instance | null) {
   if (!instance) {
-    throw new UserInputError(
+    throw new GraphQLError(
       "This role can't have a global scope: `instance` has to be declared.",
+      {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+        },
+      },
     )
   }
 }
