@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer } from '@apollo/server'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
@@ -77,7 +77,11 @@ export class Query<
   async shouldReturnData(data: unknown) {
     const result = await this.execute()
 
-    expect(result['errors']).toBeUndefined()
+    expect(result.body.kind).toBe('single')
+    if (result.body.kind === 'single') {
+      expect(result.body.singleResult['errors']).toBeUndefined()
+    }
+
     expect(result).toMatchObject({ data })
   }
 
@@ -89,7 +93,12 @@ export class Query<
       | 'UNAUTHENTICATED',
   ) {
     const response = await this.execute()
-    expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
+    expect(response.body.kind).toBe('single')
+    if (response.body.kind === 'single') {
+      expect(response?.body.singleResult.errors?.[0]?.extensions?.code).toEqual(
+        expectedError,
+      )
+    }
   }
 }
 

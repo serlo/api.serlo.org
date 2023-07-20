@@ -1,5 +1,5 @@
+import { ApolloServer } from '@apollo/server'
 import type { OAuth2Api } from '@ory/client'
-import { ApolloServer } from 'apollo-server'
 
 import { Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
