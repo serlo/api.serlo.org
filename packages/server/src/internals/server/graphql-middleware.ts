@@ -1,4 +1,4 @@
-import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import {
   ApolloError,
   ApolloServer,

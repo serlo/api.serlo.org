@@ -1,4 +1,4 @@
-import { AuthenticationError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 
 import { Service } from './service'
@@ -23,23 +23,37 @@ export async function handleAuthentication(
   }
 
   function invalid() {
-    return new AuthenticationError('Invalid authorization header')
+    return new GraphQLError('Invalid authorization header', {
+      extensions: {
+        code: 'UNAUTHENTICATED',
+      },
+    })
   }
 }
 
 function validateServiceToken(token: string): Service {
   const serviceTokenParts = token.split('=')
   if (serviceTokenParts.length !== 2 || serviceTokenParts[0] !== 'Service') {
-    throw new AuthenticationError(
+    throw new GraphQLError(
       'Invalid authorization header: invalid service token part',
+      {
+        extensions: {
+          code: 'UNAUTHENTICATED',
+        },
+      },
     )
   }
   const serviceToken = serviceTokenParts[1]
   const { service, error } = validateJwt(serviceToken)
 
   if (error || service === null) {
-    throw new AuthenticationError(
+    throw new GraphQLError(
       `Invalid service token${error ? `: ${error.message}` : ''}`,
+      {
+        extensions: {
+          code: 'UNAUTHENTICATED',
+        },
+      },
     )
   }
   return service
