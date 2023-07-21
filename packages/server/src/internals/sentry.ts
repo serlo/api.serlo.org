@@ -1,8 +1,5 @@
+import type { ApolloServerPlugin } from '@apollo/server'
 import * as Sentry from '@sentry/node'
-import type {
-  ApolloServerPlugin,
-  GraphQLRequestListener,
-} from 'apollo-server-plugin-base'
 import R from 'ramda'
 
 import { InvalidValueFromListener } from './data-source'
@@ -44,7 +41,7 @@ const ignoredErrorCodes = [
 export function createSentryPlugin(): ApolloServerPlugin {
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
-    async requestDidStart(): Promise<GraphQLRequestListener> {
+    async requestDidStart() {
       return {
         // eslint-disable-next-line @typescript-eslint/require-await
         async didEncounterErrors(ctx) {
