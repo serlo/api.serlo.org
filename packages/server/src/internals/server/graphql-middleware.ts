@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { Express, json } from 'express'
-import { GraphQLError } from 'graphql'
+import { GraphQLError, GraphQLFormattedError } from 'graphql'
 import createPlayground from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
@@ -78,7 +78,7 @@ export function getGraphQLOptions(environment: Environment) {
         model: new ModelDataSource(environment),
       }
     },
-    formatError(error) {
+    formatError(error: GraphQLFormattedError) {
       return R.path(['response', 'status'], error.extensions) === 400
         ? new GraphQLError(error.message, {
             extensions: { ...error.extensions, code: 'BAD_REQUEST' },
