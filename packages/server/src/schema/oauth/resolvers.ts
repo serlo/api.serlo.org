@@ -1,5 +1,5 @@
 import { Session } from '@ory/client'
-import { ForbiddenError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 
 import { captureErrorEvent } from '~/internals/error-event'
 import {
@@ -23,8 +23,9 @@ export const resolvers: Mutations<'oauth'> = {
       ).identity.metadata_public.legacy_id
 
       if (legacyId !== userId) {
-        throw new ForbiddenError(
+        throw new GraphQLError(
           'OAuth: You can only accept login for yourself',
+          { extensions: { code: 'FORBIDDEN' } },
         )
       }
 
@@ -77,8 +78,9 @@ export const resolvers: Mutations<'oauth'> = {
       ).identity.metadata_public.legacy_id
 
       if (legacyId !== userId) {
-        throw new ForbiddenError(
+        throw new GraphQLError(
           'OAuth: You can only accept consent for yourself',
+          { extensions: { code: 'FORBIDDEN' } },
         )
       }
 
