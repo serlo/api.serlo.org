@@ -8,6 +8,7 @@ import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
+import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 import { createSerloModel } from '~/model'
 import { UuidDecoder } from '~/model/decoder'
@@ -21,11 +22,13 @@ export function createInvalidCurrentValueErrorPlugin({
   const serloModel = createSerloModel({ environment })
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
-    async requestDidStart(): Promise<GraphQLRequestListener> {
+    async requestDidStart(): Promise<GraphQLRequestListener<Context>> {
       const uuids: number[] = []
       return {
         // eslint-disable-next-line @typescript-eslint/require-await
-        async executionDidStart(): Promise<GraphQLRequestExecutionListener> {
+        async executionDidStart(): Promise<
+          GraphQLRequestExecutionListener<Context>
+        > {
           return {
             // eslint-disable-next-line @typescript-eslint/require-await
             willResolveField({ source, info }) {
