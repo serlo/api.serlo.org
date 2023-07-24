@@ -2,7 +2,7 @@ import type {
   ApolloServerPlugin,
   GraphQLRequestExecutionListener,
   GraphQLRequestListener,
-} from 'apollo-server-plugin-base'
+} from '@apollo/server'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
