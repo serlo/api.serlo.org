@@ -3,6 +3,7 @@ import type {
   GraphQLRequestExecutionListener,
   GraphQLRequestListener,
 } from '@apollo/server'
+import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
@@ -39,7 +40,7 @@ export function createInvalidCurrentValueErrorPlugin({
         },
         async didEncounterErrors(requestContext) {
           const { errors } = requestContext
-          const hasInvalidCurrentValueError = R.any((error) => {
+          const hasInvalidCurrentValueError = R.any((error: GraphQLError) => {
             return error.originalError instanceof InvalidCurrentValueError
           }, errors)
           if (hasInvalidCurrentValueError) {
