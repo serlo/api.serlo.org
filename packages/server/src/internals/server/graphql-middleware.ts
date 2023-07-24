@@ -1,10 +1,7 @@
+import { ApolloServer } from '@apollo/server'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
-import {
-  ApolloError,
-  ApolloServer,
-  ApolloServerExpressConfig,
-} from 'apollo-server-express'
 import { Express, json } from 'express'
+import { GraphQLError } from 'graphql'
 import createPlayground from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
@@ -64,9 +61,7 @@ export async function applyGraphQLMiddleware({
   return server.graphqlPath
 }
 
-export function getGraphQLOptions(
-  environment: Environment,
-): ApolloServerExpressConfig {
+export function getGraphQLOptions(environment: Environment) {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
@@ -85,7 +80,9 @@ export function getGraphQLOptions(
     },
     formatError(error) {
       return R.path(['response', 'status'], error.extensions) === 400
-        ? new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+        ? new GraphQLError(error.message, {
+            extensions: { ...error.extensions, code: 'BAD_REQUEST' },
+          })
         : error
     },
     context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
