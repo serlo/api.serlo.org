@@ -1,5 +1,5 @@
 import { Scope } from '@serlo/authorization'
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import R from 'ramda'
 
 import {

@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server'
 import { GraphQLError } from 'graphql'
+import gql from 'graphql-tag'
 
 import {
   article,
