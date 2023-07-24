@@ -22,7 +22,7 @@
     "@apollo/server": "^4.7.5",
     "@google-cloud/storage": "^6.12.0",
     "@ory/client": "^1.1.41",
-    "@sentry/node": "^7.59.2",
+    "@sentry/node": "^7.60.0",
     "@serlo/authorization": "^0.52.1",
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
