@@ -58,7 +58,7 @@ export async function applyGraphQLMiddleware({
     return createPlayground({ endpoint: '/graphql', ...headers })(...args)
   })
 
-  return server.graphqlPath
+  return '/graphql'
 }
 
 export function getGraphQLOptions(environment: Environment) {
