@@ -97,6 +97,6 @@ afterAll(async () => {
 declare global {
   /* eslint-disable no-var */
   var pact: import('@pact-foundation/pact').Pact
-  var client: import('apollo-server').ApolloServer
+  var client: import('@apollo/server').ApolloServer
   var serloModel: ReturnType<typeof createSerloModel>
 }
