@@ -1,4 +1,4 @@
-import { ForbiddenError } from 'apollo-server'
+import { GraphQLError } from 'graphql'
 
 import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
@@ -70,8 +70,9 @@ function checkPermission({
     !allowedServices.includes(service) &&
     (userId === null || !allowedUserIds.includes(userId))
   ) {
-    throw new ForbiddenError(
+    throw new GraphQLError(
       `You do not have the permissions to ${operation} the cache`,
+      { extensions: { code: 'FORBIDDEN' } },
     )
   }
 }
