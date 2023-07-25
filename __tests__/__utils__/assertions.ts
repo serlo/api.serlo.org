@@ -94,9 +94,8 @@ export class Query<
     expect(result.body.kind).toBe('single')
     if (result.body.kind === 'single') {
       expect(result.body.singleResult['errors']).toBeUndefined()
+      expect(result.body.singleResult).toMatchObject({ data })
     }
-
-    expect(result).toMatchObject({ data })
   }
 
   async shouldFailWithError(
