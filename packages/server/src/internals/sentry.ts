@@ -1,9 +1,13 @@
-import type { ApolloServerPlugin } from '@apollo/server'
+import type {
+  ApolloServerPlugin,
+  GraphQLRequestContextDidEncounterErrors,
+} from '@apollo/server'
 import * as Sentry from '@sentry/node'
 import R from 'ramda'
 
 import { InvalidValueFromListener } from './data-source'
 import { InvalidCurrentValueError } from './data-source-helper'
+import { Context } from '~/internals/graphql'
 
 export function initializeSentry({
   dsn = process.env.SENTRY_DSN,
@@ -44,7 +48,11 @@ export function createSentryPlugin(): ApolloServerPlugin {
     async requestDidStart() {
       return {
         // eslint-disable-next-line @typescript-eslint/require-await
-        async didEncounterErrors(ctx) {
+        async didEncounterErrors(
+          ctx: GraphQLRequestContextDidEncounterErrors<
+            Pick<Context, 'service' | 'userId'>
+          >,
+        ) {
           if (!ctx.operation) return
 
           for (const error of ctx.errors) {
