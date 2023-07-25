@@ -1,7 +1,6 @@
-import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
-import { ConnectionPayload } from '~/schema/connection/types'
+import { ConnectionPayload, UserInputError } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 
 describe('resolveConnection', () => {
@@ -111,13 +110,7 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(
-      new GraphQLError('first cannot be higher than limit=500', {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      }),
-    )
+    }).toThrowError(UserInputError)
   })
 
   test('when last > limit', () => {
@@ -128,13 +121,7 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(
-      new GraphQLError('last cannot be higher than limit=500', {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      }),
-    )
+    }).toThrowError(UserInputError)
   })
 
   test('when first and last is set (because then the behavior is ambiguous)', () => {
@@ -145,12 +132,6 @@ describe('throws an error', () => {
         createCursor: (node) => node.toString(),
         limit: 500,
       })
-    }).toThrowError(
-      new GraphQLError('`first` and `last` cannot be set at the same time', {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      }),
-    )
+    }).toThrowError(UserInputError)
   })
 })
