@@ -1,7 +1,6 @@
-import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
-import { Connection, ConnectionPayload } from './types'
+import { Connection, ConnectionPayload, UserInputError } from './types'
 
 /** @see https://relay.dev/graphql/connections.htm */
 export function resolveConnection<T>({
@@ -19,27 +18,21 @@ export function resolveConnection<T>({
   let { first } = payload
 
   if (first != null && first > limit) {
-    throw new GraphQLError(`first cannot be higher than limit=${limit}`, {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError(
+      `first cannot be higher than limit=${limit}`,
+      'BAD_USER_INPUT',
+    )
   }
   if (last != null && last > limit) {
-    throw new GraphQLError(`last cannot be higher than limit=${limit}`, {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError(
+      `last cannot be higher than limit=${limit}`,
+      'BAD_USER_INPUT',
+    )
   }
   if (first != null && last != null) {
-    throw new GraphQLError(
+    throw new UserInputError(
       '`first` and `last` cannot be set at the same time',
-      {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      },
+      'BAD_USER_INPUT',
     )
   }
   if (first == null && last == null) {
