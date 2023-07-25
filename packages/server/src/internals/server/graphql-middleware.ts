@@ -52,6 +52,9 @@ export async function applyGraphQLMiddleware({
         const authorizationHeader = req.headers.authorization
         if (!authorizationHeader) {
           return Promise.resolve({
+            dataSources: {
+              model: new ModelDataSource(environment),
+            },
             service: Service.SerloCloudflareWorker,
             userId: null,
           })
@@ -100,11 +103,6 @@ export function getGraphQLOptions(environment: Environment) {
       createInvalidCurrentValueErrorPlugin({ environment }),
       createSentryPlugin(),
     ],
-    dataSources() {
-      return {
-        model: new ModelDataSource(environment),
-      }
-    },
     formatError(error: GraphQLFormattedError) {
       return R.path(['response', 'status'], error.extensions) === 400
         ? new GraphQLError(error.message, {
