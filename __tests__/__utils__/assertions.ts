@@ -2,10 +2,12 @@ import { ApolloServer } from '@apollo/server'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
-import { given, nextUuid } from '.'
+import { createTestEnvironment, given, nextUuid } from '.'
 import { createTestClient } from './test-client'
 import { user } from '../../__fixtures__'
 import { Service } from '~/internals/authentication'
+import { ModelDataSource } from '~/internals/data-source'
+import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 
@@ -25,11 +27,15 @@ export class Client {
   }
 
   execute(query: QuerySpec<Variables<Input>>) {
+    const environment: Environment = createTestEnvironment()
     return this.apolloServer.executeOperation(query, {
       contextValue: {
+        dataSources: {
+          model: new ModelDataSource(environment),
+        },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
         userId: this.context?.userId ?? null,
-      },
+      } as Context,
     })
   }
 }
