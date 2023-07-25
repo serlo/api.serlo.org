@@ -5,14 +5,17 @@ import R from 'ramda'
 import { given, nextUuid } from '.'
 import { createTestClient } from './test-client'
 import { user } from '../../__fixtures__'
+import { Service } from '~/internals/authentication'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 
 export class Client {
-  private apolloServer: ApolloServer
+  private apolloServer: ApolloServer<ClientContext>
+  private readonly context?: ClientContext
 
   constructor(context?: ClientContext) {
-    this.apolloServer = createTestClient(context)
+    this.context = context
+    this.apolloServer = createTestClient()
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
@@ -22,7 +25,12 @@ export class Client {
   }
 
   execute(query: QuerySpec<Variables<Input>>) {
-    return this.apolloServer.executeOperation(query)
+    return this.apolloServer.executeOperation(query, {
+      contextValue: {
+        service: this.context?.service ?? Service.SerloCloudflareWorker,
+        userId: this.context?.userId ?? null,
+      },
+    })
   }
 }
 

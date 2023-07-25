@@ -1,23 +1,14 @@
 import { ApolloServer } from '@apollo/server'
 import type { OAuth2Api } from '@ory/client'
 
-import { Service } from '~/internals/authentication'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
-export function createTestClient(
-  args?: Partial<Pick<Context, 'service' | 'userId'>>,
-) {
-  return new ApolloServer({
+export function createTestClient() {
+  return new ApolloServer<Partial<Pick<Context, 'service' | 'userId'>>>({
     ...getGraphQLOptions(createTestEnvironment()),
-    context(): Pick<Context, 'service' | 'userId'> {
-      return {
-        service: args?.service ?? Service.SerloCloudflareWorker,
-        userId: args?.userId ?? null,
-      }
-    },
   })
 }
 
