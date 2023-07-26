@@ -1,6 +1,7 @@
 import * as R from 'ramda'
 
-import { ConnectionPayload, UserInputError } from '~/schema/connection/types'
+import { UserInputError } from '~/errors'
+import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 
 describe('resolveConnection', () => {
