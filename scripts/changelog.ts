@@ -1517,6 +1517,11 @@ async function exec(): Promise<void> {
           'Refactor GitHub actions',
         ],
       },
+      {
+        tagName: 'v0.53.1',
+        date: '2023-07-26',
+        internal: ['Revert upgrade of Apollo Server to version 4'],
+      },
     ],
   })
 
