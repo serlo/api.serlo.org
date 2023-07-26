@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.53.2](https://github.com/serlo/api.serlo.org/compare/v0.53.1..v0.53.2) - July 26, 2023
+
+### Internal
+
+- Upgrade ApolloServer to version 4
+
 ## [v0.53.1](https://github.com/serlo/api.serlo.org/compare/v0.53.0..v0.53.1) - July 26, 2023
 
 ### Internal
