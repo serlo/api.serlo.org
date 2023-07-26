@@ -3,8 +3,8 @@ import {
   instanceToScope,
   Scope,
 } from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 
-import { UserInputError } from '~/errors'
 import { Context, Model } from '~/internals/graphql'
 import {
   DiscriminatorType,

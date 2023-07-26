@@ -1,6 +1,6 @@
 import { Session } from '@ory/client'
+import { ForbiddenError } from 'apollo-server'
 
-import { ForbiddenError } from '~/errors'
 import { captureErrorEvent } from '~/internals/error-event'
 import {
   Mutations,

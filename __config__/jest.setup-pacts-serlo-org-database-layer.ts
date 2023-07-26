@@ -9,7 +9,8 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
-import { createAuthServices } from '~/internals/authentication'
+import { createTestClient } from '../__tests__/__utils__'
+import { Service, createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
@@ -64,6 +65,10 @@ beforeEach(async () => {
       },
     ),
   )
+  global.client = createTestClient({
+    service: Service.SerloCloudflareWorker,
+    userId: null,
+  })
   global.serloModel = createSerloModel({
     environment: {
       cache: global.cache,
@@ -92,6 +97,6 @@ afterAll(async () => {
 declare global {
   /* eslint-disable no-var */
   var pact: import('@pact-foundation/pact').Pact
-  var client: import('@apollo/server').ApolloServer
+  var client: import('apollo-server').ApolloServer
   var serloModel: ReturnType<typeof createSerloModel>
 }
