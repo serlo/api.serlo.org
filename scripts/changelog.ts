@@ -1522,6 +1522,11 @@ async function exec(): Promise<void> {
         date: '2023-07-26',
         internal: ['Revert upgrade of Apollo Server to version 4'],
       },
+      {
+        tagName: 'v0.53.2',
+        date: '2023-07-26',
+        internal: ['Upgrade ApolloServer to version 4'],
+      },
     ],
   })
 
