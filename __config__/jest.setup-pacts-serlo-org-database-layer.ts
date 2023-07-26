@@ -9,7 +9,6 @@ import {
   createBeforeEach,
   setup,
 } from './setup'
-import { createTestClient } from '../__tests__/__utils__'
 import { createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
@@ -65,7 +64,6 @@ beforeEach(async () => {
       },
     ),
   )
-  global.client = createTestClient()
   global.serloModel = createSerloModel({
     environment: {
       cache: global.cache,
