@@ -1,6 +1,7 @@
 import * as R from 'ramda'
 
-import { Connection, ConnectionPayload, UserInputError } from './types'
+import { Connection, ConnectionPayload } from './types'
+import { UserInputError } from '~/errors'
 
 /** @see https://relay.dev/graphql/connections.htm */
 export function resolveConnection<T>({
