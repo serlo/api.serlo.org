@@ -1,6 +1,6 @@
-import { UserInputError } from 'apollo-server'
 import * as R from 'ramda'
 
+import { UserInputError } from '~/errors'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 

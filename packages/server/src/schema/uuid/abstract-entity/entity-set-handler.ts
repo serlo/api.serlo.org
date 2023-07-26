@@ -1,10 +1,10 @@
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds, getDefaultLicense } from '~/config'
+import { UserInputError } from '~/errors'
 import {
   assertStringIsNotEmpty,
   assertUserIsAuthenticated,
