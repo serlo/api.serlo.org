@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 
 import { user, user2 } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'

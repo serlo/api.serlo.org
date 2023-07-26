@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 
 import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
 import { castToUuid, Client, given, Query } from '../../__utils__'
