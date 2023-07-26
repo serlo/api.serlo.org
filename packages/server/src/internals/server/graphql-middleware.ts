@@ -40,44 +40,47 @@ export async function applyGraphQLMiddleware({
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
-  const server = new ApolloServer<Pick<Context, 'service' | 'userId'>>(
-    getGraphQLOptions(environment),
-  )
+  const server = new ApolloServer<Context>(getGraphQLOptions(environment))
   await server.start()
 
   app.use(json({ limit: '2mb' }))
   app.use(
     graphQLPath,
     expressMiddleware(server, {
-      context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
+      async context({ req }): Promise<Context> {
+        const dataSources = {
+          model: new ModelDataSource(environment),
+        }
         const authorizationHeader = req.headers.authorization
         if (!authorizationHeader) {
           return Promise.resolve({
-            dataSources: {
-              model: new ModelDataSource(environment),
-            },
+            dataSources,
             service: Service.SerloCloudflareWorker,
             userId: null,
           })
         }
-        return handleAuthentication(authorizationHeader, async () => {
-          try {
-            const publicKratos = environment.authServices.kratos.public
-            const session = (
-              await publicKratos.toSession({ cookie: req.header('cookie') })
-            ).data
+        const partialContext = await handleAuthentication(
+          authorizationHeader,
+          async () => {
+            try {
+              const publicKratos = environment.authServices.kratos.public
+              const session = (
+                await publicKratos.toSession({ cookie: req.header('cookie') })
+              ).data
 
-            if (SessionDecoder.is(session)) {
-              // TODO: When the time comes change it to session.identity.id
-              return session.identity.metadata_public.legacy_id
-            } else {
+              if (SessionDecoder.is(session)) {
+                // TODO: When the time comes change it to session.identity.id
+                return session.identity.metadata_public.legacy_id
+              } else {
+                return null
+              }
+            } catch {
+              // the user is probably unauthenticated
               return null
             }
-          } catch {
-            // the user is probably unauthenticated
-            return null
-          }
-        })
+          },
+        )
+        return { ...partialContext, dataSources }
       },
     }),
   )
