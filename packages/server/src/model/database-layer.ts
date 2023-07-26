@@ -1,5 +1,4 @@
 import { option as O, function as F } from 'fp-ts'
-import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
 import {
@@ -17,6 +16,7 @@ import {
   Uuid,
   UuidDecoder,
 } from './decoder'
+import { UserInputError } from '~/errors'
 
 export const spec = {
   ActiveAuthorsQuery: {
@@ -509,11 +509,7 @@ export async function makeRequest<M extends MessageType>(
       O.getOrElse(() => 'Bad Request'),
     )
 
-    throw new GraphQLError(reason, {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError(reason)
   } else {
     throw new Error(`${response.status}: ${body}`)
   }

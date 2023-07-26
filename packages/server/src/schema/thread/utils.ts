@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
+import { UserInputError } from '~/errors'
 import { Context, Model, PickResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -117,11 +117,7 @@ export function decodeThreadId(threadId: string): number {
     Buffer.from(threadId, 'base64').toString('utf-8').substring(1),
   )
   if (Number.isNaN(result) || result <= 0) {
-    throw new GraphQLError('you need to provide a valid thread id (string)', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError('you need to provide a valid thread id (string)')
   }
   return result
 }

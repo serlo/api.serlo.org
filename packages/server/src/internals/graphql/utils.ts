@@ -2,6 +2,7 @@ import { AuthorizationGuard } from '@serlo/authorization'
 import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
+import { UserInputError } from '~/errors'
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 import { isInstance } from '~/schema/instance/utils'
@@ -78,11 +79,7 @@ export function decodeId({
   if (!Number.isNaN(id) && decodedId.substring(0, prefix.length) === prefix) {
     return id
   } else {
-    throw new GraphQLError('id `${textId}` is invalid', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError('id `${textId}` is invalid')
   }
 }
 
@@ -102,13 +99,8 @@ export function assertStringIsNotEmpty(args: { [key: string]: unknown }) {
     .map(([key]) => key)
 
   if (emptyArgs.length > 0) {
-    throw new GraphQLError(
+    throw new UserInputError(
       `Arguments ${emptyArgs.join(', ')} may not be empty`,
-      {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      },
     )
   }
 }
@@ -120,10 +112,5 @@ export function isGlobalRole(role: Role): boolean {
 export function generateRole(role: Role, instance: Instance | null) {
   if (isGlobalRole(role)) return role
   if (isInstance(instance)) return `${instance}_${role}`
-  else
-    throw new GraphQLError('This role needs an instance', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+  else throw new UserInputError('This role needs an instance')
 }

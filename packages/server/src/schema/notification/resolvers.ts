@@ -1,6 +1,7 @@
 import * as auth from '@serlo/authorization'
 import { GraphQLError } from 'graphql'
 
+import { UserInputError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
@@ -52,13 +53,8 @@ export const resolvers: TypeResolvers<Notification> &
         userId = authUserId
       } else {
         if (service !== Service.NotificationEmailService) {
-          throw new GraphQLError(
+          throw new UserInputError(
             "Service is not allowed to query user's notifications",
-            {
-              extensions: {
-                code: 'BAD_USER_INPUT',
-              },
-            },
           )
         }
         userId = requestedUserId
@@ -149,12 +145,7 @@ export async function resolveEvents({
   const first = payload.first ?? limit
   const { after, objectId, actorId, instance } = payload
 
-  if (first > limit)
-    throw new GraphQLError('first cannot be higher than 500', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+  if (first > limit) throw new UserInputError('first cannot be higher than 500')
 
   const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
     first: 2 * limit + 50,
