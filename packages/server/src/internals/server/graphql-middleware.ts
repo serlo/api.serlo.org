@@ -1,10 +1,8 @@
-import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
-import {
-  ApolloError,
-  ApolloServer,
-  ApolloServerExpressConfig,
-} from 'apollo-server-express'
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { Express, json } from 'express'
+import { GraphQLError, GraphQLFormattedError } from 'graphql'
 import createPlayground from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
@@ -40,16 +38,49 @@ export async function applyGraphQLMiddleware({
   swrQueue: SwrQueue
   authServices: AuthServices
 }) {
+  const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
-  const server = new ApolloServer(getGraphQLOptions(environment))
+  const server = new ApolloServer<Context>(getGraphQLOptions(environment))
   await server.start()
 
   app.use(json({ limit: '2mb' }))
   app.use(
-    server.getMiddleware({
-      path: '/graphql',
-      onHealthCheck: async () => {
-        await swrQueue.healthy()
+    graphQLPath,
+    expressMiddleware(server, {
+      async context({ req }): Promise<Context> {
+        const dataSources = {
+          model: new ModelDataSource(environment),
+        }
+        const authorizationHeader = req.headers.authorization
+        if (!authorizationHeader) {
+          return Promise.resolve({
+            dataSources,
+            service: Service.SerloCloudflareWorker,
+            userId: null,
+          })
+        }
+        const partialContext = await handleAuthentication(
+          authorizationHeader,
+          async () => {
+            try {
+              const publicKratos = environment.authServices.kratos.public
+              const session = (
+                await publicKratos.toSession({ cookie: req.header('cookie') })
+              ).data
+
+              if (SessionDecoder.is(session)) {
+                // TODO: When the time comes change it to session.identity.id
+                return session.identity.metadata_public.legacy_id
+              } else {
+                return null
+              }
+            } catch {
+              // the user is probably unauthenticated
+              return null
+            }
+          },
+        )
+        return { ...partialContext, dataSources }
       },
     }),
   )
@@ -58,15 +89,13 @@ export async function applyGraphQLMiddleware({
       process.env.NODE_ENV === 'production'
         ? {}
         : { headers: { Authorization: `Serlo Service=${getToken()}` } }
-    return createPlayground({ endpoint: '/graphql', ...headers })(...args)
+    return createPlayground({ endpoint: graphQLPath, ...headers })(...args)
   })
 
-  return server.graphqlPath
+  return graphQLPath
 }
 
-export function getGraphQLOptions(
-  environment: Environment,
-): ApolloServerExpressConfig {
+export function getGraphQLOptions(environment: Environment) {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
@@ -78,42 +107,12 @@ export function getGraphQLOptions(
       createInvalidCurrentValueErrorPlugin({ environment }),
       createSentryPlugin(),
     ],
-    dataSources() {
-      return {
-        model: new ModelDataSource(environment),
-      }
-    },
-    formatError(error) {
+    formatError(error: GraphQLFormattedError) {
       return R.path(['response', 'status'], error.extensions) === 400
-        ? new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+        ? new GraphQLError(error.message, {
+            extensions: { ...error.extensions, code: 'BAD_REQUEST' },
+          })
         : error
-    },
-    context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
-      const authorizationHeader = req.headers.authorization
-      if (!authorizationHeader) {
-        return Promise.resolve({
-          service: Service.SerloCloudflareWorker,
-          userId: null,
-        })
-      }
-      return handleAuthentication(authorizationHeader, async () => {
-        try {
-          const publicKratos = environment.authServices.kratos.public
-          const session = (
-            await publicKratos.toSession({ cookie: req.header('cookie') })
-          ).data
-
-          if (SessionDecoder.is(session)) {
-            // TODO: When the time comes change it to session.identity.id
-            return session.identity.metadata_public.legacy_id
-          } else {
-            return null
-          }
-        } catch {
-          // the user is probably unauthenticated
-          return null
-        }
-      })
     },
   }
 }

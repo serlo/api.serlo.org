@@ -1,5 +1,5 @@
-import { gql } from 'apollo-server'
 import { option } from 'fp-ts'
+import gql from 'graphql-tag'
 
 import { user } from '../../__fixtures__'
 import { assertErrorEvent, Client } from '../__utils__'

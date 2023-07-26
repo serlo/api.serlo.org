@@ -1,4 +1,3 @@
-import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
 
@@ -17,6 +16,7 @@ import {
   Uuid,
   UuidDecoder,
 } from './decoder'
+import { UserInputError } from '~/errors'
 
 export const spec = {
   ActiveAuthorsQuery: {
