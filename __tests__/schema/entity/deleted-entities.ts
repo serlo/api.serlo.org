@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from 'apollo-server'
 
 import {
   article as baseArticle,

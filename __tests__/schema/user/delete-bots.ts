@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from 'apollo-server'
 import { rest } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
