@@ -1508,6 +1508,15 @@ async function exec(): Promise<void> {
           'Update dependabot configuration',
         ],
       },
+      {
+        tagName: 'v0.53.0',
+        date: '2023-07-26',
+        internal: [
+          'Upgrade ApolloServer to version 4',
+          'Update various dependencies',
+          'Refactor GitHub actions',
+        ],
+      },
     ],
   })
 
