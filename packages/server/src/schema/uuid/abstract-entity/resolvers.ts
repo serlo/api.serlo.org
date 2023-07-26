@@ -1,10 +1,10 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
-import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import { licenses } from '~/config'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -50,11 +50,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       const { first = 100, after, instance } = payload
 
       if (first > LIMIT)
-        throw new GraphQLError(`'first' may not be higher than ${LIMIT}`, {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        })
+        throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
       const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
 
@@ -187,11 +183,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       if (!newLicense) {
-        throw new GraphQLError(`License with id ${licenseId} does not exist.`, {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        })
+        throw new UserInputError(`License with id ${licenseId} does not exist.`)
       }
 
       const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -207,13 +199,8 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       if (entity.instance !== newLicense.instance) {
-        throw new GraphQLError(
+        throw new UserInputError(
           'The instance of the entity does not match the instance of the license.',
-          {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-            },
-          },
         )
       }
 
@@ -279,23 +266,13 @@ function decodeDateOfDeletion(after: string) {
     : undefined
 
   if (!dateOfDeletion)
-    throw new GraphQLError(
+    throw new UserInputError(
       'Field `dateOfDeletion` as string is missing in `after`',
-      {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      },
     )
 
   if (!isDateString(dateOfDeletion))
-    throw new GraphQLError(
+    throw new UserInputError(
       'The encoded dateOfDeletion in `after` should be a string in date format',
-      {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      },
     )
 
   return new Date(dateOfDeletion).toISOString()

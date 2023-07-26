@@ -1,5 +1,4 @@
 import * as auth from '@serlo/authorization'
-import { GraphQLError } from 'graphql'
 
 import {
   decodeThreadId,
@@ -7,6 +6,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -56,11 +56,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         : undefined
 
       if (first && first > limit)
-        throw new GraphQLError(`"first" cannot be larger than ${limit}`, {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        })
+        throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
       const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
         first: first + 1,

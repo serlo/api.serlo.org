@@ -19,21 +19,14 @@ export function resolveConnection<T>({
   let { first } = payload
 
   if (first != null && first > limit) {
-    throw new UserInputError(
-      `first cannot be higher than limit=${limit}`,
-      'BAD_USER_INPUT',
-    )
+    throw new UserInputError(`first cannot be higher than limit=${limit}`)
   }
   if (last != null && last > limit) {
-    throw new UserInputError(
-      `last cannot be higher than limit=${limit}`,
-      'BAD_USER_INPUT',
-    )
+    throw new UserInputError(`last cannot be higher than limit=${limit}`)
   }
   if (first != null && last != null) {
     throw new UserInputError(
       '`first` and `last` cannot be set at the same time',
-      'BAD_USER_INPUT',
     )
   }
   if (first == null && last == null) {

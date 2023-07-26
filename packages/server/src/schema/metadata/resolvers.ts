@@ -1,6 +1,5 @@
-import { GraphQLError } from 'graphql'
-
 import { resolveConnection } from '../connection/utils'
+import { UserInputError } from '~/errors'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
 export const resolvers: Queries<'metadata'> = {
@@ -52,11 +51,7 @@ export const resolvers: Queries<'metadata'> = {
 
       const first = payload.first ?? 100
       if (first > limit) {
-        throw new GraphQLError(`first cannot be higher than limit=${limit}`, {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        })
+        throw new UserInputError(`first cannot be higher than limit=${limit}`)
       }
 
       // TODO: There must be a shorter implementation

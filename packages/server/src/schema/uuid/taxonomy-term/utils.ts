@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
+import { UserInputError } from '~/errors'
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
@@ -36,13 +36,8 @@ export async function assertIsTaxonomyTerm(
     })
   } catch (error) {
     if (error instanceof InvalidCurrentValueError) {
-      throw new GraphQLError(
+      throw new UserInputError(
         `No taxonomy term found for the provided id ${id}`,
-        {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        },
       )
     } else {
       throw error

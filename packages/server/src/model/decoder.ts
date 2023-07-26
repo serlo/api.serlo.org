@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql'
 import * as t from 'io-ts'
 
+import { UserInputError } from '~/errors'
 import { Instance, Role, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
@@ -85,11 +85,7 @@ export function castTo<A>(decoder: t.Type<A, unknown>, value: unknown): A {
   if (decoder.is(value)) {
     return value
   } else {
-    throw new GraphQLError(`Illegal value ${JSON.stringify(value)} given`, {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError(`Illegal value ${JSON.stringify(value)} given`)
   }
 }
 

@@ -1,10 +1,10 @@
 import { GraphQLError } from 'graphql'
 
 export class UserInputError extends GraphQLError {
-  constructor(message: string, code: string) {
+  constructor(message: string) {
     super(message, {
       extensions: {
-        code: code,
+        code: 'BAD_USER_INPUT',
       },
     })
   }

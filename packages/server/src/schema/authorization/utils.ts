@@ -3,8 +3,8 @@ import {
   instanceToScope,
   Scope,
 } from '@serlo/authorization'
-import { GraphQLError } from 'graphql'
 
+import { UserInputError } from '~/errors'
 import { Context, Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
@@ -58,12 +58,7 @@ export async function fetchScopeOfUuid({
   dataSources: Context['dataSources']
 }): Promise<Scope> {
   const object = await dataSources.model.serlo.getUuid({ id })
-  if (object === null)
-    throw new GraphQLError('UUID does not exist.', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+  if (object === null) throw new UserInputError('UUID does not exist.')
 
   // If the object has an instance, return the corresponding scope
   if (isInstanceAware(object)) {
@@ -91,11 +86,7 @@ export async function fetchScopeOfNotificationEvent({
 }): Promise<Scope> {
   const event = await dataSources.model.serlo.getNotificationEvent({ id })
   if (event === null)
-    throw new GraphQLError('Notification event does not exist.', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError('Notification event does not exist.')
 
   return await fetchScopeOfUuid({
     id: event.objectId,

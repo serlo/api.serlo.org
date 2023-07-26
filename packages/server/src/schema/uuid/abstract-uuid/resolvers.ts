@@ -1,8 +1,8 @@
 import * as auth from '@serlo/authorization'
 import { either as E } from 'fp-ts'
-import { GraphQLError } from 'graphql'
 
 import { resolveCustomId } from '~/config'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -115,11 +115,7 @@ async function resolveIdFromPayload(
   } else if (payload.id) {
     return payload.id
   } else {
-    throw new GraphQLError('you need to provide an id or an alias', {
-      extensions: {
-        code: 'BAD_USER_INPUT',
-      },
-    })
+    throw new UserInputError('you need to provide an id or an alias')
   }
 }
 
@@ -130,13 +126,8 @@ async function resolveIdFromAlias(
   const cleanPath = encodePath(decodePath(alias.path))
 
   if (!cleanPath.startsWith('/')) {
-    throw new GraphQLError(
+    throw new UserInputError(
       "First is the worst, please add a '/' at the beginning of your path",
-      {
-        extensions: {
-          code: 'BAD_USER_INPUT',
-        },
-      },
     )
   }
 
