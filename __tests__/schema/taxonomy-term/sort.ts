@@ -1,4 +1,4 @@
-import { gql, UserInputError } from 'apollo-server'
+import gql from 'graphql-tag'
 
 import {
   article,
@@ -6,6 +6,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { castToUuid, Client, given } from '../../__utils__'
+import { UserInputError } from '~/errors'
 
 const user = { ...baseUser, roles: ['de_architect'] }
 

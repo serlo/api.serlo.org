@@ -1,5 +1,5 @@
 import { Scope } from '@serlo/authorization'
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 
 import { user as admin, user2 as regularUser } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
