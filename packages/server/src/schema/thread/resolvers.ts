@@ -1,5 +1,4 @@
 import * as auth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server-core'
 
 import {
   decodeThreadId,
@@ -7,6 +6,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

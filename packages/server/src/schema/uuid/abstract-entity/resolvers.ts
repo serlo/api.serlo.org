@@ -1,10 +1,10 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import { licenses } from '~/config'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

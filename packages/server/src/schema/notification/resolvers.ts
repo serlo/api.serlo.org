@@ -1,6 +1,6 @@
 import * as auth from '@serlo/authorization'
-import { ForbiddenError, UserInputError } from 'apollo-server'
 
+import { ForbiddenError, UserInputError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
