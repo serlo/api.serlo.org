@@ -1,7 +1,7 @@
+import { AuthenticationError } from 'apollo-server-express'
 import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
 
 import { Service } from './service'
-import { AuthenticationError } from '~/errors'
 import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(

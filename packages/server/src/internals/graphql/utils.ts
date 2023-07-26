@@ -1,7 +1,11 @@
 import { AuthorizationGuard } from '@serlo/authorization'
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError,
+} from 'apollo-server'
 import * as R from 'ramda'
 
-import { AuthenticationError, ForbiddenError, UserInputError } from '~/errors'
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 import { isInstance } from '~/schema/instance/utils'

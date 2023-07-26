@@ -1,6 +1,6 @@
+import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
-import { UserInputError } from '~/errors'
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Context, Model } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'

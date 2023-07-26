@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from 'apollo-server'
 
 import { page as basePage } from '../../../__fixtures__'
 import { given, Client, Query, nextUuid } from '../../__utils__'

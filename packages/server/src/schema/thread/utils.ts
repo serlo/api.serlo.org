@@ -1,6 +1,6 @@
+import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 
-import { UserInputError } from '~/errors'
 import { Context, Model, PickResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'

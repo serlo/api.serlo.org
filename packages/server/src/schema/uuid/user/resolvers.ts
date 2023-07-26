@@ -1,10 +1,10 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope, Scope } from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
-import { UserInputError } from '~/errors'
 import { ModelDataSource } from '~/internals/data-source'
 import {
   addContext,

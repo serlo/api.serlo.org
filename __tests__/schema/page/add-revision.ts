@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from 'apollo-server'
 import * as R from 'ramda'
 
 import { page, pageRevision, user as baseUser } from '../../../__fixtures__'

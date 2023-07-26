@@ -1,27 +1,18 @@
-import { ApolloServer } from '@apollo/server'
+import { ApolloServer } from 'apollo-server'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
-import { createTestEnvironment, given, nextUuid } from '.'
+import { given, nextUuid } from '.'
+import { createTestClient } from './test-client'
 import { user } from '../../__fixtures__'
-import { Service } from '~/internals/authentication'
-import { ModelDataSource } from '~/internals/data-source'
-import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
-import { getGraphQLOptions } from '~/internals/server'
 
 export class Client {
-  private apolloServer: ApolloServer<ClientContext>
-  private readonly context?: ClientContext
+  private apolloServer: ApolloServer
 
   constructor(context?: ClientContext) {
-    this.context = context
-    this.apolloServer = new ApolloServer<
-      Partial<Pick<Context, 'service' | 'userId'>>
-    >({
-      ...getGraphQLOptions(createTestEnvironment()),
-    })
+    this.apolloServer = createTestClient(context)
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
@@ -31,16 +22,7 @@ export class Client {
   }
 
   execute(query: QuerySpec<Variables<Input>>) {
-    const environment: Environment = createTestEnvironment()
-    return this.apolloServer.executeOperation(query, {
-      contextValue: {
-        dataSources: {
-          model: new ModelDataSource(environment),
-        },
-        service: this.context?.service ?? Service.SerloCloudflareWorker,
-        userId: this.context?.userId ?? null,
-      } as Context,
-    })
+    return this.apolloServer.executeOperation(query)
   }
 }
 
@@ -95,11 +77,8 @@ export class Query<
   async shouldReturnData(data: unknown) {
     const result = await this.execute()
 
-    expect(result.body.kind).toBe('single')
-    if (result.body.kind === 'single') {
-      expect(result.body.singleResult['errors']).toBeUndefined()
-      expect(result.body.singleResult).toMatchObject({ data })
-    }
+    expect(result['errors']).toBeUndefined()
+    expect(result).toMatchObject({ data })
   }
 
   async shouldFailWithError(
@@ -110,12 +89,7 @@ export class Query<
       | 'UNAUTHENTICATED',
   ) {
     const response = await this.execute()
-    expect(response.body.kind).toBe('single')
-    if (response.body.kind === 'single') {
-      expect(response?.body.singleResult.errors?.[0]?.extensions?.code).toEqual(
-        expectedError,
-      )
-    }
+    expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
   }
 }
 
