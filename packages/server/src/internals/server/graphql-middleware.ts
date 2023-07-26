@@ -38,6 +38,7 @@ export async function applyGraphQLMiddleware({
   swrQueue: SwrQueue
   authServices: AuthServices
 }) {
+  const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
   const server = new ApolloServer<Pick<Context, 'service' | 'userId'>>(
     getGraphQLOptions(environment),
@@ -46,7 +47,7 @@ export async function applyGraphQLMiddleware({
 
   app.use(json({ limit: '2mb' }))
   app.use(
-    '/graphql',
+    graphQLPath,
     expressMiddleware(server, {
       context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
         const authorizationHeader = req.headers.authorization
@@ -85,10 +86,10 @@ export async function applyGraphQLMiddleware({
       process.env.NODE_ENV === 'production'
         ? {}
         : { headers: { Authorization: `Serlo Service=${getToken()}` } }
-    return createPlayground({ endpoint: '/graphql', ...headers })(...args)
+    return createPlayground({ endpoint: graphQLPath, ...headers })(...args)
   })
 
-  return '/graphql'
+  return graphQLPath
 }
 
 export function getGraphQLOptions(environment: Environment) {
