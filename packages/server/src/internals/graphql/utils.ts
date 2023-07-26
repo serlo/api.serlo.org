@@ -2,7 +2,7 @@ import { AuthorizationGuard } from '@serlo/authorization'
 import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
-import { UserInputError } from '~/errors'
+import { AuthenticationError, UserInputError } from '~/errors'
 import { Context } from '~/internals/graphql/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 import { isInstance } from '~/schema/instance/utils'
@@ -12,11 +12,7 @@ export function assertUserIsAuthenticated(
   userId: number | null,
 ): asserts userId is number {
   if (userId === null) {
-    throw new GraphQLError('You are not logged in', {
-      extensions: {
-        code: 'UNAUTHENTICATED',
-      },
-    })
+    throw new AuthenticationError('You are not logged in')
   }
 }
 
