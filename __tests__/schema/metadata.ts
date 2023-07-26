@@ -1,5 +1,5 @@
 import { Instance } from '@serlo/api'
-import gql from 'graphql-tag'
+import { gql } from 'apollo-server'
 
 import { Client, given } from '../__utils__'
 

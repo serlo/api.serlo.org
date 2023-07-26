@@ -1,8 +1,8 @@
 import * as auth from '@serlo/authorization'
+import { UserInputError } from 'apollo-server'
 import { either as E } from 'fp-ts'
 
 import { resolveCustomId } from '~/config'
-import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

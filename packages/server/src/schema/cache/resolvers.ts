@@ -1,4 +1,5 @@
-import { ForbiddenError } from '~/errors'
+import { ForbiddenError } from 'apollo-server'
+
 import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
 

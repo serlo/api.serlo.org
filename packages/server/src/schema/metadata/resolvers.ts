@@ -1,5 +1,6 @@
+import { UserInputError } from 'apollo-server'
+
 import { resolveConnection } from '../connection/utils'
-import { UserInputError } from '~/errors'
 import { createNamespace, decodeId, Queries } from '~/internals/graphql'
 
 export const resolvers: Queries<'metadata'> = {

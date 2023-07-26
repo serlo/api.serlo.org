@@ -121,8 +121,6 @@ module.exports = {
           'io-ts-types/lib/*',
           'fp-ts/lib/*',
           'ts-jest/utils',
-          '@apollo/server/plugin/disabled',
-          '@apollo/server/express4',
         ],
       },
     ],
