@@ -1,4 +1,3 @@
-import { GraphQLError } from 'graphql'
 import gql from 'graphql-tag'
 
 import {
@@ -7,6 +6,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { castToUuid, Client, given } from '../../__utils__'
+import { UserInputError } from '~/errors'
 
 const user = { ...baseUser, roles: ['de_architect'] }
 
@@ -42,13 +42,8 @@ beforeEach(() => {
       [...childrenIds].sort().join(',') !==
       [...taxonomyTerm.childrenIds].sort().join(',')
     ) {
-      throw new GraphQLError(
+      throw new UserInputError(
         'children_ids have to match the current entities ids linked to the taxonomy_term_id',
-        {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          },
-        },
       )
     }
 
