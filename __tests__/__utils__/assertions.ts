@@ -3,13 +3,13 @@ import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
-import { createTestClient } from './test-client'
 import { user } from '../../__fixtures__'
 import { Service } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
+import { getGraphQLOptions } from '~/internals/server'
 
 export class Client {
   private apolloServer: ApolloServer<ClientContext>
@@ -17,7 +17,11 @@ export class Client {
 
   constructor(context?: ClientContext) {
     this.context = context
-    this.apolloServer = createTestClient()
+    this.apolloServer = new ApolloServer<
+      Partial<Pick<Context, 'service' | 'userId'>>
+    >({
+      ...getGraphQLOptions(createTestEnvironment()),
+    })
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
