@@ -1,7 +1,6 @@
 import * as auth from '@serlo/authorization'
-import { GraphQLError } from 'graphql'
 
-import { UserInputError } from '~/errors'
+import { ForbiddenError, UserInputError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
@@ -98,13 +97,8 @@ export const resolvers: TypeResolvers<Notification> &
       const eventIds = ids.map((id) => {
         const notification = notifications.find((n) => n.id === id)
         if (!notification) {
-          throw new GraphQLError(
+          throw new ForbiddenError(
             'You are only allowed to set your own notification states.',
-            {
-              extensions: {
-                code: 'FORBIDDEN',
-              },
-            },
           )
         }
         return notification.eventId

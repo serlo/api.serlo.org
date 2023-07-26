@@ -10,6 +10,16 @@ export class AuthenticationError extends GraphQLError {
   }
 }
 
+export class ForbiddenError extends GraphQLError {
+  constructor(message: string) {
+    super(message, {
+      extensions: {
+        code: 'FORBIDDEN',
+      },
+    })
+  }
+}
+
 export class UserInputError extends GraphQLError {
   constructor(message: string) {
     super(message, {

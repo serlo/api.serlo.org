@@ -1,5 +1,4 @@
-import { GraphQLError } from 'graphql'
-
+import { ForbiddenError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
 
@@ -70,9 +69,8 @@ function checkPermission({
     !allowedServices.includes(service) &&
     (userId === null || !allowedUserIds.includes(userId))
   ) {
-    throw new GraphQLError(
+    throw new ForbiddenError(
       `You do not have the permissions to ${operation} the cache`,
-      { extensions: { code: 'FORBIDDEN' } },
     )
   }
 }
