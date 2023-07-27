@@ -39,6 +39,7 @@ async function initializeServer({
   authServices: AuthServices
 }) {
   const app = createApp()
+  const healthPath = '/health'
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const graphqlPath = await applyGraphQLMiddleware({
     app,
@@ -46,9 +47,13 @@ async function initializeServer({
     swrQueue,
     authServices,
   })
+
   const kratosPath = applyKratosMiddleware({
     app,
     kratos: authServices.kratos,
+  })
+  app.get(healthPath, (req, res) => {
+    res.status(200).send('Okay!')
   })
 
   const port = 3001
@@ -60,6 +65,7 @@ async function initializeServer({
     console.log(`GraphQL endpoint:    ${host}${graphqlPath}`)
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
     console.log(`Kratos endpoint:     ${host}${kratosPath}`)
+    console.log(`Health endpoint:     ${host}${healthPath}`)
     /* eslint-enable no-console */
   })
 }
