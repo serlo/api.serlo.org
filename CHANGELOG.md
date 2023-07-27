@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.53.3](https://github.com/serlo/api.serlo.org/compare/v0.53.2..v0.53.3) - July 27, 2023
+
+### Internal
+
+- Add health endpoint
+
 ## [v0.53.2](https://github.com/serlo/api.serlo.org/compare/v0.53.1..v0.53.2) - July 26, 2023
 
 ### Internal
