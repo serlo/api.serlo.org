@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.54.0](https://github.com/serlo/api.serlo.org/compare/v0.53.3..v0.54.0) - August 15, 2023
+
+### Added
+
+- authorization: Allow architect to sort entities
+
 ## [v0.53.3](https://github.com/serlo/api.serlo.org/compare/v0.53.2..v0.53.3) - July 27, 2023
 
 ### Internal
