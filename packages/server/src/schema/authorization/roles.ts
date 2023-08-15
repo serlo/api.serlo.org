@@ -55,6 +55,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Architect]: {
     permissions: [
       Permission.Entity_RemoveChild,
+      Permission.Entity_OrderChildren,
       Permission.TaxonomyTerm_Change,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.TaxonomyTerm_RemoveChild,
