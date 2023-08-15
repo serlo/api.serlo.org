@@ -1532,6 +1532,11 @@ async function exec(): Promise<void> {
         date: '2023-07-27',
         internal: ['Add health endpoint'],
       },
+      {
+        tagName: 'v0.54.0',
+        date: '2023-08-15',
+        added: ['authorization: Allow architect to sort entities'],
+      },
     ],
   })
 
