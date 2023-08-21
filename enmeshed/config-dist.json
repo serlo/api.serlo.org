@@ -31,13 +31,19 @@
         "enabled": true
       }
     },
-    "webhooks": {
+    "webhooksV2": {
       "enabled": true,
-      "url": "http://host.docker.internal:3001/enmeshed/webhook",
-      "headers": {
-        "X-API-KEY": "apiKey"
-      },
-      "publishInterval": 5
+      "webhooks": [
+        {
+          "target": {
+            "url": "http://host.docker.internal:3001/enmeshed/webhook",
+            "headers": {
+              "X-API-KEY": "apiKey"
+            },
+            "publishInterval": 5
+          }
+        }
+      ]
     }
   }
 }

@@ -8,6 +8,8 @@ In order to test enmeshed locally you need to copy [`config-dist.json`](./config
 cp enmeshed/config-dist.json enmeshed/config.json
 ```
 
+Set the `transportLibrary.platformClientId` and `platformClientSecret` to the values you've received from the Enmeshed team.
+
 ### Starting / stoping enmeshed locally
 
 In order to start enmeshed locally you can run the comman `yarn start:enmeshed`. To tear down the connector run `yarn stop:enmeshed`.
