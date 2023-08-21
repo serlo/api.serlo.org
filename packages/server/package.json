@@ -21,6 +21,7 @@
   "dependencies": {
     "@apollo/server": "^4.9.1",
     "@google-cloud/storage": "^7.0.1",
+    "@nmshd/connector-sdk": "^2.2.2",
     "@ory/client": "^1.1.46",
     "@sentry/node": "^7.64.0",
     "@serlo/authorization": "^0.54.0",
