@@ -32,13 +32,19 @@ export const resolvers: Queries<'media'> = {
 
       return {
         uploadUrl,
-        urlAfterUpload: `https://assets.serlo.org/${fileHash}/image.${fileExtension}`,
+        urlAfterUpload: `https://assets.serlo.org/${fileHash}/${
+          mediaType === MediaType.AudioMp3 ||
+          mediaType === MediaType.AudioWav ||
+          mediaType === MediaType.AudioOgg
+            ? 'audio'
+            : 'image'
+        }.${fileExtension}`,
       }
     },
   },
 }
 
-function getFileExtensionAndMimeType(mediaType: MediaType) {
+function getFileExtensionAndMimeType(mediaType: MediaType): [string, string] {
   switch (mediaType) {
     case MediaType.ImageGif:
       return ['gif', 'image/gif']
@@ -50,5 +56,11 @@ function getFileExtensionAndMimeType(mediaType: MediaType) {
       return ['svg', 'image/svg+xml']
     case MediaType.ImageWebp:
       return ['webp', 'image/webp']
+    case MediaType.AudioMp3:
+      return ['mp3', 'audio/mpeg']
+    case MediaType.AudioWav:
+      return ['wav', 'audio/wav']
+    case MediaType.AudioOgg:
+      return ['ogg', 'audio/ogg']
   }
 }

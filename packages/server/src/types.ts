@@ -1515,6 +1515,9 @@ export type MediaQueryNewUploadArgs = {
 };
 
 export enum MediaType {
+  AudioMp3 = 'AUDIO_MP3',
+  AudioOgg = 'AUDIO_OGG',
+  AudioWav = 'AUDIO_WAV',
   ImageGif = 'IMAGE_GIF',
   ImageJpeg = 'IMAGE_JPEG',
   ImagePng = 'IMAGE_PNG',

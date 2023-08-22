@@ -17,4 +17,7 @@ enum MediaType {
   IMAGE_PNG
   IMAGE_SVG_XML
   IMAGE_WEBP
+  AUDIO_MP3
+  AUDIO_WAV
+  AUDIO_OGG
 }
