@@ -1,7 +1,6 @@
 import fs from 'fs'
 import gql from 'graphql-tag'
 import path from 'path'
-// import { fileURLToPath } from 'url'
 
 import { user } from '../../__fixtures__'
 import { Client } from '../__utils__'
@@ -65,11 +64,9 @@ async function logResponse(response: Response) {
 
   let body = ''
   try {
-    // Try to parse as JSON first
     body = JSON.stringify(await response.json(), null, 2)
   } catch (e) {
-    // If not JSON, try to read as text
-    // body = await response.text()
+    // noop
   }
 
   // eslint-disable-next-line no-console
