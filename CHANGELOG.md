@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.55.0](https://github.com/serlo/api.serlo.org/compare/v0.54.0..v0.55.0) - August 15, 2023
+
+### Changed
+
+- Update version of Metadata API
+
+### Internal
+
+- Update dependencies
+
+- Update format of license texts to new editor format
+
 ## [v0.54.0](https://github.com/serlo/api.serlo.org/compare/v0.53.3..v0.54.0) - August 15, 2023
 
 ### Added
