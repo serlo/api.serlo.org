@@ -19,9 +19,9 @@
     "start:swr-queue-worker": "tsdx watch --transpileOnly --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
-    "@apollo/server": "^4.9.1",
+    "@apollo/server": "^4.9.2",
     "@google-cloud/storage": "^7.0.1",
-    "@ory/client": "^1.1.46",
+    "@ory/client": "^1.1.51",
     "@sentry/node": "^7.64.0",
     "@serlo/authorization": "^0.54.0",
     "apollo-datasource-rest": "^3.7.0",
@@ -31,7 +31,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fp-ts": "^2.16.1",
-    "graphql": "^16.7.1",
+    "graphql": "^16.8.0",
     "graphql-playground-middleware-express": "^1.7.23",
     "graphql-type-json": "^0.3.2",
     "io-ts": "^2.2.20",
@@ -43,9 +43,9 @@
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
     "newtype-ts": "^0.3.5",
-    "pg": "^8.11.2",
+    "pg": "^8.11.3",
     "ramda": "^0.29.0",
-    "redlock": "^5.0.0-beta2",
+    "redlock": "^5.0.0-beta.2",
     "ts-toolbelt": "^9.6.0",
     "uuid": "^9.0.0"
   },
