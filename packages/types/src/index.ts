@@ -592,6 +592,12 @@ export type CommentEdge = {
   node: Comment;
 };
 
+export enum CommentStatus {
+  Done = 'done',
+  NoStatus = 'noStatus',
+  Open = 'open'
+}
+
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   alias: Scalars['String']['output'];
@@ -2498,6 +2504,7 @@ export type Thread = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   object: AbstractUuid;
+  status: CommentStatus;
   title?: Maybe<Scalars['String']['output']>;
   trashed: Scalars['Boolean']['output'];
 };
