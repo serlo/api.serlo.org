@@ -338,6 +338,31 @@ describe('uuid["threads"]', () => {
       `,
     })
 
+    test('property "status" of Thread', async () => {
+      givenThreads({ uuid: article, threads: [[comment1, comment2]] })
+
+      await new Client()
+        .prepareQuery({
+          query: gql`
+            query propertyArchived($id: Int!) {
+              uuid(id: $id) {
+                ... on ThreadAware {
+                  threads {
+                    nodes {
+                      status
+                    }
+                  }
+                }
+              }
+            }
+          `,
+        })
+        .withVariables({ id: article.id })
+        .shouldReturnData({
+          uuid: { threads: { nodes: [{ status: 'done' }] } },
+        })
+    })
+
     test('1-level comment', async () => {
       givenThreads({ uuid: article, threads: [[comment1]] })
 

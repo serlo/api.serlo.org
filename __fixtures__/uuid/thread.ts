@@ -16,6 +16,7 @@ export const comment: Model<'Comment'> = {
     'Ich glaube die Applets zur allgemeinen und Scheitelpunktform müssen die Plätze tauschen ;)',
   parentId: article.id,
   childrenIds: [],
+  status: 'open',
 }
 
 export const comment1: Model<'Comment'> = {
@@ -31,6 +32,7 @@ export const comment1: Model<'Comment'> = {
   content:
     'Die Überschriften sind verschoben, der letzte Link führt zu den Aufgaben. Ich würde auch alle verlinkten Artikel aus dem related content schmeißen. Der related content sollte laut Richtlinien nur genutzt werden, wenn ein Artikel in mehrere aufgeteilt wurde bzw. wenn der Nutzer wahrscheinlich ständig zwischen den Artikel springen muss.\r\n\r\nWas denkt ihr?\r\n\r\nLiebe Grüße,\r\nSimon',
   childrenIds: [49237].map(castToUuid),
+  status: 'done',
 }
 
 export const comment2: Model<'Comment'> = {
@@ -46,6 +48,7 @@ export const comment2: Model<'Comment'> = {
   content:
     'Ich stimme zu, der related Content ist chaotisch. Ich schlage vor, den related content zu ordnen und gegebenenfalls auch zu löschen wie vorgeschlagen',
   childrenIds: [],
+  status: 'noStatus',
 }
 
 export const comment3: Model<'Comment'> = {
@@ -61,4 +64,5 @@ export const comment3: Model<'Comment'> = {
     'Das obere Beispiel ist "ungut". Denn man hat da Kettenrechnungen hintereinander gestellt und mehrere Gleichzeitszeichen in einer Zeile, aber am Anfang ist die Rechnung 1+2 und am Ende ist die Lösung 6. Mathematisch ist das eine falsche Schreibweise, auch wenn man üblicherweise so rechnet. Bei der zweiten Variante ist das besser gelöst, denn da wird diese Nebenrechnung nicht in die Zeile der Endlösung reingeschrieben.',
   parentId: article2.id,
   childrenIds: [],
+  status: 'open',
 }
