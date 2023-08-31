@@ -1,3 +1,9 @@
+enum CommentStatus {
+  noStatus
+  open
+  done
+}
+
 type Thread {
   id: String!
   createdAt: DateTime!
@@ -11,6 +17,7 @@ type Thread {
     first: Int
     last: Int
   ): CommentConnection!
+  status: CommentStatus!
 }
 
 type Comment implements AbstractUuid {

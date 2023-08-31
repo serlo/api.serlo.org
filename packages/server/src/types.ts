@@ -596,6 +596,12 @@ export type CommentEdge = {
   node: Comment;
 };
 
+export enum CommentStatus {
+  Done = 'done',
+  NoStatus = 'noStatus',
+  Open = 'open'
+}
+
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   alias: Scalars['String']['output'];
@@ -2502,6 +2508,7 @@ export type Thread = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | Solution | SolutionRevision | TaxonomyTerm | User | Video | VideoRevision;
+  status: CommentStatus;
   title?: Maybe<Scalars['String']['output']>;
   trashed: Scalars['Boolean']['output'];
 };
@@ -3162,6 +3169,7 @@ export type ResolversTypes = {
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
+  CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
@@ -4841,6 +4849,7 @@ export type ThreadResolvers<ContextType = Context, ParentType extends ResolversP
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['CommentStatus'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

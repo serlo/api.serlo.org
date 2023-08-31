@@ -61,6 +61,7 @@ test('comment gets created, cache mutated as expected', async () => {
       content: 'Hello',
       parentId: comment1.id,
       childrenIds: [],
+      status: 'open',
     })
 
   const queryComments = new Client()
