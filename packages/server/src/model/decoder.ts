@@ -275,6 +275,12 @@ export const TaxonomyTermDecoder = t.exact(
   ]),
 )
 
+export const CommentStatusDecoder = t.union([
+  t.literal('noStatus'),
+  t.literal('open'),
+  t.literal('done'),
+])
+
 export const CommentDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
@@ -287,6 +293,7 @@ export const CommentDecoder = t.exact(
       content: t.string,
       parentId: Uuid,
       childrenIds: t.array(Uuid),
+      status: CommentStatusDecoder,
     }),
   ]),
 )

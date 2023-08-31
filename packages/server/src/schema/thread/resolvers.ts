@@ -28,7 +28,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Comment, Thread } from '~/types'
+import { Comment, CommentStatus, Thread } from '~/types'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -96,6 +96,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     },
     trashed(thread) {
       return thread.commentPayloads[0].trashed
+    },
+    status(thread) {
+      return convertCommentStatus(thread.commentPayloads[0].status)
     },
     async object(thread, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -301,4 +304,17 @@ async function resolveObject(
   return obj.__typename === DiscriminatorType.Comment
     ? resolveObject(obj, dataSources)
     : obj
+}
+
+function convertCommentStatus(
+  rawStatus: Model<'Comment'>['status'],
+): CommentStatus {
+  switch (rawStatus) {
+    case 'noStatus':
+      return CommentStatus.NoStatus
+    case 'open':
+      return CommentStatus.Open
+    case 'done':
+      return CommentStatus.Done
+  }
 }
