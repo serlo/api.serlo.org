@@ -562,7 +562,7 @@ const pactSpec: PactSpec = {
           title: null,
           archived: false,
           childrenIds: [],
-          status: 'open',
+          status: 'noStatus',
         },
       ],
     ],
