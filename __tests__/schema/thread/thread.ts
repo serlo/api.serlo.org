@@ -344,7 +344,7 @@ describe('uuid["threads"]', () => {
       await new Client()
         .prepareQuery({
           query: gql`
-            query propertyArchived($id: Int!) {
+            query propertyStatus($id: Int!) {
               uuid(id: $id) {
                 ... on ThreadAware {
                   threads {
