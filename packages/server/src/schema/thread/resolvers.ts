@@ -63,9 +63,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         after,
         instance,
         subjectId,
-        ...(input.status
-          ? { status: convertToDBLayerCommentStatus(input.status) }
-          : {}),
+        ...(input.status ? { status: input.status } : {}),
       })
 
       const threads = await resolveThreads({ firstCommentIds, dataSources })
@@ -227,10 +225,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      await dataSources.model.serlo.setThreadStatus({
-        ids,
-        status: convertToDBLayerCommentStatus(status),
-      })
+      await dataSources.model.serlo.setThreadStatus({ ids, status })
 
       return { success: true, query: {} }
     },
@@ -342,18 +337,5 @@ function convertToApiCommentStatus(
       return CommentStatus.Open
     case 'done':
       return CommentStatus.Done
-  }
-}
-
-function convertToDBLayerCommentStatus(
-  commentStatus: CommentStatus,
-): Model<'Comment'>['status'] {
-  switch (commentStatus) {
-    case CommentStatus.NoStatus:
-      return 'noStatus'
-    case CommentStatus.Open:
-      return 'open'
-    case CommentStatus.Done:
-      return 'done'
   }
 }
