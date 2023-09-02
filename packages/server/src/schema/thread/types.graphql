@@ -117,6 +117,7 @@ type ThreadMutation {
   setCommentState(
     input: ThreadSetCommentStateInput!
   ): ThreadSetCommentStateResponse
+  setThreadStatus(input: ThreadSetThreadStatusInput!): DefaultResponse!
 }
 
 input ThreadCreateThreadInput {
@@ -179,7 +180,13 @@ input ThreadSetCommentStateInput {
   id: [Int!]!
   trashed: Boolean!
 }
+
 type ThreadSetCommentStateResponse {
   success: Boolean!
   query: Query!
+}
+
+input ThreadSetThreadStatusInput {
+  id: [String!]!
+  status: CommentStatus!
 }

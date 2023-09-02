@@ -2,8 +2,8 @@ import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
 import { dateTimeSchema } from './date-time'
+import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
 import { instanceSchema } from './instance'
-import { jsonSchema } from './json'
 import { licenseSchema } from './license'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
@@ -23,7 +23,7 @@ export const schema = mergeSchemas(
   cacheSchema,
   dateTimeSchema,
   instanceSchema,
-  jsonSchema,
+  defaultGraphQLDefinitionsSchema,
   licenseSchema,
   mediaSchema,
   metadataSchema,

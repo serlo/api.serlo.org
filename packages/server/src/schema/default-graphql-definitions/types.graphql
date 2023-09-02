@@ -1,0 +1,7 @@
+scalar JSON
+scalar JSONObject
+
+type DefaultResponse {
+  success: Boolean!
+  query: Query!
+}

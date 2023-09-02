@@ -211,6 +211,29 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
+    async setThreadStatus(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+
+      const { id, status } = payload.input
+      const ids = decodeThreadIds(id)
+
+      const scopes = await Promise.all(
+        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
+      )
+      await assertUserIsAuthorized({
+        userId,
+        guards: scopes.map((scope) => auth.Thread.setThreadStatus(scope)),
+        message: 'You are not allowed to archive the provided thread(s).',
+        dataSources,
+      })
+
+      await dataSources.model.serlo.setThreadStatus({
+        ids,
+        status: convertToDBLayerCommentStatus(status),
+      })
+
+      return { success: true, query: {} }
+    },
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)

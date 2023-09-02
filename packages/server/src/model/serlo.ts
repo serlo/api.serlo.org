@@ -683,6 +683,27 @@ export function createSerloModel({
     },
   })
 
+  const setThreadStatus = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
+    ) {
+      return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
+    },
+    async updateCache({ ids, status }) {
+      await getUuid._querySpec.setCache({
+        payloads: ids.map((id) => {
+          return { id }
+        }),
+        getValue(current) {
+          if (!current || current.__typename !== DiscriminatorType.Comment)
+            return
+          return { ...current, status }
+        },
+      })
+    },
+  })
+
   const createEntity = createMutation({
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
@@ -1186,6 +1207,7 @@ export function createSerloModel({
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
+    setThreadStatus,
     sortEntity,
     sortTaxonomyTerm,
     setUuidState,
