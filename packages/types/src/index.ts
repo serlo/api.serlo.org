@@ -2579,12 +2579,12 @@ export type ThreadEditCommentResponse = {
 
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
-  createComment?: Maybe<ThreadCreateCommentResponse>;
-  createThread?: Maybe<ThreadCreateThreadResponse>;
-  editComment?: Maybe<ThreadEditCommentResponse>;
-  setCommentState?: Maybe<ThreadSetCommentStateResponse>;
-  setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
-  setThreadState?: Maybe<ThreadSetThreadStateResponse>;
+  createComment: ThreadCreateCommentResponse;
+  createThread: ThreadCreateThreadResponse;
+  editComment: ThreadEditCommentResponse;
+  setCommentState: ThreadSetCommentStateResponse;
+  setThreadArchived: ThreadSetThreadArchivedResponse;
+  setThreadState: ThreadSetThreadStateResponse;
   setThreadStatus: DefaultResponse;
 };
 
