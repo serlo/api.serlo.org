@@ -2575,20 +2575,14 @@ export type ThreadEditCommentInput = {
   content: Scalars['String']['input'];
 };
 
-export type ThreadEditCommentResponse = {
-  __typename?: 'ThreadEditCommentResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
   createComment: ThreadCreateCommentResponse;
   createThread: ThreadCreateThreadResponse;
-  editComment: ThreadEditCommentResponse;
-  setCommentState: ThreadSetCommentStateResponse;
-  setThreadArchived: ThreadSetThreadArchivedResponse;
-  setThreadState: ThreadSetThreadStateResponse;
+  editComment: DefaultResponse;
+  setCommentState: DefaultResponse;
+  setThreadArchived: DefaultResponse;
+  setThreadState: DefaultResponse;
   setThreadStatus: DefaultResponse;
 };
 
@@ -2646,32 +2640,14 @@ export type ThreadSetCommentStateInput = {
   trashed: Scalars['Boolean']['input'];
 };
 
-export type ThreadSetCommentStateResponse = {
-  __typename?: 'ThreadSetCommentStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadSetThreadArchivedInput = {
   archived: Scalars['Boolean']['input'];
   id: Array<Scalars['String']['input']>;
 };
 
-export type ThreadSetThreadArchivedResponse = {
-  __typename?: 'ThreadSetThreadArchivedResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadSetThreadStateInput = {
   id: Array<Scalars['String']['input']>;
   trashed: Scalars['Boolean']['input'];
-};
-
-export type ThreadSetThreadStateResponse = {
-  __typename?: 'ThreadSetThreadStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type ThreadSetThreadStatusInput = {
@@ -3328,15 +3304,11 @@ export type ResolversTypes = {
   ThreadCreateThreadInput: ResolverTypeWrapper<ModelOf<ThreadCreateThreadInput>>;
   ThreadCreateThreadResponse: ResolverTypeWrapper<ModelOf<ThreadCreateThreadResponse>>;
   ThreadEditCommentInput: ResolverTypeWrapper<ModelOf<ThreadEditCommentInput>>;
-  ThreadEditCommentResponse: ResolverTypeWrapper<ModelOf<ThreadEditCommentResponse>>;
   ThreadMutation: ResolverTypeWrapper<ModelOf<ThreadMutation>>;
   ThreadQuery: ResolverTypeWrapper<ModelOf<ThreadQuery>>;
   ThreadSetCommentStateInput: ResolverTypeWrapper<ModelOf<ThreadSetCommentStateInput>>;
-  ThreadSetCommentStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetCommentStateResponse>>;
   ThreadSetThreadArchivedInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadArchivedInput>>;
-  ThreadSetThreadArchivedResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadArchivedResponse>>;
   ThreadSetThreadStateInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateInput>>;
-  ThreadSetThreadStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateResponse>>;
   ThreadSetThreadStatusInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStatusInput>>;
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
@@ -3544,15 +3516,11 @@ export type ResolversParentTypes = {
   ThreadCreateThreadInput: ModelOf<ThreadCreateThreadInput>;
   ThreadCreateThreadResponse: ModelOf<ThreadCreateThreadResponse>;
   ThreadEditCommentInput: ModelOf<ThreadEditCommentInput>;
-  ThreadEditCommentResponse: ModelOf<ThreadEditCommentResponse>;
   ThreadMutation: ModelOf<ThreadMutation>;
   ThreadQuery: ModelOf<ThreadQuery>;
   ThreadSetCommentStateInput: ModelOf<ThreadSetCommentStateInput>;
-  ThreadSetCommentStateResponse: ModelOf<ThreadSetCommentStateResponse>;
   ThreadSetThreadArchivedInput: ModelOf<ThreadSetThreadArchivedInput>;
-  ThreadSetThreadArchivedResponse: ModelOf<ThreadSetThreadArchivedResponse>;
   ThreadSetThreadStateInput: ModelOf<ThreadSetThreadStateInput>;
-  ThreadSetThreadStateResponse: ModelOf<ThreadSetThreadStateResponse>;
   ThreadSetThreadStatusInput: ModelOf<ThreadSetThreadStatusInput>;
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
@@ -4902,43 +4870,19 @@ export type ThreadCreateThreadResponseResolvers<ContextType = Context, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ThreadEditCommentResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadEditCommentResponse'] = ResolversParentTypes['ThreadEditCommentResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type ThreadMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadMutation'] = ResolversParentTypes['ThreadMutation']> = {
   createComment?: Resolver<ResolversTypes['ThreadCreateCommentResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
   createThread?: Resolver<ResolversTypes['ThreadCreateThreadResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
-  editComment?: Resolver<ResolversTypes['ThreadEditCommentResponse'], ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
-  setCommentState?: Resolver<ResolversTypes['ThreadSetCommentStateResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
-  setThreadArchived?: Resolver<ResolversTypes['ThreadSetThreadArchivedResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
-  setThreadState?: Resolver<ResolversTypes['ThreadSetThreadStateResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
+  editComment?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
+  setCommentState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
+  setThreadArchived?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
+  setThreadState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
   setThreadStatus?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStatusArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadQuery'] = ResolversParentTypes['ThreadQuery']> = {
   allThreads?: Resolver<ResolversTypes['AllThreadsConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadSetCommentStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadSetCommentStateResponse'] = ResolversParentTypes['ThreadSetCommentStateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadSetThreadArchivedResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadSetThreadArchivedResponse'] = ResolversParentTypes['ThreadSetThreadArchivedResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadSetThreadStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadSetThreadStateResponse'] = ResolversParentTypes['ThreadSetThreadStateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5268,12 +5212,8 @@ export type Resolvers<ContextType = Context> = {
   ThreadAware?: ThreadAwareResolvers<ContextType>;
   ThreadCreateCommentResponse?: ThreadCreateCommentResponseResolvers<ContextType>;
   ThreadCreateThreadResponse?: ThreadCreateThreadResponseResolvers<ContextType>;
-  ThreadEditCommentResponse?: ThreadEditCommentResponseResolvers<ContextType>;
   ThreadMutation?: ThreadMutationResolvers<ContextType>;
   ThreadQuery?: ThreadQueryResolvers<ContextType>;
-  ThreadSetCommentStateResponse?: ThreadSetCommentStateResponseResolvers<ContextType>;
-  ThreadSetThreadArchivedResponse?: ThreadSetThreadArchivedResponseResolvers<ContextType>;
-  ThreadSetThreadStateResponse?: ThreadSetThreadStateResponseResolvers<ContextType>;
   ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
   ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

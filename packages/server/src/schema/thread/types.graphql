@@ -107,16 +107,10 @@ extend type Mutation {
 type ThreadMutation {
   createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse!
   createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse!
-  editComment(input: ThreadEditCommentInput!): ThreadEditCommentResponse!
-  setThreadArchived(
-    input: ThreadSetThreadArchivedInput!
-  ): ThreadSetThreadArchivedResponse!
-  setThreadState(
-    input: ThreadSetThreadStateInput!
-  ): ThreadSetThreadStateResponse!
-  setCommentState(
-    input: ThreadSetCommentStateInput!
-  ): ThreadSetCommentStateResponse!
+  editComment(input: ThreadEditCommentInput!): DefaultResponse!
+  setThreadArchived(input: ThreadSetThreadArchivedInput!): DefaultResponse!
+  setThreadState(input: ThreadSetThreadStateInput!): DefaultResponse!
+  setCommentState(input: ThreadSetCommentStateInput!): DefaultResponse!
   setThreadStatus(input: ThreadSetThreadStatusInput!): DefaultResponse!
 }
 
@@ -152,38 +146,19 @@ input ThreadEditCommentInput {
   commentId: Int!
 }
 
-type ThreadEditCommentResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input ThreadSetThreadArchivedInput {
   id: [String!]!
   archived: Boolean!
-}
-
-type ThreadSetThreadArchivedResponse {
-  success: Boolean!
-  query: Query!
 }
 
 input ThreadSetThreadStateInput {
   id: [String!]!
   trashed: Boolean!
 }
-type ThreadSetThreadStateResponse {
-  success: Boolean!
-  query: Query!
-}
 
 input ThreadSetCommentStateInput {
   id: [Int!]!
   trashed: Boolean!
-}
-
-type ThreadSetCommentStateResponse {
-  success: Boolean!
-  query: Query!
 }
 
 input ThreadSetThreadStatusInput {
