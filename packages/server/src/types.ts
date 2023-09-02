@@ -2577,12 +2577,12 @@ export type ThreadEditCommentResponse = {
 
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
-  createComment?: Maybe<ThreadCreateCommentResponse>;
-  createThread?: Maybe<ThreadCreateThreadResponse>;
-  editComment?: Maybe<ThreadEditCommentResponse>;
-  setCommentState?: Maybe<ThreadSetCommentStateResponse>;
-  setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
-  setThreadState?: Maybe<ThreadSetThreadStateResponse>;
+  createComment: ThreadCreateCommentResponse;
+  createThread: ThreadCreateThreadResponse;
+  editComment: ThreadEditCommentResponse;
+  setCommentState: ThreadSetCommentStateResponse;
+  setThreadArchived: ThreadSetThreadArchivedResponse;
+  setThreadState: ThreadSetThreadStateResponse;
 };
 
 
@@ -4882,12 +4882,12 @@ export type ThreadEditCommentResponseResolvers<ContextType = Context, ParentType
 };
 
 export type ThreadMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadMutation'] = ResolversParentTypes['ThreadMutation']> = {
-  createComment?: Resolver<Maybe<ResolversTypes['ThreadCreateCommentResponse']>, ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
-  createThread?: Resolver<Maybe<ResolversTypes['ThreadCreateThreadResponse']>, ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
-  editComment?: Resolver<Maybe<ResolversTypes['ThreadEditCommentResponse']>, ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
-  setCommentState?: Resolver<Maybe<ResolversTypes['ThreadSetCommentStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
-  setThreadArchived?: Resolver<Maybe<ResolversTypes['ThreadSetThreadArchivedResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
-  setThreadState?: Resolver<Maybe<ResolversTypes['ThreadSetThreadStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
+  createComment?: Resolver<ResolversTypes['ThreadCreateCommentResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
+  createThread?: Resolver<ResolversTypes['ThreadCreateThreadResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
+  editComment?: Resolver<ResolversTypes['ThreadEditCommentResponse'], ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
+  setCommentState?: Resolver<ResolversTypes['ThreadSetCommentStateResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
+  setThreadArchived?: Resolver<ResolversTypes['ThreadSetThreadArchivedResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
+  setThreadState?: Resolver<ResolversTypes['ThreadSetThreadStateResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
