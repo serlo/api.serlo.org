@@ -2571,20 +2571,14 @@ export type ThreadEditCommentInput = {
   content: Scalars['String']['input'];
 };
 
-export type ThreadEditCommentResponse = {
-  __typename?: 'ThreadEditCommentResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
   createComment: ThreadCreateCommentResponse;
   createThread: ThreadCreateThreadResponse;
-  editComment: ThreadEditCommentResponse;
-  setCommentState: ThreadSetCommentStateResponse;
-  setThreadArchived: ThreadSetThreadArchivedResponse;
-  setThreadState: ThreadSetThreadStateResponse;
+  editComment: DefaultResponse;
+  setCommentState: DefaultResponse;
+  setThreadArchived: DefaultResponse;
+  setThreadState: DefaultResponse;
   setThreadStatus: DefaultResponse;
 };
 
@@ -2642,32 +2636,14 @@ export type ThreadSetCommentStateInput = {
   trashed: Scalars['Boolean']['input'];
 };
 
-export type ThreadSetCommentStateResponse = {
-  __typename?: 'ThreadSetCommentStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadSetThreadArchivedInput = {
   archived: Scalars['Boolean']['input'];
   id: Array<Scalars['String']['input']>;
 };
 
-export type ThreadSetThreadArchivedResponse = {
-  __typename?: 'ThreadSetThreadArchivedResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadSetThreadStateInput = {
   id: Array<Scalars['String']['input']>;
   trashed: Scalars['Boolean']['input'];
-};
-
-export type ThreadSetThreadStateResponse = {
-  __typename?: 'ThreadSetThreadStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type ThreadSetThreadStatusInput = {
