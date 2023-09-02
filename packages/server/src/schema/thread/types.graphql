@@ -89,6 +89,7 @@ type ThreadQuery {
     first: Int
     instance: Instance
     subjectId: String
+    status: CommentStatus
   ): AllThreadsConnection!
 }
 

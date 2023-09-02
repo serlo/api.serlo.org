@@ -3,6 +3,7 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
+  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -51,9 +52,12 @@ export const spec = {
   AllThreadsQuery: {
     payload: t.intersection([
       t.type({ first: t.number }),
-      t.partial({ after: t.string }),
-      t.partial({ instance: InstanceDecoder }),
-      t.partial({ subjectId: t.number }),
+      t.partial({
+        after: t.string,
+        instance: InstanceDecoder,
+        subjectId: t.number,
+        status: CommentStatusDecoder,
+      }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
