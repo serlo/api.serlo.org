@@ -41,6 +41,7 @@ describe('allThreads', () => {
         $after: String
         $instance: Instance
         $subjectId: String
+        $status: CommentStatus
       ) {
         thread {
           allThreads(
@@ -48,6 +49,7 @@ describe('allThreads', () => {
             after: $after
             instance: $instance
             subjectId: $subjectId
+            status: $status
           ) {
             nodes {
               __typename
@@ -129,6 +131,20 @@ describe('allThreads', () => {
           allThreads: { nodes: [comment, comment1].map(getThreadData) },
         },
       })
+  })
+
+  test('parameter "status"', async () => {
+    given('AllThreadsQuery')
+      .withPayload({ first: 11, status: 'open' })
+      .returns({
+        firstCommentIds: [comment, comment1].map(R.prop('id')),
+      })
+
+    await query.withVariables({ status: 'open' }).shouldReturnData({
+      thread: {
+        allThreads: { nodes: [comment, comment1].map(getThreadData) },
+      },
+    })
   })
 
   test('fails when limit is bigger than 50', async () => {

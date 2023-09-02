@@ -63,6 +63,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         after,
         instance,
         subjectId,
+        ...(input.status
+          ? { status: convertToDBLayerCommentStatus(input.status) }
+          : {}),
       })
 
       const threads = await resolveThreads({ firstCommentIds, dataSources })
@@ -98,7 +101,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       return thread.commentPayloads[0].trashed
     },
     status(thread) {
-      return convertCommentStatus(thread.commentPayloads[0].status)
+      return convertToApiCommentStatus(thread.commentPayloads[0].status)
     },
     async object(thread, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -306,7 +309,7 @@ async function resolveObject(
     : obj
 }
 
-function convertCommentStatus(
+function convertToApiCommentStatus(
   rawStatus: Model<'Comment'>['status'],
 ): CommentStatus {
   switch (rawStatus) {
@@ -316,5 +319,18 @@ function convertCommentStatus(
       return CommentStatus.Open
     case 'done':
       return CommentStatus.Done
+  }
+}
+
+function convertToDBLayerCommentStatus(
+  commentStatus: CommentStatus,
+): Model<'Comment'>['status'] {
+  switch (commentStatus) {
+    case CommentStatus.NoStatus:
+      return 'noStatus'
+    case CommentStatus.Open:
+      return 'open'
+    case CommentStatus.Done:
+      return 'done'
   }
 }
