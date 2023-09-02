@@ -105,18 +105,18 @@ extend type Mutation {
 }
 
 type ThreadMutation {
-  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse
-  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse
-  editComment(input: ThreadEditCommentInput!): ThreadEditCommentResponse
+  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse!
+  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse!
+  editComment(input: ThreadEditCommentInput!): ThreadEditCommentResponse!
   setThreadArchived(
     input: ThreadSetThreadArchivedInput!
-  ): ThreadSetThreadArchivedResponse
+  ): ThreadSetThreadArchivedResponse!
   setThreadState(
     input: ThreadSetThreadStateInput!
-  ): ThreadSetThreadStateResponse
+  ): ThreadSetThreadStateResponse!
   setCommentState(
     input: ThreadSetCommentStateInput!
-  ): ThreadSetCommentStateResponse
+  ): ThreadSetCommentStateResponse!
   setThreadStatus(input: ThreadSetThreadStatusInput!): DefaultResponse!
 }
 
