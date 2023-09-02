@@ -892,6 +892,12 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type DefaultResponse = {
+  __typename?: 'DefaultResponse';
+  query: Query;
+  success: Scalars['Boolean']['output'];
+};
+
 export type DeletedEntitiesConnection = {
   __typename?: 'DeletedEntitiesConnection';
   edges: Array<DeletedEntityCursor>;
@@ -2583,6 +2589,7 @@ export type ThreadMutation = {
   setCommentState?: Maybe<ThreadSetCommentStateResponse>;
   setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
   setThreadState?: Maybe<ThreadSetThreadStateResponse>;
+  setThreadStatus: DefaultResponse;
 };
 
 
@@ -2613,6 +2620,11 @@ export type ThreadMutationSetThreadArchivedArgs = {
 
 export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
+};
+
+
+export type ThreadMutationSetThreadStatusArgs = {
+  input: ThreadSetThreadStatusInput;
 };
 
 export type ThreadQuery = {
@@ -2660,6 +2672,11 @@ export type ThreadSetThreadStateResponse = {
   __typename?: 'ThreadSetThreadStateResponse';
   query: Query;
   success: Scalars['Boolean']['output'];
+};
+
+export type ThreadSetThreadStatusInput = {
+  id: Array<Scalars['String']['input']>;
+  status: CommentStatus;
 };
 
 export type ThreadsConnection = {
@@ -3188,6 +3205,7 @@ export type ResolversTypes = {
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<CreateTaxonomyTermNotificationEvent>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']['output']>>;
+  DefaultResponse: ResolverTypeWrapper<ModelOf<DefaultResponse>>;
   DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
   DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
@@ -3319,6 +3337,7 @@ export type ResolversTypes = {
   ThreadSetThreadArchivedResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadArchivedResponse>>;
   ThreadSetThreadStateInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateInput>>;
   ThreadSetThreadStateResponse: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateResponse>>;
+  ThreadSetThreadStatusInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStatusInput>>;
   ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
   ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
@@ -3408,6 +3427,7 @@ export type ResolversParentTypes = {
   CreateTaxonomyTermNotificationEvent: ModelOf<CreateTaxonomyTermNotificationEvent>;
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']['output']>;
+  DefaultResponse: ModelOf<DefaultResponse>;
   DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
   DeletedEntity: ModelOf<DeletedEntity>;
   DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
@@ -3533,6 +3553,7 @@ export type ResolversParentTypes = {
   ThreadSetThreadArchivedResponse: ModelOf<ThreadSetThreadArchivedResponse>;
   ThreadSetThreadStateInput: ModelOf<ThreadSetThreadStateInput>;
   ThreadSetThreadStateResponse: ModelOf<ThreadSetThreadStateResponse>;
+  ThreadSetThreadStatusInput: ModelOf<ThreadSetThreadStatusInput>;
   ThreadsConnection: ModelOf<ThreadsConnection>;
   ThreadsCursor: ModelOf<ThreadsCursor>;
   User: ModelOf<User>;
@@ -4065,6 +4086,12 @@ export type CreateThreadNotificationEventResolvers<ContextType = Context, Parent
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
+
+export type DefaultResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DefaultResponse'] = ResolversParentTypes['DefaultResponse']> = {
+  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type DeletedEntitiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntitiesConnection'] = ResolversParentTypes['DeletedEntitiesConnection']> = {
   edges?: Resolver<Array<ResolversTypes['DeletedEntityCursor']>, ParentType, ContextType>;
@@ -4888,6 +4915,7 @@ export type ThreadMutationResolvers<ContextType = Context, ParentType extends Re
   setCommentState?: Resolver<Maybe<ResolversTypes['ThreadSetCommentStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
   setThreadArchived?: Resolver<Maybe<ResolversTypes['ThreadSetThreadArchivedResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
   setThreadState?: Resolver<Maybe<ResolversTypes['ThreadSetThreadStateResponse']>, ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
+  setThreadStatus?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStatusArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5147,6 +5175,7 @@ export type Resolvers<ContextType = Context> = {
   CreateTaxonomyTermNotificationEvent?: CreateTaxonomyTermNotificationEventResolvers<ContextType>;
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  DefaultResponse?: DefaultResponseResolvers<ContextType>;
   DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
   DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
