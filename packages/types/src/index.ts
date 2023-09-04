@@ -888,6 +888,12 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   thread: Thread;
 };
 
+export type DefaultResponse = {
+  __typename?: 'DefaultResponse';
+  query: Query;
+  success: Scalars['Boolean']['output'];
+};
+
 export type DeletedEntitiesConnection = {
   __typename?: 'DeletedEntitiesConnection';
   edges: Array<DeletedEntityCursor>;
@@ -2579,6 +2585,7 @@ export type ThreadMutation = {
   setCommentState?: Maybe<ThreadSetCommentStateResponse>;
   setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
   setThreadState?: Maybe<ThreadSetThreadStateResponse>;
+  setThreadStatus: DefaultResponse;
 };
 
 
@@ -2609,6 +2616,11 @@ export type ThreadMutationSetThreadArchivedArgs = {
 
 export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
+};
+
+
+export type ThreadMutationSetThreadStatusArgs = {
+  input: ThreadSetThreadStatusInput;
 };
 
 export type ThreadQuery = {
@@ -2656,6 +2668,11 @@ export type ThreadSetThreadStateResponse = {
   __typename?: 'ThreadSetThreadStateResponse';
   query: Query;
   success: Scalars['Boolean']['output'];
+};
+
+export type ThreadSetThreadStatusInput = {
+  id: Array<Scalars['String']['input']>;
+  status: CommentStatus;
 };
 
 export type ThreadsConnection = {
