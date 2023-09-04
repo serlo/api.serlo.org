@@ -39,6 +39,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Moderator]: {
     permissions: [
       Permission.Thread_SetThreadArchived,
+      Permission.Thread_SetThreadStatus,
       Permission.Thread_SetThreadState,
       Permission.Thread_SetCommentState,
     ],

@@ -608,6 +608,9 @@ const pactSpec: PactSpec = {
       [{ ids: [comment3.id], userId: user.id, archived: true }, undefined],
     ],
   },
+  ThreadSetThreadStatusMutation: {
+    examples: [[{ ids: [comment3.id], status: 'open' }, { success: true }]],
+  },
   ThreadsQuery: {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
   },
