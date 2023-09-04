@@ -6,7 +6,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
-import { UserInputError } from '~/errors'
+import { ForbiddenError, UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -209,21 +209,20 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
-    async setThreadStatus(_parent, payload, { dataSources, userId }) {
+    async setThreadStatus(_parent, payload, context) {
+      const { dataSources, userId } = context
+
       assertUserIsAuthenticated(userId)
 
       const { id, status } = payload.input
       const ids = decodeThreadIds(id)
 
-      const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
-      )
-      await assertUserIsAuthorized({
-        userId,
-        guards: scopes.map((scope) => auth.Thread.setThreadStatus(scope)),
-        message: 'You are not allowed to archive the provided thread(s).',
+      const threads = await resolveThreads({
+        firstCommentIds: ids,
         dataSources,
       })
+
+      await assertUserIsAuthorizedOrTookPartInDiscussion({ context, threads })
 
       await dataSources.model.serlo.setThreadStatus({ ids, status })
 
@@ -337,5 +336,46 @@ function convertToApiCommentStatus(
       return CommentStatus.Open
     case 'done':
       return CommentStatus.Done
+  }
+}
+
+async function assertUserIsAuthorizedOrTookPartInDiscussion({
+  context,
+  threads,
+}: {
+  context: Context
+  threads: Model<'Thread'>[]
+}) {
+  const { dataSources, userId } = context
+
+  const scopes = await Promise.all(
+    threads.map((thread) =>
+      fetchScopeOfUuid({
+        id: thread.commentPayloads[0].parentId,
+        dataSources,
+      }),
+    ),
+  )
+
+  const message =
+    'You are not allowed to set the status of the provided thread(s).'
+
+  try {
+    await assertUserIsAuthorized({
+      userId,
+      guards: scopes.map((scope) => auth.Thread.setThreadStatus(scope)),
+      message,
+      dataSources,
+    })
+  } catch {
+    for (const thread of threads) {
+      if (
+        thread.commentPayloads.some((comment) => comment.authorId === userId)
+      ) {
+        continue
+      } else {
+        throw new ForbiddenError(message)
+      }
+    }
   }
 }
