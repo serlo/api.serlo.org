@@ -27,7 +27,7 @@
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
     "bee-queue": "^1.5.0",
-    "bull-arena": "^3.30.4",
+    "bull-arena": "^4.0.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fp-ts": "^2.16.1",
