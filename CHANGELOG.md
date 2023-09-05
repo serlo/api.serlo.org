@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.56.0](https://github.com/serlo/api.serlo.org/compare/v0.55.0..v0.56.0) - September 5, 2023
+
+### Added
+
+- Add property `status` to Thread
+
+- Filter AllThreads by `status`
+
+- Add mutation ThreadSetStatus
+
 ## [v0.55.0](https://github.com/serlo/api.serlo.org/compare/v0.54.0..v0.55.0) - August 15, 2023
 
 ### Changed
