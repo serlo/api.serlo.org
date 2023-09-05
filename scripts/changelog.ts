@@ -1546,6 +1546,15 @@ async function exec(): Promise<void> {
         ],
         changed: ['Update version of Metadata API'],
       },
+      {
+        tagName: 'v0.56.0',
+        date: '2023-09-05',
+        added: [
+          'Add property `status` to Thread',
+          'Filter AllThreads by `status`',
+          'Add mutation ThreadSetStatus',
+        ],
+      },
     ],
   })
 
