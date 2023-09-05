@@ -3912,7 +3912,7 @@ __metadata:
     babel-plugin-module-resolver: ^5.0.0
     basic-auth: ^2.0.1
     bee-queue: ^1.5.0
-    bull-arena: ^3.30.4
+    bull-arena: ^4.0.0
     dotenv: ^16.3.1
     express: ^4.18.2
     fp-ts: ^2.16.1
@@ -6440,9 +6440,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bull-arena@npm:^3.30.4":
-  version: 3.30.4
-  resolution: "bull-arena@npm:3.30.4"
+"bull-arena@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "bull-arena@npm:4.0.0"
   dependencies:
     body-parser: ^1.20.0
     express: ^4.18.0
@@ -6451,7 +6451,7 @@ __metadata:
     lodash: ^4.17.15
     moment: ^2.29.1
     tablesort: ^5.0.1
-  checksum: 1097547505a0e5c9e8fd8a05117307e63c6eb48482920c486273796ded153812388a0d111a190af92c4937269aa317df8102a39a11facd60f42aab7dde041e52
+  checksum: 9fa87012e77444a056b5024f90e63602326d7e793e92daa878d111284d0aaee2ba7ee4abf9254968dc882173505c71368d9c448f847696cac54d7bd68244289e
   languageName: node
   linkType: hard
 
