@@ -370,10 +370,8 @@ async function assertUserIsAuthorizedOrTookPartInDiscussion({
   } catch {
     for (const thread of threads) {
       if (
-        thread.commentPayloads.some((comment) => comment.authorId === userId)
+        !thread.commentPayloads.some((comment) => comment.authorId === userId)
       ) {
-        continue
-      } else {
         throw new ForbiddenError(message)
       }
     }
