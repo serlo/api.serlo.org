@@ -58,6 +58,7 @@ export enum Permission {
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
+  Thread_SetThreadStatus = 'thread:setThreadStatus',
   Uuid_Create_Entity = 'uuid:create:entity',
   Uuid_Create_EntityRevision = 'uuid:create:entityRevision',
   Uuid_Create_Page = 'uuid:create:page',
@@ -141,6 +142,7 @@ export const Thread = {
   deleteComment: createPermissionGuard(Permission.Thread_DeleteComment),
   setThreadArchived: createPermissionGuard(Permission.Thread_SetThreadArchived),
   setThreadState: createPermissionGuard(Permission.Thread_SetThreadState),
+  setThreadStatus: createPermissionGuard(Permission.Thread_SetThreadStatus),
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
 }
 

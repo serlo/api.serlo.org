@@ -562,6 +562,7 @@ const pactSpec: PactSpec = {
           title: null,
           archived: false,
           childrenIds: [],
+          status: 'noStatus',
         },
       ],
     ],
@@ -589,6 +590,7 @@ const pactSpec: PactSpec = {
           content: '🔥 brand new!',
           parentId: article.id,
           childrenIds: [],
+          status: 'noStatus',
         },
       ],
     ],
@@ -605,6 +607,9 @@ const pactSpec: PactSpec = {
     examples: [
       [{ ids: [comment3.id], userId: user.id, archived: true }, undefined],
     ],
+  },
+  ThreadSetThreadStatusMutation: {
+    examples: [[{ ids: [comment3.id], status: 'open' }, { success: true }]],
   },
   ThreadsQuery: {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],

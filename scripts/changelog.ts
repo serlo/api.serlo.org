@@ -1537,6 +1537,24 @@ async function exec(): Promise<void> {
         date: '2023-08-15',
         added: ['authorization: Allow architect to sort entities'],
       },
+      {
+        tagName: 'v0.55.0',
+        date: '2023-08-15',
+        internal: [
+          'Update dependencies',
+          'Update format of license texts to new editor format',
+        ],
+        changed: ['Update version of Metadata API'],
+      },
+      {
+        tagName: 'v0.56.0',
+        date: '2023-09-05',
+        added: [
+          'Add property `status` to Thread',
+          'Filter AllThreads by `status`',
+          'Add mutation ThreadSetStatus',
+        ],
+      },
     ],
   })
 
