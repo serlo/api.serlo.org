@@ -6,7 +6,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
-import { UserInputError } from '~/errors'
+import { ForbiddenError, UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -28,7 +28,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Comment, Thread } from '~/types'
+import { Comment, CommentStatus, Thread } from '~/types'
 
 export const resolvers: InterfaceResolvers<'ThreadAware'> &
   Mutations<'thread'> &
@@ -63,6 +63,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         after,
         instance,
         subjectId,
+        ...(input.status ? { status: input.status } : {}),
       })
 
       const threads = await resolveThreads({ firstCommentIds, dataSources })
@@ -96,6 +97,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     },
     trashed(thread) {
       return thread.commentPayloads[0].trashed
+    },
+    status(thread) {
+      return convertToApiCommentStatus(thread.commentPayloads[0].status)
     },
     async object(thread, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
@@ -205,6 +209,25 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
+    async setThreadStatus(_parent, payload, context) {
+      const { dataSources, userId } = context
+
+      assertUserIsAuthenticated(userId)
+
+      const { id, status } = payload.input
+      const ids = decodeThreadIds(id)
+
+      const threads = await resolveThreads({
+        firstCommentIds: ids,
+        dataSources,
+      })
+
+      await assertUserIsAuthorizedOrTookPartInDiscussion({ context, threads })
+
+      await dataSources.model.serlo.setThreadStatus({ ids, status })
+
+      return { success: true, query: {} }
+    },
     async setThreadArchived(_parent, payload, { dataSources, userId }) {
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)
@@ -301,4 +324,56 @@ async function resolveObject(
   return obj.__typename === DiscriminatorType.Comment
     ? resolveObject(obj, dataSources)
     : obj
+}
+
+function convertToApiCommentStatus(
+  rawStatus: Model<'Comment'>['status'],
+): CommentStatus {
+  switch (rawStatus) {
+    case 'noStatus':
+      return CommentStatus.NoStatus
+    case 'open':
+      return CommentStatus.Open
+    case 'done':
+      return CommentStatus.Done
+  }
+}
+
+async function assertUserIsAuthorizedOrTookPartInDiscussion({
+  context,
+  threads,
+}: {
+  context: Context
+  threads: Model<'Thread'>[]
+}) {
+  const { dataSources, userId } = context
+
+  const scopes = await Promise.all(
+    threads.map((thread) =>
+      fetchScopeOfUuid({
+        id: thread.commentPayloads[0].parentId,
+        dataSources,
+      }),
+    ),
+  )
+
+  const message =
+    'You are not allowed to set the status of the provided thread(s).'
+
+  try {
+    await assertUserIsAuthorized({
+      userId,
+      guards: scopes.map((scope) => auth.Thread.setThreadStatus(scope)),
+      message,
+      dataSources,
+    })
+  } catch {
+    for (const thread of threads) {
+      if (
+        !thread.commentPayloads.some((comment) => comment.authorId === userId)
+      ) {
+        throw new ForbiddenError(message)
+      }
+    }
+  }
 }

@@ -592,6 +592,12 @@ export type CommentEdge = {
   node: Comment;
 };
 
+export enum CommentStatus {
+  Done = 'done',
+  NoStatus = 'noStatus',
+  Open = 'open'
+}
+
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   alias: Scalars['String']['output'];
@@ -880,6 +886,12 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   object: AbstractUuid;
   objectId: Scalars['Int']['output'];
   thread: Thread;
+};
+
+export type DefaultResponse = {
+  __typename?: 'DefaultResponse';
+  query: Query;
+  success: Scalars['Boolean']['output'];
 };
 
 export type DeletedEntitiesConnection = {
@@ -2498,6 +2510,7 @@ export type Thread = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   object: AbstractUuid;
+  status: CommentStatus;
   title?: Maybe<Scalars['String']['output']>;
   trashed: Scalars['Boolean']['output'];
 };
@@ -2558,20 +2571,15 @@ export type ThreadEditCommentInput = {
   content: Scalars['String']['input'];
 };
 
-export type ThreadEditCommentResponse = {
-  __typename?: 'ThreadEditCommentResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
-  createComment?: Maybe<ThreadCreateCommentResponse>;
-  createThread?: Maybe<ThreadCreateThreadResponse>;
-  editComment?: Maybe<ThreadEditCommentResponse>;
-  setCommentState?: Maybe<ThreadSetCommentStateResponse>;
-  setThreadArchived?: Maybe<ThreadSetThreadArchivedResponse>;
-  setThreadState?: Maybe<ThreadSetThreadStateResponse>;
+  createComment: ThreadCreateCommentResponse;
+  createThread: ThreadCreateThreadResponse;
+  editComment: DefaultResponse;
+  setCommentState: DefaultResponse;
+  setThreadArchived: DefaultResponse;
+  setThreadState: DefaultResponse;
+  setThreadStatus: DefaultResponse;
 };
 
 
@@ -2604,6 +2612,11 @@ export type ThreadMutationSetThreadStateArgs = {
   input: ThreadSetThreadStateInput;
 };
 
+
+export type ThreadMutationSetThreadStatusArgs = {
+  input: ThreadSetThreadStatusInput;
+};
+
 export type ThreadQuery = {
   __typename?: 'ThreadQuery';
   allThreads: AllThreadsConnection;
@@ -2614,6 +2627,7 @@ export type ThreadQueryAllThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
+  status?: InputMaybe<CommentStatus>;
   subjectId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -2622,21 +2636,9 @@ export type ThreadSetCommentStateInput = {
   trashed: Scalars['Boolean']['input'];
 };
 
-export type ThreadSetCommentStateResponse = {
-  __typename?: 'ThreadSetCommentStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadSetThreadArchivedInput = {
   archived: Scalars['Boolean']['input'];
   id: Array<Scalars['String']['input']>;
-};
-
-export type ThreadSetThreadArchivedResponse = {
-  __typename?: 'ThreadSetThreadArchivedResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type ThreadSetThreadStateInput = {
@@ -2644,10 +2646,9 @@ export type ThreadSetThreadStateInput = {
   trashed: Scalars['Boolean']['input'];
 };
 
-export type ThreadSetThreadStateResponse = {
-  __typename?: 'ThreadSetThreadStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
+export type ThreadSetThreadStatusInput = {
+  id: Array<Scalars['String']['input']>;
+  status: CommentStatus;
 };
 
 export type ThreadsConnection = {

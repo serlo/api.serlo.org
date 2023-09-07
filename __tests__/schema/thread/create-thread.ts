@@ -97,6 +97,7 @@ test('thread gets created, cache mutated as expected', async () => {
       content: '🔥 brand new!',
       parentId: article.id,
       childrenIds: [],
+      status: 'open',
     })
 
   await mutation.shouldReturnData({
