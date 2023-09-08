@@ -22,7 +22,9 @@ function init() {
 
   curl --max-time 60 -X POST "http://localhost:3001/enmeshed/init$QUERY_STRING" > "$TARGET"
 
-  open "$TARGET"
+  echo "The QRCode was generated and saved to ${TARGET} - opening ..."
+
+  openQRCode "$TARGET"
 }
 
 function help() {
@@ -34,7 +36,7 @@ set <sessionId> <name> <value> – Set attribute <name> of <sessionId> to <value
 help                           – show this help"""
 }
 
-function open() {
+function openQRCode() {
   if which open; then
     open "$1"
   elif which xdg-open; then
