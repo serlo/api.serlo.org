@@ -7,7 +7,7 @@ services:
     environment:
       CUSTOM_CONFIG_LOCATION: '/config.json'
     ports:
-      - 8081:80
+      - "8081:80"
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
@@ -19,7 +19,8 @@ services:
 
   enmeshed-mongodb:
     container_name: enmeshed-mongodb
-    image: mongo
+    # See https://github.com/docker-library/mongo/issues/485 for usage of tag 4.4.6.
+    image: mongo:4.4.6
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
