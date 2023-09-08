@@ -10,7 +10,7 @@ cp enmeshed/config-dist.json enmeshed/config.json
 
 Set the `transportLibrary.baseUrl`, `platformClientId` and `platformClientSecret` to the values you've received from the Integration team.
 
-### Starting / stoping enmeshed locally
+### Starting / stopping enmeshed locally
 
 In order to start enmeshed locally you can run the command `yarn start:enmeshed`. To tear down the connector run `yarn stop:enmeshed`.
 
