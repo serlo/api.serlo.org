@@ -12,13 +12,15 @@ function get_attributes() {
 }
 
 function init() {
-  TARGET=$(mktemp --suffix .png)
+  TMP_FILE=$(mktemp)
+  mv "$TMP_FILE" "$TMP_FILE".png
+  TARGET=$TMP_FILE.png
 
   if [ -n "$1" ]; then
     QUERY_STRING="?sessionId=$1&name=Anna%20Musterfrau"
   fi
 
-  curl -X POST "http://localhost:3001/enmeshed/init$QUERY_STRING" > "$TARGET"
+  curl --max-time 60 -X POST "http://localhost:3001/enmeshed/init$QUERY_STRING" > "$TARGET"
 
   open "$TARGET"
 }
