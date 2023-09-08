@@ -20,7 +20,13 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import { ConnectorClient } from '@nmshd/connector-sdk'
-import express, { Express, RequestHandler, Response } from 'express'
+import express, {
+  Express,
+  RequestHandler,
+  Request,
+  Response,
+  NextFunction,
+} from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
@@ -63,168 +69,177 @@ export function applyEnmeshedMiddleware({
  * Creates relationship template and returns QR for the user to scan.
  */
 function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
-  return (req, res) => {
-    ;async () => {
-      const client = ConnectorClient.create({
-        baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-        apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-      })
+  async function handleRequest(req: Request, res: Response) {
+    const client = ConnectorClient.create({
+      baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
+      apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+    })
 
-      const sessionId = readQuery(req, 'sessionId')
-      // FIXME: Uncomment next line when prototype frontend has been replaced
-      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+    const sessionId = readQuery(req, 'sessionId')
+    // FIXME: Uncomment next line when prototype frontend has been replaced
+    // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
 
-      // Try to get Relationship template ID from cache
-      const session = await getSession(cache, sessionId)
-      let relationshipTemplateId = ''
-      if (session) {
-        relationshipTemplateId = session.relationshipTemplateId
-      } else {
-        const name = readQuery(req, 'name') ?? 'Alex Janowski'
-        const nameParts = name.split(' ')
-        const givenName = nameParts.length > 0 ? nameParts[0] : 'Alex'
-        const familyName =
-          nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'Janowski'
+    // Try to get Relationship template ID from cache
+    const session = await getSession(cache, sessionId)
+    let relationshipTemplateId = ''
+    if (session) {
+      relationshipTemplateId = session.relationshipTemplateId
+    } else {
+      const name = readQuery(req, 'name') ?? 'Alex Janowski'
+      const nameParts = name.split(' ')
+      const givenName = nameParts.length > 0 ? nameParts[0] : 'Alex'
+      const familyName =
+        nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'Janowski'
 
-        // Create Relationship template
-        const createRelationshipResponse =
-          await client.relationshipTemplates.createOwnRelationshipTemplate(
-            sessionId
-              ? createRelationshipTemplateForUserJourney({
-                  sessionId,
-                  familyName,
-                  givenName,
-                })
-              : createRelationshipTemplateForPrototype(),
-          )
-
-        if (createRelationshipResponse.isError) {
-          const error = createRelationshipResponse.error
-          res.statusCode = 500
-          res.end(
-            `Error occurred while creating relationship request: ${error.code} ${error.message}`,
-          )
-          return
-        }
-        relationshipTemplateId = createRelationshipResponse.result.id
-        await setSession(cache, sessionId, { relationshipTemplateId })
-      }
-      // Create Token
-      const createTokenResponse =
-        await client.relationshipTemplates.createTokenQrCodeForOwnRelationshipTemplate(
-          relationshipTemplateId,
+      // Create Relationship template
+      const createRelationshipResponse =
+        await client.relationshipTemplates.createOwnRelationshipTemplate(
+          sessionId
+            ? createRelationshipTemplateForUserJourney({
+                sessionId,
+                familyName,
+                givenName,
+              })
+            : createRelationshipTemplateForPrototype(),
         )
-      if (createTokenResponse.isError) {
-        const error = createTokenResponse.error
+
+      if (createRelationshipResponse.isError) {
+        const error = createRelationshipResponse.error
         res.statusCode = 500
         res.end(
-          `Error occurred while creating token: ${error.code} ${error.message}`,
+          `Error occurred while creating relationship request: ${error.code} ${error.message}`,
         )
         return
       }
-      // Return QR code
-      res.statusCode = 200
-      res.setHeader('Content-Type', 'image/png')
-      res.end(createTokenResponse.result)
+      relationshipTemplateId = createRelationshipResponse.result.id
+      await setSession(cache, sessionId, { relationshipTemplateId })
     }
+    // Create Token
+    const createTokenResponse =
+      await client.relationshipTemplates.createTokenQrCodeForOwnRelationshipTemplate(
+        relationshipTemplateId,
+      )
+    if (createTokenResponse.isError) {
+      const error = createTokenResponse.error
+      res.statusCode = 500
+      res.end(
+        `Error occurred while creating token: ${error.code} ${error.message}`,
+      )
+      return
+    }
+    // Return QR code
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'image/png')
+    res.end(createTokenResponse.result)
+  }
+
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error'),
+    )
   }
 }
 
 function createGetAttributesHandler(cache: Cache): RequestHandler {
-  return (req, res) => {
-    ;async () => {
-      const sessionId = readQuery(req, 'sessionId')
-      if (!sessionId)
-        return validationError(res, 'Missing required parameter: sessionId.')
-      const session = await getSession(cache, sessionId)
+  async function handleRequest(req: Request, res: Response) {
+    const sessionId = readQuery(req, 'sessionId')
+    if (!sessionId)
+      return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
 
-      if (!session)
-        return validationError(
-          res,
-          'Session not found. Please create a QR code first.',
-        )
-      res.setHeader('Content-Type', 'application/json')
-      if (session.attributes) {
-        res.statusCode = 200
-        res.end(
-          JSON.stringify({ status: 'success', attributes: session.attributes }),
-        )
-      } else {
-        res.statusCode = 200
-        res.end(JSON.stringify({ status: 'pending' }))
-      }
+    if (!session)
+      return validationError(
+        res,
+        'Session not found. Please create a QR code first.',
+      )
+    res.setHeader('Content-Type', 'application/json')
+    if (session.attributes) {
+      res.statusCode = 200
+      res.end(
+        JSON.stringify({ status: 'success', attributes: session.attributes }),
+      )
+    } else {
+      res.statusCode = 200
+      res.end(JSON.stringify({ status: 'pending' }))
     }
+  }
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error'),
+    )
   }
 }
 
 function createSetAttributesHandler(cache: Cache): RequestHandler {
-  return (req, res) => {
-    ;async () => {
-      res.setHeader('Content-Type', 'application/json')
+  async function handleRequest(req: Request, res: Response) {
+    res.setHeader('Content-Type', 'application/json')
 
-      const sessionId = readQuery(req, 'sessionId')
-      if (!sessionId)
-        return validationError(res, 'Missing required parameter: sessionId.')
-      const session = await getSession(cache, sessionId)
+    const sessionId = readQuery(req, 'sessionId')
+    if (!sessionId)
+      return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
 
-      const name = readQuery(req, 'name')
-      if (!name)
-        return validationError(res, 'Missing required parameter: name.')
-      const value = readQuery(req, 'value')
-      if (!value)
-        return validationError(res, 'Missing required parameter: value.')
+    const name = readQuery(req, 'name')
+    if (!name) return validationError(res, 'Missing required parameter: name.')
+    const value = readQuery(req, 'value')
+    if (!value)
+      return validationError(res, 'Missing required parameter: value.')
 
-      if (!session)
-        return validationError(
-          res,
-          'Session not found. Please create a QR code first.',
-        )
-      if (!session.enmeshedId)
-        return validationError(res, 'Relationship not accepted yet.')
+    if (!session)
+      return validationError(
+        res,
+        'Session not found. Please create a QR code first.',
+      )
+    if (!session.enmeshedId)
+      return validationError(res, 'Relationship not accepted yet.')
 
-      const client = ConnectorClient.create({
-        baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-        apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-      })
+    const client = ConnectorClient.create({
+      baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
+      apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+    })
 
-      // Get own Identity
-      const getIdentityResponse = await client.account.getIdentityInfo()
-      if (getIdentityResponse.isError)
-        return validationError(res, 'Error retrieving connector identity info.')
-      //const connectorIdentity = getIdentityResponse.result.address
+    // Get own Identity
+    const getIdentityResponse = await client.account.getIdentityInfo()
+    if (getIdentityResponse.isError)
+      return validationError(res, 'Error retrieving connector identity info.')
+    //const connectorIdentity = getIdentityResponse.result.address
 
-      // Send message to create/change attribute
-      // See: https://enmeshed.eu/explore/schema#attributeschangerequest
-      const sendMessageResponse = await client.messages.sendMessage({
-        recipients: [session.enmeshedId],
-        content: {
-          '@type': 'RequestMail',
-          to: [session.enmeshedId],
-          cc: [],
-          subject: 'Aktualisierung deines Lernstands',
-          body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
-          requests: [
-            {
-              '@type': 'AttributesChangeRequest',
-              attributes: [{ name, value }],
-              applyTo: session.enmeshedId,
-              reason:
-                'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
-            },
-            /*{
+    // Send message to create/change attribute
+    // See: https://enmeshed.eu/explore/schema#attributeschangerequest
+    const sendMessageResponse = await client.messages.sendMessage({
+      recipients: [session.enmeshedId],
+      content: {
+        '@type': 'RequestMail',
+        to: [session.enmeshedId],
+        cc: [],
+        subject: 'Aktualisierung deines Lernstands',
+        body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
+        requests: [
+          {
+            '@type': 'AttributesChangeRequest',
+            attributes: [{ name, value }],
+            applyTo: session.enmeshedId,
+            reason:
+              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
+          },
+          /*{
             '@type': 'AttributesShareRequest',
             attributes: [name],
             recipients: [connectorIdentity],
             reason: 'Aktualisierung Lernstand',
           },*/
-          ],
-        },
-      })
-      if (sendMessageResponse.isError)
-        return validationError(res, JSON.stringify(sendMessageResponse.error))
-      res.statusCode = 200
-      res.end(JSON.stringify({ status: 'success' }))
-    }
+        ],
+      },
+    })
+    if (sendMessageResponse.isError)
+      return validationError(res, JSON.stringify(sendMessageResponse.error))
+    res.statusCode = 200
+    res.end(JSON.stringify({ status: 'success' }))
+  }
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error'),
+    )
   }
 }
 
@@ -232,84 +247,89 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
  * Endpoint for Connector webhook, which receives any changes within relationships and messages
  */
 function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
-  return (req, res, next) => {
-    ;async () => {
-      if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
-        return next()
+  async function handleRequest(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
+      return next()
 
-      // TODO: Checking scheme of request body
-      const payload = req.body as EnmeshedWebhookPayload
-      if (!payload || !(payload.relationships || payload.messages))
-        return next()
+    // TODO: Checking scheme of request body
+    const payload = req.body as EnmeshedWebhookPayload
+    if (!payload || !(payload.relationships || payload.messages)) return next()
 
-      // Process relationships
-      for (const relationship of payload.relationships) {
-        // Check if relationship name matches
-        const sessionId =
-          relationship.template.content.metadata.sessionId ?? null
-        // FIXME: Uncomment next line when prototype frontend has been replaced
-        // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
-        const session = await getSession(cache, sessionId)
+    // Process relationships
+    for (const relationship of payload.relationships) {
+      // Check if relationship name matches
+      const sessionId = relationship.template.content.metadata.sessionId ?? null
+      // FIXME: Uncomment next line when prototype frontend has been replaced
+      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+      const session = await getSession(cache, sessionId)
 
-        // FIXME: Uncomment next lines when prototype frontend has been replaced
-        // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
-        // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
+      // FIXME: Uncomment next lines when prototype frontend has been replaced
+      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
+      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
 
-        // Accept all pending relationship requests
-        for (const change of relationship.changes) {
-          if (
-            ['Creation', 'RelationshipRequest'].includes(change.type) &&
-            ['Pending', 'Revoked'].includes(change.status)
-          ) {
-            await acceptRelationshipRequest(relationship, change)
+      // Accept all pending relationship requests
+      for (const change of relationship.changes) {
+        if (
+          ['Creation', 'RelationshipRequest'].includes(change.type) &&
+          ['Pending', 'Revoked'].includes(change.status)
+        ) {
+          await acceptRelationshipRequest(relationship, change)
 
-            if (session) {
-              await setSession(cache, sessionId, {
-                ...session,
-                enmeshedId: relationship.peer,
-                attributes: {
-                  ...session.attributes,
-                  ...getSessionAttributes(
-                    Object.values(change.request.content?.attributes ?? {}),
-                  ),
-                },
-              })
-            } else {
-              await sendWelcomeMessage(relationship)
-              await sendAttributesChangeRequest(relationship)
-            }
-          }
-        }
-      }
-
-      // Process messages
-      for (const message of payload.messages) {
-        if (message.content['@type'] == 'AttributesChangeRequest') {
-          const sessionId = await getSessionId(cache, message.createdBy)
-          const session = await getSession(cache, sessionId)
           if (session) {
             await setSession(cache, sessionId, {
               ...session,
-              enmeshedId: message.createdBy,
+              enmeshedId: relationship.peer,
               attributes: {
                 ...session.attributes,
-                ...getSessionAttributes(message.content.attributes),
+                ...getSessionAttributes(
+                  Object.values(change.request.content?.attributes ?? {}),
+                ),
               },
             })
-            // eslint-disable-next-line no-console
-            console.log(`Received attributes`)
+          } else {
+            await sendWelcomeMessage(relationship)
+            await sendAttributesChangeRequest(relationship)
           }
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('Received message:')
-          // eslint-disable-next-line no-console
-          console.log(message.content)
         }
       }
-
-      res.statusCode = 200
-      res.end('')
     }
+
+    // Process messages
+    for (const message of payload.messages) {
+      if (message.content['@type'] == 'AttributesChangeRequest') {
+        const sessionId = await getSessionId(cache, message.createdBy)
+        const session = await getSession(cache, sessionId)
+        if (session) {
+          await setSession(cache, sessionId, {
+            ...session,
+            enmeshedId: message.createdBy,
+            attributes: {
+              ...session.attributes,
+              ...getSessionAttributes(message.content.attributes),
+            },
+          })
+          // eslint-disable-next-line no-console
+          console.log(`Received attributes`)
+        }
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('Received message:')
+        // eslint-disable-next-line no-console
+        console.log(message.content)
+      }
+    }
+
+    res.statusCode = 200
+    res.end('')
+  }
+  return (request, response, next) => {
+    handleRequest(request, response, next).catch(() =>
+      response.status(500).send('Internal Server Error'),
+    )
   }
 }
 
