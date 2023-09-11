@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.0](https://github.com/serlo/api.serlo.org/compare/v0.56.0..v0.57.0) - September 11, 2023
+
+### Added
+
+- Reintroduce data-wallet
+
 ## [v0.56.0](https://github.com/serlo/api.serlo.org/compare/v0.55.0..v0.56.0) - September 5, 2023
 
 ### Added
