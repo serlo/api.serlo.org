@@ -9,6 +9,7 @@ import { Cache, createCache, createEmptyCache } from '../cache'
 import { initializeSentry } from '../sentry'
 import { createSwrQueue, SwrQueue } from '../swr-queue'
 import { createTimer } from '../timer'
+import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 export * from './graphql-middleware'
@@ -47,11 +48,12 @@ async function initializeServer({
     swrQueue,
     authServices,
   })
-
   const kratosPath = applyKratosMiddleware({
     app,
     kratos: authServices.kratos,
   })
+  const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
+
   app.get(healthPath, (req, res) => {
     res.status(200).send('Okay!')
   })
@@ -66,6 +68,9 @@ async function initializeServer({
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
     console.log(`Kratos endpoint:     ${host}${kratosPath}`)
     console.log(`Health endpoint:     ${host}${healthPath}`)
+    if (enmeshedPath) {
+      console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
+    }
     /* eslint-enable no-console */
   })
 }

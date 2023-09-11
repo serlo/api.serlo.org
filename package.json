@@ -38,10 +38,13 @@
     "redis:list": "docker compose exec redis redis-cli KEYS '*'",
     "show-unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport=packages/types/ --excludePathsFromReport=packages/server/src/types.ts --ignoreFiles=/dist/",
     "start": "npm-run-all start:redis start:server",
+    "start:enmeshed": "docker-compose -f enmeshed/docker-compose.yml up -d",
     "start:redis": "docker compose up --detach",
     "start:server": "lerna run --stream --scope @serlo/api.serlo.org start",
     "start:swr-queue-worker": "lerna run --stream --scope @serlo/api.serlo.org start:swr-queue-worker",
     "stop": "docker compose stop",
+    "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
+    "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.js --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
   },
