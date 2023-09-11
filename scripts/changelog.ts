@@ -1555,6 +1555,11 @@ async function exec(): Promise<void> {
           'Add mutation ThreadSetStatus',
         ],
       },
+      {
+        tagName: 'v0.57.0',
+        date: '2023-09-11',
+        added: ['Reintroduce data-wallet'],
+      },
     ],
   })
 
