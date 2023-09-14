@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.1](https://github.com/serlo/api.serlo.org/compare/v0.57.0..v0.57.1) - September 14, 2023
+
+### Internal
+
+- Add logging to enmeshed middleware
+
 ## [v0.57.0](https://github.com/serlo/api.serlo.org/compare/v0.56.0..v0.57.0) - September 11, 2023
 
 ### Added
