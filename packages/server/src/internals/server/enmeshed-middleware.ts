@@ -138,7 +138,7 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
         error,
-        errorContext: { request },
+        errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
     })
@@ -172,7 +172,7 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
         error,
-        errorContext: { request },
+        errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
     })
@@ -249,7 +249,7 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
         error,
-        errorContext: { request },
+        errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
     })
@@ -343,7 +343,7 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
     handleRequest(request, response, next).catch((error: Error) => {
       captureErrorEvent({
         error,
-        errorContext: { request },
+        errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
     })
