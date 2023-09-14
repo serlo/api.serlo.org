@@ -1565,6 +1565,11 @@ async function exec(): Promise<void> {
         date: '2023-09-14',
         internal: ['Add logging to enmeshed middleware'],
       },
+      {
+        tagName: 'v0.57.2',
+        date: '2023-09-14',
+        internal: ['Fix logging in enmeshed middleware'],
+      },
     ],
   })
 
