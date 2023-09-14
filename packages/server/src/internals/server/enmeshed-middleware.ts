@@ -36,6 +36,7 @@ import {
   RelationshipChange,
 } from './enmeshed-payload'
 import { Cache } from '../cache'
+import { captureErrorEvent } from '../error-event'
 
 const Session = t.intersection([
   t.type({ relationshipTemplateId: t.string }),
@@ -134,9 +135,13 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
   }
 
   return (request, response) => {
-    handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error'),
-    )
+    handleRequest(request, response).catch((error: Error) => {
+      captureErrorEvent({
+        error,
+        errorContext: { request },
+      })
+      return response.status(500).send('Internal Server Error')
+    })
   }
 }
 
@@ -164,9 +169,13 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
     }
   }
   return (request, response) => {
-    handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error'),
-    )
+    handleRequest(request, response).catch((error: Error) => {
+      captureErrorEvent({
+        error,
+        errorContext: { request },
+      })
+      return response.status(500).send('Internal Server Error')
+    })
   }
 }
 
@@ -237,9 +246,13 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
     res.end(JSON.stringify({ status: 'success' }))
   }
   return (request, response) => {
-    handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error'),
-    )
+    handleRequest(request, response).catch((error: Error) => {
+      captureErrorEvent({
+        error,
+        errorContext: { request },
+      })
+      return response.status(500).send('Internal Server Error')
+    })
   }
 }
 
@@ -327,9 +340,13 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
     res.end('')
   }
   return (request, response, next) => {
-    handleRequest(request, response, next).catch(() =>
-      response.status(500).send('Internal Server Error'),
-    )
+    handleRequest(request, response, next).catch((error: Error) => {
+      captureErrorEvent({
+        error,
+        errorContext: { request },
+      })
+      return response.status(500).send('Internal Server Error')
+    })
   }
 }
 

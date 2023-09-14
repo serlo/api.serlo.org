@@ -1560,6 +1560,11 @@ async function exec(): Promise<void> {
         date: '2023-09-11',
         added: ['Reintroduce data-wallet'],
       },
+      {
+        tagName: 'v0.57.1',
+        date: '2023-09-14',
+        internal: ['Add logging to enmeshed middleware'],
+      },
     ],
   })
 
