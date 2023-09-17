@@ -1,4 +1,5 @@
 import { Session } from '@ory/client'
+import * as t from 'io-ts'
 
 import { ForbiddenError } from '~/errors'
 import { captureErrorEvent } from '~/internals/error-event'
@@ -7,6 +8,8 @@ import {
   createNamespace,
   assertUserIsAuthenticated,
 } from '~/internals/graphql'
+
+const TraitsDecoder = t.type({ username: t.string, email: t.string })
 
 export const resolvers: Mutations<'oauth'> = {
   Mutation: {
@@ -82,10 +85,13 @@ export const resolvers: Mutations<'oauth'> = {
         )
       }
 
-      const { username, email } = session.identity.traits as {
-        username: string
-        email: string
+      const traits = session.identity?.traits as unknown
+
+      if (!TraitsDecoder.is(traits)) {
+        throw new ForbiddenError('session has illegal state')
       }
+
+      const { username, email } = traits
       const { hydra } = dataSources.model.authServices
 
       return hydra
