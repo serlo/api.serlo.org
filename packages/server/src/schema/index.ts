@@ -1,6 +1,7 @@
 import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
+import { contentGenerationSchema } from './content-generation'
 import { dateTimeSchema } from './date-time'
 import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
 import { instanceSchema } from './instance'
@@ -19,8 +20,9 @@ import { mergeSchemas } from '~/internals/graphql'
 
 export const schema = mergeSchemas(
   authorizationSchema,
-  connectionSchema,
   cacheSchema,
+  connectionSchema,
+  contentGenerationSchema,
   dateTimeSchema,
   instanceSchema,
   defaultGraphQLDefinitionsSchema,

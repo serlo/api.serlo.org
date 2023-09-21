@@ -602,6 +602,11 @@ export enum CommentStatus {
   Open = 'open'
 }
 
+export type ContentGenerationQuery = {
+  __typename?: 'ContentGenerationQuery';
+  generatedContent: Scalars['JSONObject']['output'];
+};
+
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   alias: Scalars['String']['output'];
@@ -1848,6 +1853,7 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON']['output'];
+  contentGeneration: ContentGenerationQuery;
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
@@ -3164,6 +3170,7 @@ export type ResolversTypes = {
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
+  ContentGenerationQuery: ResolverTypeWrapper<ModelOf<ContentGenerationQuery>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
@@ -3382,6 +3389,7 @@ export type ResolversParentTypes = {
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
   CommentEdge: ModelOf<CommentEdge>;
+  ContentGenerationQuery: ModelOf<ContentGenerationQuery>;
   Course: ModelOf<Course>;
   CoursePage: ModelOf<CoursePage>;
   CoursePageRevision: ModelOf<CoursePageRevision>;
@@ -3879,6 +3887,11 @@ export type CommentConnectionResolvers<ContextType = Context, ParentType extends
 export type CommentEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentEdge'] = ResolversParentTypes['CommentEdge']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContentGenerationQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQuery'] = ResolversParentTypes['ContentGenerationQuery']> = {
+  generatedContent?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4539,6 +4552,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
   activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  contentGeneration?: Resolver<ResolversTypes['ContentGenerationQuery'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
   license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
@@ -5103,6 +5117,7 @@ export type Resolvers<ContextType = Context> = {
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
   CommentEdge?: CommentEdgeResolvers<ContextType>;
+  ContentGenerationQuery?: ContentGenerationQueryResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CoursePage?: CoursePageResolvers<ContextType>;
   CoursePageRevision?: CoursePageRevisionResolvers<ContextType>;

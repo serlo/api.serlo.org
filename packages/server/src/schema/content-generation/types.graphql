@@ -1,0 +1,7 @@
+extend type Query {
+  contentGeneration: ContentGenerationQuery!
+}
+
+type ContentGenerationQuery {
+  generatedContent: JSONObject!
+}
