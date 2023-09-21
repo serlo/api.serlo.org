@@ -604,7 +604,20 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: Scalars['JSONObject']['output'];
+  generatedContent: ScMcExercise;
+};
+
+
+export type ContentGenerationQueryGeneratedContentArgs = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  exercise_types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  goal?: InputMaybe<Scalars['String']['input']>;
+  grade?: InputMaybe<Scalars['Int']['input']>;
+  info?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  number_exercises?: InputMaybe<Scalars['Int']['input']>;
+  subject?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1984,6 +1997,14 @@ export enum Role {
   Sysadmin = 'sysadmin'
 }
 
+export type ScMcExercise = {
+  __typename?: 'ScMcExercise';
+  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  question?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+};
+
 export enum Scope {
   Serlo = 'Serlo',
   SerloDe = 'Serlo_De',
@@ -3258,6 +3279,7 @@ export type ResolversTypes = {
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
+  ScMcExercise: ResolverTypeWrapper<ModelOf<ScMcExercise>>;
   Scope: ResolverTypeWrapper<ModelOf<Scope>>;
   ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
   ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
@@ -3474,6 +3496,7 @@ export type ResolversParentTypes = {
   RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
+  ScMcExercise: ModelOf<ScMcExercise>;
   ScopedRole: ModelOf<ScopedRole>;
   ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
   ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
@@ -3891,7 +3914,7 @@ export type CommentEdgeResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type ContentGenerationQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQuery'] = ResolversParentTypes['ContentGenerationQuery']> = {
-  generatedContent?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  generatedContent?: Resolver<ResolversTypes['ScMcExercise'], ParentType, ContextType, Partial<ContentGenerationQueryGeneratedContentArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4609,6 +4632,14 @@ export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ScMcExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScMcExercise'] = ResolversParentTypes['ScMcExercise']> = {
+  correct_options?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
+  options?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  question?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
   role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -5194,6 +5225,7 @@ export type Resolvers<ContextType = Context> = {
   RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
+  ScMcExercise?: ScMcExerciseResolvers<ContextType>;
   ScopedRole?: ScopedRoleResolvers<ContextType>;
   ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
   ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;

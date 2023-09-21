@@ -24,11 +24,11 @@ export const GeneratedContentDecoder = t.union([
 ])
 
 export async function makeRequest(payload: Payload) {
-  const databaseLayerUrl = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}`
-  const body = JSON.stringify(payload === undefined ? {} : { payload })
-  const response = await fetch(databaseLayerUrl, {
-    method: 'POST',
-    body,
+  // @ts-expect-error TODO: TS complains because payload has non-string property values, but it actually works.
+  const params = new URLSearchParams(payload).toString()
+  const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
+  const response = await fetch(url, {
+    method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   })
 
@@ -47,7 +47,7 @@ export async function makeRequest(payload: Payload) {
 
     throw new UserInputError(reason)
   } else {
-    throw new Error(`${response.status}: ${body}`)
+    throw new Error(`${response.status}`)
   }
 }
 
