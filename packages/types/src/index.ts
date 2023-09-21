@@ -598,6 +598,11 @@ export enum CommentStatus {
   Open = 'open'
 }
 
+export type ContentGenerationQuery = {
+  __typename?: 'ContentGenerationQuery';
+  generatedContent: Scalars['JSONObject']['output'];
+};
+
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
   alias: Scalars['String']['output'];
@@ -1844,6 +1849,7 @@ export type Query = {
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
   authorization: Scalars['JSON']['output'];
+  contentGeneration: ContentGenerationQuery;
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;
