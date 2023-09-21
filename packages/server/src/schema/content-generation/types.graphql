@@ -3,5 +3,23 @@ extend type Query {
 }
 
 type ContentGenerationQuery {
-  generatedContent: JSONObject!
+  generatedContent(
+    subject: String
+    grade: Int
+    level: String
+    topic: String
+    goal: String
+    category: String
+    number_exercises: Int
+    info: String
+    exercise_types: [String]
+  ): ScMcExercise!
+}
+
+# TODO: Add short answer exercise type as well
+type ScMcExercise {
+  type: String
+  question: String
+  options: [String]
+  correct_options: [Int]
 }

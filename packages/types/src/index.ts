@@ -600,7 +600,20 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: Scalars['JSONObject']['output'];
+  generatedContent: ScMcExercise;
+};
+
+
+export type ContentGenerationQueryGeneratedContentArgs = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  exercise_types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  goal?: InputMaybe<Scalars['String']['input']>;
+  grade?: InputMaybe<Scalars['Int']['input']>;
+  info?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Scalars['String']['input']>;
+  number_exercises?: InputMaybe<Scalars['Int']['input']>;
+  subject?: InputMaybe<Scalars['String']['input']>;
+  topic?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1979,6 +1992,14 @@ export enum Role {
   StaticPagesBuilder = 'static_pages_builder',
   Sysadmin = 'sysadmin'
 }
+
+export type ScMcExercise = {
+  __typename?: 'ScMcExercise';
+  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  question?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+};
 
 export enum Scope {
   Serlo = 'Serlo',

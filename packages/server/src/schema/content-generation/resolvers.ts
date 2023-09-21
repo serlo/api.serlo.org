@@ -5,10 +5,9 @@ export const resolvers: Queries<'contentGeneration'> = {
     contentGeneration: createNamespace(),
   },
   ContentGenerationQuery: {
-    generatedContent() {
-      return {
-        type: 'fakeExercise',
-      }
+    async generatedContent(_parent, payload, { dataSources }) {
+      // @ts-expect-error TODO: Eslint complaining, no idea why
+      return await dataSources.model.serlo.getGeneratedContent(payload)
     },
   },
 }
