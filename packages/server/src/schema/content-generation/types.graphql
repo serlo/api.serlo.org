@@ -6,13 +6,13 @@ type ContentGenerationQuery {
   generatedContent(
     subject: String
     grade: Int
-    level: String
+    difficulty: String
     topic: String
     goal: String
     category: String
-    number_exercises: Int
-    info: String
-    exercise_types: [String]
+    subtasks: Int
+    previous_knowledge: String
+    exercise_type: String
   ): ContentGenerationQueryResponse!
 }
 

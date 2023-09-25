@@ -606,13 +606,13 @@ export type ContentGenerationQuery = {
 
 export type ContentGenerationQueryGeneratedContentArgs = {
   category?: InputMaybe<Scalars['String']['input']>;
-  exercise_types?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  difficulty?: InputMaybe<Scalars['String']['input']>;
+  exercise_type?: InputMaybe<Scalars['String']['input']>;
   goal?: InputMaybe<Scalars['String']['input']>;
   grade?: InputMaybe<Scalars['Int']['input']>;
-  info?: InputMaybe<Scalars['String']['input']>;
-  level?: InputMaybe<Scalars['String']['input']>;
-  number_exercises?: InputMaybe<Scalars['Int']['input']>;
+  previous_knowledge?: InputMaybe<Scalars['String']['input']>;
   subject?: InputMaybe<Scalars['String']['input']>;
+  subtasks?: InputMaybe<Scalars['Int']['input']>;
   topic?: InputMaybe<Scalars['String']['input']>;
 };
 

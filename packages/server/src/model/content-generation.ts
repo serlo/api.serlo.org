@@ -6,33 +6,21 @@ import { UserInputError } from '~/errors'
 export const UserInputDecoder = t.strict({
   subject: t.string,
   grade: t.number,
-  level: t.keyof({
-    leicht: null,
-    moderat: null,
-    knifflig: null,
+  difficulty: t.keyof({
+    low: null,
+    medium: null,
+    high: null,
   }),
   topic: t.string,
   goal: t.string,
-  category: t.keyof({
-    'eine Einzelaufgabe': null,
-    'ein Quiz': null,
-    'einen Test': null,
+  subtasks: t.number,
+  previous_knowledge: t.string,
+  exercise_type: t.keyof({
+    'multiple choice': null,
+    'single choice': null,
+    'single word solution': null,
+    'single number solution': null,
   }),
-  number_exercises: t.number,
-  info: t.string,
-  exercise_types: t.array(
-    t.keyof({
-      'Multiple Choice': null,
-      'Single Choice': null,
-      Lückentext: null,
-      'Wahr Falsch': null,
-      Zuordnung: null,
-      Freitext: null,
-      Sachaufgabe: null,
-      'Lösung mit 1 Wort': null,
-      'Lösung mit 1 Zahl': null,
-    }),
-  ),
 })
 
 export const GeneratedScMcExerciseDecoder = t.strict({
@@ -83,29 +71,21 @@ export async function makeRequest(payload: Payload) {
   }
 }
 
-type ExerciseDifficulty = 'leicht' | 'moderat' | 'knifflig'
-
-type ExerciseCategory = 'eine Einzelaufgabe' | 'ein Quiz' | 'einen Test'
+type ExerciseDifficulty = 'low' | 'medium' | 'high'
 
 type ExerciseType =
-  | 'Multiple Choice'
-  | 'Single Choice'
-  | 'Lückentext'
-  | 'Wahr Falsch'
-  | 'Zuordnung'
-  | 'Freitext'
-  | 'Sachaufgabe'
-  | 'Lösung mit 1 Wort'
-  | 'Lösung mit 1 Zahl'
+  | 'multiple choice'
+  | 'single choice'
+  | 'single word solution'
+  | 'single number solution'
 
 export interface Payload {
   subject: string
   grade: number
-  level: ExerciseDifficulty
+  difficulty: ExerciseDifficulty
   topic: string
   goal: string
-  category: ExerciseCategory
-  number_exercises: number
-  info: string
-  exercise_types: ExerciseType[]
+  subtasks: number
+  previous_knowledge: string
+  exercise_type: ExerciseType
 }
