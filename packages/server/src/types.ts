@@ -8,6 +8,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -622,7 +623,7 @@ export type ContentGenerationQueryGeneratedContentArgs = {
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  generatedContent?: Maybe<ScMcExercise>;
+  generatedContent?: Maybe<GeneratedContent>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1390,6 +1391,8 @@ export type ExerciseRevisionCursor = {
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
 };
+
+export type GeneratedContent = ScMcExercise | ShortAnswerExercise;
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
@@ -2196,6 +2199,12 @@ export type SetVideoInput = {
   subscribeThisByEmail: Scalars['Boolean']['input'];
   title: Scalars['String']['input'];
   url: Scalars['String']['input'];
+};
+
+export type ShortAnswerExercise = {
+  __typename?: 'ShortAnswerExercise';
+  question?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
@@ -3137,6 +3146,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
+  GeneratedContent: ( ModelOf<ScMcExercise> ) | ( ModelOf<ShortAnswerExercise> );
+};
 
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
@@ -3198,7 +3211,7 @@ export type ResolversTypes = {
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
   ContentGenerationQuery: ResolverTypeWrapper<ModelOf<ContentGenerationQuery>>;
-  ContentGenerationQueryResponse: ResolverTypeWrapper<ModelOf<ContentGenerationQueryResponse>>;
+  ContentGenerationQueryResponse: ResolverTypeWrapper<ModelOf<Omit<ContentGenerationQueryResponse, 'generatedContent'> & { generatedContent?: Maybe<ResolversTypes['GeneratedContent']> }>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
@@ -3240,6 +3253,7 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
+  GeneratedContent: ModelOf<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GeneratedContent']>>;
   GroupedExercise: ResolverTypeWrapper<ModelOf<GroupedExercise>>;
   GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
   GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
@@ -3305,6 +3319,7 @@ export type ResolversTypes = {
   SetThreadStateNotificationEvent: ResolverTypeWrapper<ModelOf<SetThreadStateNotificationEvent>>;
   SetUuidStateNotificationEvent: ResolverTypeWrapper<ModelOf<SetUuidStateNotificationEvent>>;
   SetVideoInput: ResolverTypeWrapper<ModelOf<SetVideoInput>>;
+  ShortAnswerExercise: ResolverTypeWrapper<ModelOf<ShortAnswerExercise>>;
   Solution: ResolverTypeWrapper<ModelOf<Solution>>;
   SolutionRevision: ResolverTypeWrapper<ModelOf<SolutionRevision>>;
   SolutionRevisionConnection: ResolverTypeWrapper<ModelOf<SolutionRevisionConnection>>;
@@ -3419,7 +3434,7 @@ export type ResolversParentTypes = {
   CommentConnection: ModelOf<CommentConnection>;
   CommentEdge: ModelOf<CommentEdge>;
   ContentGenerationQuery: ModelOf<ContentGenerationQuery>;
-  ContentGenerationQueryResponse: ModelOf<ContentGenerationQueryResponse>;
+  ContentGenerationQueryResponse: ModelOf<Omit<ContentGenerationQueryResponse, 'generatedContent'> & { generatedContent?: Maybe<ResolversParentTypes['GeneratedContent']> }>;
   Course: ModelOf<Course>;
   CoursePage: ModelOf<CoursePage>;
   CoursePageRevision: ModelOf<CoursePageRevision>;
@@ -3461,6 +3476,7 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
+  GeneratedContent: ModelOf<ResolversUnionTypes<ResolversParentTypes>['GeneratedContent']>;
   GroupedExercise: ModelOf<GroupedExercise>;
   GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
   GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
@@ -3522,6 +3538,7 @@ export type ResolversParentTypes = {
   SetThreadStateNotificationEvent: ModelOf<SetThreadStateNotificationEvent>;
   SetUuidStateNotificationEvent: ModelOf<SetUuidStateNotificationEvent>;
   SetVideoInput: ModelOf<SetVideoInput>;
+  ShortAnswerExercise: ModelOf<ShortAnswerExercise>;
   Solution: ModelOf<Solution>;
   SolutionRevision: ModelOf<SolutionRevision>;
   SolutionRevisionConnection: ModelOf<SolutionRevisionConnection>;
@@ -3927,7 +3944,7 @@ export type ContentGenerationQueryResolvers<ContextType = Context, ParentType ex
 };
 
 export type ContentGenerationQueryResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQueryResponse'] = ResolversParentTypes['ContentGenerationQueryResponse']> = {
-  generatedContent?: Resolver<Maybe<ResolversTypes['ScMcExercise']>, ParentType, ContextType>;
+  generatedContent?: Resolver<Maybe<ResolversTypes['GeneratedContent']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4320,6 +4337,10 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ExerciseRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GeneratedContentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedContent'] = ResolversParentTypes['GeneratedContent']> = {
+  __resolveType: TypeResolveFn<'ScMcExercise' | 'ShortAnswerExercise', ParentType, ContextType>;
 };
 
 export type GroupedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExercise'] = ResolversParentTypes['GroupedExercise']> = {
@@ -4732,6 +4753,12 @@ export type SetUuidStateNotificationEventResolvers<ContextType = Context, Parent
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ShortAnswerExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ShortAnswerExercise'] = ResolversParentTypes['ShortAnswerExercise']> = {
+  question?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5202,6 +5229,7 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
+  GeneratedContent?: GeneratedContentResolvers<ContextType>;
   GroupedExercise?: GroupedExerciseResolvers<ContextType>;
   GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
   GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;
@@ -5250,6 +5278,7 @@ export type Resolvers<ContextType = Context> = {
   SetTaxonomyTermNotificationEvent?: SetTaxonomyTermNotificationEventResolvers<ContextType>;
   SetThreadStateNotificationEvent?: SetThreadStateNotificationEventResolvers<ContextType>;
   SetUuidStateNotificationEvent?: SetUuidStateNotificationEventResolvers<ContextType>;
+  ShortAnswerExercise?: ShortAnswerExerciseResolvers<ContextType>;
   Solution?: SolutionResolvers<ContextType>;
   SolutionRevision?: SolutionRevisionResolvers<ContextType>;
   SolutionRevisionConnection?: SolutionRevisionConnectionResolvers<ContextType>;

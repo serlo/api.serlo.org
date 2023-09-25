@@ -618,7 +618,7 @@ export type ContentGenerationQueryGeneratedContentArgs = {
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  generatedContent?: Maybe<ScMcExercise>;
+  generatedContent?: Maybe<GeneratedContent>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1386,6 +1386,8 @@ export type ExerciseRevisionCursor = {
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
 };
+
+export type GeneratedContent = ScMcExercise | ShortAnswerExercise;
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
@@ -2192,6 +2194,12 @@ export type SetVideoInput = {
   subscribeThisByEmail: Scalars['Boolean']['input'];
   title: Scalars['String']['input'];
   url: Scalars['String']['input'];
+};
+
+export type ShortAnswerExercise = {
+  __typename?: 'ShortAnswerExercise';
+  question?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {

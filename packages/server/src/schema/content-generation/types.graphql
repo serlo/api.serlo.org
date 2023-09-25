@@ -18,13 +18,19 @@ type ContentGenerationQuery {
 
 type ContentGenerationQueryResponse {
   success: Boolean!
-  generatedContent: ScMcExercise
+  generatedContent: GeneratedContent
 }
 
-# TODO: Add short answer exercise type as well
+union GeneratedContent = ScMcExercise | ShortAnswerExercise
+
 type ScMcExercise {
   type: String
   question: String
   options: [String]
   correct_options: [Int]
+}
+
+type ShortAnswerExercise {
+  type: String
+  question: String
 }

@@ -56,7 +56,7 @@ export const GeneratedContentDecoder = t.union([
 ])
 
 export async function makeRequest(payload: Payload) {
-  // @ts-expect-error TODO: TS complains because payload has non-string property values, but it actually works.
+  // @ts-expect-error TS complains because payload has non-string property values, but it actually works.
   const params = new URLSearchParams(payload).toString()
   const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
   const response = await fetch(url, {
