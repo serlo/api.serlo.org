@@ -3,6 +3,38 @@ import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
 
+export const UserInputDecoder = t.strict({
+  subject: t.string,
+  grade: t.number,
+  level: t.keyof({
+    leicht: null,
+    moderat: null,
+    knifflig: null,
+  }),
+  topic: t.string,
+  goal: t.string,
+  category: t.keyof({
+    'eine Einzelaufgabe': null,
+    'ein Quiz': null,
+    'einen Test': null,
+  }),
+  number_exercises: t.number,
+  info: t.string,
+  exercise_types: t.array(
+    t.keyof({
+      'Multiple Choice': null,
+      'Single Choice': null,
+      Lückentext: null,
+      'Wahr Falsch': null,
+      Zuordnung: null,
+      Freitext: null,
+      Sachaufgabe: null,
+      'Lösung mit 1 Wort': null,
+      'Lösung mit 1 Zahl': null,
+    }),
+  ),
+})
+
 export const GeneratedScMcExerciseDecoder = t.strict({
   type: t.keyof({
     multiple_choice: null,
