@@ -1392,7 +1392,13 @@ export type ExerciseRevisionCursor = {
   node: ExerciseRevision;
 };
 
-export type GeneratedContent = ScMcExercise | ShortAnswerExercise;
+export type GeneratedContent = {
+  __typename?: 'GeneratedContent';
+  heading?: Maybe<Scalars['String']['output']>;
+  subtasks?: Maybe<Array<Maybe<GeneratedExercise>>>;
+};
+
+export type GeneratedExercise = ScMcExercise | ShortAnswerExercise;
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
@@ -2203,6 +2209,7 @@ export type SetVideoInput = {
 
 export type ShortAnswerExercise = {
   __typename?: 'ShortAnswerExercise';
+  correct_answer?: Maybe<Scalars['String']['output']>;
   question?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
 };
@@ -3148,7 +3155,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
-  GeneratedContent: ( ModelOf<ScMcExercise> ) | ( ModelOf<ShortAnswerExercise> );
+  GeneratedExercise: ( ModelOf<ScMcExercise> ) | ( ModelOf<ShortAnswerExercise> );
 };
 
 /** Mapping of interface types */
@@ -3211,7 +3218,7 @@ export type ResolversTypes = {
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
   ContentGenerationQuery: ResolverTypeWrapper<ModelOf<ContentGenerationQuery>>;
-  ContentGenerationQueryResponse: ResolverTypeWrapper<ModelOf<Omit<ContentGenerationQueryResponse, 'generatedContent'> & { generatedContent?: Maybe<ResolversTypes['GeneratedContent']> }>>;
+  ContentGenerationQueryResponse: ResolverTypeWrapper<ModelOf<ContentGenerationQueryResponse>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
@@ -3253,7 +3260,8 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
-  GeneratedContent: ModelOf<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GeneratedContent']>>;
+  GeneratedContent: ResolverTypeWrapper<ModelOf<Omit<GeneratedContent, 'subtasks'> & { subtasks?: Maybe<Array<Maybe<ResolversTypes['GeneratedExercise']>>> }>>;
+  GeneratedExercise: ModelOf<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['GeneratedExercise']>>;
   GroupedExercise: ResolverTypeWrapper<ModelOf<GroupedExercise>>;
   GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
   GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
@@ -3434,7 +3442,7 @@ export type ResolversParentTypes = {
   CommentConnection: ModelOf<CommentConnection>;
   CommentEdge: ModelOf<CommentEdge>;
   ContentGenerationQuery: ModelOf<ContentGenerationQuery>;
-  ContentGenerationQueryResponse: ModelOf<Omit<ContentGenerationQueryResponse, 'generatedContent'> & { generatedContent?: Maybe<ResolversParentTypes['GeneratedContent']> }>;
+  ContentGenerationQueryResponse: ModelOf<ContentGenerationQueryResponse>;
   Course: ModelOf<Course>;
   CoursePage: ModelOf<CoursePage>;
   CoursePageRevision: ModelOf<CoursePageRevision>;
@@ -3476,7 +3484,8 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
-  GeneratedContent: ModelOf<ResolversUnionTypes<ResolversParentTypes>['GeneratedContent']>;
+  GeneratedContent: ModelOf<Omit<GeneratedContent, 'subtasks'> & { subtasks?: Maybe<Array<Maybe<ResolversParentTypes['GeneratedExercise']>>> }>;
+  GeneratedExercise: ModelOf<ResolversUnionTypes<ResolversParentTypes>['GeneratedExercise']>;
   GroupedExercise: ModelOf<GroupedExercise>;
   GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
   GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
@@ -4340,6 +4349,12 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 };
 
 export type GeneratedContentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedContent'] = ResolversParentTypes['GeneratedContent']> = {
+  heading?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  subtasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['GeneratedExercise']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GeneratedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedExercise'] = ResolversParentTypes['GeneratedExercise']> = {
   __resolveType: TypeResolveFn<'ScMcExercise' | 'ShortAnswerExercise', ParentType, ContextType>;
 };
 
@@ -4757,6 +4772,7 @@ export type SetUuidStateNotificationEventResolvers<ContextType = Context, Parent
 };
 
 export type ShortAnswerExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ShortAnswerExercise'] = ResolversParentTypes['ShortAnswerExercise']> = {
+  correct_answer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   question?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -5230,6 +5246,7 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
   GeneratedContent?: GeneratedContentResolvers<ContextType>;
+  GeneratedExercise?: GeneratedExerciseResolvers<ContextType>;
   GroupedExercise?: GroupedExerciseResolvers<ContextType>;
   GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
   GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;

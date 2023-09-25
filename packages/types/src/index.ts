@@ -1387,7 +1387,13 @@ export type ExerciseRevisionCursor = {
   node: ExerciseRevision;
 };
 
-export type GeneratedContent = ScMcExercise | ShortAnswerExercise;
+export type GeneratedContent = {
+  __typename?: 'GeneratedContent';
+  heading?: Maybe<Scalars['String']['output']>;
+  subtasks?: Maybe<Array<Maybe<GeneratedExercise>>>;
+};
+
+export type GeneratedExercise = ScMcExercise | ShortAnswerExercise;
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
@@ -2198,6 +2204,7 @@ export type SetVideoInput = {
 
 export type ShortAnswerExercise = {
   __typename?: 'ShortAnswerExercise';
+  correct_answer?: Maybe<Scalars['String']['output']>;
   question?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
 };

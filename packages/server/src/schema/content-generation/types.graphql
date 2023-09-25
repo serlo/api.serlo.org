@@ -21,7 +21,12 @@ type ContentGenerationQueryResponse {
   generatedContent: GeneratedContent
 }
 
-union GeneratedContent = ScMcExercise | ShortAnswerExercise
+type GeneratedContent {
+  heading: String
+  subtasks: [GeneratedExercise]
+}
+
+union GeneratedExercise = ScMcExercise | ShortAnswerExercise
 
 type ScMcExercise {
   type: String
@@ -33,4 +38,5 @@ type ScMcExercise {
 type ShortAnswerExercise {
   type: String
   question: String
+  correct_answer: String
 }
