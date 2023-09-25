@@ -13,7 +13,12 @@ type ContentGenerationQuery {
     number_exercises: Int
     info: String
     exercise_types: [String]
-  ): ScMcExercise!
+  ): ContentGenerationQueryResponse!
+}
+
+type ContentGenerationQueryResponse {
+  success: Boolean!
+  generatedContent: ScMcExercise
 }
 
 # TODO: Add short answer exercise type as well

@@ -604,7 +604,7 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: ScMcExercise;
+  generatedContent: ContentGenerationQueryResponse;
 };
 
 
@@ -618,6 +618,12 @@ export type ContentGenerationQueryGeneratedContentArgs = {
   number_exercises?: InputMaybe<Scalars['Int']['input']>;
   subject?: InputMaybe<Scalars['String']['input']>;
   topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ContentGenerationQueryResponse = {
+  __typename?: 'ContentGenerationQueryResponse';
+  generatedContent?: Maybe<ScMcExercise>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -3192,6 +3198,7 @@ export type ResolversTypes = {
   CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
   ContentGenerationQuery: ResolverTypeWrapper<ModelOf<ContentGenerationQuery>>;
+  ContentGenerationQueryResponse: ResolverTypeWrapper<ModelOf<ContentGenerationQueryResponse>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
@@ -3412,6 +3419,7 @@ export type ResolversParentTypes = {
   CommentConnection: ModelOf<CommentConnection>;
   CommentEdge: ModelOf<CommentEdge>;
   ContentGenerationQuery: ModelOf<ContentGenerationQuery>;
+  ContentGenerationQueryResponse: ModelOf<ContentGenerationQueryResponse>;
   Course: ModelOf<Course>;
   CoursePage: ModelOf<CoursePage>;
   CoursePageRevision: ModelOf<CoursePageRevision>;
@@ -3914,7 +3922,13 @@ export type CommentEdgeResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type ContentGenerationQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQuery'] = ResolversParentTypes['ContentGenerationQuery']> = {
-  generatedContent?: Resolver<ResolversTypes['ScMcExercise'], ParentType, ContextType, Partial<ContentGenerationQueryGeneratedContentArgs>>;
+  generatedContent?: Resolver<ResolversTypes['ContentGenerationQueryResponse'], ParentType, ContextType, Partial<ContentGenerationQueryGeneratedContentArgs>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContentGenerationQueryResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQueryResponse'] = ResolversParentTypes['ContentGenerationQueryResponse']> = {
+  generatedContent?: Resolver<Maybe<ResolversTypes['ScMcExercise']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5149,6 +5163,7 @@ export type Resolvers<ContextType = Context> = {
   CommentConnection?: CommentConnectionResolvers<ContextType>;
   CommentEdge?: CommentEdgeResolvers<ContextType>;
   ContentGenerationQuery?: ContentGenerationQueryResolvers<ContextType>;
+  ContentGenerationQueryResponse?: ContentGenerationQueryResponseResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CoursePage?: CoursePageResolvers<ContextType>;
   CoursePageRevision?: CoursePageRevisionResolvers<ContextType>;

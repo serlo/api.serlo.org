@@ -600,7 +600,7 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: ScMcExercise;
+  generatedContent: ContentGenerationQueryResponse;
 };
 
 
@@ -614,6 +614,12 @@ export type ContentGenerationQueryGeneratedContentArgs = {
   number_exercises?: InputMaybe<Scalars['Int']['input']>;
   subject?: InputMaybe<Scalars['String']['input']>;
   topic?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ContentGenerationQueryResponse = {
+  __typename?: 'ContentGenerationQueryResponse';
+  generatedContent?: Maybe<ScMcExercise>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
