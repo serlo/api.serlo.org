@@ -36,12 +36,18 @@ export const GeneratedScMcExerciseDecoder = t.strict({
 export const GeneratedShortAnswerExerciseDecoder = t.strict({
   type: t.literal('short_answer'),
   question: t.string,
+  correct_answer: t.string,
 })
 
-export const GeneratedContentDecoder = t.union([
-  GeneratedScMcExerciseDecoder,
-  GeneratedShortAnswerExerciseDecoder,
-])
+export const GeneratedContentDecoder = t.strict({
+  heading: t.string,
+  subtasks: t.array(
+    t.union([
+      GeneratedScMcExerciseDecoder,
+      GeneratedShortAnswerExerciseDecoder,
+    ]),
+  ),
+})
 
 export async function makeRequest(payload: Payload) {
   // @ts-expect-error TS complains because payload has non-string property values, but it actually works.
@@ -53,7 +59,9 @@ export async function makeRequest(payload: Payload) {
   })
 
   if (response.status === 200) {
-    return (await response.json()) as unknown
+    const generationResult = (await response.json()) as string
+    const parsedGenerationResult = JSON.parse(generationResult) as unknown
+    return parsedGenerationResult
   } else if (response.status === 404) {
     return null
   } else if (response.status === 400) {
