@@ -42,10 +42,17 @@ export const GeneratedShortAnswerExerciseDecoder = t.strict({
 export const GeneratedContentDecoder = t.strict({
   heading: t.string,
   subtasks: t.array(
-    t.union([
-      GeneratedScMcExerciseDecoder,
-      GeneratedShortAnswerExerciseDecoder,
-    ]),
+    t.strict({
+      type: t.keyof({
+        multiple_choice: null,
+        single_choice: null,
+        short_answer: null,
+      }),
+      question: t.string,
+      options: t.union([t.array(t.string), t.null]),
+      correct_options: t.union([t.array(t.number), t.null]),
+      correct_answer: t.union([t.null, t.string]),
+    }),
   ),
 })
 
@@ -61,7 +68,21 @@ export async function makeRequest(payload: Payload) {
   if (response.status === 200) {
     const generationResult = (await response.json()) as string
     const parsedGenerationResult = JSON.parse(generationResult) as unknown
-    return parsedGenerationResult
+
+    console.log('parsed: ', parsedGenerationResult)
+
+    const finalResult = {
+      heading: parsedGenerationResult.heading,
+      subtasks: parsedGenerationResult.subtasks.map((subtask) => ({
+        type: subtask.type,
+        question: subtask.question,
+        options: subtask.options || null,
+        correct_options: subtask.correct_options || null,
+        correct_answer: subtask.correct_answer || null,
+      })),
+    }
+
+    return finalResult
   } else if (response.status === 404) {
     return null
   } else if (response.status === 400) {
