@@ -1393,7 +1393,14 @@ export type GeneratedContent = {
   subtasks?: Maybe<Array<Maybe<GeneratedExercise>>>;
 };
 
-export type GeneratedExercise = ScMcExercise | ShortAnswerExercise;
+export type GeneratedExercise = {
+  __typename?: 'GeneratedExercise';
+  correct_answer?: Maybe<Scalars['String']['output']>;
+  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
+  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  question: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'GroupedExercise';
@@ -2007,14 +2014,6 @@ export enum Role {
   Sysadmin = 'sysadmin'
 }
 
-export type ScMcExercise = {
-  __typename?: 'ScMcExercise';
-  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
-  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  question?: Maybe<Scalars['String']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
-};
-
 export enum Scope {
   Serlo = 'Serlo',
   SerloDe = 'Serlo_De',
@@ -2200,13 +2199,6 @@ export type SetVideoInput = {
   subscribeThisByEmail: Scalars['Boolean']['input'];
   title: Scalars['String']['input'];
   url: Scalars['String']['input'];
-};
-
-export type ShortAnswerExercise = {
-  __typename?: 'ShortAnswerExercise';
-  correct_answer?: Maybe<Scalars['String']['output']>;
-  question?: Maybe<Scalars['String']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
