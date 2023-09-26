@@ -21,22 +21,17 @@ export const resolvers: Queries<'contentGeneration'> = {
 
         const generatedContent =
           await dataSources.model.serlo.getGeneratedContent(userInput)
-        console.log(generatedContent)
 
         return {
           success: true,
           generatedContent,
         }
       } catch (error) {
-        console.error(error)
         return {
           success: false,
           generatedContent: null,
         }
       }
-    },
-    __resolveType(object) {
-      console.log('__resolveType: ', object)
     },
   },
 }

@@ -1390,16 +1390,7 @@ export type ExerciseRevisionCursor = {
 export type GeneratedContent = {
   __typename?: 'GeneratedContent';
   heading?: Maybe<Scalars['String']['output']>;
-  subtasks?: Maybe<Array<Maybe<GeneratedExercise>>>;
-};
-
-export type GeneratedExercise = {
-  __typename?: 'GeneratedExercise';
-  correct_answer?: Maybe<Scalars['String']['output']>;
-  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
-  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  question: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  subtasks?: Maybe<Array<Maybe<Scalars['JSON']['output']>>>;
 };
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {

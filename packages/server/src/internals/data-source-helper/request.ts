@@ -38,7 +38,6 @@ export type Request<Payload, Result> = (Payload extends undefined
 export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
   async function query(payload: P) {
     const result = await spec.getCurrentValue(payload)
-    console.log(result)
     const decodedResult = spec.decoder.decode(result)
 
     if (E.isRight(decodedResult)) {
