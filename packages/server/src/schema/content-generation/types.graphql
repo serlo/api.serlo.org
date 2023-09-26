@@ -23,28 +23,5 @@ type ContentGenerationQueryResponse {
 
 type GeneratedContent {
   heading: String
-  subtasks: [GeneratedExercise]
+  subtasks: [JSON]
 }
-
-type GeneratedExercise {
-  type: String!
-  question: String!
-  options: [String]
-  correct_options: [Int]
-  correct_answer: String
-}
-
-# union GeneratedExercise = ScMcExercise | ShortAnswerExercise
-
-# type ScMcExercise {
-#   type: String
-#   question: String
-#   options: [String]
-#   correct_options: [Int]
-# }
-
-# type ShortAnswerExercise {
-#   type: String
-#   question: String
-#   correct_answer: String
-# }

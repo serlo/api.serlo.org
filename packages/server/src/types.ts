@@ -1394,16 +1394,7 @@ export type ExerciseRevisionCursor = {
 export type GeneratedContent = {
   __typename?: 'GeneratedContent';
   heading?: Maybe<Scalars['String']['output']>;
-  subtasks?: Maybe<Array<Maybe<GeneratedExercise>>>;
-};
-
-export type GeneratedExercise = {
-  __typename?: 'GeneratedExercise';
-  correct_answer?: Maybe<Scalars['String']['output']>;
-  correct_options?: Maybe<Array<Maybe<Scalars['Int']['output']>>>;
-  options?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  question: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  subtasks?: Maybe<Array<Maybe<Scalars['JSON']['output']>>>;
 };
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
@@ -3248,7 +3239,6 @@ export type ResolversTypes = {
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
   GeneratedContent: ResolverTypeWrapper<ModelOf<GeneratedContent>>;
-  GeneratedExercise: ResolverTypeWrapper<ModelOf<GeneratedExercise>>;
   GroupedExercise: ResolverTypeWrapper<ModelOf<GroupedExercise>>;
   GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
   GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
@@ -3470,7 +3460,6 @@ export type ResolversParentTypes = {
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
   GeneratedContent: ModelOf<GeneratedContent>;
-  GeneratedExercise: ModelOf<GeneratedExercise>;
   GroupedExercise: ModelOf<GroupedExercise>;
   GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
   GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
@@ -4333,16 +4322,7 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 
 export type GeneratedContentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedContent'] = ResolversParentTypes['GeneratedContent']> = {
   heading?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subtasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['GeneratedExercise']>>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GeneratedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedExercise'] = ResolversParentTypes['GeneratedExercise']> = {
-  correct_answer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  correct_options?: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType>;
-  options?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subtasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['JSON']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5219,7 +5199,6 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
   GeneratedContent?: GeneratedContentResolvers<ContextType>;
-  GeneratedExercise?: GeneratedExerciseResolvers<ContextType>;
   GroupedExercise?: GroupedExerciseResolvers<ContextType>;
   GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
   GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;
