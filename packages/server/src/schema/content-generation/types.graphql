@@ -3,25 +3,10 @@ extend type Query {
 }
 
 type ContentGenerationQuery {
-  generatedContent(
-    subject: String
-    grade: Int
-    difficulty: String
-    topic: String
-    goal: String
-    category: String
-    subtasks: Int
-    previous_knowledge: String
-    exercise_type: String
-  ): ContentGenerationQueryResponse!
+  generateContent(prompt: String!): ContentGenerationQueryResponse!
 }
 
 type ContentGenerationQueryResponse {
   success: Boolean!
-  generatedContent: GeneratedContent
-}
-
-type GeneratedContent {
-  heading: String
-  subtasks: [JSON]
+  generatedContent: String
 }

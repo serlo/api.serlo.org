@@ -3,6 +3,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import * as ContentGenerationService from './content-generation'
+import { Payload as PromptGenerationPayload } from './content-generation'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
@@ -1160,12 +1161,9 @@ export function createSerloModel({
     },
   })
 
-  const getGeneratedContent = createRequest({
-    decoder: ContentGenerationService.GeneratedContentDecoder,
-    async getCurrentValue(payload: ContentGenerationService.Payload) {
-      return ContentGenerationService.makeRequest(payload)
-    },
-  })
+  async function getGeneratedContent(payload: PromptGenerationPayload) {
+    return ContentGenerationService.makeRequest(payload)
+  }
 
   return {
     addEntityRevision,
