@@ -604,25 +604,17 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: ContentGenerationQueryResponse;
+  generateContent: ContentGenerationQueryResponse;
 };
 
 
-export type ContentGenerationQueryGeneratedContentArgs = {
-  category?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
-  exercise_type?: InputMaybe<Scalars['String']['input']>;
-  goal?: InputMaybe<Scalars['String']['input']>;
-  grade?: InputMaybe<Scalars['Int']['input']>;
-  previous_knowledge?: InputMaybe<Scalars['String']['input']>;
-  subject?: InputMaybe<Scalars['String']['input']>;
-  subtasks?: InputMaybe<Scalars['Int']['input']>;
-  topic?: InputMaybe<Scalars['String']['input']>;
+export type ContentGenerationQueryGenerateContentArgs = {
+  prompt: Scalars['String']['input'];
 };
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  generatedContent?: Maybe<GeneratedContent>;
+  generatedContent?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1389,12 +1381,6 @@ export type ExerciseRevisionCursor = {
   __typename?: 'ExerciseRevisionCursor';
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
-};
-
-export type GeneratedContent = {
-  __typename?: 'GeneratedContent';
-  heading?: Maybe<Scalars['String']['output']>;
-  subtasks?: Maybe<Array<Maybe<Scalars['JSON']['output']>>>;
 };
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
@@ -3238,7 +3224,6 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
-  GeneratedContent: ResolverTypeWrapper<ModelOf<GeneratedContent>>;
   GroupedExercise: ResolverTypeWrapper<ModelOf<GroupedExercise>>;
   GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
   GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
@@ -3459,7 +3444,6 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
-  GeneratedContent: ModelOf<GeneratedContent>;
   GroupedExercise: ModelOf<GroupedExercise>;
   GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
   GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
@@ -3920,12 +3904,12 @@ export type CommentEdgeResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type ContentGenerationQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQuery'] = ResolversParentTypes['ContentGenerationQuery']> = {
-  generatedContent?: Resolver<ResolversTypes['ContentGenerationQueryResponse'], ParentType, ContextType, Partial<ContentGenerationQueryGeneratedContentArgs>>;
+  generateContent?: Resolver<ResolversTypes['ContentGenerationQueryResponse'], ParentType, ContextType, RequireFields<ContentGenerationQueryGenerateContentArgs, 'prompt'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ContentGenerationQueryResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQueryResponse'] = ResolversParentTypes['ContentGenerationQueryResponse']> = {
-  generatedContent?: Resolver<Maybe<ResolversTypes['GeneratedContent']>, ParentType, ContextType>;
+  generatedContent?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4317,12 +4301,6 @@ export type ExerciseRevisionConnectionResolvers<ContextType = Context, ParentTyp
 export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevisionCursor'] = ResolversParentTypes['ExerciseRevisionCursor']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['ExerciseRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GeneratedContentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GeneratedContent'] = ResolversParentTypes['GeneratedContent']> = {
-  heading?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subtasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['JSON']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -5198,7 +5176,6 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
-  GeneratedContent?: GeneratedContentResolvers<ContextType>;
   GroupedExercise?: GroupedExerciseResolvers<ContextType>;
   GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
   GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;
