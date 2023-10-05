@@ -1,15 +1,12 @@
 import * as auth from '@serlo/authorization'
 import { Scope } from '@serlo/authorization'
-import { either as E } from 'fp-ts'
 
-import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   Queries,
 } from '~/internals/graphql'
-import { PayloadDecoder } from '~/model/content-generation'
 
 export const resolvers: Queries<'contentGeneration'> = {
   Query: {
@@ -17,14 +14,6 @@ export const resolvers: Queries<'contentGeneration'> = {
   },
   ContentGenerationQuery: {
     async generateContent(_parent, payload, { dataSources, userId }) {
-      const decodedUserInput = PayloadDecoder.decode(payload)
-
-      if (E.isLeft(decodedUserInput)) {
-        throw new UserInputError('Prompt needs to be a string.')
-      }
-
-      const userInput = decodedUserInput.right
-
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -33,8 +22,7 @@ export const resolvers: Queries<'contentGeneration'> = {
         dataSources,
       })
 
-      const content =
-        await dataSources.model.serlo.getGeneratedContent(userInput)
+      const content = await dataSources.model.serlo.getGeneratedContent(payload)
 
       return {
         success: true,
