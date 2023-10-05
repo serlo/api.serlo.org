@@ -9,7 +9,7 @@ export const PayloadDecoder = t.strict({
 
 export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
   const url = new URL(
-    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
+    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
   )
 
   url.searchParams.append('prompt', prompt)

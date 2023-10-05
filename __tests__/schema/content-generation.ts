@@ -33,7 +33,7 @@ beforeAll(() => {
   // server is a global variable that is defined in __config__/setup.ts
   server.use(
     rest.get(
-      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
+      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
       (_req, res, ctx) => {
         return res(
           ctx.status(200),
@@ -70,7 +70,7 @@ test('fails for unauthorized user (wrong roles)', async () => {
 test('fails when internal server error in content generation service occurs', async () => {
   server.use(
     rest.get(
-      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
+      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
       (_req, res, ctx) => {
         return res(ctx.status(500))
       },
