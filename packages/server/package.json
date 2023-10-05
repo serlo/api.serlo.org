@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.57.2",
+  "version": "0.57.3",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -24,7 +24,7 @@
     "@nmshd/connector-sdk": "^2.2.2",
     "@ory/client": "^1.2.6",
     "@sentry/node": "^7.69.0",
-    "@serlo/authorization": "^0.57.0",
+    "@serlo/authorization": "^0.57.3",
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
     "bee-queue": "^1.5.0",
