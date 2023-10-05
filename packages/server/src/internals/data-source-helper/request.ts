@@ -33,7 +33,7 @@ export type Request<Payload, Result> = (Payload extends undefined
  * Creates a request function for a data source. This is a "read" operation
  * which shall never be cached by the API. Thus it only checks whether the
  * returned value has the right type. It throws an error when the check was not
- * sucessfull.
+ * successful.
  */
 export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
   async function query(payload: P) {
