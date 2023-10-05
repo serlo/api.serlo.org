@@ -3,11 +3,11 @@ import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
 
-export const UserInputDecoder = t.strict({
+export const PayloadDecoder = t.strict({
   prompt: t.string,
 })
 
-export async function makeRequest(payload: Payload) {
+export async function makeRequest(payload: t.TypeOf<typeof PayloadDecoder>) {
   const params = new URLSearchParams(payload).toString()
   const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
 
@@ -33,8 +33,4 @@ export async function makeRequest(payload: Payload) {
   } else {
     throw new Error(`${response.status}`)
   }
-}
-
-export interface Payload extends Record<string, string> {
-  prompt: string
 }
