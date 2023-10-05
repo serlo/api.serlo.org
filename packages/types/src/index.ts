@@ -600,25 +600,17 @@ export enum CommentStatus {
 
 export type ContentGenerationQuery = {
   __typename?: 'ContentGenerationQuery';
-  generatedContent: ContentGenerationQueryResponse;
+  generateContent: ContentGenerationQueryResponse;
 };
 
 
-export type ContentGenerationQueryGeneratedContentArgs = {
-  category?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
-  exercise_type?: InputMaybe<Scalars['String']['input']>;
-  goal?: InputMaybe<Scalars['String']['input']>;
-  grade?: InputMaybe<Scalars['Int']['input']>;
-  previous_knowledge?: InputMaybe<Scalars['String']['input']>;
-  subject?: InputMaybe<Scalars['String']['input']>;
-  subtasks?: InputMaybe<Scalars['Int']['input']>;
-  topic?: InputMaybe<Scalars['String']['input']>;
+export type ContentGenerationQueryGenerateContentArgs = {
+  prompt: Scalars['String']['input'];
 };
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  generatedContent?: Maybe<GeneratedContent>;
+  result?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1385,12 +1377,6 @@ export type ExerciseRevisionCursor = {
   __typename?: 'ExerciseRevisionCursor';
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
-};
-
-export type GeneratedContent = {
-  __typename?: 'GeneratedContent';
-  heading?: Maybe<Scalars['String']['output']>;
-  subtasks?: Maybe<Array<Maybe<Scalars['JSON']['output']>>>;
 };
 
 export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {

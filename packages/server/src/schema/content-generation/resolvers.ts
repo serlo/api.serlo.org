@@ -1,37 +1,30 @@
-import { either as E } from 'fp-ts'
+import * as auth from '@serlo/authorization'
+import { Scope } from '@serlo/authorization'
 
-import * as ContentGenerationService from '../../model/content-generation'
-import { createNamespace, Queries } from '~/internals/graphql'
+import {
+  assertUserIsAuthenticated,
+  assertUserIsAuthorized,
+  createNamespace,
+  Queries,
+} from '~/internals/graphql'
 
 export const resolvers: Queries<'contentGeneration'> = {
   Query: {
     contentGeneration: createNamespace(),
   },
   ContentGenerationQuery: {
-    async generatedContent(_parent, payload, { dataSources }) {
-      try {
-        const decodedUserInput =
-          ContentGenerationService.UserInputDecoder.decode(payload)
+    async generateContent(_parent, payload, { dataSources, userId }) {
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Ai.executePrompt(Scope.Serlo_De),
+        message: 'Insufficient role to execute the prompt.',
+        dataSources,
+      })
 
-        if (E.isLeft(decodedUserInput)) {
-          throw new Error('Invalid user input')
-        }
+      const record = await dataSources.model.serlo.getGeneratedContent(payload)
 
-        const userInput = decodedUserInput.right
-
-        const generatedContent =
-          await dataSources.model.serlo.getGeneratedContent(userInput)
-
-        return {
-          success: true,
-          generatedContent,
-        }
-      } catch (error) {
-        return {
-          success: false,
-          generatedContent: null,
-        }
-      }
+      return { success: true, record }
     },
   },
 }

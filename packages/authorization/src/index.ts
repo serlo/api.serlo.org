@@ -44,6 +44,7 @@ export enum Permission {
   TaxonomyTerm_Change = 'taxonomyTerm:change',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
   TaxonomyTerm_OrderChildren = 'taxonomyTerm:orderChildren',
+  Ai_ExecutePrompt = 'ai:executePrompt',
   TaxonomyTerm_Set = 'taxonomyTerm:set',
   Thread_CreateThread = 'thread:createThread',
   Thread_CreateComment = 'thread:createComment',
@@ -101,6 +102,10 @@ export const Entity = {
   addChild: createPermissionGuard(Permission.Entity_AddChild),
   removeChild: createPermissionGuard(Permission.Entity_RemoveChild),
   orderChildren: createPermissionGuard(Permission.Entity_OrderChildren),
+}
+
+export const Ai = {
+  executePrompt: createPermissionGuard(Permission.Ai_ExecutePrompt),
 }
 
 export const File = {

@@ -3,65 +3,21 @@ import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
 
-export const UserInputDecoder = t.strict({
-  subject: t.string,
-  grade: t.number,
-  difficulty: t.keyof({
-    low: null,
-    medium: null,
-    high: null,
-  }),
-  topic: t.string,
-  goal: t.string,
-  subtasks: t.number,
-  previous_knowledge: t.string,
-  exercise_type: t.keyof({
-    'multiple choice': null,
-    'single choice': null,
-    'single word solution': null,
-    'single number solution': null,
-  }),
+export const PayloadDecoder = t.strict({
+  prompt: t.string,
 })
 
-export const GeneratedScMcExerciseDecoder = t.strict({
-  type: t.keyof({
-    multiple_choice: null,
-    single_choice: null,
-  }),
-  question: t.string,
-  options: t.array(t.string),
-  correct_options: t.array(t.number),
-})
+export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
+  const url = new URL(
+    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
+  )
 
-export const GeneratedShortAnswerExerciseDecoder = t.strict({
-  type: t.literal('short_answer'),
-  question: t.string,
-  correct_answer: t.string,
-})
+  url.searchParams.append('prompt', prompt)
 
-export const GeneratedContentDecoder = t.strict({
-  heading: t.string,
-  subtasks: t.array(
-    t.union([
-      GeneratedScMcExerciseDecoder,
-      GeneratedShortAnswerExerciseDecoder,
-    ]),
-  ),
-})
-
-export async function makeRequest(payload: Payload) {
-  // @ts-expect-error TS complains because payload has non-string property values, but it actually works.
-  const params = new URLSearchParams(payload).toString()
-  const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  })
+  const response = await fetch(url.href)
 
   if (response.status === 200) {
-    const generationResult = (await response.json()) as string
-    const parsedGenerationResult = JSON.parse(generationResult) as unknown
-    return parsedGenerationResult
+    return await response.text()
   } else if (response.status === 404) {
     return null
   } else if (response.status === 400) {
@@ -77,23 +33,4 @@ export async function makeRequest(payload: Payload) {
   } else {
     throw new Error(`${response.status}`)
   }
-}
-
-type ExerciseDifficulty = 'low' | 'medium' | 'high'
-
-type ExerciseType =
-  | 'multiple choice'
-  | 'single choice'
-  | 'single word solution'
-  | 'single number solution'
-
-export interface Payload {
-  subject: string
-  grade: number
-  difficulty: ExerciseDifficulty
-  topic: string
-  goal: string
-  subtasks: number
-  previous_knowledge: string
-  exercise_type: ExerciseType
 }

@@ -51,6 +51,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Entity_OrderChildren,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.Uuid_SetState_EntityRevision,
+      Permission.Ai_ExecutePrompt,
     ],
   },
   [Role.Architect]: {

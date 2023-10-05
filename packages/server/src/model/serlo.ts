@@ -1160,13 +1160,6 @@ export function createSerloModel({
     },
   })
 
-  const getGeneratedContent = createRequest({
-    decoder: ContentGenerationService.GeneratedContentDecoder,
-    async getCurrentValue(payload: ContentGenerationService.Payload) {
-      return ContentGenerationService.makeRequest(payload)
-    },
-  })
-
   return {
     addEntityRevision,
     addPageRevision,
@@ -1191,7 +1184,7 @@ export function createSerloModel({
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
-    getGeneratedContent,
+    getGeneratedContent: ContentGenerationService.makeRequest,
     getNavigation,
     getNavigationPayload,
     getNotificationEvent,
