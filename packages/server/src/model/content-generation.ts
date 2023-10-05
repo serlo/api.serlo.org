@@ -7,12 +7,14 @@ export const PayloadDecoder = t.strict({
   prompt: t.string,
 })
 
-export async function makeRequest(payload: t.TypeOf<typeof PayloadDecoder>) {
-  const params = new URLSearchParams(payload).toString()
-  const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
+export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
+  const url = new URL(
+    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
+  )
 
-  const response = await fetch(url, {
-    method: 'GET',
+  url.searchParams.append('prompt', prompt)
+
+  const response = await fetch(url.href, {
     headers: { 'Content-Type': 'text/plain' },
   })
 
