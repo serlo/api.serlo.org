@@ -18,7 +18,7 @@ beforeAll(() => {
   server.use(
     rest.get(
       `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
-      (req, res, ctx) => {
+      (_req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.text(mockContentGenerationServiceResponse),
@@ -111,7 +111,7 @@ test('fails when internal server error in content generation service occurs', as
   server.use(
     rest.get(
       `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
-      (req, res, ctx) => {
+      (_req, res, ctx) => {
         return res(ctx.status(500))
       },
     ),
