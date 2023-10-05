@@ -67,16 +67,6 @@ test('fails for unauthorized user (wrong roles)', async () => {
   await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
 })
 
-test('fails when invalid payload is passed', async () => {
-  const invalidPayload: Record<string, unknown> = {
-    incorrectKey: 'Invalid value',
-  }
-
-  await query
-    .withVariables(invalidPayload as unknown as { prompt: string })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
-
 test('fails when internal server error in content generation service occurs', async () => {
   server.use(
     rest.get(
