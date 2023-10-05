@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { rest } from 'msw'
 
 import { user as baseUser } from '../../__fixtures__'
-import { Client, given, nextUuid } from '../__utils__'
+import { Client, given } from '../__utils__'
 
 const mockContentGenerationServiceResponse = JSON.stringify({
   heading: 'Exercises for 7th grade',
@@ -11,6 +11,22 @@ const mockContentGenerationServiceResponse = JSON.stringify({
       question: 'What is the 2nd binomial formula?',
     },
   ],
+})
+
+const user = { ...baseUser, roles: ['de_reviewer'] }
+
+const query = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    query GenerateContent($prompt: String!) {
+      contentGeneration {
+        generateContent(prompt: $prompt) {
+          success
+          data
+        }
+      }
+    }
+  `,
+  variables: { prompt: 'Generate exercise for 7th grade math' },
 })
 
 beforeAll(() => {
@@ -28,42 +44,12 @@ beforeAll(() => {
   )
 })
 
-const user = { ...baseUser, roles: ['de_reviewer'] }
-
-const userWithWrongRole = {
-  ...baseUser,
-  id: nextUuid(user.id),
-  // Being an architect is not sufficient. One has to be a reviewer.
-  roles: ['login', 'de_architect'],
-}
-
 beforeEach(() => {
-  given('UuidQuery').for(user, userWithWrongRole)
+  given('UuidQuery').for(user)
 })
 
-const payload = {
-  prompt: 'Generate exercise for 7th grade math',
-}
-
-const generateContentQuery = gql`
-  query GenerateContent($prompt: String!) {
-    contentGeneration {
-      generateContent(prompt: $prompt) {
-        success
-        data
-      }
-    }
-  }
-`
-
 test('successfully generate content', async () => {
-  const client = new Client({ userId: user.id })
-    .prepareQuery({
-      query: generateContentQuery,
-    })
-    .withVariables(payload)
-
-  await client.shouldReturnData({
+  await query.shouldReturnData({
     contentGeneration: {
       generateContent: {
         success: true,
@@ -74,23 +60,11 @@ test('successfully generate content', async () => {
 })
 
 test('fails for unauthenticated user', async () => {
-  const client = new Client()
-    .prepareQuery({
-      query: generateContentQuery,
-    })
-    .withVariables(payload)
-
-  await client.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails for unauthorized user (wrong roles)', async () => {
-  const client = new Client({ userId: userWithWrongRole.id })
-    .prepareQuery({
-      query: generateContentQuery,
-    })
-    .withVariables(payload)
-
-  await client.shouldFailWithError('FORBIDDEN')
+  await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when invalid payload is passed', async () => {
@@ -98,13 +72,9 @@ test('fails when invalid payload is passed', async () => {
     incorrectKey: 'Invalid value',
   }
 
-  const client = new Client({ userId: user.id })
-    .prepareQuery({
-      query: generateContentQuery,
-    })
-    .withVariables(invalidPayload)
-
-  await client.shouldFailWithError('BAD_USER_INPUT')
+  await query
+    .withVariables(invalidPayload as unknown as { prompt: string })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when internal server error in content generation service occurs', async () => {
@@ -117,15 +87,5 @@ test('fails when internal server error in content generation service occurs', as
     ),
   )
 
-  const triggerErrorPayload = {
-    prompt: 'TRIGGER_INTERNAL_ERROR',
-  }
-
-  const client = new Client({ userId: user.id })
-    .prepareQuery({
-      query: generateContentQuery,
-    })
-    .withVariables(triggerErrorPayload)
-
-  await client.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
