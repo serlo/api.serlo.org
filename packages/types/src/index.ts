@@ -610,7 +610,7 @@ export type ContentGenerationQueryGenerateContentArgs = {
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  generatedContent?: Maybe<Scalars['String']['output']>;
+  data?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
 

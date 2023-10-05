@@ -8,5 +8,5 @@ type ContentGenerationQuery {
 
 type ContentGenerationQueryResponse {
   success: Boolean!
-  generatedContent: String
+  data: String
 }

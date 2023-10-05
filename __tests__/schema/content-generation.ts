@@ -1,15 +1,17 @@
 import gql from 'graphql-tag'
 import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 import { user as baseUser } from '../../__fixtures__'
-import { Client } from '../__utils__'
+import { Client, given, nextUuid } from '../__utils__'
+
+const user = { ...baseUser, roles: ['de_reviewer'] }
 
 const mockPythonServiceResponse = JSON.stringify({
   heading: 'Exercises for 7th grade',
 })
 
-const server = setupServer(
+// server is a global variable that is defined in __config__/setup.ts
+server.use(
   rest.get(
     `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises`,
     (req, res, ctx) => {
@@ -18,13 +20,23 @@ const server = setupServer(
   ),
 )
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+const userWithNoPermissionId = nextUuid(baseUser.id)
+const userWithNoPermission = {
+  ...baseUser,
+  id: userWithNoPermissionId,
+  roles: [],
+}
 
-const user = { ...baseUser, roles: ['de_reviewer'] }
+const userWithWrongRole = {
+  ...baseUser,
+  id: nextUuid(userWithNoPermissionId),
+  // Being a guest or architect is not sufficient. One has to be a reviewer.
+  roles: ['guest', 'de_architect'],
+}
 
-const userWithNoPermission = { ...baseUser, roles: [] }
+beforeEach(() => {
+  given('UuidQuery').for(user, userWithNoPermission, userWithWrongRole)
+})
 
 // Need to extend this hyper flexible record to satisfy .withVariables()
 interface GenerateContentPayload extends Record<string, unknown> {
@@ -38,9 +50,9 @@ const payload: GenerateContentPayload = {
 const generateContentQuery = gql`
   query GenerateContent($prompt: String!) {
     contentGeneration {
-      generateContent(payload: { prompt: $prompt }) {
+      generateContent(prompt: $prompt) {
         success
-        generatedContent
+        data
       }
     }
   }
@@ -54,13 +66,17 @@ test('successfully generate content', async () => {
     .withVariables(payload)
 
   await client.shouldReturnData({
-    success: true,
-    generatedContent: mockPythonServiceResponse,
+    contentGeneration: {
+      generateContent: {
+        success: true,
+        data: mockPythonServiceResponse,
+      },
+    },
   })
 })
 
 test('fails for unauthenticated user', async () => {
-  const client = new Client({ userId: user.id })
+  const client = new Client()
     .prepareQuery({
       query: generateContentQuery,
     })
@@ -69,15 +85,24 @@ test('fails for unauthenticated user', async () => {
   await client.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails for unauthorized user', async () => {
-  // User does not have the correct permissions to execute the prompt
+test('fails for unauthorized user (no roles)', async () => {
   const client = new Client({ userId: userWithNoPermission.id })
     .prepareQuery({
       query: generateContentQuery,
     })
     .withVariables(payload)
 
-  await client.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+  await client.shouldFailWithError('FORBIDDEN')
+})
+
+test('fails for unauthorized user (wrong roles)', async () => {
+  const client = new Client({ userId: userWithWrongRole.id })
+    .prepareQuery({
+      query: generateContentQuery,
+    })
+    .withVariables(payload)
+
+  await client.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when invalid payload is passed', async () => {
