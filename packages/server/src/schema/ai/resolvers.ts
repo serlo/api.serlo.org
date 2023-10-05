@@ -8,12 +8,12 @@ import {
   Queries,
 } from '~/internals/graphql'
 
-export const resolvers: Queries<'contentGeneration'> = {
+export const resolvers: Queries<'ai'> = {
   Query: {
-    contentGeneration: createNamespace(),
+    ai: createNamespace(),
   },
-  ContentGenerationQuery: {
-    async generateContent(_parent, payload, { dataSources, userId }) {
+  AiQuery: {
+    async executePrompt(_parent, payload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -22,7 +22,7 @@ export const resolvers: Queries<'contentGeneration'> = {
         dataSources,
       })
 
-      const record = await dataSources.model.serlo.getGeneratedContent(payload)
+      const record = await dataSources.model.serlo.executePrompt(payload)
 
       return { success: true, record }
     },

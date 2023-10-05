@@ -2,7 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import * as ContentGenerationService from './content-generation'
+import { makeRequest as executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
@@ -1175,6 +1175,7 @@ export function createSerloModel({
     deleteBots,
     deleteRegularUsers,
     editComment,
+    executePrompt,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
@@ -1184,7 +1185,6 @@ export function createSerloModel({
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
-    getGeneratedContent: ContentGenerationService.makeRequest,
     getNavigation,
     getNavigationPayload,
     getNotificationEvent,

@@ -17,9 +17,9 @@ const user = { ...baseUser, roles: ['de_reviewer'] }
 
 const query = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    query GenerateContent($prompt: String!) {
-      contentGeneration {
-        generateContent(prompt: $prompt) {
+    query ($prompt: String!) {
+      ai {
+        executePrompt(prompt: $prompt) {
           success
           record
         }
@@ -50,8 +50,8 @@ beforeEach(() => {
 
 test('successfully generate content', async () => {
   await query.shouldReturnData({
-    contentGeneration: {
-      generateContent: {
+    ai: {
+      executePrompt: {
         success: true,
         record: mockContentGenerationServiceResponse,
       },
