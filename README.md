@@ -51,6 +51,12 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 - `yarn pacts` runs the contract tests (requires `yarn start:redis` beforehand)
 - `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into main
 
+### Run specific test
+
+You can pass the name of your test as an argument. For example to only run the tests of the metadata.
+
+`yarn test -- metadata`
+
 ### Use the GraphQL playground
 
 After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).

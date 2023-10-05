@@ -1570,6 +1570,13 @@ async function exec(): Promise<void> {
         date: '2023-09-14',
         internal: ['Fix logging in enmeshed middleware'],
       },
+      {
+        tagName: 'v0.57.3',
+        date: '2023-10-05',
+        added: ['Add namespace `ai`'],
+        fixed: ['fix econnreset between connector and mongodb'],
+        internal: ['Update dependencies'],
+      },
     ],
   })
 
