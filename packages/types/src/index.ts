@@ -277,6 +277,16 @@ export type AddRevisionResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type AiQuery = {
+  __typename?: 'AiQuery';
+  executePrompt: ExecutePromptResponse;
+};
+
+
+export type AiQueryExecutePromptArgs = {
+  prompt: Scalars['String']['input'];
+};
+
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String']['input'];
@@ -597,22 +607,6 @@ export enum CommentStatus {
   NoStatus = 'noStatus',
   Open = 'open'
 }
-
-export type ContentGenerationQuery = {
-  __typename?: 'ContentGenerationQuery';
-  generateContent: ContentGenerationQueryResponse;
-};
-
-
-export type ContentGenerationQueryGenerateContentArgs = {
-  prompt: Scalars['String']['input'];
-};
-
-export type ContentGenerationQueryResponse = {
-  __typename?: 'ContentGenerationQueryResponse';
-  result?: Maybe<Scalars['String']['output']>;
-  success: Scalars['Boolean']['output'];
-};
 
 export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Course';
@@ -1168,6 +1162,12 @@ export type EventRevisionCursor = {
   __typename?: 'EventRevisionCursor';
   cursor: Scalars['String']['output'];
   node: EventRevision;
+};
+
+export type ExecutePromptResponse = {
+  __typename?: 'ExecutePromptResponse';
+  record?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1859,8 +1859,8 @@ export type Query = {
   activeAuthors: UserConnection;
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
+  ai: AiQuery;
   authorization: Scalars['JSON']['output'];
-  contentGeneration: ContentGenerationQuery;
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
   license: LicenseQuery;

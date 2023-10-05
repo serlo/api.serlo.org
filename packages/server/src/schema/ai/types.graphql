@@ -1,0 +1,12 @@
+extend type Query {
+  ai: AiQuery!
+}
+
+type AiQuery {
+  executePrompt(prompt: String!): ExecutePromptResponse!
+}
+
+type ExecutePromptResponse {
+  success: Boolean!
+  record: String
+}
