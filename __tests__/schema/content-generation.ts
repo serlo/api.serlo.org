@@ -21,7 +21,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
       contentGeneration {
         generateContent(prompt: $prompt) {
           success
-          data
+          record
         }
       }
     }
@@ -53,7 +53,7 @@ test('successfully generate content', async () => {
     contentGeneration: {
       generateContent: {
         success: true,
-        data: mockContentGenerationServiceResponse,
+        record: mockContentGenerationServiceResponse,
       },
     },
   })
