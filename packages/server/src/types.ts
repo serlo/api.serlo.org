@@ -614,7 +614,7 @@ export type ContentGenerationQueryGenerateContentArgs = {
 
 export type ContentGenerationQueryResponse = {
   __typename?: 'ContentGenerationQueryResponse';
-  data?: Maybe<Scalars['String']['output']>;
+  result?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -3909,7 +3909,7 @@ export type ContentGenerationQueryResolvers<ContextType = Context, ParentType ex
 };
 
 export type ContentGenerationQueryResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentGenerationQueryResponse'] = ResolversParentTypes['ContentGenerationQueryResponse']> = {
-  data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  result?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

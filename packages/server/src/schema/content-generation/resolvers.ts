@@ -22,12 +22,9 @@ export const resolvers: Queries<'contentGeneration'> = {
         dataSources,
       })
 
-      const content = await dataSources.model.serlo.getGeneratedContent(payload)
+      const record = await dataSources.model.serlo.getGeneratedContent(payload)
 
-      return {
-        success: true,
-        data: content,
-      }
+      return { success: true, record }
     },
   },
 }
