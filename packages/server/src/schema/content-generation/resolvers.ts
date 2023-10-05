@@ -2,6 +2,7 @@ import * as auth from '@serlo/authorization'
 import { Scope } from '@serlo/authorization'
 import { either as E } from 'fp-ts'
 
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -16,36 +17,28 @@ export const resolvers: Queries<'contentGeneration'> = {
   },
   ContentGenerationQuery: {
     async generateContent(_parent, payload, { dataSources, userId }) {
-      try {
-        const decodedUserInput = UserInputDecoder.decode(payload)
+      const decodedUserInput = UserInputDecoder.decode(payload)
 
-        if (E.isLeft(decodedUserInput)) {
-          throw new Error('Invalid user input')
-        }
+      if (E.isLeft(decodedUserInput)) {
+        throw new UserInputError('Prompt needs to be a string.')
+      }
 
-        const userInput = decodedUserInput.right
+      const userInput = decodedUserInput.right
 
-        assertUserIsAuthenticated(userId)
+      assertUserIsAuthenticated(userId)
+      await assertUserIsAuthorized({
+        userId,
+        guard: auth.Ai.executePrompt(Scope.Serlo_De),
+        message: 'Insufficient role to execute the prompt.',
+        dataSources,
+      })
 
-        await assertUserIsAuthorized({
-          userId,
-          guard: auth.Ai.executePrompt(Scope.Serlo_De),
-          message: 'You are not allowed to execute the prompt.',
-          dataSources,
-        })
+      const content =
+        await dataSources.model.serlo.getGeneratedContent(userInput)
 
-        const content =
-          await dataSources.model.serlo.getGeneratedContent(userInput)
-
-        return {
-          success: true,
-          generatedContent: content,
-        }
-      } catch (error) {
-        return {
-          success: false,
-          generatedContent: null,
-        }
+      return {
+        success: true,
+        data: content,
       }
     },
   },

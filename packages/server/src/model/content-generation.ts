@@ -8,12 +8,12 @@ export const UserInputDecoder = t.strict({
 })
 
 export async function makeRequest(payload: Payload) {
-  // @ts-expect-error TS complains because payload has non-string property values, but it actually works.
   const params = new URLSearchParams(payload).toString()
   const url = `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/exercises?${params}`
+
   const response = await fetch(url, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
   })
 
   if (response.status === 200) {
@@ -39,6 +39,6 @@ export async function makeRequest(payload: Payload) {
   }
 }
 
-export interface Payload {
+export interface Payload extends Record<string, string> {
   prompt: string
 }
