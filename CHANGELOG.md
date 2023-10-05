@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.3](https://github.com/serlo/api.serlo.org/compare/v0.57.2..v0.57.3) - October 5, 2023
+
+### Added
+
+- Add namespace `ai`
+
+### Fixed
+
+- fix econnreset between connector and mongodb
+
+### Internal
+
+- Update dependencies
+
 ## [v0.57.2](https://github.com/serlo/api.serlo.org/compare/v0.57.1..v0.57.2) - September 14, 2023
 
 ### Internal

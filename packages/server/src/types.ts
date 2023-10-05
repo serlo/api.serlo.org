@@ -281,6 +281,16 @@ export type AddRevisionResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type AiQuery = {
+  __typename?: 'AiQuery';
+  executePrompt: ExecutePromptResponse;
+};
+
+
+export type AiQueryExecutePromptArgs = {
+  prompt: Scalars['String']['input'];
+};
+
 export type AliasInput = {
   instance: Instance;
   path: Scalars['String']['input'];
@@ -1158,6 +1168,12 @@ export type EventRevisionCursor = {
   node: EventRevision;
 };
 
+export type ExecutePromptResponse = {
+  __typename?: 'ExecutePromptResponse';
+  record: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
   alias: Scalars['String']['output'];
@@ -1847,6 +1863,7 @@ export type Query = {
   activeAuthors: UserConnection;
   activeDonors: UserConnection;
   activeReviewers: UserConnection;
+  ai: AiQuery;
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
@@ -3140,6 +3157,7 @@ export type ResolversTypes = {
   AbstractUuidConnection: ResolverTypeWrapper<ModelOf<AbstractUuidConnection>>;
   AbstractUuidCursor: ResolverTypeWrapper<ModelOf<AbstractUuidCursor>>;
   AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
+  AiQuery: ResolverTypeWrapper<ModelOf<AiQuery>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
   AllThreadsConnection: ResolverTypeWrapper<ModelOf<AllThreadsConnection>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
@@ -3197,6 +3215,7 @@ export type ResolversTypes = {
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
   EventRevisionCursor: ResolverTypeWrapper<ModelOf<EventRevisionCursor>>;
+  ExecutePromptResponse: ResolverTypeWrapper<ModelOf<ExecutePromptResponse>>;
   Exercise: ResolverTypeWrapper<ModelOf<Exercise>>;
   ExerciseGroup: ResolverTypeWrapper<ModelOf<ExerciseGroup>>;
   ExerciseGroupRevision: ResolverTypeWrapper<ModelOf<ExerciseGroupRevision>>;
@@ -3359,6 +3378,7 @@ export type ResolversParentTypes = {
   AbstractUuidConnection: ModelOf<AbstractUuidConnection>;
   AbstractUuidCursor: ModelOf<AbstractUuidCursor>;
   AddRevisionResponse: ModelOf<AddRevisionResponse>;
+  AiQuery: ModelOf<AiQuery>;
   AliasInput: ModelOf<AliasInput>;
   AllThreadsConnection: ModelOf<AllThreadsConnection>;
   Applet: ModelOf<Applet>;
@@ -3415,6 +3435,7 @@ export type ResolversParentTypes = {
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
   EventRevisionCursor: ModelOf<EventRevisionCursor>;
+  ExecutePromptResponse: ModelOf<ExecutePromptResponse>;
   Exercise: ModelOf<Exercise>;
   ExerciseGroup: ModelOf<ExerciseGroup>;
   ExerciseGroupRevision: ModelOf<ExerciseGroupRevision>;
@@ -3711,6 +3732,11 @@ export type AddRevisionResponseResolvers<ContextType = Context, ParentType exten
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
+  executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'prompt'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4177,6 +4203,12 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExecutePromptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExecutePromptResponse'] = ResolversParentTypes['ExecutePromptResponse']> = {
+  record?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Exercise'] = ResolversParentTypes['Exercise']> = {
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   currentRevision?: Resolver<Maybe<ResolversTypes['ExerciseRevision']>, ParentType, ContextType>;
@@ -4538,6 +4570,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   activeAuthors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveAuthorsArgs>>;
   activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
   activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
+  ai?: Resolver<ResolversTypes['AiQuery'], ParentType, ContextType>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
@@ -5086,6 +5119,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
   AbstractUuidCursor?: AbstractUuidCursorResolvers<ContextType>;
   AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
+  AiQuery?: AiQueryResolvers<ContextType>;
   AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
@@ -5133,6 +5167,7 @@ export type Resolvers<ContextType = Context> = {
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
   EventRevisionCursor?: EventRevisionCursorResolvers<ContextType>;
+  ExecutePromptResponse?: ExecutePromptResponseResolvers<ContextType>;
   Exercise?: ExerciseResolvers<ContextType>;
   ExerciseGroup?: ExerciseGroupResolvers<ContextType>;
   ExerciseGroupRevision?: ExerciseGroupRevisionResolvers<ContextType>;
