@@ -14,9 +14,7 @@ export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
 
   url.searchParams.append('prompt', prompt)
 
-  const response = await fetch(url.href, {
-    headers: { 'Content-Type': 'text/plain' },
-  })
+  const response = await fetch(url.href)
 
   if (response.status === 200) {
     return await response.text()
