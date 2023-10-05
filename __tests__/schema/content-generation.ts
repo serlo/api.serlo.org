@@ -4,10 +4,13 @@ import { rest } from 'msw'
 import { user as baseUser } from '../../__fixtures__'
 import { Client, given, nextUuid } from '../__utils__'
 
-const user = { ...baseUser, roles: ['de_reviewer'] }
-
 const mockPythonServiceResponse = JSON.stringify({
   heading: 'Exercises for 7th grade',
+  subtasks: [
+    {
+      question: 'What is the 2nd binomial formula?',
+    },
+  ],
 })
 
 // server is a global variable that is defined in __config__/setup.ts
@@ -19,6 +22,8 @@ server.use(
     },
   ),
 )
+
+const user = { ...baseUser, roles: ['de_reviewer'] }
 
 const userWithNoPermissionId = nextUuid(baseUser.id)
 const userWithNoPermission = {
