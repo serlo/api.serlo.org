@@ -2,7 +2,12 @@ import gql from 'graphql-tag'
 import { rest } from 'msw'
 
 import { user as baseUser } from '../../__fixtures__'
-import { Client, given } from '../__utils__'
+import {
+  Client,
+  RestResolver,
+  given,
+  hasInternalServerError,
+} from '../__utils__'
 
 const mockContentGenerationServiceResponse = JSON.stringify({
   heading: 'Exercises for 7th grade',
@@ -30,18 +35,9 @@ const query = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeAll(() => {
-  // server is a global variable that is defined in __config__/setup.ts
-  server.use(
-    rest.get(
-      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.text(mockContentGenerationServiceResponse),
-        )
-      },
-    ),
-  )
+  givenContentGenerationService((_req, res, ctx) => {
+    return res(ctx.status(200), ctx.text(mockContentGenerationServiceResponse))
+  })
 })
 
 beforeEach(() => {
@@ -68,14 +64,17 @@ test('fails for unauthorized user (wrong roles)', async () => {
 })
 
 test('fails when internal server error in content generation service occurs', async () => {
-  server.use(
-    rest.get(
-      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
-      (_req, res, ctx) => {
-        return res(ctx.status(500))
-      },
-    ),
-  )
+  givenContentGenerationService(hasInternalServerError())
 
   await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
+
+function givenContentGenerationService(resolver: RestResolver) {
+  // server is a global variable that is defined in __config__/setup.ts
+  server.use(
+    rest.get(
+      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
+      resolver,
+    ),
+  )
+}
