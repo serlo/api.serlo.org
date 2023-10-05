@@ -17,11 +17,7 @@ export async function makeRequest(payload: Payload) {
   })
 
   if (response.status === 200) {
-    // Despite application/json headers, the Python fastAPI service seems to be
-    // returning a string with the JSON inside it. Were not going to parse it
-    // here and will defer that to the Client.
-    const generationResultString = await response.text()
-    return generationResultString
+    return await response.text()
   } else if (response.status === 404) {
     return null
   } else if (response.status === 400) {
