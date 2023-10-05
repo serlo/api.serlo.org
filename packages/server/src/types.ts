@@ -1170,7 +1170,7 @@ export type EventRevisionCursor = {
 
 export type ExecutePromptResponse = {
   __typename?: 'ExecutePromptResponse';
-  record?: Maybe<Scalars['String']['output']>;
+  record: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
 
@@ -4204,7 +4204,7 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
 };
 
 export type ExecutePromptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExecutePromptResponse'] = ResolversParentTypes['ExecutePromptResponse']> = {
-  record?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  record?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

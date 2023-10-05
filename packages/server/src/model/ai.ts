@@ -18,8 +18,6 @@ export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
 
   if (response.status === 200) {
     return await response.text()
-  } else if (response.status === 404) {
-    return null
   } else if (response.status === 400) {
     const responseText = await response.text()
     const reason = F.pipe(
