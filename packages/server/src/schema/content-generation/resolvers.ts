@@ -9,7 +9,7 @@ import {
   createNamespace,
   Queries,
 } from '~/internals/graphql'
-import { UserInputDecoder } from '~/model/content-generation'
+import { PayloadDecoder } from '~/model/content-generation'
 
 export const resolvers: Queries<'contentGeneration'> = {
   Query: {
@@ -17,7 +17,7 @@ export const resolvers: Queries<'contentGeneration'> = {
   },
   ContentGenerationQuery: {
     async generateContent(_parent, payload, { dataSources, userId }) {
-      const decodedUserInput = UserInputDecoder.decode(payload)
+      const decodedUserInput = PayloadDecoder.decode(payload)
 
       if (E.isLeft(decodedUserInput)) {
         throw new UserInputError('Prompt needs to be a string.')
