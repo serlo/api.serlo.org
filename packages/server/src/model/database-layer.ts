@@ -1,31 +1,9 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { UserInputError } from 'apollo-server-express'
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
-import fetch from 'node-fetch'
 
 import {
   CommentDecoder,
+  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -39,6 +17,7 @@ import {
   Uuid,
   UuidDecoder,
 } from './decoder'
+import { UserInputError } from '~/errors'
 
 export const spec = {
   ActiveAuthorsQuery: {
@@ -73,8 +52,12 @@ export const spec = {
   AllThreadsQuery: {
     payload: t.intersection([
       t.type({ first: t.number }),
-      t.partial({ after: t.string }),
-      t.partial({ instance: InstanceDecoder }),
+      t.partial({
+        after: t.string,
+        instance: InstanceDecoder,
+        subjectId: t.number,
+        status: CommentStatusDecoder,
+      }),
     ]),
     response: t.type({ firstCommentIds: t.array(t.number) }),
     canBeNull: false,
@@ -90,7 +73,7 @@ export const spec = {
         t.type({
           id: t.number,
           dateOfDeletion: t.string,
-        })
+        }),
       ),
     }),
     canBeNull: false,
@@ -111,7 +94,7 @@ export const spec = {
         t.intersection([
           t.type({ identifier: t.type({ value: t.number }) }),
           t.UnknownRecord,
-        ])
+        ]),
       ),
     }),
     canBeNull: false,
@@ -294,7 +277,7 @@ export const spec = {
     payload: t.type({}),
     response: t.strict({
       subjects: t.array(
-        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number })
+        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number }),
       ),
     }),
     canBeNull: false,
@@ -404,6 +387,14 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
+  ThreadSetThreadStatusMutation: {
+    payload: t.type({
+      ids: t.array(t.number),
+      status: CommentStatusDecoder,
+    }),
+    response: t.strict({ success: t.literal(true) }),
+    canBeNull: false,
+  },
   ThreadsQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({ firstCommentIds: t.array(t.number) }),
@@ -500,7 +491,7 @@ export const spec = {
 
 export async function makeRequest<M extends MessageType>(
   type: M,
-  payload: Payload<M>
+  payload: Payload<M>,
 ) {
   const databaseLayerUrl = `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}`
   const body = JSON.stringify({
@@ -527,7 +518,7 @@ export async function makeRequest<M extends MessageType>(
       O.tryCatch(() => JSON.parse(responseText) as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
       O.map((json) => json.reason),
-      O.getOrElse(() => 'Bad Request')
+      O.getOrElse(() => 'Bad Request'),
     )
 
     throw new UserInputError(reason)
@@ -537,10 +528,10 @@ export async function makeRequest<M extends MessageType>(
 }
 
 export function getDecoderFor<M extends NullableMessageType>(
-  message: M
+  message: M,
 ): t.UnionC<[ResponseDecoder<M>, t.NullC]>
 export function getDecoderFor<M extends NotNullableMessageType>(
-  message: M
+  message: M,
 ): ResponseDecoder<M>
 export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
   const messageSpec = spec[message]
@@ -551,7 +542,7 @@ export function getDecoderFor<M extends MessageType>(message: M): t.Mixed {
 }
 
 export function getPayloadDecoderFor<M extends MessageType>(
-  message: M
+  message: M,
 ): PayloadDecoder<M> {
   return spec[message]['payload']
 }

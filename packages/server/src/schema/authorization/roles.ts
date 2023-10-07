@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { AuthorizationPayload, Permission, Scope } from '@serlo/authorization'
 import * as R from 'ramda'
 
@@ -60,6 +39,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Moderator]: {
     permissions: [
       Permission.Thread_SetThreadArchived,
+      Permission.Thread_SetThreadStatus,
       Permission.Thread_SetThreadState,
       Permission.Thread_SetCommentState,
     ],
@@ -71,11 +51,13 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Permission.Entity_OrderChildren,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.Uuid_SetState_EntityRevision,
+      Permission.Ai_ExecutePrompt,
     ],
   },
   [Role.Architect]: {
     permissions: [
       Permission.Entity_RemoveChild,
+      Permission.Entity_OrderChildren,
       Permission.TaxonomyTerm_Change,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.TaxonomyTerm_RemoveChild,
@@ -121,7 +103,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
 export type RolesPayload = { [scope in Scope]?: Role[] }
 
 export function resolveRolesPayload(
-  payload: RolesPayload
+  payload: RolesPayload,
 ): AuthorizationPayload {
   const permissions: AuthorizationPayload = {}
 
@@ -132,7 +114,7 @@ export function resolveRolesPayload(
   for (const globalRole of globalRoles) {
     globalPermissions = R.union(
       globalPermissions,
-      getPermissionsForRole(globalRole)
+      getPermissionsForRole(globalRole),
     )
   }
   permissions[Scope.Serlo] = globalPermissions
@@ -145,30 +127,30 @@ export function resolveRolesPayload(
     for (const role of roles) {
       instancedPermissions = R.union(
         instancedPermissions,
-        getPermissionsForRole(role)
+        getPermissionsForRole(role),
       )
     }
     permissions[scope] = instancedPermissions
   }
 
   return R.pickBy(R.complement(R.isEmpty), permissions)
+}
 
-  function getPermissionsForRole(role: Role): Permission[] {
-    return roleDefinitions[role].permissions ?? []
-  }
+export function getPermissionsForRole(role: Role): Permission[] {
+  return roleDefinitions[role].permissions ?? []
+}
 
-  function getRolesWithInheritance(initialRoles: Role[] = []): Role[] {
-    const allRoles: Role[] = []
-    const queue = [...initialRoles]
+export function getRolesWithInheritance(initialRoles: Role[] = []): Role[] {
+  const allRoles: Role[] = []
+  const queue = [...initialRoles]
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const role = queue.pop()
-      if (!role) return allRoles
-      if (allRoles.includes(role)) continue
-      allRoles.push(role)
-      const inheritedRoles = roleDefinitions[role].extends ?? []
-      queue.push(...inheritedRoles)
-    }
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const role = queue.pop()
+    if (!role) return allRoles
+    if (allRoles.includes(role)) continue
+    allRoles.push(role)
+    const inheritedRoles = roleDefinitions[role].extends ?? []
+    queue.push(...inheritedRoles)
   }
 }

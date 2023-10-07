@@ -1,25 +1,5 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { Matchers } from '@pact-foundation/pact'
+import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 import R from 'ramda'
 
 import {
@@ -42,6 +22,7 @@ import {
   appletRevision,
   article,
   articleRevision,
+  articleRevision2,
   checkoutRevisionNotificationEvent,
   comment,
   comment3,
@@ -57,6 +38,7 @@ import {
   groupedExerciseRevision,
   page,
   pageRevision,
+  pageRevision2,
   solution,
   solutionRevision,
   taxonomyTermCurriculumTopic,
@@ -127,7 +109,7 @@ const uuids = [
 ]
 const abstractEvent = R.pick(
   ['__typename', 'id', 'instance', 'date', 'actorId', 'objectId'],
-  checkoutRevisionNotificationEvent
+  checkoutRevisionNotificationEvent,
 ) as Model<'AbstractNotificationEvent'>
 
 const pactSpec: PactSpec = {
@@ -168,7 +150,14 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  EntitiesMetadataQuery: { examples: [] },
+  EntitiesMetadataQuery: {
+    examples: [
+      [
+        { first: 1, after: undefined, instance: Instance.De },
+        { entities: [{ identifier: { value: 1495 } }] },
+      ],
+    ],
+  },
   EntityAddRevisionMutation: {
     examples: [
       [
@@ -212,9 +201,34 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact tests for the following two mutations
-  EntityCheckoutRevisionMutation: { examples: [] },
-  EntityRejectRevisionMutation: { examples: [] },
+  EntityCheckoutRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: articleRevision2.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  EntityRejectRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: articleRevision2.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   EntityCreateMutation: {
     examples: [
       [
@@ -353,9 +367,34 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  // TODO: Add pact tests for the following two mutations
-  PageCheckoutRevisionMutation: { examples: [] },
-  PageRejectRevisionMutation: { examples: [] },
+  PageCheckoutRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: pageRevision2.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
+  PageRejectRevisionMutation: {
+    examples: [
+      [
+        {
+          revisionId: pageRevision2.id,
+          userId: user.id,
+          reason: '',
+        },
+        {
+          success: true,
+        },
+      ],
+    ],
+  },
   PageCreateMutation: {
     examples: [
       [
@@ -523,6 +562,7 @@ const pactSpec: PactSpec = {
           title: null,
           archived: false,
           childrenIds: [],
+          status: 'noStatus',
         },
       ],
     ],
@@ -550,6 +590,7 @@ const pactSpec: PactSpec = {
           content: '🔥 brand new!',
           parentId: article.id,
           childrenIds: [],
+          status: 'noStatus',
         },
       ],
     ],
@@ -566,6 +607,9 @@ const pactSpec: PactSpec = {
     examples: [
       [{ ids: [comment3.id], userId: user.id, archived: true }, undefined],
     ],
+  },
+  ThreadSetThreadStatusMutation: {
+    examples: [[{ ids: [comment3.id], status: 'open' }, { success: true }]],
   },
   ThreadsQuery: {
     examples: [[{ id: article.id }, { firstCommentIds: [1] }]],
@@ -701,13 +745,15 @@ async function addInteraction<M extends DatabaseLayer.MessageType>(arg: {
     withRequest: {
       method: 'POST',
       path: '/',
-      body: { type, payload },
+      // TODO: proper typing
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      body: { type, payload } as AnyTemplate,
       headers: { 'Content-Type': 'application/json' },
     },
     willRespondWith: {
       status: arg.responseStatus,
       headers: arg.responseHeaders ?? {},
-      body: arg.responseBody,
+      body: arg.responseBody as { responseBody: AnyTemplate },
     },
   })
 
@@ -722,7 +768,7 @@ function toMatcher(value: unknown): unknown {
   } else if (Array.isArray(value)) {
     return value.length > 0
       ? Matchers.eachLike(
-          typeof value[0] === 'object' ? toMatcher(value[0]) : value[0]
+          typeof value[0] === 'object' ? toMatcher(value[0]) : value[0],
         )
       : []
   } else if (typeof value === 'object') {
@@ -736,7 +782,7 @@ function toMatcher(value: unknown): unknown {
 
 function generalMap(
   func: (x: unknown) => unknown,
-  value: Record<string, unknown> | Array<unknown>
+  value: Record<string, unknown> | Array<unknown>,
 ): unknown {
   return Array.isArray(value)
     ? func(value)

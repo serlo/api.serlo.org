@@ -1,31 +1,10 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope, Scope } from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import R from 'ramda'
 
+import { UserInputError } from '~/errors'
 import { ModelDataSource } from '~/internals/data-source'
 import {
   addContext,
@@ -54,6 +33,10 @@ import {
   UserDecoder,
 } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
+import {
+  getPermissionsForRole,
+  getRolesWithInheritance,
+} from '~/schema/authorization/roles'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -114,8 +97,8 @@ export const resolvers: LegacyQueries<
           dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
             decoder: UserDecoder,
-          })
-        )
+          }),
+        ),
       )
 
       return resolveConnection({
@@ -162,14 +145,20 @@ export const resolvers: LegacyQueries<
           dataSources.model.serlo.getUuidWithCustomDecoder({
             id,
             decoder: UserDecoder,
-          })
-        )
+          }),
+        ),
       )
-      return resolveConnection({
+      const userConnection = resolveConnection({
         nodes: users,
         payload: { first },
         createCursor: (node) => node.id.toString(),
       })
+
+      return {
+        ...userConnection,
+        permissions: getPermissionsForRole(role),
+        inheritance: getRolesWithInheritance([role]),
+      }
     },
   },
   User: {
@@ -191,10 +180,10 @@ export const resolvers: LegacyQueries<
         E.getOrElse(consumeErrorEvent([] as string[][])),
         A.findLast(
           (row) =>
-            row.length >= 3 && row[1] === user.username && row[2] === 'yes'
+            row.length >= 3 && row[1] === user.username && row[2] === 'yes',
         ),
         O.chain(A.head),
-        O.getOrElse(R.always(null as null | string))
+        O.getOrElse(R.always(null as null | string)),
       )
     },
     async chatUrl(user, _args, { dataSources }) {
@@ -208,7 +197,7 @@ export const resolvers: LegacyQueries<
     },
     async isActiveAuthor(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
-        user.id
+        user.id,
       )
     },
     async isActiveDonor(user, _args, context) {
@@ -218,7 +207,7 @@ export const resolvers: LegacyQueries<
     },
     async isActiveReviewer(user, _args, { dataSources }) {
       return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
-        user.id
+        user.id,
       )
     },
     async isNewAuthor(user, _args, { dataSources }) {
@@ -242,24 +231,24 @@ export const resolvers: LegacyQueries<
               const unrevisedRevisionIds = unrevisedEntity.revisionIds.filter(
                 (revisionId) =>
                   unrevisedEntity.currentRevisionId === null ||
-                  revisionId > unrevisedEntity.currentRevisionId
+                  revisionId > unrevisedEntity.currentRevisionId,
               )
               const unrevisedRevisions = await Promise.all(
                 unrevisedRevisionIds.map((id) =>
                   dataSources.model.serlo.getUuidWithCustomDecoder({
                     id,
                     decoder: RevisionDecoder,
-                  })
-                )
+                  }),
+                ),
               )
 
               return [unrevisedEntity, unrevisedRevisions] as const
-            })
-        )
+            }),
+        ),
       )
       const unrevisedEntitiesByUser = unrevisedEntitiesAndRevisions
         .filter(([_, unrevisedRevisions]) =>
-          unrevisedRevisions.some((revision) => revision.authorId === user.id)
+          unrevisedRevisions.some((revision) => revision.authorId === user.id),
         )
         .map(([unrevisedEntity, _]) => unrevisedEntity)
 
@@ -332,7 +321,7 @@ export const resolvers: LegacyQueries<
 
       const { botIds } = input
       const users = await Promise.all(
-        botIds.map((botId) => dataSources.model.serlo.getUuid({ id: botId }))
+        botIds.map((botId) => dataSources.model.serlo.getUuid({ id: botId })),
       )
 
       if (!t.array(UserDecoder).is(users))
@@ -340,13 +329,13 @@ export const resolvers: LegacyQueries<
 
       const activities = await Promise.all(
         botIds.map((userId) =>
-          dataSources.model.serlo.getActivityByType({ userId })
-        )
+          dataSources.model.serlo.getActivityByType({ userId }),
+        ),
       )
 
       if (activities.some((activity) => activity.edits >= 5))
         throw new UserInputError(
-          'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.'
+          'One user has more than 4 edits. Is it really a spam account? Please inform the dev team.',
         )
 
       if (process.env.ENVIRONMENT === 'production') {
@@ -368,10 +357,10 @@ export const resolvers: LegacyQueries<
       }
 
       const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
-        { botIds }
+        { botIds },
       )
       await Promise.all(
-        botIds.map(async (botId) => await deleteKratosUser(botId, dataSources))
+        botIds.map(async (botId) => await deleteKratosUser(botId, dataSources)),
       )
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
@@ -411,12 +400,12 @@ export const resolvers: LegacyQueries<
           if (user.username !== username) return null
 
           return user
-        })
+        }),
       )
 
       if (!t.array(UserDecoder).is(users))
         throw new UserInputError(
-          'Either one id does not belong to a user or one username / id combination is wrong'
+          'Either one id does not belong to a user or one username / id combination is wrong',
         )
 
       return await Promise.all(
@@ -430,7 +419,7 @@ export const resolvers: LegacyQueries<
 
           if (result.success) await deleteKratosUser(id, dataSources)
           return result
-        })
+        }),
       )
     },
 
@@ -495,7 +484,7 @@ async function resolveUserConnectionFromIds({
   context: Context
 }) {
   const uuids = await Promise.all(
-    ids.map(async (id) => context.dataSources.model.serlo.getUuid({ id }))
+    ids.map(async (id) => context.dataSources.model.serlo.getUuid({ id })),
   )
   const users = assertAll({
     assertion(uuid: Model<'AbstractUuid'> | null): uuid is Model<'User'> {
@@ -520,12 +509,12 @@ async function activeDonorIDs({ dataSources }: Context) {
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,
     }),
-    extractIDsFromFirstColumn
+    extractIDsFromFirstColumn,
   )
 }
 
 function extractIDsFromFirstColumn(
-  columns: E.Either<ErrorEvent, CellValues>
+  columns: E.Either<ErrorEvent, CellValues>,
 ): number[] {
   return F.pipe(
     columns,
@@ -533,36 +522,36 @@ function extractIDsFromFirstColumn(
     E.chain(
       E.fromNullable<ErrorEvent>({
         error: new Error('no columns in selected range'),
-      })
+      }),
     ),
     E.map((rows) => rows.slice(1).map(R.trim)),
     E.map(
       assertAll({
         assertion: (entry) => /^\d+$/.test(entry),
         error: new Error('invalid entry in activeDonorSpreadsheet'),
-      })
+      }),
     ),
     E.map(A.map((entry) => Number(entry))),
     E.mapLeft(addContext({ location: 'activeDonorSpreadsheet' })),
-    E.getOrElse(consumeErrorEvent([] as number[]))
+    E.getOrElse(consumeErrorEvent([] as number[])),
   )
 }
 
 function assertInstanceIsSet(instance: Instance | null) {
   if (!instance) {
     throw new UserInputError(
-      "This role can't have a global scope: `instance` has to be declared."
+      "This role can't have a global scope: `instance` has to be declared.",
     )
   }
 }
 async function deleteKratosUser(
   userId: number,
-  dataSources: { model: ModelDataSource }
+  dataSources: { model: ModelDataSource },
 ) {
   const identity =
     await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(userId)
   if (identity)
-    await dataSources.model.authServices.kratos.admin.adminDeleteIdentity(
-      identity.id
-    )
+    await dataSources.model.authServices.kratos.admin.deleteIdentity({
+      id: identity.id,
+    })
 }

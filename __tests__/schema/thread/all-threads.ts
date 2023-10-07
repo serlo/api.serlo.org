@@ -1,42 +1,56 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { comment, comment1, comment2, comment3 } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import {
+  article,
+  article2,
+  comment,
+  comment1,
+  comment2,
+  comment3,
+} from '../../../__fixtures__'
+import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
 describe('allThreads', () => {
+  const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3)
+    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
+    given('UuidQuery').for(article, article2)
+    given('SubjectsQuery').returns({
+      subjects: [
+        {
+          instance: article.instance,
+          taxonomyTermId: article.taxonomyTermIds[0],
+        },
+        {
+          instance: article2.instance,
+          taxonomyTermId: article2.taxonomyTermIds[0],
+        },
+      ],
+    })
   })
 
   const query = new Client().prepareQuery({
     query: gql`
-      query ($first: Int, $after: String, $instance: Instance) {
+      query (
+        $first: Int
+        $after: String
+        $instance: Instance
+        $subjectId: String
+        $status: CommentStatus
+      ) {
         thread {
-          allThreads(first: $first, after: $after, instance: $instance) {
+          allThreads(
+            first: $first
+            after: $after
+            instance: $instance
+            subjectId: $subjectId
+            status: $status
+          ) {
             nodes {
               __typename
               createdAt
@@ -99,6 +113,38 @@ describe('allThreads', () => {
       .shouldReturnData({
         thread: { allThreads: { nodes: [comment2].map(getThreadData) } },
       })
+  })
+
+  test('parameter "subjectId"', async () => {
+    given('AllThreadsQuery')
+      .withPayload({ first: 11, subjectId: article.canonicalSubjectId! })
+      .returns({
+        firstCommentIds: [comment, comment1].map(R.prop('id')),
+      })
+
+    await query
+      .withVariables({
+        subjectId: encodeSubjectId(article.canonicalSubjectId!),
+      })
+      .shouldReturnData({
+        thread: {
+          allThreads: { nodes: [comment, comment1].map(getThreadData) },
+        },
+      })
+  })
+
+  test('parameter "status"', async () => {
+    given('AllThreadsQuery')
+      .withPayload({ first: 11, status: 'open' })
+      .returns({
+        firstCommentIds: [comment, comment1].map(R.prop('id')),
+      })
+
+    await query.withVariables({ status: 'open' }).shouldReturnData({
+      thread: {
+        allThreads: { nodes: [comment, comment1].map(getThreadData) },
+      },
+    })
   })
 
   test('fails when limit is bigger than 50', async () => {

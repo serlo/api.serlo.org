@@ -1,25 +1,4 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import { rest } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
@@ -76,7 +55,7 @@ beforeEach(() => {
       ctx.json({
         success: true,
         emailHashes: botIds.map((id) => emailHash({ id })),
-      })
+      }),
     )
   })
 
@@ -170,7 +149,7 @@ describe('community chat', () => {
 
   test('send a sentry event when the user cannot be deleted from the community chat', async () => {
     givenChatDeleteUserEndpoint(
-      returnsJson({ json: { success: false, errorType: 'unknown' } })
+      returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
 
     await mutation.withInput({ botIds: [user2.id] }).execute()
@@ -203,7 +182,7 @@ describe('mailchimp', () => {
 
   test('send a sentry event when the user cannot be deleted', async () => {
     givenMailchimpDeleteEmailEndpoint(
-      returnsJson({ status: 405, json: { errorType: 'unknown' } })
+      returnsJson({ status: 405, json: { errorType: 'unknown' } }),
     )
 
     await mutation.execute()
@@ -246,7 +225,7 @@ test('fails when database layer has an internal error', async () => {
 })
 
 test('fails when kratos has an error', async () => {
-  global.kratos.admin.adminDeleteIdentity = () => {
+  global.kratos.admin.deleteIdentity = () => {
     throw new Error('Error in kratos')
   }
 
@@ -254,15 +233,15 @@ test('fails when kratos has an error', async () => {
 })
 
 function givenChatDeleteUserEndpoint(
-  resolver: RestResolver<{ username: string }>
+  resolver: RestResolver<{ username: string }>,
 ) {
   global.server.use(
-    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver)
+    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver),
   )
 }
 
 function givenMailchimpDeleteEmailEndpoint(
-  resolver: RestResolver<never, { emailHash: string }>
+  resolver: RestResolver<never, { emailHash: string }>,
 ) {
   const url =
     `https://us5.api.mailchimp.com/3.0/` +

@@ -1,31 +1,15 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import type { V0alpha2Api } from '@ory/client'
+import type {
+  FrontendApi,
+  IdentityApi,
+  IdentityApiDeleteIdentityRequest,
+} from '@ory/client'
 import {
   RestRequest,
   ResponseResolver,
   rest,
   restContext,
   PathParams,
+  DefaultBodyType,
 } from 'msw'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -36,24 +20,26 @@ import type { MajorDimension } from '~/model'
 export class MockKratos {
   identities: Identity[] = []
 
-  public = {} as unknown as V0alpha2Api
+  public = {} as unknown as FrontendApi
 
   admin = {
-    adminDeleteIdentity: (id: string) => {
-      const identity = this.identities.find((identity) => identity.id === id)
+    deleteIdentity: (requestParameters: IdentityApiDeleteIdentityRequest) => {
+      const identity = this.identities.find(
+        (identity) => identity.id === requestParameters.id,
+      )
       if (identity) {
         const identityIndex = this.identities.indexOf(identity)
         this.identities.splice(identityIndex)
       }
     },
-  } as unknown as V0alpha2Api
+  } as unknown as IdentityApi
 
   db = {
     getIdentityByLegacyId: (
-      legacyId: number
+      legacyId: number,
     ): Partial<Identity> | undefined => {
       return this.identities.find(
-        (identity) => identity.metadata_public.legacy_id === legacyId
+        (identity) => identity.metadata_public.legacy_id === legacyId,
       )
     },
   } as unknown as KratosDB
@@ -111,7 +97,7 @@ export function defaultSpreadsheetApi(): SpreadsheetApiResolver {
 }
 
 export function givenSpreadsheet(
-  args: SpreadsheetQuery & { values: string[][] }
+  args: SpreadsheetQuery & { values: string[][] },
 ) {
   spreadsheets[toKey(args)] = args.values
 }
@@ -136,8 +122,8 @@ export function hasInternalServerError(): RestResolver {
 }
 
 export type RestResolver<
-  RequestBodyType = RestRequest['body'],
-  RequestParamsType extends PathParams = PathParams
+  RequestBodyType extends DefaultBodyType = DefaultBodyType,
+  RequestParamsType extends PathParams = PathParams,
 > = ResponseResolver<
   RestRequest<RequestBodyType, RequestParamsType>,
   typeof restContext

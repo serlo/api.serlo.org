@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { generateChangelog } from '@inyono/changelog'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
@@ -1455,11 +1434,154 @@ async function exec(): Promise<void> {
         date: '2023-02-12',
         fixed: ['user: decrease db calls due to language query'],
       },
+      {
+        tagName: 'v0.49.3',
+        date: '2023-03-02',
+        added: ['Add license for Chancenwerk'],
+      },
+      {
+        tagName: 'v0.49.4',
+        date: '2023-03-02',
+        changed: ['Change agreements of default and Chancenwerk license'],
+      },
+      {
+        tagName: 'v0.49.5',
+        date: '2023-03-02',
+        fixed: ['Minor rewording in licenses'],
+      },
+      {
+        tagName: 'v0.49.6',
+        date: '2023-03-06',
+        fixed: ['Minor rewording in license of Chancenwerk'],
+      },
+      {
+        tagName: 'v0.49.7',
+        date: '2023-03-17',
+        added: ['Add `subjectId` to allThreads()'],
+      },
+      {
+        tagName: 'v0.49.8',
+        date: '2023-04-12',
+        added: ['Add support for an empty cache'],
+        fixed: ['Make filtering of threads more resource efficient'],
+        changed: ['Update various dependencies'],
+      },
+      {
+        tagName: 'v0.50.0',
+        date: '2023-04-18',
+        added: ['Implement single logout endpoint for one oidc provider'],
+      },
+      {
+        tagName: 'v0.50.1',
+        date: '2023-05-15',
+        internal: ['Add logger to track use of Kratos register endpoint'],
+      },
+      {
+        tagName: 'v0.51.0',
+        date: '2023-06-13',
+        added: ['Set metadata version to 1.0.0'],
+        internal: ['Upgrade node to v18 and many dependencies'],
+      },
+      {
+        tagName: 'v0.51.1',
+        date: '2023-06-14',
+        fixed: ['Fix missing fetch by upgrade docker base image'],
+      },
+      {
+        tagName: 'v0.52.0',
+        date: '2023-06-26',
+        added: [
+          'Add endpoint version for frontend repo',
+          'Enable users to delete their own comments',
+        ],
+        internal: [
+          'Update various dependencies',
+          'Enable dependabot version updates',
+          'Add pact tests for entity revision and page revision',
+        ],
+      },
+      {
+        tagName: 'v0.52.1',
+        date: '2023-07-04',
+        internal: [
+          'Update various dependencies',
+          'Update dependabot configuration',
+        ],
+      },
+      {
+        tagName: 'v0.53.0',
+        date: '2023-07-26',
+        internal: [
+          'Upgrade ApolloServer to version 4',
+          'Update various dependencies',
+          'Refactor GitHub actions',
+        ],
+      },
+      {
+        tagName: 'v0.53.1',
+        date: '2023-07-26',
+        internal: ['Revert upgrade of Apollo Server to version 4'],
+      },
+      {
+        tagName: 'v0.53.2',
+        date: '2023-07-26',
+        internal: ['Upgrade ApolloServer to version 4'],
+      },
+      {
+        tagName: 'v0.53.3',
+        date: '2023-07-27',
+        internal: ['Add health endpoint'],
+      },
+      {
+        tagName: 'v0.54.0',
+        date: '2023-08-15',
+        added: ['authorization: Allow architect to sort entities'],
+      },
+      {
+        tagName: 'v0.55.0',
+        date: '2023-08-15',
+        internal: [
+          'Update dependencies',
+          'Update format of license texts to new editor format',
+        ],
+        changed: ['Update version of Metadata API'],
+      },
+      {
+        tagName: 'v0.56.0',
+        date: '2023-09-05',
+        added: [
+          'Add property `status` to Thread',
+          'Filter AllThreads by `status`',
+          'Add mutation ThreadSetStatus',
+        ],
+      },
+      {
+        tagName: 'v0.57.0',
+        date: '2023-09-11',
+        added: ['Reintroduce data-wallet'],
+      },
+      {
+        tagName: 'v0.57.1',
+        date: '2023-09-14',
+        internal: ['Add logging to enmeshed middleware'],
+      },
+      {
+        tagName: 'v0.57.2',
+        date: '2023-09-14',
+        internal: ['Fix logging in enmeshed middleware'],
+      },
+      {
+        tagName: 'v0.57.3',
+        date: '2023-10-05',
+        added: ['Add namespace `ai`'],
+        fixed: ['fix econnreset between connector and mongodb'],
+        internal: ['Update dependencies'],
+      },
     ],
   })
 
   await fs.promises.writeFile(
     path.join(__dirname, '..', 'CHANGELOG.md'),
-    content
+    content,
   )
 }

@@ -1,3 +1,9 @@
+enum CommentStatus {
+  noStatus
+  open
+  done
+}
+
 type Thread {
   id: String!
   createdAt: DateTime!
@@ -11,6 +17,7 @@ type Thread {
     first: Int
     last: Int
   ): CommentConnection!
+  status: CommentStatus!
 }
 
 type Comment implements AbstractUuid {
@@ -81,6 +88,8 @@ type ThreadQuery {
     after: String
     first: Int
     instance: Instance
+    subjectId: String
+    status: CommentStatus
   ): AllThreadsConnection!
 }
 
@@ -96,18 +105,13 @@ extend type Mutation {
 }
 
 type ThreadMutation {
-  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse
-  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse
-  editComment(input: ThreadEditCommentInput!): ThreadEditCommentResponse
-  setThreadArchived(
-    input: ThreadSetThreadArchivedInput!
-  ): ThreadSetThreadArchivedResponse
-  setThreadState(
-    input: ThreadSetThreadStateInput!
-  ): ThreadSetThreadStateResponse
-  setCommentState(
-    input: ThreadSetCommentStateInput!
-  ): ThreadSetCommentStateResponse
+  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse!
+  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse!
+  editComment(input: ThreadEditCommentInput!): DefaultResponse!
+  setThreadArchived(input: ThreadSetThreadArchivedInput!): DefaultResponse!
+  setThreadState(input: ThreadSetThreadStateInput!): DefaultResponse!
+  setCommentState(input: ThreadSetCommentStateInput!): DefaultResponse!
+  setThreadStatus(input: ThreadSetThreadStatusInput!): DefaultResponse!
 }
 
 input ThreadCreateThreadInput {
@@ -142,35 +146,22 @@ input ThreadEditCommentInput {
   commentId: Int!
 }
 
-type ThreadEditCommentResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input ThreadSetThreadArchivedInput {
   id: [String!]!
   archived: Boolean!
-}
-
-type ThreadSetThreadArchivedResponse {
-  success: Boolean!
-  query: Query!
 }
 
 input ThreadSetThreadStateInput {
   id: [String!]!
   trashed: Boolean!
 }
-type ThreadSetThreadStateResponse {
-  success: Boolean!
-  query: Query!
-}
 
 input ThreadSetCommentStateInput {
   id: [Int!]!
   trashed: Boolean!
 }
-type ThreadSetCommentStateResponse {
-  success: Boolean!
-  query: Query!
+
+input ThreadSetThreadStatusInput {
+  id: [String!]!
+  status: CommentStatus!
 }

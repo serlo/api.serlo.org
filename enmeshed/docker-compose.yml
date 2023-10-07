@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  enmeshed-connector:
+    container_name: enmeshed-connector
+    image: ghcr.io/nmshd/connector:latest
+    environment:
+      CUSTOM_CONFIG_LOCATION: '/config.json'
+    ports:
+      - '8081:80'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./config.json:/config.json:ro
+      - ./logs:/usr/app/logs
+    depends_on:
+      - enmeshed-mongodb
+    restart: always
+
+  enmeshed-mongodb:
+    container_name: enmeshed-mongodb
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+    restart: always
+
+volumes:
+  mongodb_data:

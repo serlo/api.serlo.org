@@ -1,34 +1,15 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-
 import { Session } from '@ory/client'
-import { ForbiddenError } from 'apollo-server'
+import * as t from 'io-ts'
 
+import { ForbiddenError } from '~/errors'
 import { captureErrorEvent } from '~/internals/error-event'
 import {
   Mutations,
   createNamespace,
   assertUserIsAuthenticated,
 } from '~/internals/graphql'
+
+const TraitsDecoder = t.type({ username: t.string, email: t.string })
 
 export const resolvers: Mutations<'oauth'> = {
   Mutation: {
@@ -46,19 +27,22 @@ export const resolvers: Mutations<'oauth'> = {
 
       if (legacyId !== userId) {
         throw new ForbiddenError(
-          'OAuth: You can only accept login for yourself'
+          'OAuth: You can only accept login for yourself',
         )
       }
 
       const { hydra } = dataSources.model.authServices
 
       return await hydra
-        .getLoginRequest(challenge)
+        .getOAuth2LoginRequest({ loginChallenge: challenge })
         .then(async () => {
           return await hydra
-            .acceptLoginRequest(challenge, {
-              subject: String(legacyId),
-              context: session as Session,
+            .acceptOAuth2LoginRequest({
+              loginChallenge: challenge,
+              acceptOAuth2LoginRequest: {
+                subject: String(legacyId),
+                context: session as Session,
+              },
             })
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
@@ -69,7 +53,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the login request'
+                'Something went wrong while accepting the login request',
               )
             })
         })
@@ -79,11 +63,11 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the login request'
+            'Something went wrong while getting the login request',
           )
         })
     },
-    async acceptConsent(_parent, { input }, { dataSources, userId }) {
+    acceptConsent(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input as {
@@ -97,37 +81,44 @@ export const resolvers: Mutations<'oauth'> = {
 
       if (legacyId !== userId) {
         throw new ForbiddenError(
-          'OAuth: You can only accept consent for yourself'
+          'OAuth: You can only accept consent for yourself',
         )
       }
 
-      const { username, email } = session.identity.traits as {
-        username: string
-        email: string
+      const traits = session.identity?.traits as unknown
+
+      if (!TraitsDecoder.is(traits)) {
+        throw new ForbiddenError('session has illegal state')
       }
+
+      const { username, email } = traits
       const { hydra } = dataSources.model.authServices
 
       return hydra
-        .getConsentRequest(challenge)
+        .getOAuth2ConsentRequest({ consentChallenge: challenge })
         .then(async ({ data: body }) => {
           const scopes = body.requested_scope
 
           return await hydra
-            .acceptConsentRequest(challenge, {
-              grant_scope: body.requested_scope,
+            .acceptOAuth2ConsentRequest({
+              consentChallenge: challenge,
+              acceptOAuth2ConsentRequest: {
+                grant_scope: body.requested_scope,
 
-              grant_access_token_audience: body.requested_access_token_audience,
+                grant_access_token_audience:
+                  body.requested_access_token_audience,
 
-              session: {
-                id_token: {
-                  id: legacyId,
-                  username,
-                  ...(scopes?.includes('email')
-                    ? {
-                        email,
-                        email_verified: true,
-                      }
-                    : {}),
+                session: {
+                  id_token: {
+                    id: legacyId,
+                    username,
+                    ...(scopes?.includes('email')
+                      ? {
+                          email,
+                          email_verified: true,
+                        }
+                      : {}),
+                  },
                 },
               },
             })
@@ -140,7 +131,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the consent request'
+                'Something went wrong while accepting the consent request',
               )
             })
         })
@@ -150,17 +141,17 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the consent request'
+            'Something went wrong while getting the consent request',
           )
         })
     },
     async acceptLogout(_parent, { challenge }, { dataSources }) {
       const { hydra } = dataSources.model.authServices
       return await hydra
-        .getLogoutRequest(challenge)
+        .getOAuth2LogoutRequest({ logoutChallenge: challenge })
         .then(async () => {
           return await hydra
-            .acceptLogoutRequest(challenge)
+            .acceptOAuth2LogoutRequest({ logoutChallenge: challenge })
             .then(({ data: body }) => {
               return { success: true, redirectUri: body.redirect_to }
             })
@@ -170,7 +161,7 @@ export const resolvers: Mutations<'oauth'> = {
                 errorContext: { challenge },
               })
               throw new Error(
-                'Something went wrong while accepting the logout request'
+                'Something went wrong while accepting the logout request',
               )
             })
         })
@@ -180,7 +171,7 @@ export const resolvers: Mutations<'oauth'> = {
             errorContext: { challenge },
           })
           throw new Error(
-            'Something went wrong while getting the logout request'
+            'Something went wrong while getting the logout request',
           )
         })
     },

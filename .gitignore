@@ -1,3 +1,7 @@
+# Local enmeshed connector
+/enmeshed/logs
+/enmeshed/config.json
+
 # Logs
 logs
 *.log
@@ -89,6 +93,3 @@ dist/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# asdf version file
-.tool-versions

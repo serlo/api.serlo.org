@@ -8,7 +8,11 @@ Unified GraphQL API for [Serlo](https://serlo.org).
 
 ## Setup
 
-You need [Docker](https://docs.docker.com/engine/installation/), [Node.js](https://nodejs.org) and [Yarn](https://yarnpkg.com) installed on your system.
+You need:
+
+- [Node.js](https://nodejs.org) and [yarn cli](https://yarnpkg.com/cli/) from [.tool-versions](.tool-versions) installed on your system.
+  - You may use [asdf](https://asdf-vm.com/) for the installation.
+- [Docker](https://docs.docker.com/engine/installation/)
 
 Now follow the upcoming instructions.
 
@@ -22,14 +26,24 @@ $ cd api.serlo.org
 
 ## Development
 
-### Install dependencies
+### Initial setup
 
-Run `yarn` to install the dependencies of all packages and
-run `yarn build` to build also the packages 'authorization' and 'types'.
+Run `yarn` to install the dependencies of all packages.
+
+Run `yarn build` to build the packages 'authorization' and 'types'.
 
 ### Start
 
 Make sure Docker is running and then run `yarn start` to start Redis.
+
+#### Setup NODE_OPTIONS
+
+If in the `/etc/hosts` file of your host you have the `::1` (IPv6) mapped to `localhost`, you will additionally need
+to set: `--dns-result-order=ipv4first` in the `NODE_OPTIONS` environment variable:
+
+```bash
+export NODE_OPTIONS=--dns-result-order=ipv4first
+```
 
 ### Run tests
 
@@ -37,9 +51,15 @@ Make sure Docker is running and then run `yarn start` to start Redis.
 - `yarn pacts` runs the contract tests (requires `yarn start:redis` beforehand)
 - `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into main
 
+### Run specific test
+
+You can pass the name of your test as an argument. For example to only run the tests of the metadata.
+
+`yarn test -- metadata`
+
 ### Use the GraphQL playground
 
-After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).  
+After `yarn start`, you can open the GraphQL playground via [http://localhost:3000/\_\_\_graphql](http://localhost:3000/___graphql).
 Note that most queries will need a running [serlo/serlo.org-database-layer](https://github.com/serlo/serlo.org-database-layer) dev environment.
 
 If you need to run requests authenticated/authorized, use `yarn auth` to be authenticated as user with id 1 or `yarn auth <id>` to choose a specific user.

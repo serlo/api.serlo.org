@@ -1,39 +1,19 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { Configuration as KratosConfig, V0alpha2Api } from '@ory/client'
-import { AdminApi, Configuration as HydraConfig } from '@ory/hydra-client'
+import { Configuration, IdentityApi, FrontendApi, OAuth2Api } from '@ory/client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import { Pool, DatabaseError } from 'pg'
 
 import { captureErrorEvent } from '../error-event'
 
+export interface Kratos {
+  public: FrontendApi
+  admin: IdentityApi
+  db: KratosDB
+}
+
 export interface AuthServices {
-  kratos: {
-    public: V0alpha2Api
-    admin: V0alpha2Api
-    db: KratosDB
-  }
-  hydra: AdminApi
+  kratos: Kratos
+  hydra: OAuth2Api
 }
 
 export interface Identity {
@@ -91,6 +71,28 @@ export class KratosDB extends Pool {
     if (identities && IdentityDecoder.is(identities[0])) return identities[0]
     return null
   }
+
+  async getIdByCredentialIdentifier(
+    identifier: string,
+  ): Promise<string | null> {
+    const identities = await this.executeSingleQuery({
+      query: `SELECT identity_credentials.identity_id
+           FROM identity_credentials
+           JOIN identity_credential_identifiers
+             ON identity_credentials.id = identity_credential_identifiers.identity_credential_id
+             WHERE identity_credential_identifiers.identifier = $1`,
+      params: [identifier],
+    })
+
+    if (
+      identities &&
+      identities[0] &&
+      t.type({ identity_id: t.string }).is(identities[0])
+    ) {
+      return identities[0].identity_id
+    }
+    return null
+  }
   async executeSingleQuery<T>({
     query,
     params = [],
@@ -109,28 +111,28 @@ export class KratosDB extends Pool {
 export function createAuthServices(): AuthServices {
   return {
     kratos: {
-      public: new V0alpha2Api(
-        new KratosConfig({
+      public: new FrontendApi(
+        new Configuration({
           basePath: process.env.SERVER_KRATOS_PUBLIC_HOST,
-        })
+        }),
       ),
 
-      admin: new V0alpha2Api(
-        new KratosConfig({
+      admin: new IdentityApi(
+        new Configuration({
           basePath: process.env.SERVER_KRATOS_ADMIN_HOST,
-        })
+        }),
       ),
       db: new KratosDB({
         connectionString: process.env.SERVER_KRATOS_DB_URI,
       }),
     },
-    hydra: new AdminApi(
-      new HydraConfig({
+    hydra: new OAuth2Api(
+      new Configuration({
         basePath: process.env.SERVER_HYDRA_HOST,
         baseOptions: {
           headers: { 'X-Forwarded-Proto': 'https' },
         },
-      })
+      }),
     ),
   }
 }
