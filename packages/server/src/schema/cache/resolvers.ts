@@ -1,26 +1,4 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { ForbiddenError } from 'apollo-server'
-
+import { ForbiddenError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
 
@@ -31,6 +9,7 @@ const allowedUserIds = [
   32543, // botho
   178145, // CarolinJaser
   178807, // HugoBT
+  245844, // MoeHome
 ]
 
 export const resolvers: Mutations<'_cache'> = {
@@ -68,7 +47,7 @@ export const resolvers: Mutations<'_cache'> = {
         allowedServices: [Service.Serlo, Service.SerloCacheWorker],
       })
       await Promise.all(
-        input.keys.map((key) => dataSources.model.updateCacheValue({ key }))
+        input.keys.map((key) => dataSources.model.updateCacheValue({ key })),
       )
       return { success: true }
     },
@@ -92,7 +71,7 @@ function checkPermission({
     (userId === null || !allowedUserIds.includes(userId))
   ) {
     throw new ForbiddenError(
-      `You do not have the permissions to ${operation} the cache`
+      `You do not have the permissions to ${operation} the cache`,
     )
   }
 }

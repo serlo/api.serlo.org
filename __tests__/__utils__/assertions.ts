@@ -1,57 +1,57 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { ApolloServer } from 'apollo-server'
+import { ApolloServer } from '@apollo/server'
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 
-import { given, nextUuid } from '.'
-import { createTestClient } from './test-client'
+import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
+import { Service } from '~/internals/authentication'
+import { ModelDataSource } from '~/internals/data-source'
+import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
+import { getGraphQLOptions } from '~/internals/server'
 
 export class Client {
-  private apolloServer: ApolloServer
+  private apolloServer: ApolloServer<ClientContext>
+  private readonly context?: ClientContext
 
   constructor(context?: ClientContext) {
-    this.apolloServer = createTestClient(context)
+    this.context = context
+    this.apolloServer = new ApolloServer<
+      Partial<Pick<Context, 'service' | 'userId'>>
+    >({
+      ...getGraphQLOptions(createTestEnvironment()),
+    })
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
-    query: QuerySpec<V>
+    query: QuerySpec<V>,
   ) {
     return new Query(this, query)
   }
 
   execute(query: QuerySpec<Variables<Input>>) {
-    return this.apolloServer.executeOperation(query)
+    const environment: Environment = createTestEnvironment()
+    return this.apolloServer.executeOperation(query, {
+      contextValue: {
+        dataSources: {
+          model: new ModelDataSource(environment),
+        },
+        service: this.context?.service ?? Service.SerloCloudflareWorker,
+        userId: this.context?.userId ?? null,
+      } as Context,
+    })
   }
 }
 
 export class Query<
   I extends Input = Input,
-  V extends Variables<I> = Variables<I>
+  V extends Variables<I> = Variables<I>,
 > {
-  constructor(private client: Client, private query: QuerySpec<V>) {}
+  constructor(
+    private client: Client,
+    private query: QuerySpec<V>,
+  ) {}
 
   withInput(input: I) {
     return new Query(this.client, { ...this.query, variables: { input } })
@@ -60,7 +60,7 @@ export class Query<
   changeInput(input: Partial<I>) {
     return new Query(
       this.client,
-      R.mergeDeepRight(this.query, { variables: { input } })
+      R.mergeDeepRight(this.query, { variables: { input } }),
     )
   }
 
@@ -95,8 +95,11 @@ export class Query<
   async shouldReturnData(data: unknown) {
     const result = await this.execute()
 
-    expect(result['errors']).toBeUndefined()
-    expect(result).toMatchObject({ data })
+    expect(result.body.kind).toBe('single')
+    if (result.body.kind === 'single') {
+      expect(result.body.singleResult['errors']).toBeUndefined()
+      expect(result.body.singleResult).toMatchObject({ data })
+    }
   }
 
   async shouldFailWithError(
@@ -104,10 +107,15 @@ export class Query<
       | 'BAD_USER_INPUT'
       | 'FORBIDDEN'
       | 'INTERNAL_SERVER_ERROR'
-      | 'UNAUTHENTICATED'
+      | 'UNAUTHENTICATED',
   ) {
     const response = await this.execute()
-    expect(response?.errors?.[0]?.extensions?.code).toEqual(expectedError)
+    expect(response.body.kind).toBe('single')
+    if (response.body.kind === 'single') {
+      expect(response?.body.singleResult.errors?.[0]?.extensions?.code).toEqual(
+        expectedError,
+      )
+    }
   }
 }
 

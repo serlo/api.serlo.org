@@ -1,27 +1,6 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import * as auth from '@serlo/authorization'
-import { ForbiddenError, UserInputError } from 'apollo-server'
 
+import { ForbiddenError, UserInputError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
@@ -64,7 +43,7 @@ export const resolvers: TypeResolvers<Notification> &
     async notifications(
       _parent,
       { userId: requestedUserId, unread, emailSent, email, ...cursorPayload },
-      { dataSources, service, userId: authUserId }
+      { dataSources, service, userId: authUserId },
     ) {
       let userId: number
 
@@ -74,7 +53,7 @@ export const resolvers: TypeResolvers<Notification> &
       } else {
         if (service !== Service.NotificationEmailService) {
           throw new UserInputError(
-            "Service is not allowed to query user's notifications"
+            "Service is not allowed to query user's notifications",
           )
         }
         userId = requestedUserId
@@ -88,7 +67,7 @@ export const resolvers: TypeResolvers<Notification> &
         (notification) =>
           (unread == null || notification.unread === unread) &&
           (email == null || notification.email === email) &&
-          (emailSent == null || notification.emailSent === emailSent)
+          (emailSent == null || notification.emailSent === emailSent),
       )
 
       return resolveConnection({
@@ -119,14 +98,16 @@ export const resolvers: TypeResolvers<Notification> &
         const notification = notifications.find((n) => n.id === id)
         if (!notification) {
           throw new ForbiddenError(
-            'You are only allowed to set your own notification states.'
+            'You are only allowed to set your own notification states.',
           )
         }
         return notification.eventId
       })
 
       const scopes = await Promise.all(
-        eventIds.map((id) => fetchScopeOfNotificationEvent({ id, dataSources }))
+        eventIds.map((id) =>
+          fetchScopeOfNotificationEvent({ id, dataSources }),
+        ),
       )
 
       await assertUserIsAuthorized({

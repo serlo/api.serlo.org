@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { DocumentNode } from 'graphql'
 import R from 'ramda'
 import { A, O } from 'ts-toolbelt'
@@ -38,7 +17,7 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
   const resolvers = R.reduce<Record<string, unknown>, Schema['resolvers']>(
     R.mergeDeepRight,
     {},
-    subResolvers
+    subResolvers,
   )
   const subTypeDefs = R.map((schema) => schema.typeDefs, schemas)
   const typeDefs = R.flatten(subTypeDefs)
@@ -210,11 +189,10 @@ export type InterfaceResolvers<I extends keyof Resolvers> = Required<
  */
 export type PickResolvers<
   R extends keyof Resolvers,
-  F = O.OptionalKeys<GetResolver<R>>
+  F = O.OptionalKeys<GetResolver<R>>,
 > = Required<PickKeys<GetResolver<R>, F>>
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
+export type ResolverFunction<Result, Parent, Args = object> = Resolver<
   Result,
   Parent,
   Context,
@@ -241,7 +219,7 @@ export type ResolverFunction<Result, Parent, Args = {}> = Resolver<
 export type TypeResolvers<T extends { __typename?: keyof Resolvers }> =
   Typename<T> extends keyof Resolvers
     ? A.Compute<
-        O.MergeUp<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
+        O.Merge<RequiredResolvers<T>, Pick<Resolvers, Typename<T>>, 'deep'>,
         'deep'
       >
     : never

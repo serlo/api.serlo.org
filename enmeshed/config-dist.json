@@ -1,0 +1,51 @@
+{
+  "transportLibrary": {
+    "baseUrl": "https://mycustomurl.org",
+    "platformClientId": "clientId",
+    "platformClientSecret": "clientSecret"
+  },
+  "database": {
+    "connectionString": "mongodb://root:password@enmeshed-mongodb:27017/?authSource=admin&readPreference=primary&ssl=false",
+    "dbName": "demo"
+  },
+  "infrastructure": {
+    "httpServer": {
+      "enabled": true,
+      "cors": {
+        "origin": false
+      },
+      "apiKey": "apiKey"
+    }
+  },
+  "modules": {
+    "sync": {
+      "enabled": true,
+      "interval": 5
+    },
+    "autoAcceptRelationshipCreationChanges": {
+      "enabled": false,
+      "responseContent": {}
+    },
+    "coreHttpApi": {
+      "enabled": true,
+      "docs": {
+        "enabled": false
+      }
+    },
+    "webhooksV2": {
+      "enabled": true,
+      "webhooks": [
+        {
+          "triggers": ["transport.messageReceived"],
+          "target": {
+            "url": "http://host.docker.internal:3001/enmeshed/webhook",
+            "headers": {
+              "X-API-KEY": "webhookKey"
+            },
+            "publishInterval": 5
+          }
+        }
+      ]
+    }
+  }
+}

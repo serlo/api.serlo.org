@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { spawnSync } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
@@ -83,13 +62,13 @@ function buildDockerImage({
       '--format',
       'json',
     ],
-    { stdio: 'pipe' }
+    { stdio: 'pipe' },
   )
   const images = JSON.parse(String(result.stdout)) as unknown[]
 
   if (images.length > 0) {
     console.log(
-      `Skipping deployment: ${remoteName}:${version} already present in registry`
+      `Skipping deployment: ${remoteName}:${version} already present in registry`,
     )
     return
   }
@@ -101,7 +80,7 @@ function buildDockerImage({
   spawnSync(
     'docker',
     ['build', '-f', Dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
-    { stdio: 'inherit' }
+    { stdio: 'inherit' },
   )
 
   remoteTags.forEach((remoteTag) => {
@@ -118,7 +97,9 @@ function getTargetVersions(version: semver.SemVer) {
         'next',
         ...R.range(0, prerelease.length).map(
           (i) =>
-            `${major}.${minor}.${patch}-${prerelease.slice(0, i + 1).join('.')}`
+            `${major}.${minor}.${patch}-${prerelease
+              .slice(0, i + 1)
+              .join('.')}`,
         ),
       ]
     : ['latest', `${major}`, `${major}.${minor}`, `${major}.${minor}.${patch}`]

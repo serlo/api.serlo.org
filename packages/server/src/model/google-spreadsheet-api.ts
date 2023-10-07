@@ -1,30 +1,8 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { either as E, option as O, function as F } from 'fp-ts'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
 import { formatValidationErrors } from 'io-ts-reporters'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
-import fetch from 'node-fetch'
 import { URL } from 'url'
 
 import { createQuery } from '~/internals/data-source-helper'
@@ -70,7 +48,7 @@ export function createGoogleSpreadsheetApiModel({
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows
         const url = new URL(
-          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
         )
         url.searchParams.append('majorDimension', majorDimension)
         const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
@@ -80,7 +58,7 @@ export function createGoogleSpreadsheetApiModel({
           addContext({
             location: 'googleSpreadSheetApi',
             locationContext: { ...args },
-          })
+          }),
         )
 
         try {
@@ -98,7 +76,7 @@ export function createGoogleSpreadsheetApiModel({
             }),
             E.map((v) => v.values),
             E.chain(E.fromNullable({ error: new Error('range is empty') })),
-            specifyErrorLocation
+            specifyErrorLocation,
           )
         } catch (error) {
           return specifyErrorLocation(E.left({ error: E.toError(error) }))
@@ -126,7 +104,7 @@ export function createGoogleSpreadsheetApiModel({
         majorDimension: MajorDimension.Rows,
       },
     },
-    environment
+    environment,
   )
 
   return {

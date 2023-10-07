@@ -1,31 +1,10 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import * as serloAuth from '@serlo/authorization'
-import { UserInputError } from 'apollo-server'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds, getDefaultLicense } from '~/config'
+import { UserInputError } from '~/errors'
 import {
   assertStringIsNotEmpty,
   assertUserIsAuthenticated,
@@ -64,7 +43,7 @@ export function createSetEntityResolver({
   return async (
     _parent: unknown,
     { input }: { input: SetAbstractEntityInput },
-    { dataSources, userId }: Context
+    { dataSources, userId }: Context,
   ) => {
     assertStringIsNotEmpty(R.pick(mandatoryFieldKeys, input))
 
@@ -73,7 +52,7 @@ export function createSetEntityResolver({
     const { needsReview } = input
     const forwardArgs = R.pick(
       ['changes', 'subscribeThis', 'subscribeThisByEmail'],
-      input
+      input,
     )
     const fieldKeys = [
       'cohesive',
@@ -87,7 +66,7 @@ export function createSetEntityResolver({
     const fields = R.mapObjIndexed(
       (val: string | boolean) =>
         typeof val !== 'string' ? val.toString() : val,
-      R.filter((val) => val != null, R.pick(fieldKeys, input))
+      R.filter((val) => val != null, R.pick(fieldKeys, input)),
     )
 
     if (!checkInput(input))
@@ -107,13 +86,13 @@ export function createSetEntityResolver({
         input.entityId == null ? 'entities' : 'revisions'
       }`,
       guard: serloAuth.Uuid.create(
-        input.entityId == null ? 'Entity' : 'EntityRevision'
+        input.entityId == null ? 'Entity' : 'EntityRevision',
       )(scope),
     })
 
     const isAutoreview = await isAutoreviewEntity(
       input.entityId != null ? input.entityId : input.parentId,
-      dataSources
+      dataSources,
     )
 
     if (!isAutoreview && !needsReview) {
@@ -158,7 +137,7 @@ export function createSetEntityResolver({
 
       if (!isParentTaxonomyTerm && !isParentEntity)
         throw new UserInputError(
-          `No entity or taxonomy term found for the provided id ${input.parentId}`
+          `No entity or taxonomy term found for the provided id ${input.parentId}`,
         )
 
       const entity = await dataSources.model.serlo.createEntity({
@@ -181,7 +160,7 @@ export function createSetEntityResolver({
 
 async function isAutoreviewEntity(
   id: number,
-  dataSources: Context['dataSources']
+  dataSources: Context['dataSources'],
 ): Promise<boolean> {
   if (autoreviewTaxonomyIds.includes(id)) return true
 
@@ -195,7 +174,7 @@ async function isAutoreviewEntity(
   } else if (t.type({ taxonomyTermIds: t.array(t.number) }).is(uuid)) {
     return (
       await Promise.all(
-        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, dataSources))
+        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, dataSources)),
       )
     ).every((x) => x)
   } else {

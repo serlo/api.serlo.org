@@ -115,11 +115,14 @@ module.exports = {
       'error',
       {
         allow: [
+          '@pact-foundation/pact/src/dsl/matchers',
           'msw/node',
           'io-ts/lib/*',
           'io-ts-types/lib/*',
           'fp-ts/lib/*',
           'ts-jest/utils',
+          '@apollo/server/plugin/disabled',
+          '@apollo/server/express4',
         ],
       },
     ],

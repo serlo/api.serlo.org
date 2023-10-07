@@ -1,31 +1,8 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
-import {
-  ApolloError,
-  ApolloServer,
-  ApolloServerExpressConfig,
-} from 'apollo-server-express'
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { Express, json } from 'express'
+import { GraphQLError, GraphQLFormattedError } from 'graphql'
 import createPlayground from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
@@ -61,33 +38,64 @@ export async function applyGraphQLMiddleware({
   swrQueue: SwrQueue
   authServices: AuthServices
 }) {
+  const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
-  const server = new ApolloServer(getGraphQLOptions(environment))
+  const server = new ApolloServer<Context>(getGraphQLOptions(environment))
   await server.start()
 
   app.use(json({ limit: '2mb' }))
   app.use(
-    server.getMiddleware({
-      path: '/graphql',
-      onHealthCheck: async () => {
-        await swrQueue.healthy()
+    graphQLPath,
+    expressMiddleware(server, {
+      async context({ req }): Promise<Context> {
+        const dataSources = {
+          model: new ModelDataSource(environment),
+        }
+        const authorizationHeader = req.headers.authorization
+        if (!authorizationHeader) {
+          return Promise.resolve({
+            dataSources,
+            service: Service.SerloCloudflareWorker,
+            userId: null,
+          })
+        }
+        const partialContext = await handleAuthentication(
+          authorizationHeader,
+          async () => {
+            try {
+              const publicKratos = environment.authServices.kratos.public
+              const session = (
+                await publicKratos.toSession({ cookie: req.header('cookie') })
+              ).data
+
+              if (SessionDecoder.is(session)) {
+                // TODO: When the time comes change it to session.identity.id
+                return session.identity.metadata_public.legacy_id
+              } else {
+                return null
+              }
+            } catch {
+              // the user is probably unauthenticated
+              return null
+            }
+          },
+        )
+        return { ...partialContext, dataSources }
       },
-    })
+    }),
   )
   app.get('/___graphql', (...args) => {
     const headers =
       process.env.NODE_ENV === 'production'
         ? {}
         : { headers: { Authorization: `Serlo Service=${getToken()}` } }
-    return createPlayground({ endpoint: '/graphql', ...headers })(...args)
+    return createPlayground({ endpoint: graphQLPath, ...headers })(...args)
   })
 
-  return server.graphqlPath
+  return graphQLPath
 }
 
-export function getGraphQLOptions(
-  environment: Environment
-): ApolloServerExpressConfig {
+export function getGraphQLOptions(environment: Environment) {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
@@ -99,42 +107,12 @@ export function getGraphQLOptions(
       createInvalidCurrentValueErrorPlugin({ environment }),
       createSentryPlugin(),
     ],
-    dataSources() {
-      return {
-        model: new ModelDataSource(environment),
-      }
-    },
-    formatError(error) {
+    formatError(error: GraphQLFormattedError) {
       return R.path(['response', 'status'], error.extensions) === 400
-        ? new ApolloError(error.message, 'BAD_REQUEST', error.extensions)
+        ? new GraphQLError(error.message, {
+            extensions: { ...error.extensions, code: 'BAD_REQUEST' },
+          })
         : error
-    },
-    context({ req }): Promise<Pick<Context, 'service' | 'userId'>> {
-      const authorizationHeader = req.headers.authorization
-      if (!authorizationHeader) {
-        return Promise.resolve({
-          service: Service.SerloCloudflareWorker,
-          userId: null,
-        })
-      }
-      return handleAuthentication(authorizationHeader, async () => {
-        try {
-          const publicKratos = environment.authServices.kratos.public
-          const session = (
-            await publicKratos.toSession(undefined, req.header('cookie'))
-          ).data
-
-          if (SessionDecoder.is(session)) {
-            // TODO: When the time comes change it to session.identity.id
-            return session.identity.metadata_public.legacy_id
-          } else {
-            return null
-          }
-        } catch {
-          // the user is probably unauthenticated
-          return null
-        }
-      })
     },
   }
 }

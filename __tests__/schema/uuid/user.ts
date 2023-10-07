@@ -1,26 +1,5 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { Scope } from '@serlo/authorization'
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import R from 'ramda'
 
 import {
@@ -92,7 +71,7 @@ describe('User', () => {
             'lastLogin',
             'description',
           ],
-          user
+          user,
         ),
       })
   })
@@ -458,7 +437,7 @@ describe('User', () => {
   describe('property "chatUrl"', () => {
     test('when user is registered at community.serlo.org', async () => {
       global.server.use(
-        createChatUsersInfoHandler({ username: user.username, success: true })
+        createChatUsersInfoHandler({ username: user.username, success: true }),
       )
 
       await client
@@ -481,7 +460,7 @@ describe('User', () => {
 
     test('when user is registered at community.serlo.org', async () => {
       global.server.use(
-        createChatUsersInfoHandler({ username: user.username, success: false })
+        createChatUsersInfoHandler({ username: user.username, success: false }),
       )
 
       await client
@@ -527,7 +506,7 @@ describe('User', () => {
       unrevisedRevisionByUser,
       unrevisedRevisionByAnotherUser,
       articleByAnotherUser,
-      articleByUser
+      articleByUser,
     )
     given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
 

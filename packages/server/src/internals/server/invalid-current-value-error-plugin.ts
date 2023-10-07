@@ -1,33 +1,14 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import type {
   ApolloServerPlugin,
   GraphQLRequestExecutionListener,
   GraphQLRequestListener,
-} from 'apollo-server-plugin-base'
+} from '@apollo/server'
+import { GraphQLError } from 'graphql'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
+import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 import { createSerloModel } from '~/model'
 import { UuidDecoder } from '~/model/decoder'
@@ -41,11 +22,13 @@ export function createInvalidCurrentValueErrorPlugin({
   const serloModel = createSerloModel({ environment })
   return {
     // eslint-disable-next-line @typescript-eslint/require-await
-    async requestDidStart(): Promise<GraphQLRequestListener> {
+    async requestDidStart(): Promise<GraphQLRequestListener<Context>> {
       const uuids: number[] = []
       return {
         // eslint-disable-next-line @typescript-eslint/require-await
-        async executionDidStart(): Promise<GraphQLRequestExecutionListener> {
+        async executionDidStart(): Promise<
+          GraphQLRequestExecutionListener<Context>
+        > {
           return {
             // eslint-disable-next-line @typescript-eslint/require-await
             willResolveField({ source, info }) {
@@ -60,7 +43,7 @@ export function createInvalidCurrentValueErrorPlugin({
         },
         async didEncounterErrors(requestContext) {
           const { errors } = requestContext
-          const hasInvalidCurrentValueError = R.any((error) => {
+          const hasInvalidCurrentValueError = R.any((error: GraphQLError) => {
             return error.originalError instanceof InvalidCurrentValueError
           }, errors)
           if (hasInvalidCurrentValueError) {
@@ -81,7 +64,7 @@ export function createInvalidCurrentValueErrorPlugin({
                   ids,
                 })
                 return scope
-              }
+              },
             )
           }
         },

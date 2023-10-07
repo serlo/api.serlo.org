@@ -1,25 +1,4 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
-import { gql } from 'apollo-server'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import {
@@ -109,8 +88,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, actorId: castToUuid(23) }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -130,7 +109,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -144,8 +123,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, instance: Instance.De }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -165,7 +144,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -179,8 +158,8 @@ describe('query endpoint "events"', () => {
         }),
         allEvents.map((event) => {
           return { ...event, objectId: castToUuid(23) }
-        })
-      )
+        }),
+      ),
     )
     setupEvents(events)
 
@@ -200,7 +179,7 @@ describe('query endpoint "events"', () => {
       .shouldReturnData({
         events: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       })
@@ -208,7 +187,7 @@ describe('query endpoint "events"', () => {
 
   test('with filter `after`', async () => {
     const events = assignSequentialIds(
-      R.range(0, 200).flatMap(R.always(allEvents))
+      R.range(0, 200).flatMap(R.always(allEvents)),
     )
     const afterId = R.reverse(events)[1000].id
     setupEvents(events)
@@ -242,7 +221,7 @@ describe('query endpoint "events"', () => {
 
   test('`hasNextPage` is always true when database layer responses with hasNextPage == true', async () => {
     const events = assignSequentialIds(
-      R.range(0, 105).flatMap(R.always(allEvents))
+      R.range(0, 105).flatMap(R.always(allEvents)),
     )
     const afterId = R.reverse(events)[1039].id
     setupEvents(events)
@@ -269,7 +248,7 @@ describe('query endpoint "events"', () => {
 
   test('number of returned events is bounded to 500 when `first` is undefined', async () => {
     const events = assignSequentialIds(
-      R.range(0, 50).flatMap(R.always(allEvents))
+      R.range(0, 50).flatMap(R.always(allEvents)),
     )
     setupEvents(events)
 
@@ -323,8 +302,8 @@ test('User.eventsByUser returns events of this user', async () => {
       }),
       allEvents.map((event) => {
         return { ...event, actorId: castToUuid(23) }
-      })
-    )
+      }),
+    ),
   )
   setupEvents(events)
   given('UuidQuery').for(user)
@@ -351,7 +330,7 @@ test('User.eventsByUser returns events of this user', async () => {
       uuid: {
         eventsByUser: {
           nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId)
+            events.slice(0, allEvents.length).map(getTypenameAndId),
           ),
         },
       },
@@ -366,8 +345,8 @@ test('AbstractEntity.events returns events for this entity', async () => {
       }),
       allEvents.map((event) => {
         return { ...event, objectId: castToUuid(23) }
-      })
-    )
+      }),
+    ),
   )
   setupEvents(events)
   given('UuidQuery').for(article)
@@ -394,7 +373,7 @@ test('AbstractEntity.events returns events for this entity', async () => {
       uuid: {
         events: {
           nodes: R.reverse(
-            events.slice(0, events.length / 2).map(getTypenameAndId)
+            events.slice(0, events.length / 2).map(getTypenameAndId),
           ),
         },
       },
@@ -418,13 +397,13 @@ function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
       ctx.json({
         events: filteredEvents.slice(0, first),
         hasNextPage: filteredEvents.length > first,
-      })
+      }),
     )
   })
 }
 
 function assignSequentialIds(
-  events: Model<'AbstractNotificationEvent'>[]
+  events: Model<'AbstractNotificationEvent'>[],
 ): Model<'AbstractNotificationEvent'>[] {
   return events.map((event, id) => {
     return { ...event, id: castToUuid(id + 1) }

@@ -2,6 +2,190 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.3](https://github.com/serlo/api.serlo.org/compare/v0.57.2..v0.57.3) - October 5, 2023
+
+### Added
+
+- Add namespace `ai`
+
+### Fixed
+
+- fix econnreset between connector and mongodb
+
+### Internal
+
+- Update dependencies
+
+## [v0.57.2](https://github.com/serlo/api.serlo.org/compare/v0.57.1..v0.57.2) - September 14, 2023
+
+### Internal
+
+- Fix logging in enmeshed middleware
+
+## [v0.57.1](https://github.com/serlo/api.serlo.org/compare/v0.57.0..v0.57.1) - September 14, 2023
+
+### Internal
+
+- Add logging to enmeshed middleware
+
+## [v0.57.0](https://github.com/serlo/api.serlo.org/compare/v0.56.0..v0.57.0) - September 11, 2023
+
+### Added
+
+- Reintroduce data-wallet
+
+## [v0.56.0](https://github.com/serlo/api.serlo.org/compare/v0.55.0..v0.56.0) - September 5, 2023
+
+### Added
+
+- Add property `status` to Thread
+
+- Filter AllThreads by `status`
+
+- Add mutation ThreadSetStatus
+
+## [v0.55.0](https://github.com/serlo/api.serlo.org/compare/v0.54.0..v0.55.0) - August 15, 2023
+
+### Changed
+
+- Update version of Metadata API
+
+### Internal
+
+- Update dependencies
+
+- Update format of license texts to new editor format
+
+## [v0.54.0](https://github.com/serlo/api.serlo.org/compare/v0.53.3..v0.54.0) - August 15, 2023
+
+### Added
+
+- authorization: Allow architect to sort entities
+
+## [v0.53.3](https://github.com/serlo/api.serlo.org/compare/v0.53.2..v0.53.3) - July 27, 2023
+
+### Internal
+
+- Add health endpoint
+
+## [v0.53.2](https://github.com/serlo/api.serlo.org/compare/v0.53.1..v0.53.2) - July 26, 2023
+
+### Internal
+
+- Upgrade ApolloServer to version 4
+
+## [v0.53.1](https://github.com/serlo/api.serlo.org/compare/v0.53.0..v0.53.1) - July 26, 2023
+
+### Internal
+
+- Revert upgrade of Apollo Server to version 4
+
+## [v0.53.0](https://github.com/serlo/api.serlo.org/compare/v0.52.1..v0.53.0) - July 26, 2023
+
+### Internal
+
+- Upgrade ApolloServer to version 4
+
+- Update various dependencies
+
+- Refactor GitHub actions
+
+## [v0.52.1](https://github.com/serlo/api.serlo.org/compare/v0.52.0..v0.52.1) - July 4, 2023
+
+### Internal
+
+- Update various dependencies
+
+- Update dependabot configuration
+
+## [v0.52.0](https://github.com/serlo/api.serlo.org/compare/v0.51.1..v0.52.0) - June 26, 2023
+
+### Added
+
+- Add endpoint version for frontend repo
+
+- Enable users to delete their own comments
+
+### Internal
+
+- Update various dependencies
+
+- Enable dependabot version updates
+
+- Add pact tests for entity revision and page revision
+
+## [v0.51.1](https://github.com/serlo/api.serlo.org/compare/v0.51.0..v0.51.1) - June 14, 2023
+
+### Fixed
+
+- Fix missing fetch by upgrade docker base image
+
+## [v0.51.0](https://github.com/serlo/api.serlo.org/compare/v0.50.1..v0.51.0) - June 13, 2023
+
+### Added
+
+- Set metadata version to 1.0.0
+
+### Internal
+
+- Upgrade node to v18 and many dependencies
+
+## [v0.50.1](https://github.com/serlo/api.serlo.org/compare/v0.50.0..v0.50.1) - May 15, 2023
+
+### Internal
+
+- Add logger to track use of Kratos register endpoint
+
+## [v0.50.0](https://github.com/serlo/api.serlo.org/compare/v0.49.8..v0.50.0) - April 18, 2023
+
+### Added
+
+- Implement single logout endpoint for one oidc provider
+
+## [v0.49.8](https://github.com/serlo/api.serlo.org/compare/v0.49.7..v0.49.8) - April 12, 2023
+
+### Added
+
+- Add support for an empty cache
+
+### Changed
+
+- Update various dependencies
+
+### Fixed
+
+- Make filtering of threads more resource efficient
+
+## [v0.49.7](https://github.com/serlo/api.serlo.org/compare/v0.49.6..v0.49.7) - March 17, 2023
+
+### Added
+
+- Add `subjectId` to allThreads()
+
+## [v0.49.6](https://github.com/serlo/api.serlo.org/compare/v0.49.5..v0.49.6) - March 6, 2023
+
+### Fixed
+
+- Minor rewording in license of Chancenwerk
+
+## [v0.49.5](https://github.com/serlo/api.serlo.org/compare/v0.49.4..v0.49.5) - March 2, 2023
+
+### Fixed
+
+- Minor rewording in licenses
+
+## [v0.49.4](https://github.com/serlo/api.serlo.org/compare/v0.49.3..v0.49.4) - March 2, 2023
+
+### Changed
+
+- Change agreements of default and Chancenwerk license
+
+## [v0.49.3](https://github.com/serlo/api.serlo.org/compare/v0.49.2..v0.49.3) - March 2, 2023
+
+### Added
+
+- Add license for Chancenwerk
+
 ## [v0.49.2](https://github.com/serlo/api.serlo.org/compare/v0.49.1..v0.49.2) - February 12, 2023
 
 ### Fixed

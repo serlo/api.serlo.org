@@ -1,32 +1,13 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { makeRequest as executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
   CommentDecoder,
+  DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
   NavigationDataDecoder,
@@ -71,11 +52,11 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment
+    environment,
   )
 
   async function getUuidWithCustomDecoder<
-    S extends Model<'AbstractUuid'> | null
+    S extends Model<'AbstractUuid'> | null,
   >({ id, decoder }: { id: number; decoder: t.Type<S, unknown> }): Promise<S> {
     return getUuid._querySpec.queryWithDecoder({ id }, decoder)
   }
@@ -117,7 +98,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment
+    environment,
   )
 
   const getActiveReviewerIds = createQuery(
@@ -137,7 +118,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment
+    environment,
   )
 
   const getActivityByType = createQuery(
@@ -145,7 +126,7 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('ActivityByTypeQuery'),
       enableSwr: true,
       getCurrentValue: (
-        payload: DatabaseLayer.Payload<'ActivityByTypeQuery'>
+        payload: DatabaseLayer.Payload<'ActivityByTypeQuery'>,
       ) => {
         return DatabaseLayer.makeRequest('ActivityByTypeQuery', payload)
       },
@@ -157,20 +138,20 @@ export function createSerloModel({
         if (!key.startsWith('de.serlo.org/api/user/activity-by-type/'))
           return O.none
         const userId = parseInt(
-          key.replace('de.serlo.org/api/user/activity-by-type/', '')
+          key.replace('de.serlo.org/api/user/activity-by-type/', ''),
         )
         if (Number.isNaN(userId)) return O.none
         return O.some({ userId })
       },
       examplePayload: { userId: 1 },
     },
-    environment
+    environment,
   )
 
   const getPotentialSpamUsers = createRequest({
     decoder: DatabaseLayer.getDecoderFor('UserPotentialSpamUsersQuery'),
     getCurrentValue(
-      payload: DatabaseLayer.Payload<'UserPotentialSpamUsersQuery'>
+      payload: DatabaseLayer.Payload<'UserPotentialSpamUsersQuery'>,
     ) {
       return DatabaseLayer.makeRequest('UserPotentialSpamUsersQuery', payload)
     },
@@ -193,11 +174,11 @@ export function createSerloModel({
   const deleteRegularUsers = createMutation({
     decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
     mutate: (
-      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>
+      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>,
     ) => {
       return DatabaseLayer.makeRequest(
         'UserDeleteRegularUsersMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ userId }, { success }) {
@@ -252,7 +233,7 @@ export function createSerloModel({
       },
       examplePayload: { instance: Instance.De },
     },
-    environment
+    environment,
   )
 
   const getNavigation = createRequest({
@@ -350,7 +331,7 @@ export function createSerloModel({
       },
       examplePayload: { path: '/math', instance: Instance.En },
     },
-    environment
+    environment,
   )
 
   const getSubjects = createQuery(
@@ -367,7 +348,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment
+    environment,
   )
 
   const getUnrevisedEntities = createQuery(
@@ -385,7 +366,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment
+    environment,
   )
 
   const getUnrevisedEntitiesPerSubject = createRequest({
@@ -430,13 +411,13 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment
+    environment,
   )
 
   const getEventsAfter = createRequest({
     decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
     async getCurrentValue(
-      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number }
+      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number },
     ) {
       return DatabaseLayer.makeRequest('EventsQuery', payload)
     },
@@ -470,7 +451,7 @@ export function createSerloModel({
       maxAge: { hour: 1 },
       examplePayload: { first: 5 },
     },
-    environment
+    environment,
   )
 
   const getNotifications = createQuery(
@@ -493,7 +474,7 @@ export function createSerloModel({
       },
       examplePayload: { userId: 1 },
     },
-    environment
+    environment,
   )
 
   const setNotificationState = createMutation({
@@ -510,7 +491,7 @@ export function createSerloModel({
           const notifications = current.notifications.map((notification) =>
             ids.includes(notification.id)
               ? { ...notification, unread }
-              : notification
+              : notification,
           )
           return { ...current, notifications }
         },
@@ -523,7 +504,7 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
       getCurrentValue: (
-        payload: DatabaseLayer.Payload<'SubscriptionsQuery'>
+        payload: DatabaseLayer.Payload<'SubscriptionsQuery'>,
       ) => {
         return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
       },
@@ -539,7 +520,7 @@ export function createSerloModel({
       },
       examplePayload: { userId: 1 },
     },
-    environment
+    environment,
   )
 
   const setSubscription = createMutation({
@@ -554,7 +535,7 @@ export function createSerloModel({
           if (!current) return
 
           const currentWithoutNew = current.subscriptions.filter(
-            ({ objectId }) => !ids.includes(objectId)
+            ({ objectId }) => !ids.includes(objectId),
           )
 
           // remove
@@ -600,7 +581,7 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment
+    environment,
   )
 
   const createThread = createMutation({
@@ -629,7 +610,7 @@ export function createSerloModel({
   const createComment = createMutation({
     decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
     async mutate(
-      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>
+      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>,
     ) {
       return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
     },
@@ -642,7 +623,8 @@ export function createSerloModel({
         await getUuid._querySpec.setCache({
           payload: { id: payload.threadId },
           getValue(current) {
-            if (!current || current.__typename !== 'Comment') return
+            if (!current || current.__typename !== DiscriminatorType.Comment)
+              return
             current.childrenIds.push(value.id) // new comment on last pos in thread
             return current
           },
@@ -678,11 +660,11 @@ export function createSerloModel({
   const archiveThread = createMutation({
     decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
     async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>
+      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>,
     ) {
       return DatabaseLayer.makeRequest(
         'ThreadSetThreadArchivedMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ ids, archived }) {
@@ -691,11 +673,33 @@ export function createSerloModel({
           return { id }
         }),
         getValue(current) {
-          if (!current || current.__typename !== 'Comment') return
+          if (!current || current.__typename !== DiscriminatorType.Comment)
+            return
           return {
             ...current,
             archived: ids.includes(current.id) ? archived : current.archived,
           }
+        },
+      })
+    },
+  })
+
+  const setThreadStatus = createMutation({
+    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
+    async mutate(
+      payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
+    ) {
+      return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
+    },
+    async updateCache({ ids, status }) {
+      await getUuid._querySpec.setCache({
+        payloads: ids.map((id) => {
+          return { id }
+        }),
+        getValue(current) {
+          if (!current || current.__typename !== DiscriminatorType.Comment)
+            return
+          return { ...current, status }
         },
       })
     },
@@ -727,7 +731,7 @@ export function createSerloModel({
               current.unrevisedEntityIds.includes(newEntity.id)
             ) {
               current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
-                (id) => id !== newEntity.id
+                (id) => id !== newEntity.id,
               )
             }
             if (
@@ -764,7 +768,7 @@ export function createSerloModel({
               current.unrevisedEntityIds.includes(input.entityId)
             ) {
               current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
-                (id) => id !== input.entityId
+                (id) => id !== input.entityId,
               )
             }
             if (
@@ -785,7 +789,7 @@ export function createSerloModel({
               if (!current) return
 
               const currentWithoutNew = current.subscriptions.filter(
-                ({ objectId }) => input.entityId !== objectId
+                ({ objectId }) => input.entityId !== objectId,
               )
 
               const newEntry = {
@@ -795,7 +799,7 @@ export function createSerloModel({
 
               return {
                 subscriptions: [...currentWithoutNew, newEntry].sort(
-                  (a, b) => a.objectId - b.objectId
+                  (a, b) => a.objectId - b.objectId,
                 ),
               }
             },
@@ -808,11 +812,11 @@ export function createSerloModel({
   const checkoutEntityRevision = createMutation({
     decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
     async mutate(
-      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>
+      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>,
     ) {
       return DatabaseLayer.makeRequest(
         'EntityCheckoutRevisionMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ revisionId }) {
@@ -936,7 +940,7 @@ export function createSerloModel({
   const getDeletedEntities = createRequest({
     decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
     async getCurrentValue(
-      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>
+      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>,
     ) {
       return DatabaseLayer.makeRequest('DeletedEntitiesQuery', payload)
     },
@@ -945,7 +949,7 @@ export function createSerloModel({
   const getEntitiesMetadata = createRequest({
     decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
     async getCurrentValue(
-      payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>
+      payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>,
     ) {
       return DatabaseLayer.makeRequest('EntitiesMetadataQuery', payload)
     },
@@ -954,11 +958,11 @@ export function createSerloModel({
   const linkEntitiesToTaxonomy = createMutation({
     decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
     mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>
+      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>,
     ) => {
       return DatabaseLayer.makeRequest(
         'TaxonomyCreateEntityLinksMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ taxonomyTermId, entityIds }, { success }) {
@@ -966,8 +970,8 @@ export function createSerloModel({
         await Promise.all(
           [...entityIds, taxonomyTermId].map(
             async (id) =>
-              await getUuid._querySpec.removeCache({ payload: { id } })
-          )
+              await getUuid._querySpec.removeCache({ payload: { id } }),
+          ),
         )
       }
     },
@@ -976,11 +980,11 @@ export function createSerloModel({
   const unlinkEntitiesFromTaxonomy = createMutation({
     decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
     mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>
+      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>,
     ) => {
       return DatabaseLayer.makeRequest(
         'TaxonomyDeleteEntityLinksMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ taxonomyTermId, entityIds }, { success }) {
@@ -988,8 +992,8 @@ export function createSerloModel({
         await Promise.all(
           [...entityIds, taxonomyTermId].map(
             async (id) =>
-              await getUuid._querySpec.removeCache({ payload: { id } })
-          )
+              await getUuid._querySpec.removeCache({ payload: { id } }),
+          ),
         )
       }
     },
@@ -1067,14 +1071,14 @@ export function createSerloModel({
 
   const setTaxonomyTermNameAndDescription = createMutation({
     decoder: DatabaseLayer.getDecoderFor(
-      'TaxonomyTermSetNameAndDescriptionMutation'
+      'TaxonomyTermSetNameAndDescriptionMutation',
     ),
     mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyTermSetNameAndDescriptionMutation'>
+      payload: DatabaseLayer.Payload<'TaxonomyTermSetNameAndDescriptionMutation'>,
     ) => {
       return DatabaseLayer.makeRequest(
         'TaxonomyTermSetNameAndDescriptionMutation',
-        payload
+        payload,
       )
     },
     async updateCache({ id, name, description }, { success }) {
@@ -1140,7 +1144,7 @@ export function createSerloModel({
 
             if (!current.roles.includes(roleName)) return current
             current.roles = current.roles.filter(
-              (currentRole) => currentRole !== roleName
+              (currentRole) => currentRole !== roleName,
             )
             return current
           },
@@ -1171,6 +1175,7 @@ export function createSerloModel({
     deleteBots,
     deleteRegularUsers,
     editComment,
+    executePrompt,
     getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
@@ -1204,6 +1209,7 @@ export function createSerloModel({
     setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
+    setThreadStatus,
     sortEntity,
     sortTaxonomyTerm,
     setUuidState,

@@ -1,24 +1,3 @@
-/**
- * This file is part of Serlo.org API
- *
- * Copyright (c) 2020-2023 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
- */
 import { Instance } from '@serlo/api'
 
 export enum Scope {
@@ -65,6 +44,7 @@ export enum Permission {
   TaxonomyTerm_Change = 'taxonomyTerm:change',
   TaxonomyTerm_RemoveChild = 'taxonomyTerm:removeChild',
   TaxonomyTerm_OrderChildren = 'taxonomyTerm:orderChildren',
+  Ai_ExecutePrompt = 'ai:executePrompt',
   TaxonomyTerm_Set = 'taxonomyTerm:set',
   Thread_CreateThread = 'thread:createThread',
   Thread_CreateComment = 'thread:createComment',
@@ -79,6 +59,7 @@ export enum Permission {
   Thread_SetThreadArchived = 'thread:setThreadArchived',
   Thread_SetThreadState = 'thread:setThreadState',
   Thread_SetCommentState = 'thread:setCommentState',
+  Thread_SetThreadStatus = 'thread:setThreadStatus',
   Uuid_Create_Entity = 'uuid:create:entity',
   Uuid_Create_EntityRevision = 'uuid:create:entityRevision',
   Uuid_Create_Page = 'uuid:create:page',
@@ -101,13 +82,13 @@ export type AuthorizationPayload = {
 }
 
 export type AuthorizationGuard = (
-  authorizationPayload: AuthorizationPayload
+  authorizationPayload: AuthorizationPayload,
 ) => boolean
 
 export type GenericAuthorizationGuard = (scope: Scope) => AuthorizationGuard
 
 function createPermissionGuard(
-  permission: Permission
+  permission: Permission,
 ): GenericAuthorizationGuard {
   return (scope) => (authorizationPayload) => {
     return authorizationPayload[scope]?.includes(permission) === true
@@ -121,6 +102,10 @@ export const Entity = {
   addChild: createPermissionGuard(Permission.Entity_AddChild),
   removeChild: createPermissionGuard(Permission.Entity_RemoveChild),
   orderChildren: createPermissionGuard(Permission.Entity_OrderChildren),
+}
+
+export const Ai = {
+  executePrompt: createPermissionGuard(Permission.Ai_ExecutePrompt),
 }
 
 export const File = {
@@ -162,6 +147,7 @@ export const Thread = {
   deleteComment: createPermissionGuard(Permission.Thread_DeleteComment),
   setThreadArchived: createPermissionGuard(Permission.Thread_SetThreadArchived),
   setThreadState: createPermissionGuard(Permission.Thread_SetThreadState),
+  setThreadStatus: createPermissionGuard(Permission.Thread_SetThreadStatus),
   setCommentState: createPermissionGuard(Permission.Thread_SetCommentState),
 }
 
@@ -181,7 +167,7 @@ export type UuidType =
   | 'PageRevision'
   | 'TaxonomyTerm'
   | 'User'
-  | string
+  | 'unknown'
 
 export const Uuid = {
   create: (type: UuidType): GenericAuthorizationGuard => {

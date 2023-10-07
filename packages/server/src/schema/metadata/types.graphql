@@ -9,6 +9,15 @@ type MetadataQuery {
     instance: Instance
     modifiedAfter: String
   ): EntityMetadataConnection!
+    @deprecated(
+      reason: "Please use the `resources` field instead. This property will be deleted."
+    )
+  resources(
+    first: Int
+    after: String
+    instance: Instance
+    modifiedAfter: String
+  ): EntityMetadataConnection!
   publisher: JSONObject!
   version: String!
 }
