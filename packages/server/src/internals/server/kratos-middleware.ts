@@ -27,7 +27,7 @@ export function applyKratosMiddleware({
   kratos: Kratos
 }) {
   app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
-  app.post(`${basePath}/updateLastLogin`, updateLastLoginHandler(kratosAdmin))
+  app.post(`${basePath}/updateLastLogin`, updateLastLoginHandler(kratos))
   app.use(express.urlencoded({ extended: true }))
 
   if (
@@ -182,7 +182,7 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   }
 }
 
-function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
+function updateLastLoginHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     if (!t.type({ userId: t.string }).is(request.body)) {
       response.statusCode = 400
@@ -193,17 +193,21 @@ function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
     const { userId } = request.body
 
     try {
-      const kratosUser = (await kratos.adminGetIdentity(userId)).data
+      const kratosUser = (await kratos.admin.getIdentity({ id: userId })).data
 
-      await kratos.adminUpdateIdentity(kratosUser.id, {
-        schema_id: 'default',
-        metadata_public: {
-          ...kratosUser.metadata_public,
-          lastLogin: new Date(),
+      await kratos.admin.updateIdentity({
+        id: kratosUser.id,
+        updateIdentityBody: {
+          schema_id: 'default',
+          metadata_public: {
+            ...kratosUser.metadata_public,
+            lastLogin: new Date(),
+          },
+          metadata_admin: kratosUser.metadata_admin,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          traits: kratosUser.traits,
+          state: IdentityState.Active,
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        traits: kratosUser.traits,
-        state: IdentityState.Active,
       })
 
       response.json({ status: 'success' }).end()
@@ -221,7 +225,7 @@ function updateLastLoginHandler(kratos: V0alpha2Api): RequestHandler {
   // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state=)')
+      response.status(500).send('Internal Server Error (Illegal state=)'),
     )
   }
 }
