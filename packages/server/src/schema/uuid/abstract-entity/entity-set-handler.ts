@@ -36,7 +36,10 @@ export function createSetEntityResolver({
   transformedInput,
 }: {
   entityType: EntityType
-  mandatoryFieldKeys: (keyof SetAbstractEntityInput)[]
+  mandatoryFieldKeys: [
+    keyof SetAbstractEntityInput,
+    ...(keyof SetAbstractEntityInput)[],
+  ]
   // TODO: the logic of this and others transformedInput's should go to DB Layer
   transformedInput?: (x: SetAbstractEntityInput) => SetAbstractEntityInput
 }) {
