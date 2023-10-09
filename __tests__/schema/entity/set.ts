@@ -55,7 +55,10 @@ const ALL_POSSIBLE_FIELDS: EntityFields = {
   url: 'https://url.org',
 }
 
-const fieldKeys: Record<EntityType, (keyof EntityFields)[]> = {
+const fieldKeys: Record<
+  EntityType,
+  [keyof EntityFields, ...(keyof EntityFields)[]]
+> = {
   [EntityType.Applet]: [
     'title',
     'content',
