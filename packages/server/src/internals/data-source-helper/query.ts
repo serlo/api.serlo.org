@@ -7,7 +7,6 @@ import { InvalidCurrentValueError } from './common'
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time } from '../swr-queue'
-import { captureErrorEvent } from '~/internals/error-event'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -29,13 +28,6 @@ export function createQuery<P, R>(
 
     const decoder = customDecoder ?? t.unknown
 
-    let invalidCacheValueErrorContext: {
-      timeInvalidCacheSaved: string
-      invalidCacheValue: unknown
-      source: string
-      validationErrors: string[]
-    } | null = null
-
     if (O.isSome(cacheValue)) {
       const cacheEntry = cacheValue.value
       const decodedCacheValue = decoder.decode(cacheEntry.value)
@@ -49,15 +41,6 @@ export function createQuery<P, R>(
         }
 
         return decodedCacheValue.right as S
-      } else {
-        invalidCacheValueErrorContext = {
-          timeInvalidCacheSaved: new Date(
-            cacheEntry.lastModified,
-          ).toISOString(),
-          invalidCacheValue: cacheEntry.value,
-          source: cacheEntry.source,
-          validationErrors: reporter.report(decodedCacheValue),
-        }
       }
     }
 
@@ -71,21 +54,6 @@ export function createQuery<P, R>(
         value: decoded.right,
         source: 'API: From a call to a data source',
       })
-
-      if (invalidCacheValueErrorContext) {
-        captureErrorEvent({
-          error: new Error(
-            'Invalid cached value received that could be repaired automatically by data source.',
-          ),
-          fingerprint: ['invalid-value', 'cache', key],
-          errorContext: {
-            ...invalidCacheValueErrorContext,
-            key,
-            currentValue: value,
-            decoder: decoder.name,
-          },
-        })
-      }
 
       return value as S
     } else {
