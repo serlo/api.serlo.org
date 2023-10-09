@@ -26,9 +26,10 @@ export function applyKratosMiddleware({
   app: Express
   kratos: Kratos
 }) {
+  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
+  app.post(`${basePath}/updateLastLogin`, updateLastLoginHandler(kratos))
   app.use(express.urlencoded({ extended: true }))
 
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
   if (
     process.env.ENVIRONMENT === 'local' ||
     process.env.ENVIRONMENT === 'staging'
@@ -177,6 +178,54 @@ function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   return (request, response) => {
     handleRequest(request, response).catch(() =>
       sendErrorResponse(response, 'Internal Server Error (Illegal state)'),
+    )
+  }
+}
+
+function updateLastLoginHandler(kratos: Kratos): RequestHandler {
+  async function handleRequest(request: Request, response: Response) {
+    if (!t.type({ userId: t.string }).is(request.body)) {
+      response.statusCode = 400
+      response.end('Valid identity id has to be provided')
+      return
+    }
+
+    const { userId } = request.body
+
+    try {
+      const kratosUser = (await kratos.admin.getIdentity({ id: userId })).data
+
+      await kratos.admin.updateIdentity({
+        id: kratosUser.id,
+        updateIdentityBody: {
+          schema_id: 'default',
+          metadata_public: {
+            ...kratosUser.metadata_public,
+            lastLogin: new Date(),
+          },
+          metadata_admin: kratosUser.metadata_admin,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          traits: kratosUser.traits,
+          state: IdentityState.Active,
+        },
+      })
+
+      response.json({ status: 'success' }).end()
+    } catch (error: unknown) {
+      captureErrorEvent({
+        error: new Error('Could not synchronize lastLogin date'),
+        errorContext: { userId, error },
+      })
+
+      response.statusCode = 500
+      return response.end('Internal error in after hook')
+    }
+  }
+
+  // See https://stackoverflow.com/a/71912991
+  return (request, response) => {
+    handleRequest(request, response).catch(() =>
+      response.status(500).send('Internal Server Error (Illegal state=)'),
     )
   }
 }
