@@ -278,6 +278,9 @@ export const resolvers: LegacyQueries<
     language(user, _, { dataSources }) {
       return dataSources.model.kratos.getUserLanguage({ userLegacyId: user.id })
     },
+    lastLogin(user, _, { dataSources }) {
+      return dataSources.model.kratos.getLastLogin({ username: user.username })
+    },
   },
   Mutation: {
     user: createNamespace(),

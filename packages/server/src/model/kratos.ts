@@ -1,7 +1,9 @@
 import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
+import { DateFromISOString } from 'io-ts-types'
 
 import { InstanceDecoder } from './decoder'
+import { IdentityDecoder } from '~/internals/authentication'
 import { createQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 
@@ -45,7 +47,41 @@ export function createKratosModel({
     environment,
   )
 
+  const getLastLogin = createQuery(
+    {
+      decoder: t.union([DateFromISOString, t.null]),
+      enableSwr: true,
+      staleAfter: { days: 1 },
+      maxAge: { days: 30 },
+      async getCurrentValue({ username }: { username: string }) {
+        const identity = (
+          await environment.authServices.kratos.admin.listIdentities({
+            credentialsIdentifier: username,
+          })
+        ).data[0]
+
+        if (!IdentityDecoder.is(identity)) return null
+
+        const lastLogin = identity.metadata_public.lastLogin
+
+        if (!lastLogin) return null
+
+        return DateFromISOString.is(new Date(lastLogin)) ? lastLogin : null
+      },
+      getKey: ({ username }) => {
+        return `kratos.serlo.org/lastLogin/${username}`
+      },
+      getPayload: (key) => {
+        if (!key.startsWith('kratos.serlo.org/lastLogin/')) return O.none
+        const username = key.replace('kratos.serlo.org/lastLogin/', '')
+        return F.pipe(O.some({ username }))
+      },
+      examplePayload: { username: 'serlouser' },
+    },
+    environment,
+  )
   return {
+    getLastLogin,
     getUserLanguage,
   }
 }
