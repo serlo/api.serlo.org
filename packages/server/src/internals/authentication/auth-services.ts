@@ -16,25 +16,7 @@ export interface AuthServices {
   hydra: OAuth2Api
 }
 
-export interface Identity {
-  id: string
-  traits: {
-    username: string
-    email: string
-  } & Partial<{
-    description: string | null
-    motivation: string | null
-    profile_image: string | null
-    language: string | null
-  }>
-  schema_id: string
-  created_at: Date | string
-  updated_at: Date | string
-  state: 'active' | 'inactive'
-  state_changed_at: Date | string
-  metadata_public: { legacy_id: number; lastLogin?: Date | string | null }
-  metadata_admin?: null
-}
+export type Identity = t.TypeOf<typeof IdentityDecoder>
 
 export const IdentityDecoder = t.type({
   id: t.string,
@@ -55,10 +37,12 @@ export const IdentityDecoder = t.type({
   updated_at: t.union([DateFromISOString, t.string]),
   state: t.union([t.literal('active'), t.literal('inactive')]),
   state_changed_at: t.union([DateFromISOString, t.string]),
-  metadata_public: t.type({
-    legacy_id: t.number,
-    lastLogin: t.union([DateFromISOString, t.string, t.undefined, t.null]),
-  }),
+  metadata_public: t.intersection([
+    t.type({ legacy_id: t.number }),
+    t.partial({
+      lastLogin: t.union([DateFromISOString, t.string, t.undefined, t.null]),
+    }),
+  ]),
 })
 
 export class KratosDB extends Pool {
