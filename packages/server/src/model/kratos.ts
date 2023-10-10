@@ -49,7 +49,7 @@ export function createKratosModel({
 
   const getLastLogin = createQuery(
     {
-      decoder: t.union([DateFromISOString, t.null]),
+      decoder: t.union([t.string, t.null]),
       enableSwr: true,
       staleAfter: { days: 1 },
       maxAge: { days: 30 },
@@ -66,7 +66,9 @@ export function createKratosModel({
 
         if (!lastLogin) return null
 
-        return DateFromISOString.is(new Date(lastLogin)) ? lastLogin : null
+        return DateFromISOString.is(new Date(lastLogin))
+          ? String(lastLogin)
+          : null
       },
       getKey: ({ username }) => {
         return `kratos.serlo.org/lastLogin/${username}`
