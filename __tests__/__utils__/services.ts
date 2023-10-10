@@ -2,6 +2,7 @@ import type {
   FrontendApi,
   IdentityApi,
   IdentityApiDeleteIdentityRequest,
+  IdentityApiListIdentitiesRequest,
 } from '@ory/client'
 import {
   RestRequest,
@@ -31,6 +32,17 @@ export class MockKratos {
         const identityIndex = this.identities.indexOf(identity)
         this.identities.splice(identityIndex)
       }
+    },
+    listIdentities: ({
+      credentialsIdentifier,
+    }: IdentityApiListIdentitiesRequest) => {
+      return Promise.resolve({
+        data: [
+          this.identities.find(
+            (identity) => identity.traits.username === credentialsIdentifier,
+          ),
+        ],
+      })
     },
   } as unknown as IdentityApi
 
@@ -63,6 +75,7 @@ export function createFakeIdentity(user: Model<'User'>): Identity {
     },
     metadata_public: {
       legacy_id: user.id,
+      lastLogin: user.lastLogin,
     },
   }
 }
