@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-module.exports = {
+export default {
   semi: false,
   singleQuote: true,
 }

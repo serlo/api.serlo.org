@@ -5,6 +5,7 @@
   "bugs": {
     "url": "https://github.com/serlo/api.serlo.org/issues"
   },
+  "type": "module",
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
