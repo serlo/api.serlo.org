@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { pathsToModuleNameMapper } = require('ts-jest')
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,import/extensions
@@ -21,7 +22,7 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '/__tests-pacts__/index\\.ts',
   transform: {
-    '^.+\\.graphql$': './transform-graphql-jest-28-shim.js',
+    '^.+\\.graphql$': './transform-graphql-jest-28-shim.cjs',
   },
   watchPathIgnorePatterns: ['<rootDir>/pacts/'],
 }
