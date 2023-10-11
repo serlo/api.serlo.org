@@ -1577,6 +1577,11 @@ async function exec(): Promise<void> {
         fixed: ['fix econnreset between connector and mongodb'],
         internal: ['Update dependencies'],
       },
+      {
+        tagName: 'v0.57.4',
+        date: '2023-10-11',
+        fixed: ['Fix `user.lastLogin`'],
+      },
     ],
   })
 
