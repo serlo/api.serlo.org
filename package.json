@@ -47,7 +47,7 @@
     "stop": "docker compose stop",
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "stop:redis": "docker-compose stop",
-    "test": "jest --config jest.config.js --runInBand --forceExit",
+    "test": "jest --config jest.config.cjs --runInBand --forceExit",
     "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
