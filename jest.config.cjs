@@ -22,6 +22,6 @@ module.exports = {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/__utils__/'],
   transform: {
-    '^.+\\.graphql$': './transform-graphql-jest-28-shim.js',
+    '^.+\\.graphql$': './transform-graphql-jest-28-shim.cjs',
   },
 }
