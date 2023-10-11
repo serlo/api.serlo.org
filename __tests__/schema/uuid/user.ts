@@ -47,7 +47,6 @@ describe('User', () => {
                 trashed
                 username
                 date
-                lastLogin
                 description
               }
             }
@@ -62,15 +61,7 @@ describe('User', () => {
       })
       .shouldReturnData({
         uuid: R.pick(
-          [
-            '__typename',
-            'id',
-            'trashed',
-            'username',
-            'date',
-            'lastLogin',
-            'description',
-          ],
+          ['__typename', 'id', 'trashed', 'username', 'date', 'description'],
           user,
         ),
       })
@@ -533,6 +524,38 @@ describe('User', () => {
           unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
         },
       })
+  })
+
+  describe('property lasLogin', () => {
+    const query = client
+      .prepareQuery({
+        query: gql`
+          query user($id: Int!) {
+            uuid(id: $id) {
+              ... on User {
+                lastLogin
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({
+        id: user.id,
+      })
+    test('returns null for unauthenticated user', async () => {
+      await query.shouldReturnData({
+        uuid: {
+          lastLogin: null,
+        },
+      })
+    })
+    test('is readable for authenticated user', async () => {
+      await query.forLoginUser().shouldReturnData({
+        uuid: {
+          lastLogin: user.lastLogin,
+        },
+      })
+    })
   })
 })
 
