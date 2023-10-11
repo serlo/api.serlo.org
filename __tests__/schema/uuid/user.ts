@@ -526,7 +526,7 @@ describe('User', () => {
       })
   })
 
-  describe('property lasLogin', () => {
+  describe('property lastLogin', () => {
     const query = client
       .prepareQuery({
         query: gql`
