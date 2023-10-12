@@ -1582,6 +1582,11 @@ async function exec(): Promise<void> {
         date: '2023-10-11',
         fixed: ['Fix `user.lastLogin`'],
       },
+      {
+        tagName: 'v0.57.5',
+        date: '2023-10-11',
+        fixed: ['Only show `lastLogin` to auth users'],
+      },
     ],
   })
 
