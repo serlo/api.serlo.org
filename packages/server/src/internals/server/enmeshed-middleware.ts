@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ConnectorClient } from '@nmshd/connector-sdk'
+import { ConnectorClient, ConnectorRequestContent } from '@nmshd/connector-sdk'
 import express, {
   Express,
   RequestHandler,
@@ -78,21 +78,102 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
-      const name = readQuery(req, 'name') ?? 'Alex Janowski'
-      const nameParts = name.split(' ')
+      // const name = readQuery(req, 'name') ?? 'Alex Janowski'
 
-      // Create Relationship template
+      const createAttributeResponse = await client.attributes.createAttribute({
+        content: {
+          '@type': 'IdentityAttribute',
+          owner: (await client.account.getIdentityInfo()).result.address,
+          value: {
+            '@type': 'DisplayName',
+            value: 'LENABI Demo 1',
+          },
+        },
+      })
+
+      if (createAttributeResponse.isError) {
+        const error = createAttributeResponse.error
+        return res
+          .status(500)
+          .end(
+            `Error occurred while creating relationship attribute: ${error.code} ${error.message}`,
+          )
+      }
+
+      // TODO: this is just the same as the example in docs to see it working
+      const attributesContent: ConnectorRequestContent = {
+        items: [
+          {
+            '@type': 'RequestItemGroup',
+            mustBeAccepted: true,
+            title: 'Shared Attributes',
+            items: [
+              {
+                '@type': 'ShareAttributeRequestItem',
+                mustBeAccepted: true,
+                attribute: {
+                  '@type': 'IdentityAttribute',
+                  owner: '',
+                  value: {
+                    '@type': 'DisplayName',
+                    value: 'LENABI Demo 1',
+                  },
+                },
+                sourceAttributeId: createAttributeResponse.result.id,
+              },
+            ],
+          },
+          {
+            '@type': 'RequestItemGroup',
+            mustBeAccepted: true,
+            title: 'Requested Attributes',
+            items: [
+              {
+                '@type': 'ReadAttributeRequestItem',
+                mustBeAccepted: true,
+                query: {
+                  '@type': 'IdentityAttributeQuery',
+                  valueType: 'GivenName',
+                },
+              },
+              {
+                '@type': 'ReadAttributeRequestItem',
+                mustBeAccepted: true,
+                query: {
+                  '@type': 'IdentityAttributeQuery',
+                  valueType: 'Surname',
+                },
+              },
+              {
+                '@type': 'ReadAttributeRequestItem',
+                mustBeAccepted: false,
+                query: {
+                  '@type': 'IdentityAttributeQuery',
+                  valueType: 'EMailAddress',
+                },
+              },
+            ],
+          },
+        ],
+      }
+      const validationResponse = await client.outgoingRequests.canCreateRequest(
+        {
+          content: attributesContent,
+        },
+      )
+      if (validationResponse.isError) {
+        const error = validationResponse.error
+        return res
+          .status(500)
+          .end(
+            `Error occurred while creating relationship attribute: ${error.code} ${error.message}`,
+          )
+      }
+
       const createRelationshipResponse =
         await client.relationshipTemplates.createOwnRelationshipTemplate(
           sessionId
-            ? createRelationshipTemplateForUserJourney({
-                sessionId,
-                familyName:
-                  nameParts.length > 1
-                    ? nameParts[nameParts.length - 1]
-                    : 'Janowski',
-                givenName: nameParts.length > 0 ? nameParts[0] : 'Alex',
-              })
+            ? createRelationshipTemplateForUserJourney(attributesContent)
             : createRelationshipTemplateForPrototype(),
         )
 
@@ -342,35 +423,28 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
   }
 }
 
+// TODO: Map https://github.com/serlo/api.serlo.org/blob/b097e8744fa566cc08831cf53214d2faa9b13d41/packages/server/src/internals/server/enmeshed-middleware.ts#L489
+// to new format
+function createRelationshipTemplateForUserJourney(
+  attributesContent: ConnectorRequestContent,
+) {
+  return {
+    maxNumberOfAllocations: 1,
+    expiresAt: '2100-01-01T00:00:00.000Z',
+    content: {
+      '@type': 'RelationshipTemplateContent',
+      title: 'Connector Demo Contact',
+      onNewRelationship: attributesContent,
+    },
+  }
+}
+
+// TODO: to be rewritten or removed
 function createRelationshipTemplateForPrototype() {
   return {
     // maxNumberOfRelationships: 0,
     expiresAt: '2100-01-01T00:00:00.000Z',
     content: {
-      // Shared own attributes
-      attributes: [
-        {
-          name: 'Thing.name',
-          value: 'LENABI Demo 1',
-        },
-        {
-          name: 'Corporation.legalName',
-          value: 'Serlo Education e.V.',
-        },
-        // {
-        //   name: 'Comm.phone',
-        //   value: '',
-        // },
-        {
-          name: 'Comm.email',
-          value: 'de@serlo.org',
-        },
-        {
-          name: 'Comm.website',
-          value: 'https://de.serlo.org',
-        },
-      ],
-      // Additional metadata that will be returned with request
       metadata: {
         sessionId: 'session-id',
       },
@@ -408,62 +482,6 @@ function createRelationshipTemplateForPrototype() {
             title: 'Nachrichtenversand zwecks Marketing',
             duration: 'Bis auf Widerruf',
             required: false,
-          },
-        ],
-      },
-      privacy: {
-        text: 'Ja, ich habe die Datenschutzerklärung von Serlo gelesen und akzeptiere diese hiermit.',
-        required: true,
-        activeConsent: false,
-        link: 'https://de.serlo.org/privacy',
-      },
-    },
-  }
-}
-
-function createRelationshipTemplateForUserJourney({
-  sessionId,
-  familyName,
-  givenName,
-}: {
-  sessionId: string
-  familyName: string
-  givenName: string
-}) {
-  return {
-    expiresAt: '2100-01-01T00:00:00.000Z',
-    content: {
-      attributes: [
-        {
-          name: 'Thing.name',
-          value: 'Serlo Education e.V.',
-        },
-        {
-          name: 'Corporation.legalName',
-          value: 'Serlo Education e.V.',
-        },
-        {
-          name: 'Comm.email',
-          value: 'de@serlo.org',
-        },
-        {
-          name: 'Comm.website',
-          value: 'https://de.serlo.org',
-        },
-      ],
-      metadata: { sessionId },
-      request: {
-        create: [
-          { attribute: 'Person.familyName', value: familyName },
-          { attribute: 'Person.givenName', value: givenName },
-        ],
-        required: [{ attribute: 'Lernstand-Mathe' }],
-        authorizations: [
-          {
-            id: 'comm',
-            title: 'Laden und Speichern von Lernstände',
-            duration: 'Dauer der Nutzung von serlo.org',
-            required: true,
           },
         ],
       },
