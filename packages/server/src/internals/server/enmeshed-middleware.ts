@@ -1,7 +1,7 @@
 /**
  * This file is part of Serlo.org API
  *
- * Copyright (c) 2020-2022 Serlo Education e.V.
+ * Copyright (c) 2020-2023 Serlo Education e.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License
@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @copyright Copyright (c) 2020-2022 Serlo Education e.V.
+ * @copyright Copyright (c) 2020-2023 Serlo Education e.V.
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
@@ -37,15 +37,6 @@ import {
 } from './enmeshed-payload'
 import { Cache } from '../cache'
 import { captureErrorEvent } from '../error-event'
-
-const Session = t.intersection([
-  t.type({ relationshipTemplateId: t.string }),
-  t.partial({
-    enmeshedId: t.string,
-    attributes: t.UnknownRecord,
-  }),
-])
-type Session = t.TypeOf<typeof Session>
 
 export function applyEnmeshedMiddleware({
   app,
@@ -80,17 +71,15 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     // FIXME: Uncomment next line when prototype frontend has been replaced
     // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
 
-    // Try to get Relationship template ID from cache
     const session = await getSession(cache, sessionId)
+
     let relationshipTemplateId = ''
+
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
       const name = readQuery(req, 'name') ?? 'Alex Janowski'
       const nameParts = name.split(' ')
-      const givenName = nameParts.length > 0 ? nameParts[0] : 'Alex'
-      const familyName =
-        nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'Janowski'
 
       // Create Relationship template
       const createRelationshipResponse =
@@ -98,24 +87,29 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
           sessionId
             ? createRelationshipTemplateForUserJourney({
                 sessionId,
-                familyName,
-                givenName,
+                familyName:
+                  nameParts.length > 1
+                    ? nameParts[nameParts.length - 1]
+                    : 'Janowski',
+                givenName: nameParts.length > 0 ? nameParts[0] : 'Alex',
               })
             : createRelationshipTemplateForPrototype(),
         )
 
       if (createRelationshipResponse.isError) {
         const error = createRelationshipResponse.error
-        res.statusCode = 500
-        res.end(
-          `Error occurred while creating relationship request: ${error.code} ${error.message}`,
-        )
-        return
+        return res
+          .status(500)
+          .end(
+            `Error occurred while creating relationship request: ${error.code} ${error.message}`,
+          )
       }
+
       relationshipTemplateId = createRelationshipResponse.result.id
+
       await setSession(cache, sessionId, { relationshipTemplateId })
     }
-    // Create Token
+
     const createTokenResponse =
       await client.relationshipTemplates.createTokenQrCodeForOwnRelationshipTemplate(
         relationshipTemplateId,
@@ -128,10 +122,8 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
       )
       return
     }
-    // Return QR code
-    res.statusCode = 200
     res.setHeader('Content-Type', 'image/png')
-    res.end(createTokenResponse.result)
+    res.status(200).end(createTokenResponse.result)
   }
 
   return (request, response) => {
@@ -382,9 +374,7 @@ function createRelationshipTemplateForPrototype() {
       metadata: {
         sessionId: 'session-id',
       },
-      // Requested user data
       request: {
-        // Attributes that are stored in the users wallet when the relationship is accepted
         // See: https://enmeshed.eu/explore/schema#person-attributes
         create: [
           { attribute: 'Person.familyName', value: 'Musterfrau' },
@@ -406,52 +396,6 @@ function createRelationshipTemplateForPrototype() {
             }),
           },
         ],
-        // Required attributes that must be shared (without these, no contact can be established)
-        // required: [
-        //   {
-        //     attribute: 'Person.familyName',
-        //   },
-        //   {
-        //     attribute: 'Person.givenName',
-        //   },
-        //   {
-        //     attribute: 'Person.gender',
-        //   },
-        //   {
-        //     attribute: 'Person.birthDate',
-        //   },
-        //   {
-        //     attribute: 'Person.nationality',
-        //   },
-        //   {
-        //     attribute: 'Address',
-        //   },
-        // ],
-        // Optional attributes that can be shared by the user
-        // optional: [
-        //   {
-        //     attribute: 'Comm.email',
-        //   },
-        //   {
-        //     attribute: 'Comm.phone',
-        //   },
-        // ],
-        // Optional questions that can be asked of the user (are not stored in the wallet)
-        // questions: [
-        //   { key: "certId", type: "invisible", value: "math_algebra_1" },
-        //   { key: "cert", label: "Gewählter Kurs", value: "Algebra I", type: "string", readonly: true },
-        //   {
-        //     key: "start",
-        //     label: "Start des Kurses",
-        //     type: "dropdown",
-        //     values: [
-        //       { key: "online", label: "Online (jederzeit)" },
-        //       { key: "15.06.2021", label: "Classroom: 15.06.2021" },
-        //       { key: "29.06.2021", label: "Classroom: 29.06.2021" }
-        //     ]
-        //   }
-        // ],
-        // Certain authorisations requested from the user
         authorizations: [
           {
             id: 'comm',
@@ -467,21 +411,12 @@ function createRelationshipTemplateForPrototype() {
           },
         ],
       },
-      // Privacy policy to be accepted by user
       privacy: {
         text: 'Ja, ich habe die Datenschutzerklärung von Serlo gelesen und akzeptiere diese hiermit.',
         required: true,
         activeConsent: false,
         link: 'https://de.serlo.org/privacy',
       },
-      // Sends a message with the corresponding arbitrary content if the relationship already exists,
-      // so that a second reading of a template can be handled
-      // ifRelationshipExists: {
-      //   action: "message",
-      //   content: {
-      //     info: "relationshipExists"
-      //   }
-      // }
     },
   }
 }
@@ -689,6 +624,15 @@ function validationError(res: Response, message: string) {
     }),
   )
 }
+
+const Session = t.intersection([
+  t.type({ relationshipTemplateId: t.string }),
+  t.partial({
+    enmeshedId: t.string,
+    attributes: t.UnknownRecord,
+  }),
+])
+type Session = t.TypeOf<typeof Session>
 
 async function getSession(
   cache: Cache,
