@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.5](https://github.com/serlo/api.serlo.org/compare/v0.57.4..v0.57.5) - October 11, 2023
+
+### Fixed
+
+- Only show `lastLogin` to auth users
+
 ## [v0.57.4](https://github.com/serlo/api.serlo.org/compare/v0.57.3..v0.57.4) - October 11, 2023
 
 ### Fixed

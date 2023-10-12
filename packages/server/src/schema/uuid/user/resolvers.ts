@@ -278,7 +278,13 @@ export const resolvers: LegacyQueries<
     language(user, _, { dataSources }) {
       return dataSources.model.kratos.getUserLanguage({ userLegacyId: user.id })
     },
-    lastLogin(user, _, { dataSources }) {
+    lastLogin(user, _, { dataSources, userId }) {
+      try {
+        assertUserIsAuthenticated(userId)
+      } catch {
+        return null
+      }
+
       return dataSources.model.kratos.getLastLogin({ username: user.username })
     },
   },
