@@ -78,7 +78,8 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
-      // const name = readQuery(req, 'name') ?? 'Alex Janowski'
+      const name = readQuery(req, 'name') ?? 'Alex Janowski'
+      const nameParts = name.split(' ')
 
       const createAttributeResponse = await client.attributes.createAttribute({
         content: {
@@ -100,9 +101,8 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
           )
       }
 
-      // TODO: reintroduce metadata: {sessionId: prototpye ? 'session-id' : sessionId }
-      // simplify, move to create prototype function
       const attributesContent: ConnectorRequestContent = {
+        metadata: { sessionId: sessionId ?? 'session-id' },
         items: [
           {
             '@type': 'RequestItemGroup',
@@ -137,7 +137,7 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
                   owner: '',
                   value: {
                     '@type': 'GivenName',
-                    value: 'Martina',
+                    value: nameParts.length > 0 ? nameParts[0] : 'Alex',
                   },
                 },
               },
@@ -149,7 +149,10 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
                   owner: '',
                   value: {
                     '@type': 'Surname',
-                    value: 'Musterfrau',
+                    value:
+                      nameParts.length > 1
+                        ? nameParts[nameParts.length - 1]
+                        : 'Janowski',
                   },
                 },
               },
@@ -162,18 +165,6 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
                   value: {
                     '@type': 'Nationality',
                     value: 'DE',
-                  },
-                },
-              },
-              {
-                '@type': 'CreateAttributeRequestItem',
-                mustBeAccepted: true,
-                attribute: {
-                  '@type': 'IdentityAttribute',
-                  owner: '',
-                  value: {
-                    '@type': 'EMailAddress',
-                    value: 'martina@musterfrau.de',
                   },
                 },
               },
@@ -191,25 +182,20 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
         return res
           .status(500)
           .end(
-            `Error occurred while creating relationship attribute: ${error.code} ${error.message}`,
+            `Error occurred while validating attributes: ${error.code} ${error.message}`,
           )
       }
 
       const createRelationshipResponse =
-        await client.relationshipTemplates.createOwnRelationshipTemplate(
-          createRelationshipTemplateForPrototype(attributesContent),
-        )
-      // await client.relationshipTemplates.createOwnRelationshipTemplate(
-      //     sessionId
-      //       ? createRelationshipTemplateForUserJourney(
-      //         {
-      //           sessionId,
-      //           familyName,
-      //           givenName,
-      //         }
-      //       )
-      //       : createRelationshipTemplateForPrototype(attributesContent)
-      //   )
+        await client.relationshipTemplates.createOwnRelationshipTemplate({
+          maxNumberOfAllocations: 1,
+          expiresAt: '2100-01-01T00:00:00.000Z',
+          content: {
+            '@type': 'RelationshipTemplateContent',
+            title: 'Connector Demo Contact',
+            onNewRelationship: attributesContent,
+          },
+        })
 
       if (createRelationshipResponse.isError) {
         const error = createRelationshipResponse.error
@@ -314,13 +300,10 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
       apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
     })
 
-    // Get own Identity
     const getIdentityResponse = await client.account.getIdentityInfo()
     if (getIdentityResponse.isError)
       return validationError(res, 'Error retrieving connector identity info.')
-    //const connectorIdentity = getIdentityResponse.result.address
 
-    // Send message to create/change attribute
     // See: https://enmeshed.eu/explore/schema#attributeschangerequest
     const sendMessageResponse = await client.messages.sendMessage({
       recipients: [session.enmeshedId],
@@ -338,12 +321,6 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
             reason:
               'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
           },
-          /*{
-            '@type': 'AttributesShareRequest',
-            attributes: [name],
-            recipients: [connectorIdentity],
-            reason: 'Aktualisierung Lernstand',
-          },*/
         ],
       },
     })
@@ -454,76 +431,6 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
       })
       return response.status(500).send('Internal Server Error')
     })
-  }
-}
-
-function createRelationshipTemplateForPrototype(
-  attributesContent: ConnectorRequestContent,
-) {
-  return {
-    maxNumberOfAllocations: 1,
-    expiresAt: '2100-01-01T00:00:00.000Z',
-    content: {
-      '@type': 'RelationshipTemplateContent',
-      title: 'Connector Demo Contact',
-      onNewRelationship: attributesContent,
-    },
-  }
-}
-
-function createRelationshipTemplateForUserJourney({
-  sessionId,
-  familyName,
-  givenName,
-}: {
-  sessionId: string
-  familyName: string
-  givenName: string
-}) {
-  return {
-    expiresAt: '2100-01-01T00:00:00.000Z',
-    content: {
-      attributes: [
-        {
-          name: 'Thing.name',
-          value: 'Serlo Education e.V.',
-        },
-        {
-          name: 'Corporation.legalName',
-          value: 'Serlo Education e.V.',
-        },
-        {
-          name: 'Comm.email',
-          value: 'de@serlo.org',
-        },
-        {
-          name: 'Comm.website',
-          value: 'https://de.serlo.org',
-        },
-      ],
-      metadata: { sessionId },
-      request: {
-        create: [
-          { attribute: 'Person.familyName', value: familyName },
-          { attribute: 'Person.givenName', value: givenName },
-        ],
-        required: [{ attribute: 'Lernstand-Mathe' }],
-        authorizations: [
-          {
-            id: 'comm',
-            title: 'Laden und Speichern von Lernstände',
-            duration: 'Dauer der Nutzung von serlo.org',
-            required: true,
-          },
-        ],
-      },
-      privacy: {
-        text: 'Ja, ich habe die Datenschutzerklärung von Serlo gelesen und akzeptiere diese hiermit.',
-        required: true,
-        activeConsent: false,
-        link: 'https://de.serlo.org/privacy',
-      },
-    },
   }
 }
 
