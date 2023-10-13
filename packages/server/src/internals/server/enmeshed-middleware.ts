@@ -100,7 +100,8 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
           )
       }
 
-      // TODO: this is just the same as the example in docs to see it working
+      // TODO: reintroduce metadata: {sessionId: prototpye ? 'session-id' : sessionId }
+      // simplify, move to create prototype function
       const attributesContent: ConnectorRequestContent = {
         items: [
           {
@@ -129,27 +130,51 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
             title: 'Requested Attributes',
             items: [
               {
-                '@type': 'ReadAttributeRequestItem',
+                '@type': 'CreateAttributeRequestItem',
                 mustBeAccepted: true,
-                query: {
-                  '@type': 'IdentityAttributeQuery',
-                  valueType: 'GivenName',
+                attribute: {
+                  '@type': 'IdentityAttribute',
+                  owner: '',
+                  value: {
+                    '@type': 'GivenName',
+                    value: 'Martina',
+                  },
                 },
               },
               {
-                '@type': 'ReadAttributeRequestItem',
+                '@type': 'CreateAttributeRequestItem',
                 mustBeAccepted: true,
-                query: {
-                  '@type': 'IdentityAttributeQuery',
-                  valueType: 'Surname',
+                attribute: {
+                  '@type': 'IdentityAttribute',
+                  owner: '',
+                  value: {
+                    '@type': 'Surname',
+                    value: 'Musterfrau',
+                  },
                 },
               },
               {
-                '@type': 'ReadAttributeRequestItem',
-                mustBeAccepted: false,
-                query: {
-                  '@type': 'IdentityAttributeQuery',
-                  valueType: 'EMailAddress',
+                '@type': 'CreateAttributeRequestItem',
+                mustBeAccepted: true,
+                attribute: {
+                  '@type': 'IdentityAttribute',
+                  owner: '',
+                  value: {
+                    '@type': 'Nationality',
+                    value: 'DE',
+                  },
+                },
+              },
+              {
+                '@type': 'CreateAttributeRequestItem',
+                mustBeAccepted: true,
+                attribute: {
+                  '@type': 'IdentityAttribute',
+                  owner: '',
+                  value: {
+                    '@type': 'EMailAddress',
+                    value: 'martina@musterfrau.de',
+                  },
                 },
               },
             ],
@@ -172,10 +197,19 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
 
       const createRelationshipResponse =
         await client.relationshipTemplates.createOwnRelationshipTemplate(
-          sessionId
-            ? createRelationshipTemplateForUserJourney(attributesContent)
-            : createRelationshipTemplateForPrototype(),
+          createRelationshipTemplateForPrototype(attributesContent),
         )
+      // await client.relationshipTemplates.createOwnRelationshipTemplate(
+      //     sessionId
+      //       ? createRelationshipTemplateForUserJourney(
+      //         {
+      //           sessionId,
+      //           familyName,
+      //           givenName,
+      //         }
+      //       )
+      //       : createRelationshipTemplateForPrototype(attributesContent)
+      //   )
 
       if (createRelationshipResponse.isError) {
         const error = createRelationshipResponse.error
@@ -423,9 +457,7 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
   }
 }
 
-// TODO: Map https://github.com/serlo/api.serlo.org/blob/b097e8744fa566cc08831cf53214d2faa9b13d41/packages/server/src/internals/server/enmeshed-middleware.ts#L489
-// to new format
-function createRelationshipTemplateForUserJourney(
+function createRelationshipTemplateForPrototype(
   attributesContent: ConnectorRequestContent,
 ) {
   return {
@@ -439,49 +471,49 @@ function createRelationshipTemplateForUserJourney(
   }
 }
 
-// TODO: to be rewritten or removed
-function createRelationshipTemplateForPrototype() {
+function createRelationshipTemplateForUserJourney({
+  sessionId,
+  familyName,
+  givenName,
+}: {
+  sessionId: string
+  familyName: string
+  givenName: string
+}) {
   return {
-    // maxNumberOfRelationships: 0,
     expiresAt: '2100-01-01T00:00:00.000Z',
     content: {
-      metadata: {
-        sessionId: 'session-id',
-      },
+      attributes: [
+        {
+          name: 'Thing.name',
+          value: 'Serlo Education e.V.',
+        },
+        {
+          name: 'Corporation.legalName',
+          value: 'Serlo Education e.V.',
+        },
+        {
+          name: 'Comm.email',
+          value: 'de@serlo.org',
+        },
+        {
+          name: 'Comm.website',
+          value: 'https://de.serlo.org',
+        },
+      ],
+      metadata: { sessionId },
       request: {
-        // See: https://enmeshed.eu/explore/schema#person-attributes
         create: [
-          { attribute: 'Person.familyName', value: 'Musterfrau' },
-          { attribute: 'Person.givenName', value: 'Martina' },
-          { attribute: 'Person.gender', value: 'f' },
-          { attribute: 'Person.birthDate', value: '01.01.1980' },
-          { attribute: 'Person.nationality', value: 'Deutsch' },
-          { attribute: 'Comm.email', value: 'martina@musterfrau.de' },
-          {
-            attribute: 'Address',
-            value: JSON.stringify({
-              addressName: '',
-              type: 'private',
-              street: 'Teststr.',
-              houseNo: '1',
-              zipCode: '12345',
-              city: 'Berlin',
-              country: 'Deutschland',
-            }),
-          },
+          { attribute: 'Person.familyName', value: familyName },
+          { attribute: 'Person.givenName', value: givenName },
         ],
+        required: [{ attribute: 'Lernstand-Mathe' }],
         authorizations: [
           {
             id: 'comm',
-            title: 'Direkter Nachrichtenversand (auch Push)',
-            duration: 'Dauer der Versicherung',
+            title: 'Laden und Speichern von Lernstände',
+            duration: 'Dauer der Nutzung von serlo.org',
             required: true,
-          },
-          {
-            id: 'marketing',
-            title: 'Nachrichtenversand zwecks Marketing',
-            duration: 'Bis auf Widerruf',
-            required: false,
           },
         ],
       },
