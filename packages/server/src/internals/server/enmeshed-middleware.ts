@@ -19,7 +19,11 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
-import { ConnectorClient, ConnectorRequestContent } from '@nmshd/connector-sdk'
+import {
+  ConnectorClient,
+  ConnectorError,
+  ConnectorRequestContent,
+} from '@nmshd/connector-sdk'
 import express, {
   Express,
   RequestHandler,
@@ -48,11 +52,19 @@ export function applyEnmeshedMiddleware({
   if (process.env.ENVIRONMENT === 'production') return null
 
   const basePath = '/enmeshed'
-  app.post(`${basePath}/init`, createEnmeshedInitMiddleware(cache))
+  const client = ConnectorClient.create({
+    baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
+    apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+  })
+
+  app.post(`${basePath}/init`, createEnmeshedInitMiddleware(client, cache))
   app.get(`${basePath}/attributes`, createGetAttributesHandler(cache))
-  app.post(`${basePath}/attributes`, createSetAttributesHandler(cache))
+  app.post(`${basePath}/attributes`, createSetAttributesHandler(client, cache))
   app.use(express.json())
-  app.post(`${basePath}/webhook`, createEnmeshedWebhookMiddleware(cache))
+  app.post(
+    `${basePath}/webhook`,
+    createEnmeshedWebhookMiddleware(client, cache),
+  )
   return `${basePath}/init`
 }
 
@@ -60,13 +72,11 @@ export function applyEnmeshedMiddleware({
  * Endpoint for enmeshed relationship initialization.
  * Creates relationship template and returns QR for the user to scan.
  */
-function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
+function createEnmeshedInitMiddleware(
+  client: ConnectorClient,
+  cache: Cache,
+): RequestHandler {
   async function handleRequest(req: Request, res: Response) {
-    const client = ConnectorClient.create({
-      baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-      apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-    })
-
     const sessionId = readQuery(req, 'sessionId')
     // FIXME: Uncomment next line when prototype frontend has been replaced
     // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
@@ -93,12 +103,11 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
       })
 
       if (createAttributeResponse.isError) {
-        const error = createAttributeResponse.error
-        return res
-          .status(500)
-          .end(
-            `Error occurred while creating relationship attribute: ${error.code} ${error.message}`,
-          )
+        return handleConnectorError({
+          error: createAttributeResponse.error,
+          message: 'Error occurred while creating relationship attribute',
+          response: res,
+        })
       }
 
       const attributesContent: ConnectorRequestContent = {
@@ -172,18 +181,18 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
           },
         ],
       }
+
       const validationResponse = await client.outgoingRequests.canCreateRequest(
         {
           content: attributesContent,
         },
       )
       if (validationResponse.isError) {
-        const error = validationResponse.error
-        return res
-          .status(500)
-          .end(
-            `Error occurred while validating attributes: ${error.code} ${error.message}`,
-          )
+        return handleConnectorError({
+          error: validationResponse.error,
+          message: 'Error occurred while validating attributes',
+          response: res,
+        })
       }
 
       const createRelationshipResponse =
@@ -196,14 +205,12 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
             onNewRelationship: attributesContent,
           },
         })
-
       if (createRelationshipResponse.isError) {
-        const error = createRelationshipResponse.error
-        return res
-          .status(500)
-          .end(
-            `Error occurred while creating relationship request: ${error.code} ${error.message}`,
-          )
+        return handleConnectorError({
+          error: createRelationshipResponse.error,
+          message: 'Error occurred while creating relationship',
+          response: res,
+        })
       }
 
       relationshipTemplateId = createRelationshipResponse.result.id
@@ -216,12 +223,11 @@ function createEnmeshedInitMiddleware(cache: Cache): RequestHandler {
         relationshipTemplateId,
       )
     if (createTokenResponse.isError) {
-      const error = createTokenResponse.error
-      res.statusCode = 500
-      res.end(
-        `Error occurred while creating token: ${error.code} ${error.message}`,
-      )
-      return
+      return handleConnectorError({
+        error: createTokenResponse.error,
+        message: 'Error occurred while creating token',
+        response: res,
+      })
     }
     res.setHeader('Content-Type', 'image/png')
     res.status(200).end(createTokenResponse.result)
@@ -252,13 +258,13 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
       )
     res.setHeader('Content-Type', 'application/json')
     if (session.attributes) {
-      res.statusCode = 200
-      res.end(
-        JSON.stringify({ status: 'success', attributes: session.attributes }),
-      )
+      res
+        .status(200)
+        .end(
+          JSON.stringify({ status: 'success', attributes: session.attributes }),
+        )
     } else {
-      res.statusCode = 200
-      res.end(JSON.stringify({ status: 'pending' }))
+      res.status(200).end(JSON.stringify({ status: 'pending' }))
     }
   }
   return (request, response) => {
@@ -272,7 +278,10 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
   }
 }
 
-function createSetAttributesHandler(cache: Cache): RequestHandler {
+function createSetAttributesHandler(
+  client: ConnectorClient,
+  cache: Cache,
+): RequestHandler {
   async function handleRequest(req: Request, res: Response) {
     res.setHeader('Content-Type', 'application/json')
 
@@ -295,14 +304,14 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
     if (!session.enmeshedId)
       return validationError(res, 'Relationship not accepted yet.')
 
-    const client = ConnectorClient.create({
-      baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-      apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-    })
-
     const getIdentityResponse = await client.account.getIdentityInfo()
-    if (getIdentityResponse.isError)
-      return validationError(res, 'Error retrieving connector identity info.')
+    if (getIdentityResponse.isError) {
+      return handleConnectorError({
+        error: getIdentityResponse.error,
+        message: 'Error retrieving connector identity info',
+        response: res,
+      })
+    }
 
     // See: https://enmeshed.eu/explore/schema#attributeschangerequest
     const sendMessageResponse = await client.messages.sendMessage({
@@ -324,10 +333,14 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
         ],
       },
     })
-    if (sendMessageResponse.isError)
-      return validationError(res, JSON.stringify(sendMessageResponse.error))
-    res.statusCode = 200
-    res.end(JSON.stringify({ status: 'success' }))
+    if (sendMessageResponse.isError) {
+      return handleConnectorError({
+        error: sendMessageResponse.error,
+        message: 'Error retrieving connector identity info',
+        response: res,
+      })
+    }
+    res.status(200).end(JSON.stringify({ status: 'success' }))
   }
   return (request, response) => {
     handleRequest(request, response).catch((error: Error) => {
@@ -343,7 +356,10 @@ function createSetAttributesHandler(cache: Cache): RequestHandler {
 /**
  * Endpoint for Connector webhook, which receives any changes within relationships and messages
  */
-function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
+function createEnmeshedWebhookMiddleware(
+  client: ConnectorClient,
+  cache: Cache,
+): RequestHandler {
   async function handleRequest(
     req: Request,
     res: Response,
@@ -352,13 +368,10 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
     if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
       return next()
 
-    // TODO: Checking scheme of request body
     const payload = req.body as EnmeshedWebhookPayload
     if (!payload || !(payload.relationships || payload.messages)) return next()
 
-    // Process relationships
     for (const relationship of payload.relationships) {
-      // Check if relationship name matches
       const sessionId = relationship.template.content.metadata.sessionId ?? null
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
@@ -368,13 +381,12 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
       // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
       // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
 
-      // Accept all pending relationship requests
       for (const change of relationship.changes) {
         if (
           ['Creation', 'RelationshipRequest'].includes(change.type) &&
           ['Pending', 'Revoked'].includes(change.status)
         ) {
-          await acceptRelationshipRequest(relationship, change)
+          await acceptRelationshipRequest(relationship, change, client)
 
           if (session) {
             await setSession(cache, sessionId, {
@@ -388,14 +400,14 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
               },
             })
           } else {
-            await sendWelcomeMessage(relationship)
-            await sendAttributesChangeRequest(relationship)
+            const payload = { relationship, client }
+            await sendWelcomeMessage(payload)
+            await sendAttributesChangeRequest(payload)
           }
         }
       }
     }
 
-    // Process messages
     for (const message of payload.messages) {
       if (message.content['@type'] == 'AttributesChangeRequest') {
         const sessionId = await getSessionId(cache, message.createdBy)
@@ -420,8 +432,7 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
       }
     }
 
-    res.statusCode = 200
-    res.end('')
+    res.status(200).end('')
   }
   return (request, response, next) => {
     handleRequest(request, response, next).catch((error: Error) => {
@@ -440,12 +451,8 @@ function createEnmeshedWebhookMiddleware(cache: Cache): RequestHandler {
 async function acceptRelationshipRequest(
   relationship: Relationship,
   change: RelationshipChange,
+  client: ConnectorClient,
 ): Promise<boolean> {
-  const client = ConnectorClient.create({
-    baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-    apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-  })
-  // Accept relationship request
   const acceptRelationshipResponse =
     await client.relationships.acceptRelationshipChange(
       relationship.id,
@@ -469,13 +476,13 @@ async function acceptRelationshipRequest(
 /**
  * Sends a welcome message with a test file attachment to be saved within the users' data wallet
  */
-async function sendWelcomeMessage(
-  relationship: Relationship,
-): Promise<boolean> {
-  const client = ConnectorClient.create({
-    baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-    apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-  })
+async function sendWelcomeMessage({
+  relationship,
+  client,
+}: {
+  relationship: Relationship
+  client: ConnectorClient
+}): Promise<boolean> {
   const expiresAt = new Date()
   expiresAt.setHours(expiresAt.getHours() + 1)
   const uploadFileResponse = await client.files.uploadOwnFile({
@@ -493,7 +500,6 @@ async function sendWelcomeMessage(
     return false
   }
 
-  // Send message with file attachment
   const sendMessageResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
@@ -516,15 +522,13 @@ async function sendWelcomeMessage(
  * Requests user to change and share attributes in data wallet
  * Attributes will be sent to connector webhook after confirmation
  */
-async function sendAttributesChangeRequest(
-  relationship: Relationship,
-): Promise<boolean> {
-  const client = ConnectorClient.create({
-    baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-    apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
-  })
-
-  // Get own Identity
+async function sendAttributesChangeRequest({
+  relationship,
+  client,
+}: {
+  relationship: Relationship
+  client: ConnectorClient
+}): Promise<boolean> {
   const getIdentityResponse = await client.account.getIdentityInfo()
   if (getIdentityResponse.isError) {
     // eslint-disable-next-line no-console
@@ -570,6 +574,18 @@ async function sendAttributesChangeRequest(
     return false
   }
   return true
+}
+
+function handleConnectorError({
+  error,
+  message,
+  response,
+}: {
+  error: ConnectorError
+  message: string
+  response: Response
+}) {
+  return response.status(500).end(`${message}: ${error.code} ${error.message}`)
 }
 
 function validationError(res: Response, message: string) {
