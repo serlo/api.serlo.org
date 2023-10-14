@@ -201,7 +201,7 @@ function createEnmeshedInitMiddleware(
           expiresAt: '2100-01-01T00:00:00.000Z',
           content: {
             '@type': 'RelationshipTemplateContent',
-            title: 'Connector Demo Contact',
+            title: 'LENABI Demo',
             onNewRelationship: attributesContent,
           },
         })
@@ -213,9 +213,11 @@ function createEnmeshedInitMiddleware(
         })
       }
 
-      relationshipTemplateId = createRelationshipResponse.result.id
-
-      await setSession(cache, sessionId, { relationshipTemplateId })
+      await setSession(cache, sessionId, {
+        relationshipTemplateId: createRelationshipResponse.result.id,
+        content: createRelationshipResponse.result
+          .content as Session['content'],
+      })
     }
 
     const createTokenResponse =
@@ -257,11 +259,14 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
         'Session not found. Please create a QR code first.',
       )
     res.setHeader('Content-Type', 'application/json')
-    if (session.attributes) {
+    if (session.content) {
       res
         .status(200)
         .end(
-          JSON.stringify({ status: 'success', attributes: session.attributes }),
+          JSON.stringify({
+            status: 'success',
+            attributes: session.content['onNewRelationship'],
+          }),
         )
     } else {
       res.status(200).end(JSON.stringify({ status: 'pending' }))
@@ -392,8 +397,8 @@ function createEnmeshedWebhookMiddleware(
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
-              attributes: {
-                ...session.attributes,
+              content: {
+                ...session.content,
                 ...getSessionAttributes(
                   Object.values(change.request.content?.attributes ?? {}),
                 ),
@@ -416,8 +421,8 @@ function createEnmeshedWebhookMiddleware(
           await setSession(cache, sessionId, {
             ...session,
             enmeshedId: message.createdBy,
-            attributes: {
-              ...session.attributes,
+            content: {
+              ...session.content,
               ...getSessionAttributes(message.content.attributes),
             },
           })
@@ -602,7 +607,7 @@ const Session = t.intersection([
   t.type({ relationshipTemplateId: t.string }),
   t.partial({
     enmeshedId: t.string,
-    attributes: t.UnknownRecord,
+    content: t.UnknownRecord,
   }),
 ])
 type Session = t.TypeOf<typeof Session>
