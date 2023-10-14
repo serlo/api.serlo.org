@@ -45,6 +45,11 @@ to set: `--dns-result-order=ipv4first` in the `NODE_OPTIONS` environment variabl
 export NODE_OPTIONS=--dns-result-order=ipv4first
 ```
 
+### Caching
+
+By default, while developing, the caching won't work. If you want to have caching, change the value `CACHE_TYPE` in `.env` to any other
+value besides 'empty'.
+
 ### Run tests
 
 - `yarn test` runs the unit tests (requires `yarn start:redis` beforehand)
