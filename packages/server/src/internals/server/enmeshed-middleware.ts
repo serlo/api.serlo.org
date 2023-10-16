@@ -260,14 +260,12 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
       )
     res.setHeader('Content-Type', 'application/json')
     if (session.content) {
-      res
-        .status(200)
-        .end(
-          JSON.stringify({
-            status: 'success',
-            attributes: session.content['onNewRelationship'],
-          }),
-        )
+      res.status(200).end(
+        JSON.stringify({
+          status: 'success',
+          attributes: session.content['onNewRelationship'],
+        }),
+      )
     } else {
       res.status(200).end(JSON.stringify({ status: 'pending' }))
     }
