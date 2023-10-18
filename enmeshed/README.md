@@ -2,7 +2,7 @@
 
 ### Setup
 
-In order to test enmeshed locally you need to copy [`config-dist.json`](./config-dist.json) to `config.json` and update `clientId` and `clientSecret` in the copied configuration:
+In order to test enmeshed locally you need to copy [`config-dist.json`](./config-dist.json) to `config.json`:
 
 ```sh
 cp enmeshed/config-dist.json enmeshed/config.json
