@@ -26,7 +26,6 @@ const typesMap = {
   subject: TaxonomyTermType.Subject,
   topicFolder: TaxonomyTermType.ExerciseFolder,
   curriculumTopicFolder: TaxonomyTermType.ExerciseFolder,
-  exerciseFolder: TaxonomyTermType.ExerciseFolder,
   topic: TaxonomyTermType.Topic,
   // fallbacks
   blog: TaxonomyTermType.Topic,
