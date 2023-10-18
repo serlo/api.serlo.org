@@ -197,7 +197,6 @@ function createEnmeshedInitMiddleware(
 
       const createRelationshipResponse =
         await client.relationshipTemplates.createOwnRelationshipTemplate({
-          maxNumberOfAllocations: 1,
           expiresAt: '2100-01-01T00:00:00.000Z',
           content: {
             '@type': 'RelationshipTemplateContent',
