@@ -253,7 +253,6 @@ export const TaxonomyTermTypeDecoder = t.union([
   t.literal(TaxonomyTermType.Root),
   t.literal(TaxonomyTermType.Subject),
   t.literal(TaxonomyTermType.Topic),
-  t.literal(TaxonomyTermType.ExerciseFolder),
 ])
 
 export const TaxonomyTermDecoder = t.exact(
