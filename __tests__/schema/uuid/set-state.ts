@@ -33,10 +33,10 @@ beforeEach(() => {
       const { ids, trashed } = req.body.payload
 
       for (const id of ids) {
-        const article = uuids.find((x) => x.id === id)
+        const uuid = uuids.find((x) => x.id === id)
 
-        if (article != null) {
-          article.trashed = trashed
+        if (uuid != null) {
+          uuid.trashed = trashed
         } else {
           return res(ctx.status(500))
         }
