@@ -110,6 +110,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
+      // TODO: Handle privacy and Lernstand-Mathe See https://github.com/serlo/api.serlo.org/blob/main/packages/server/src/internals/server/enmeshed-middleware.ts#L525
       const attributesContent: ConnectorRequestContent = {
         metadata: { sessionId: sessionId ?? 'session-id' },
         items: [
