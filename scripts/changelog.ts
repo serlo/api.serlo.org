@@ -1587,6 +1587,11 @@ async function exec(): Promise<void> {
         date: '2023-10-11',
         fixed: ['Only show `lastLogin` to auth users'],
       },
+      {
+        tagName: 'v0.57.6',
+        date: '2023-10-18',
+        fixed: ['Actualize enmeshed relationship template schema to version 2'],
+      },
     ],
   })
 

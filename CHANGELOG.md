@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.6](https://github.com/serlo/api.serlo.org/compare/v0.57.5..v0.57.6) - October 18, 2023
+
+### Fixed
+
+- Actualize enmeshed relationship template schema to version 2
+
 ## [v0.57.5](https://github.com/serlo/api.serlo.org/compare/v0.57.4..v0.57.5) - October 11, 2023
 
 ### Fixed
