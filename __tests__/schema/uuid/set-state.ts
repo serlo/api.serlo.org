@@ -45,9 +45,13 @@ beforeEach(() => {
       return res(ctx.status(200))
     })
 })
+
 describe('infrastructural testing', () => {
   beforeEach(() => {
-    given('UuidQuery').for({ ...baseUser, roles: ['de_architect'] })
+    given('UuidQuery').for(
+      { ...baseUser, roles: ['de_architect'] },
+      { ...article, trashed: false },
+    )
   })
 
   test('returns "{ success: true }" when it succeeds', async () => {
@@ -69,7 +73,7 @@ describe('infrastructural testing', () => {
       })
       .withVariables({ id: article.id })
 
-    await uuidQuery.shouldReturnData({ uuid: { trashed: true } })
+    await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
     await mutation.withInput({ id: [article.id], trashed: true }).execute()
 
     await uuidQuery.shouldReturnData({ uuid: { trashed: true } })
@@ -93,6 +97,10 @@ describe('infrastructural testing', () => {
 })
 
 describe('permission-based testing', () => {
+  beforeEach(() => {
+    given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, user2, article)
+  })
+
   test('fails when user is not authenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
@@ -100,120 +108,61 @@ describe('permission-based testing', () => {
       .shouldFailWithError('UNAUTHENTICATED')
   })
 
-  // TESTS TO BUILD:
-  // role: login
-  // uuids negative response: page, pageRevision, user2, taxonomyTermRoot, article
-
-  // role: de_architect
-  // uuids positive response: taxonomyTermRoot, article
-  // uuids negative response: page, pageRevision, user2
-
-  // role: (de_)static_pages_builder
-  // uuids positive response: page, pageRevision
-  // uuids negative response: taxonomyTermRoot, user2, article
-
   test('fails when login user tries to set state of page', async () => {
-    given('UuidQuery').for({ ...baseUser, roles: ['login'] }, page)
-
-    await mutation
-      .withInput({ id: [page.id], trashed: true })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('login', page.id, 'fail')
   })
 
   test('fails when login user tries to set state of page revision', async () => {
-    given('UuidQuery').for({ ...baseUser, roles: ['login'] }, pageRevision)
-
-    await mutation
-      .withInput({ id: [pageRevision.id], trashed: true })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('login', pageRevision.id, 'fail')
   })
 
   test('fails when architect tries to set state of page', async () => {
-    given('UuidQuery').for({ ...baseUser, roles: ['de_architect'] }, page)
-
-    await mutation
-      .withInput({ id: [page.id], trashed: false })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('de_architect', page.id, 'fail')
   })
 
   test('fails when architect tries to set state of user', async () => {
-    given('UuidQuery').for({ ...baseUser, roles: ['de_architect'] }, user2)
-
-    await mutation
-      .withInput({ id: [user2.id], trashed: false })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('de_architect', user2.id, 'fail')
   })
 
   test('returns "{ success: true }" when architect tries to set state of article', async () => {
-    given('UuidQuery').for({ ...baseUser, roles: ['de_architect'] }, article)
-
-    await mutation
-      .withInput({ id: [article.id], trashed: true })
-      .shouldReturnData({ uuid: { setState: { success: true } } })
+    await mockUser('de_architect', article.id, 'success')
   })
 
   test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
-    given('UuidQuery').for(
-      { ...baseUser, roles: ['de_architect'] },
-      taxonomyTermRoot,
-    )
-
-    await mutation
-      .withInput({ id: [taxonomyTermRoot.id], trashed: true })
-      .shouldReturnData({ uuid: { setState: { success: true } } })
+    await mockUser('de_architect', taxonomyTermRoot.id, 'success')
   })
 
   test('fails when static_pages_builder tries to set state of user', async () => {
-    given('UuidQuery').for(
-      { ...baseUser, roles: ['de_static_pages_builder'] },
-      user2,
-    )
-
-    await mutation
-      .withInput({ id: [user2.id], trashed: false })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('de_static_pages_builder', user2.id, 'fail')
   })
 
   test('fails when static_pages_builder tries to set state of article', async () => {
-    given('UuidQuery').for(
-      { ...baseUser, roles: ['de_static_pages_builder'] },
-      article,
-    )
-
-    await mutation
-      .withInput({ id: [article.id], trashed: false })
-      .shouldFailWithError('FORBIDDEN')
+    await mockUser('de_static_pages_builder', article.id, 'fail')
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page', async () => {
-    given('UuidQuery').for(
-      { ...baseUser, roles: ['de_static_pages_builder'] },
-      page,
-    )
-
-    await mutation
-      .withInput({ id: [page.id], trashed: true })
-      .shouldReturnData({ uuid: { setState: { success: true } } })
+    await mockUser('de_static_pages_builder', page.id, 'success')
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
-    given('UuidQuery').for(
-      { ...baseUser, roles: ['de_static_pages_builder'] },
-      pageRevision,
-    )
-
-    await mutation
-      .withInput({ id: [pageRevision.id], trashed: true })
-      .shouldReturnData({ uuid: { setState: { success: true } } })
+    await mockUser('de_static_pages_builder', pageRevision.id, 'success')
   })
 })
 
-// FUNCTION EXAMPLE
+async function mockUser(
+  userRole: string,
+  uuidId: number,
+  successSwitch: string,
+) {
+  given('UuidQuery').for({ ...baseUser, roles: [userRole] })
 
-// async function mockUserAndUuid(userRole: string, uuidType, returnValue) {
-//   given('UuidQuery').for({ ...baseUser, roles: [userRole] }, uuidType)
-
-//   await mutation
-//     .withInput({ id: [uuidType.id], trashed: true })
-//     .shouldReturnData(returnValue)
-// }
+  if (successSwitch === 'success') {
+    await mutation
+      .withInput({ id: [uuidId], trashed: true })
+      .shouldReturnData({ uuid: { setState: { success: true } } })
+  } else if (successSwitch === 'fail') {
+    await mutation
+      .withInput({ id: [uuidId], trashed: true })
+      .shouldFailWithError('FORBIDDEN')
+  }
+}
