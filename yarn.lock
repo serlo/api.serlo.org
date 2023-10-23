@@ -1738,8 +1738,8 @@ __metadata:
   linkType: hard
 
 "@google-cloud/storage@npm:^7.3.0":
-  version: 7.3.0
-  resolution: "@google-cloud/storage@npm:7.3.0"
+  version: 7.3.1
+  resolution: "@google-cloud/storage@npm:7.3.1"
   dependencies:
     "@google-cloud/paginator": ^5.0.0
     "@google-cloud/projectify": ^4.0.0
@@ -1755,10 +1755,10 @@ __metadata:
     mime: ^3.0.0
     mime-types: ^2.0.8
     p-limit: ^3.0.1
-    retry-request: ^6.0.0
+    retry-request: ^7.0.0
     teeny-request: ^9.0.0
     uuid: ^8.0.0
-  checksum: 55e2f88cb12e120e9c281f8d34ffd09674121a6cdedf29bdfc058bdd90c3108006a347c4e5736322c01cfd20c3cea8a636b4c33d52c72fa0293460044563f76a
+  checksum: 28cac2a6d0dfdb88bece484291f6491e7418597492ae99d556065a18a4d3fbd2e79594fbe023499104f3c28cdc703126d596f25d0930fe97d6300abbc5e53c85
   languageName: node
   linkType: hard
 
@@ -4565,6 +4565,18 @@ __metadata:
     "@types/tough-cookie": "*"
     form-data: ^2.5.0
   checksum: 98b713b1abfb3cf26388253b8025a6010e0b987493f6ffc7855799368938e4ded75a6e4e9dd8d83d7fd8863f745005f82da649d7f93cc5d14244518e8aaed3f8
+  languageName: node
+  linkType: hard
+
+"@types/request@npm:^2.48.8":
+  version: 2.48.11
+  resolution: "@types/request@npm:2.48.11"
+  dependencies:
+    "@types/caseless": "*"
+    "@types/node": "*"
+    "@types/tough-cookie": "*"
+    form-data: ^2.5.0
+  checksum: fa3682c6420d2da8223f12d8270ab51db6f1559f075379e8c87990785a5009ac38966f3ac0a7c61e31e2dd46117a6a0fee8c652d988772625a84c73348f027af
   languageName: node
   linkType: hard
 
@@ -17426,13 +17438,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"retry-request@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "retry-request@npm:6.0.0"
+"retry-request@npm:^7.0.0":
+  version: 7.0.1
+  resolution: "retry-request@npm:7.0.1"
   dependencies:
+    "@types/request": ^2.48.8
     debug: ^4.1.1
     extend: ^3.0.2
-  checksum: 54cd6bc37be509301ebaab944fa64a1be63986ccd2752a06acf05b2ef19b5c06875880754ecd0072680110ba1c30c81337f9547026034ba459ebd1b512799bd7
+    teeny-request: ^9.0.0
+  checksum: 75a359afc8a748ae2ee2b5991cf3c7a198a61492e73b0fcdc6f03d35767c99a3eb0dc93194f1acf1575665475e4edfcf5cf74097376390e05fc6c004133bd79d
   languageName: node
   linkType: hard
 
