@@ -21,8 +21,6 @@ import {
   license,
   page,
   pageRevision,
-  solution,
-  solutionRevision,
   user,
   video,
   videoRevision,
@@ -88,11 +86,6 @@ const repositoryFixtures: Record<
     repository: groupedExercise,
     revision: groupedExerciseRevision,
     revisionType: EntityRevisionType.GroupedExerciseRevision,
-  },
-  [EntityType.Solution]: {
-    repository: solution,
-    revision: solutionRevision,
-    revisionType: EntityRevisionType.SolutionRevision,
   },
   [EntityType.Video]: {
     repository: video,
