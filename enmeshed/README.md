@@ -8,7 +8,7 @@ In order to test enmeshed locally you need to copy [`config-dist.json`](./config
 cp enmeshed/config-dist.json enmeshed/config.json
 ```
 
-Set the `transportLibrary.baseUrl`, `platformClientId` and `platformClientSecret` to the values you've received from the Integration team.
+Set the `transportLibrary.baseUrl`, `transportLibrary.platformClientId` and `transportLibrary.platformClientSecret` to the values you've received from the Integration team.
 
 ### Starting / stopping enmeshed locally
 
