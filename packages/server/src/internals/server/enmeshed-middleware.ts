@@ -213,8 +213,10 @@ function createEnmeshedInitMiddleware(
         })
       }
 
+      relationshipTemplateId = createRelationshipResponse.result.id
+
       await setSession(cache, sessionId, {
-        relationshipTemplateId: createRelationshipResponse.result.id,
+        relationshipTemplateId,
         content: createRelationshipResponse.result
           .content as Session['content'],
       })
