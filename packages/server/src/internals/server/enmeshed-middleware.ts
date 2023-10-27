@@ -183,7 +183,7 @@ function createEnmeshedInitMiddleware(
                 attribute: {
                   owner: '',
                   key: 'lernstandMathe',
-                  confidentiality: 'private',
+                  confidentiality: 'public',
                   '@type': 'RelationshipAttribute',
                   value: {
                     '@type': 'ProprietaryString',
@@ -332,11 +332,10 @@ function createSetAttributesHandler(
       })
     }
 
-    // See: https://enmeshed.eu/explore/schema#attributeschangerequest
     const sendMessageResponse = await client.messages.sendMessage({
       recipients: [session.enmeshedId],
       content: {
-        '@type': 'RequestMail',
+        '@type': 'Mail',
         to: [session.enmeshedId],
         cc: [],
         subject: 'Aktualisierung deines Lernstands',
@@ -534,7 +533,6 @@ async function sendWelcomeMessage({
     return false
   }
 
-  // TODO: update to v2
   const sendMessageResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
@@ -576,9 +574,8 @@ async function sendAttributesChangeRequest({
   const sendMessageResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
-      '@type': 'RequestMail',
+      '@type': 'Mail',
       to: [relationship.peer],
-      cc: [],
       subject: 'Dein Lernstand',
       body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
       requests: [
@@ -605,9 +602,7 @@ async function sendAttributesChangeRequest({
   if (sendMessageResponse.isError) {
     // eslint-disable-next-line no-console
     console.log(sendMessageResponse)
-    return false
   }
-  return true
 }
 
 function handleConnectorError({
@@ -617,9 +612,15 @@ function handleConnectorError({
 }: {
   error: ConnectorError
   message: string
-  response: Response
+  response?: Response
 }) {
-  return response.status(500).end(`${message}: ${error.code} ${error.message}`)
+  const log = `${message}: ${error.code} ${error.message}`
+  if(response) {
+    return response.status(500).end(log)
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(log)
+  }
 }
 
 function validationError(res: Response, message: string) {
