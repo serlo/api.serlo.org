@@ -109,7 +109,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
-      // TODO: Handle privacy and Lernstand-Mathe See https://github.com/serlo/api.serlo.org/blob/main/packages/server/src/internals/server/enmeshed-middleware.ts#L525
+      // TODO: Handle privacy and Lernstand-Mathe See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L460
       const attributesContent: ConnectorRequestContent = {
         metadata: { sessionId: sessionId ?? 'session-id' },
         items: [
@@ -372,13 +372,12 @@ function createEnmeshedWebhookMiddleware(
     if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
       return next()
 
-    if (!req.body) return next()
-
     const { result } = await client.account.sync()
+
     for (const relationship of result.relationships) {
       const sessionId =
         (relationship.template.content as { metadata: { sessionId: string } })
-          .metadata.sessionId ?? null
+          ?.metadata?.sessionId ?? null
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
@@ -424,8 +423,6 @@ function createEnmeshedWebhookMiddleware(
     }
 
     for (const message of result.messages) {
-      console.log({ message })
-
       const content = message.content as {
         '@type': string
         attributes: { name: string; value: string }[]
@@ -452,9 +449,7 @@ function createEnmeshedWebhookMiddleware(
         }
       } else {
         // eslint-disable-next-line no-console
-        console.log('Received message:')
-        // eslint-disable-next-line no-console
-        console.log(message.content)
+        console.log('Received message:', message.content)
       }
     }
 
