@@ -22,6 +22,10 @@
 import {
   ConnectorClient,
   ConnectorError,
+  ConnectorRelationship,
+  ConnectorRelationshipChange,
+  ConnectorRelationshipChangeStatus,
+  ConnectorRelationshipChangeType,
   ConnectorRequestContent,
 } from '@nmshd/connector-sdk'
 import express, {
@@ -34,11 +38,6 @@ import express, {
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import {
-  EnmeshedWebhookPayload,
-  Relationship,
-  RelationshipChange,
-} from './enmeshed-payload'
 import { Cache } from '../cache'
 import { captureErrorEvent } from '../error-event'
 
@@ -373,11 +372,13 @@ function createEnmeshedWebhookMiddleware(
     if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
       return next()
 
-    const payload = req.body as EnmeshedWebhookPayload
-    if (!payload || !(payload.relationships || payload.messages)) return next()
+    if (!req.body) return next()
 
-    for (const relationship of payload.relationships) {
-      const sessionId = relationship.template.content.metadata.sessionId ?? null
+    const { result } = await client.account.sync()
+    for (const relationship of result.relationships) {
+      const sessionId =
+        (relationship.template.content as { metadata: { sessionId: string } })
+          .metadata.sessionId ?? null
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
@@ -388,8 +389,11 @@ function createEnmeshedWebhookMiddleware(
 
       for (const change of relationship.changes) {
         if (
-          ['Creation', 'RelationshipRequest'].includes(change.type) &&
-          ['Pending', 'Revoked'].includes(change.status)
+          [ConnectorRelationshipChangeType.CREATION].includes(change.type) &&
+          [
+            ConnectorRelationshipChangeStatus.PENDING,
+            ConnectorRelationshipChangeStatus.REJECTED,
+          ].includes(change.status)
         ) {
           await acceptRelationshipRequest(relationship, change, client)
 
@@ -400,7 +404,13 @@ function createEnmeshedWebhookMiddleware(
               content: {
                 ...session.content,
                 ...getSessionAttributes(
-                  Object.values(change.request.content?.attributes ?? {}),
+                  Object.values(
+                    (
+                      change.request.content as {
+                        attributes: { name: string; value: string }[]
+                      }
+                    ).attributes ?? {},
+                  ),
                 ),
               },
             })
@@ -413,8 +423,19 @@ function createEnmeshedWebhookMiddleware(
       }
     }
 
-    for (const message of payload.messages) {
-      if (message.content['@type'] == 'AttributesChangeRequest') {
+    for (const message of result.messages) {
+      console.log({ message })
+
+      const content = message.content as {
+        '@type': string
+        attributes: { name: string; value: string }[]
+      }
+
+      // TODO: check if AttributesChangeRequest is deprecated
+      if (
+        content['@type'] == 'AttributesChangeRequest' ||
+        content['@type'] == 'ProposeAttributeRequestItem'
+      ) {
         const sessionId = await getSessionId(cache, message.createdBy)
         const session = await getSession(cache, sessionId)
         if (session) {
@@ -423,7 +444,7 @@ function createEnmeshedWebhookMiddleware(
             enmeshedId: message.createdBy,
             content: {
               ...session.content,
-              ...getSessionAttributes(message.content.attributes),
+              ...getSessionAttributes(Object.values(content.attributes ?? {})),
             },
           })
           // eslint-disable-next-line no-console
@@ -454,10 +475,10 @@ function createEnmeshedWebhookMiddleware(
  * Accepts pending relationship request
  */
 async function acceptRelationshipRequest(
-  relationship: Relationship,
-  change: RelationshipChange,
+  relationship: ConnectorRelationship,
+  change: ConnectorRelationshipChange,
   client: ConnectorClient,
-): Promise<boolean> {
+): Promise<void> {
   const acceptRelationshipResponse =
     await client.relationships.acceptRelationshipChange(
       relationship.id,
@@ -473,9 +494,7 @@ async function acceptRelationshipRequest(
   if (acceptRelationshipResponse.isError) {
     // eslint-disable-next-line no-console
     console.log(acceptRelationshipResponse)
-    return false
   }
-  return true
 }
 
 /**
@@ -485,7 +504,7 @@ async function sendWelcomeMessage({
   relationship,
   client,
 }: {
-  relationship: Relationship
+  relationship: ConnectorRelationship
   client: ConnectorClient
 }): Promise<boolean> {
   const expiresAt = new Date()
@@ -505,6 +524,7 @@ async function sendWelcomeMessage({
     return false
   }
 
+  // TODO: update to v2
   const sendMessageResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
@@ -531,7 +551,7 @@ async function sendAttributesChangeRequest({
   relationship,
   client,
 }: {
-  relationship: Relationship
+  relationship: ConnectorRelationship
   client: ConnectorClient
 }): Promise<boolean> {
   const getIdentityResponse = await client.account.getIdentityInfo()
@@ -542,8 +562,7 @@ async function sendAttributesChangeRequest({
   }
   const connectorIdentity = getIdentityResponse.result.address
 
-  // Send message to create/change attribute
-  // See: https://enmeshed.eu/explore/schema#attributeschangerequest
+  // TODO: update do v2
   const sendMessageResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
