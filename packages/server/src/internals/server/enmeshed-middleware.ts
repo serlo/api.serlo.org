@@ -109,7 +109,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
-      // TODO: Handle privacy and Lernstand-Mathe See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L460
+      // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
       const attributesContent: ConnectorRequestContent = {
         metadata: { sessionId: sessionId ?? 'session-id' },
         items: [
@@ -174,6 +174,21 @@ function createEnmeshedInitMiddleware(
                   value: {
                     '@type': 'Nationality',
                     value: 'DE',
+                  },
+                },
+              },
+              {
+                '@type': 'CreateAttributeRequestItem',
+                mustBeAccepted: true,
+                attribute: {
+                  owner: '',
+                  key: 'lernstandMathe',
+                  confidentiality: 'private',
+                  '@type': 'RelationshipAttribute',
+                  value: {
+                    '@type': 'ProprietaryString',
+                    title: 'LernstandMathe',
+                    value: '',
                   },
                 },
               },
