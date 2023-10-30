@@ -392,10 +392,20 @@ function createEnmeshedWebhookMiddleware(
       const sessionId =
         (relationship.template.content as { metadata: { sessionId: string } })
           ?.metadata?.sessionId ?? null
+
+      // TODO: actually, we need go access onNewRelationship to get the right value,
+      // but doing so the flow with welcome message etc. doesn't work.
+      // Investigate if it was on purpose before.
+      // const sessionId =
+      //   (
+      //     relationship.template.content as {
+      //       onNewRelationship: { metadata: { sessionId: string } }
+      //     }
+      //   )?.onNewRelationship?.metadata?.sessionId ?? null
+
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
-
       // FIXME: Uncomment next lines when prototype frontend has been replaced
       // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
       // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
@@ -430,7 +440,7 @@ function createEnmeshedWebhookMiddleware(
           } else {
             const payload = { relationship, client }
             await sendWelcomeMessage(payload)
-            await sendAttributesChangeRequest(payload)
+            await sendAttributesChangeRequest({ ...payload, session })
           }
         }
       }
@@ -442,11 +452,7 @@ function createEnmeshedWebhookMiddleware(
         attributes: { name: string; value: string }[]
       }
 
-      // TODO: check if AttributesChangeRequest is deprecated
-      if (
-        content['@type'] == 'AttributesChangeRequest' ||
-        content['@type'] == 'ProposeAttributeRequestItem'
-      ) {
+      if (content['@type'] == 'CreateAttributeRequestItem') {
         const sessionId = await getSessionId(cache, message.createdBy)
         const session = await getSession(cache, sessionId)
         if (session) {
@@ -501,8 +507,10 @@ async function acceptRelationshipRequest(
       },
     )
   if (acceptRelationshipResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(acceptRelationshipResponse)
+    handleConnectorError({
+      error: acceptRelationshipResponse.error,
+      message: 'Failed while accepting relationship request',
+    })
   }
 }
 
@@ -515,22 +523,24 @@ async function sendWelcomeMessage({
 }: {
   relationship: ConnectorRelationship
   client: ConnectorClient
-}): Promise<boolean> {
+}): Promise<void> {
   const expiresAt = new Date()
   expiresAt.setHours(expiresAt.getHours() + 1)
   const uploadFileResponse = await client.files.uploadOwnFile({
     title: 'Serlo Testdatei',
     description: 'Test file created by Serlo',
     file: Buffer.from(
-      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! – Dies ist eine Testdatei.</p></body></html>',
+      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! - Dies ist eine Testdatei.</p></body></html>',
     ),
     filename: 'serlo-test.html',
     expiresAt: expiresAt.toISOString(),
   })
+
   if (uploadFileResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(uploadFileResponse)
-    return false
+    handleConnectorError({
+      error: uploadFileResponse.error,
+      message: 'Failed to upload file in welcome message',
+    })
   }
 
   const sendMessageResponse = await client.messages.sendMessage({
@@ -543,12 +553,13 @@ async function sendWelcomeMessage({
     },
     attachments: [uploadFileResponse.result.id],
   })
+
   if (sendMessageResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(sendMessageResponse)
-    return false
+    handleConnectorError({
+      error: sendMessageResponse.error,
+      message: 'Failed to upload file in welcome message',
+    })
   }
-  return true
 }
 
 /**
@@ -558,50 +569,91 @@ async function sendWelcomeMessage({
 async function sendAttributesChangeRequest({
   relationship,
   client,
+  session,
 }: {
   relationship: ConnectorRelationship
   client: ConnectorClient
-}): Promise<boolean> {
-  const getIdentityResponse = await client.account.getIdentityInfo()
-  if (getIdentityResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(getIdentityResponse)
-    return false
-  }
-  const connectorIdentity = getIdentityResponse.result.address
+  // TODO: remove null after being sure session is defined
+  session: Session | null
+}): Promise<void> {
+  const mathLevel = '42'
+  const request = await client.outgoingRequests.createRequest({
+    content: {
+      items: [
+        {
+          '@type': 'CreateAttributeRequestItem',
+          mustBeAccepted: true,
+          attribute: {
+            key: 'lernstandMathe',
+            owner: '',
+            confidentiality: 'public',
+            '@type': 'RelationshipAttribute',
+            value: {
+              '@type': 'ProprietaryString',
+              title: 'LernstandMathe',
+              value: mathLevel,
+            },
+          },
+        },
+        // TODO: fix or throw out
+        // {
+        //   '@type': 'ShareAttributeRequestItem',
+        //   mustBeAccepted: true,
+        //   attribute: {
+        //     '@type': 'RelationshipAttribute',
+        //     confidentiality: 'public',
+        //     key: 'lernstandMathe',
+        //     owner: '',
+        //     value: {
+        //       '@type': 'ProprietaryString',
+        //       title: 'LernstandMathe',
+        //       value: mathLevel,
+        //     },
+        //   },
+        //   // TODO: refactor: hardcode at items[0].items[0]
+        //   sourceAttributeId:
+        //     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        //     session!.content?.onNewRelationship!.items[0]!.items[0]!.sourceAttributeId as string,
+        // },
+      ],
+    },
+    peer: relationship.peer,
+  })
 
-  // TODO: update do v2
-  const sendMessageResponse = await client.messages.sendMessage({
+  if (request.isError) {
+    handleConnectorError({
+      error: request.error,
+      message: 'Failed to create request to change attribute:',
+    })
+  }
+
+  const sendMailResponse = await client.messages.sendMessage({
     recipients: [relationship.peer],
     content: {
       '@type': 'Mail',
       to: [relationship.peer],
       subject: 'Dein Lernstand',
       body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
-      requests: [
-        {
-          '@type': 'AttributesChangeRequest',
-          attributes: [
-            {
-              name: 'lenabi.level',
-              value: '42',
-            },
-          ],
-          applyTo: relationship.peer,
-          reason: 'Lernstand',
-        },
-        {
-          '@type': 'AttributesShareRequest',
-          attributes: ['lenabi.level'],
-          recipients: [connectorIdentity],
-          reason: 'Lernstand',
-        },
-      ],
     },
   })
-  if (sendMessageResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(sendMessageResponse)
+
+  if (sendMailResponse.isError) {
+    handleConnectorError({
+      error: sendMailResponse.error,
+      message: 'Failed to send mail',
+    })
+  }
+
+  const attributeChangeResponse = await client.messages.sendMessage({
+    recipients: [relationship.peer],
+    content: request.result.content,
+  })
+
+  if (attributeChangeResponse.isError) {
+    handleConnectorError({
+      error: attributeChangeResponse.error,
+      message: 'Failed to send attribute change request:',
+    })
   }
 }
 
@@ -615,7 +667,7 @@ function handleConnectorError({
   response?: Response
 }) {
   const log = `${message}: ${error.code} ${error.message}`
-  if(response) {
+  if (response) {
     return response.status(500).end(log)
   } else {
     // eslint-disable-next-line no-console
