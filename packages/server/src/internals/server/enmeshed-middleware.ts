@@ -440,7 +440,7 @@ function createEnmeshedWebhookMiddleware(
           } else {
             const payload = { relationship, client }
             await sendWelcomeMessage(payload)
-            await sendAttributesChangeRequest({ ...payload, session })
+            await sendAttributesChangeRequest(payload)
           }
         }
       }
@@ -569,14 +569,10 @@ async function sendWelcomeMessage({
 async function sendAttributesChangeRequest({
   relationship,
   client,
-  session,
 }: {
   relationship: ConnectorRelationship
   client: ConnectorClient
-  // TODO: remove null after being sure session is defined
-  session: Session | null
 }): Promise<void> {
-  const mathLevel = '42'
   const request = await client.outgoingRequests.createRequest({
     content: {
       items: [
@@ -591,30 +587,10 @@ async function sendAttributesChangeRequest({
             value: {
               '@type': 'ProprietaryString',
               title: 'LernstandMathe',
-              value: mathLevel,
+              value: '42',
             },
           },
         },
-        // TODO: fix or throw out
-        // {
-        //   '@type': 'ShareAttributeRequestItem',
-        //   mustBeAccepted: true,
-        //   attribute: {
-        //     '@type': 'RelationshipAttribute',
-        //     confidentiality: 'public',
-        //     key: 'lernstandMathe',
-        //     owner: '',
-        //     value: {
-        //       '@type': 'ProprietaryString',
-        //       title: 'LernstandMathe',
-        //       value: mathLevel,
-        //     },
-        //   },
-        //   // TODO: refactor: hardcode at items[0].items[0]
-        //   sourceAttributeId:
-        //     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        //     session!.content?.onNewRelationship!.items[0]!.items[0]!.sourceAttributeId as string,
-        // },
       ],
     },
     peer: relationship.peer,
@@ -633,7 +609,7 @@ async function sendAttributesChangeRequest({
       '@type': 'Mail',
       to: [relationship.peer],
       subject: 'Dein Lernstand',
-      body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
+      body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand.\nDein Serlo-Team',
     },
   })
 
