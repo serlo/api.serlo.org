@@ -390,18 +390,11 @@ function createEnmeshedWebhookMiddleware(
 
     for (const relationship of result.relationships) {
       const sessionId =
-        (relationship.template.content as { metadata: { sessionId: string } })
-          ?.metadata?.sessionId ?? null
-
-      // TODO: actually, we need go access onNewRelationship to get the right value,
-      // but doing so the flow with welcome message etc. doesn't work.
-      // Investigate if it was on purpose before.
-      // const sessionId =
-      //   (
-      //     relationship.template.content as {
-      //       onNewRelationship: { metadata: { sessionId: string } }
-      //     }
-      //   )?.onNewRelationship?.metadata?.sessionId ?? null
+        (
+          relationship.template.content as {
+            onNewRelationship: { metadata: { sessionId: string } }
+          }
+        )?.onNewRelationship?.metadata?.sessionId ?? null
 
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
@@ -420,7 +413,8 @@ function createEnmeshedWebhookMiddleware(
         ) {
           await acceptRelationshipRequest(relationship, change, client)
 
-          if (session) {
+          // 'session-id' as sessionId means prototype, not user journey
+          if (session && sessionId !== 'session-id') {
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
