@@ -111,7 +111,7 @@ function createEnmeshedInitMiddleware(
 
       // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
       const attributesContent: ConnectorRequestContent = {
-        metadata: { sessionId: sessionId ?? 'session-id' },
+        metadata: { sessionId: sessionId },
         items: [
           {
             '@type': 'RequestItemGroup',
@@ -414,7 +414,7 @@ function createEnmeshedWebhookMiddleware(
           await acceptRelationshipRequest(relationship, change, client)
 
           // 'session-id' as sessionId means prototype, not user journey
-          if (session && sessionId !== 'session-id') {
+          if (session) {
             await setSession(cache, sessionId, {
               ...session,
               enmeshedId: relationship.peer,
