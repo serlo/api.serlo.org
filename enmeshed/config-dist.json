@@ -36,7 +36,24 @@
       "enabled": true,
       "webhooks": [
         {
-          "triggers": ["transport.messageReceived"],
+          "triggers": [
+            "consumption.attributeCreated",
+            "consumption.attributeDeleted",
+            "consumption.attributeSucceded",
+            "consumption.attributeUpdated",
+            "consumption.incomingRequestReceived",
+            "consumption.incomingRequestStatusChanged",
+            "consumption.messageProcessed",
+            "consumption.outgoingRequestCreated",
+            "consumption.outgoingRequestFromRelationshipCreationChange",
+            "consumption.outgoingRequestStatusChanged",
+            "consumption.relationshipTemplateProcessed",
+            "consumption.sharedAttributeCopyCreated",
+            "transport.messageReceived",
+            "transport.messageSent",
+            "transport.peerRelationshipTemplateLoaded",
+            "transport.relationshipChanged"
+          ],
           "target": {
             "url": "http://host.docker.internal:3001/enmeshed/webhook",
             "headers": {
