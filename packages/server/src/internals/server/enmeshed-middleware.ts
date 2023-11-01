@@ -182,7 +182,7 @@ function createEnmeshedInitMiddleware(
                 mustBeAccepted: true,
                 attribute: {
                   owner: '',
-                  key: 'lernstandMathe',
+                  key: 'LernstandMathe',
                   confidentiality: 'public',
                   '@type': 'RelationshipAttribute',
                   value: {
@@ -308,13 +308,6 @@ function createSetAttributesHandler(
     if (!sessionId)
       return validationError(res, 'Missing required parameter: sessionId.')
     const session = await getSession(cache, sessionId)
-
-    const name = readQuery(req, 'name')
-    if (!name) return validationError(res, 'Missing required parameter: name.')
-    const value = readQuery(req, 'value')
-    if (!value)
-      return validationError(res, 'Missing required parameter: value.')
-
     if (!session)
       return validationError(
         res,
@@ -323,12 +316,39 @@ function createSetAttributesHandler(
     if (!session.enmeshedId)
       return validationError(res, 'Relationship not accepted yet.')
 
-    const getIdentityResponse = await client.account.getIdentityInfo()
-    if (getIdentityResponse.isError) {
+    const name = readQuery(req, 'name')
+    if (!name) return validationError(res, 'Missing required parameter: name.')
+    const value = readQuery(req, 'value')
+    if (!value)
+      return validationError(res, 'Missing required parameter: value.')
+
+    const request = await client.outgoingRequests.createRequest({
+      content: {
+        items: [
+          {
+            '@type': 'CreateAttributeRequestItem',
+            mustBeAccepted: true,
+            attribute: {
+              key: name,
+              owner: '',
+              confidentiality: 'public',
+              '@type': 'RelationshipAttribute',
+              value: {
+                '@type': 'ProprietaryString',
+                title: name,
+                value: value,
+              },
+            },
+          },
+        ],
+      },
+      peer: session.enmeshedId,
+    })
+
+    if (request.isError) {
       return handleConnectorError({
-        error: getIdentityResponse.error,
-        message: 'Error retrieving connector identity info',
-        response: res,
+        error: request.error,
+        message: 'Failed to create request to change attribute:',
       })
     }
 
@@ -337,29 +357,33 @@ function createSetAttributesHandler(
       content: {
         '@type': 'Mail',
         to: [session.enmeshedId],
-        cc: [],
         subject: 'Aktualisierung deines Lernstands',
         body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
-        requests: [
-          {
-            '@type': 'AttributesChangeRequest',
-            attributes: [{ name, value }],
-            applyTo: session.enmeshedId,
-            reason:
-              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
-          },
-        ],
       },
     })
+
     if (sendMessageResponse.isError) {
       return handleConnectorError({
         error: sendMessageResponse.error,
-        message: 'Error retrieving connector identity info',
-        response: res,
+        message: 'Failed to send message:',
       })
     }
+
+    const attributeChangeResponse = await client.messages.sendMessage({
+      recipients: [session.enmeshedId],
+      content: request.result.content,
+    })
+
+    if (attributeChangeResponse.isError) {
+      return handleConnectorError({
+        error: attributeChangeResponse.error,
+        message: 'Failed to send attribute change request:',
+      })
+    }
+
     res.status(200).end(JSON.stringify({ status: 'success' }))
   }
+
   return (request, response) => {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
@@ -574,7 +598,7 @@ async function sendAttributesChangeRequest({
           '@type': 'CreateAttributeRequestItem',
           mustBeAccepted: true,
           attribute: {
-            key: 'lernstandMathe',
+            key: 'LernstandMathe',
             owner: '',
             confidentiality: 'public',
             '@type': 'RelationshipAttribute',
