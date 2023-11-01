@@ -82,7 +82,7 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return '1.2.0'
+      return process.env.METADATA_API_VERSION ?? '1.3.0'
     },
   },
 }
