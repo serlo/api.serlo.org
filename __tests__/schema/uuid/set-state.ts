@@ -9,6 +9,8 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
+import { generateRole } from '~/internals/graphql'
+import { Instance, Role } from '~/types'
 
 const uuids = [article, page, pageRevision, taxonomyTermRoot, user2]
 const client = new Client({ userId: baseUser.id })
@@ -109,58 +111,114 @@ describe('permission-based testing', () => {
   })
 
   test('fails when login user tries to set state of page', async () => {
-    await mockUser('login', page.id, 'fail')
+    await testPermissionWithMockUser(Role.Login, page.id, false)
   })
 
   test('fails when login user tries to set state of page revision', async () => {
-    await mockUser('login', pageRevision.id, 'fail')
+    await testPermissionWithMockUser(Role.Login, pageRevision.id, false)
   })
 
   test('fails when architect tries to set state of page', async () => {
-    await mockUser('de_architect', page.id, 'fail')
+    await testPermissionWithMockUser(
+      generateRole(Role.Architect, Instance.De),
+      page.id,
+      false,
+    )
   })
 
   test('fails when architect tries to set state of user', async () => {
-    await mockUser('de_architect', user2.id, 'fail')
-  })
-
-  test('returns "{ success: true }" when architect tries to set state of article', async () => {
-    await mockUser('de_architect', article.id, 'success')
-  })
-
-  test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
-    await mockUser('de_architect', taxonomyTermRoot.id, 'success')
+    await testPermissionWithMockUser(
+      generateRole(Role.Architect, Instance.De),
+      user2.id,
+      false,
+    )
   })
 
   test('fails when static_pages_builder tries to set state of user', async () => {
-    await mockUser('de_static_pages_builder', user2.id, 'fail')
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      user2.id,
+      false,
+    )
   })
 
   test('fails when static_pages_builder tries to set state of article', async () => {
-    await mockUser('de_static_pages_builder', article.id, 'fail')
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      article.id,
+      false,
+    )
+  })
+
+  test('fails when static_pages_builder tries to set state of taxonomy term', async () => {
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      taxonomyTermRoot.id,
+      false,
+    )
+  })
+
+  test('returns "{ success: true }" when architect tries to set state of article', async () => {
+    await testPermissionWithMockUser(
+      generateRole(Role.Architect, Instance.De),
+      article.id,
+      true,
+    )
+  })
+
+  test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
+    await testPermissionWithMockUser(
+      generateRole(Role.Architect, Instance.De),
+      taxonomyTermRoot.id,
+      true,
+    )
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page', async () => {
-    await mockUser('de_static_pages_builder', page.id, 'success')
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      page.id,
+      true,
+    )
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
-    await mockUser('de_static_pages_builder', pageRevision.id, 'success')
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      pageRevision.id,
+      true,
+    )
+  })
+
+  test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
+    await testPermissionWithMockUser(
+      generateRole(Role.StaticPagesBuilder, Instance.De),
+      pageRevision.id,
+      true,
+    )
+  })
+
+  test('returns "{ success: true }" when architect tries to set state of user', async () => {
+    await testPermissionWithMockUser(
+      generateRole(Role.Admin, Instance.De),
+      user2.id,
+      true,
+    )
   })
 })
 
-async function mockUser(
+async function testPermissionWithMockUser(
   userRole: string,
   uuidId: number,
-  successSwitch: string,
+  successSwitch: boolean,
 ) {
   given('UuidQuery').for({ ...baseUser, roles: [userRole] })
 
-  if (successSwitch === 'success') {
+  if (successSwitch) {
     await mutation
       .withInput({ id: [uuidId], trashed: true })
       .shouldReturnData({ uuid: { setState: { success: true } } })
-  } else if (successSwitch === 'fail') {
+  } else if (!successSwitch) {
     await mutation
       .withInput({ id: [uuidId], trashed: true })
       .shouldFailWithError('FORBIDDEN')
