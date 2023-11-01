@@ -482,12 +482,7 @@ function createEnmeshedWebhookMiddleware(
               ...getSessionAttributes(Object.values(content.attributes ?? {})),
             },
           })
-          // eslint-disable-next-line no-console
-          console.log(`Received attributes`)
         }
-      } else {
-        // eslint-disable-next-line no-console
-        console.log('Received message:', message.content)
       }
     }
 
