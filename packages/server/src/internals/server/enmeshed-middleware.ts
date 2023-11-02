@@ -229,11 +229,7 @@ function createEnmeshedInitMiddleware(
 
       relationshipTemplateId = createRelationshipResponse.result.id
 
-      await setSession(cache, sessionId, {
-        relationshipTemplateId,
-        content: createRelationshipResponse.result
-          .content as Session['content'],
-      })
+      await setSession(cache, sessionId, { relationshipTemplateId })
     }
 
     const createTokenResponse =
@@ -279,7 +275,7 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
       res.status(200).end(
         JSON.stringify({
           status: 'success',
-          attributes: session.content['onNewRelationship'],
+          attributes: session.content,
         }),
       )
     } else {
@@ -420,13 +416,6 @@ function createEnmeshedWebhookMiddleware(
           }
         )?.onNewRelationship?.metadata?.sessionId ?? null
 
-      // FIXME: Uncomment next line when prototype frontend has been replaced
-      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
-      const session = await getSession(cache, sessionId)
-      // FIXME: Uncomment next lines when prototype frontend has been replaced
-      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
-      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
-
       for (const change of relationship.changes) {
         if (
           [ConnectorRelationshipChangeType.CREATION].includes(change.type) &&
@@ -436,32 +425,27 @@ function createEnmeshedWebhookMiddleware(
           ].includes(change.status)
         ) {
           await acceptRelationshipRequest(relationship, change, client)
-
-          // 'session-id' as sessionId means prototype, not user journey
-          if (session) {
-            await setSession(cache, sessionId, {
-              ...session,
-              enmeshedId: relationship.peer,
-              content: {
-                ...session.content,
-                ...getSessionAttributes(
-                  Object.values(
-                    (
-                      change.request.content as {
-                        attributes: { name: string; value: string }[]
-                      }
-                    ).attributes ?? {},
-                  ),
-                ),
-              },
-            })
-          } else {
-            const payload = { relationship, client }
-            await sendWelcomeMessage(payload)
-            await sendAttributesChangeRequest(payload)
+          if (!sessionId) {
+            await sendWelcomeMessage({ relationship, client })
+            await sendAttributesChangeRequest({ relationship, client })
           }
         }
       }
+
+      // console.log(relationship.template.content)
+      // FIXME: Uncomment next line when prototype frontend has been replaced
+      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+      const session = await getSession(cache, sessionId)
+
+      if (session) {
+        await setSession(cache, sessionId, {
+          relationshipTemplateId: relationship.template.id,
+          content: relationship.template.content as Session['content'],
+        })
+      }
+      // FIXME: Uncomment next lines when prototype frontend has been replaced
+      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
+      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
     }
 
     for (const message of result.messages) {
