@@ -146,7 +146,7 @@ function createEnmeshedInitMiddleware(
                   owner: '',
                   value: {
                     '@type': 'GivenName',
-                    value: nameParts.length > 0 ? nameParts[0] : 'Alex',
+                    value: nameParts.length > 0 ? nameParts[0] : '',
                   },
                 },
               },
@@ -161,7 +161,7 @@ function createEnmeshedInitMiddleware(
                     value:
                       nameParts.length > 1
                         ? nameParts[nameParts.length - 1]
-                        : 'Janowski',
+                        : '',
                   },
                 },
               },
@@ -495,13 +495,6 @@ async function acceptRelationshipRequest(
     await client.relationships.acceptRelationshipChange(
       relationship.id,
       change.id,
-      {
-        content: {
-          // FIXME: The documentation is unclear on what should be submitted here
-          prop1: 'value',
-          prop2: 1,
-        },
-      },
     )
   if (acceptRelationshipResponse.isError) {
     handleConnectorError({
