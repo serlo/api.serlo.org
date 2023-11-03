@@ -415,8 +415,9 @@ function createEnmeshedWebhookMiddleware(
             onNewRelationship: { metadata: { sessionId: string } }
           }
         )?.onNewRelationship?.metadata?.sessionId ?? null
-
+      console.log({sessionId})
       for (const change of relationship.changes) {
+        console.log({change})
         if (
           [ConnectorRelationshipChangeType.CREATION].includes(change.type) &&
           [
@@ -432,7 +433,6 @@ function createEnmeshedWebhookMiddleware(
         }
       }
 
-      // console.log(relationship.template.content)
       // FIXME: Uncomment next line when prototype frontend has been replaced
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
