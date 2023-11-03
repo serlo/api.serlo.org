@@ -415,9 +415,9 @@ function createEnmeshedWebhookMiddleware(
             onNewRelationship: { metadata: { sessionId: string } }
           }
         )?.onNewRelationship?.metadata?.sessionId ?? null
-      console.log({sessionId})
+      console.log({ sessionId })
       for (const change of relationship.changes) {
-        console.log({change})
+        console.log({ change })
         if (
           [ConnectorRelationshipChangeType.CREATION].includes(change.type) &&
           [
