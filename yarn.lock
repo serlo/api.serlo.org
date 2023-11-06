@@ -6185,13 +6185,13 @@ __metadata:
   linkType: hard
 
 "bee-queue@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "bee-queue@npm:1.5.0"
+  version: 1.6.0
+  resolution: "bee-queue@npm:1.6.0"
   dependencies:
-    p-finally: ^1.0.0
+    p-finally: ^2.0.0
     promise-callbacks: ^3.8.1
     redis: ^3.1.2
-  checksum: f99305049d444ac31c2c3b23a8e359719edb2dc62187f1f5f1add811c283b9e7079a29bb04d43249e150e967f1616090995c9bbf6f22c1cf023f3ddbdb217681
+  checksum: c882f9cfdfccb65c4617098b25adb14b2f575c1a5d2a771c5ffe6cf9a278585c65fd34528a57ed53ff61232e4e1d90bd37da0772eb1f145311a493fde8405f15
   languageName: node
   linkType: hard
 
