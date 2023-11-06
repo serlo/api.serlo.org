@@ -22,20 +22,13 @@
 import {
   ConnectorClient,
   ConnectorError,
-  ConnectorRelationship,
-  ConnectorRelationshipChange,
   ConnectorRelationshipChangeStatus,
   ConnectorRelationshipChangeType,
   ConnectorRequestContent,
 } from '@nmshd/connector-sdk'
-import express, {
-  Express,
-  RequestHandler,
-  Request,
-  Response,
-  NextFunction,
-} from 'express'
+import express, { Express, RequestHandler, Request, Response } from 'express'
 import { option as O } from 'fp-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import * as t from 'io-ts'
 
 import { Cache } from '../cache'
@@ -391,6 +384,30 @@ function createSetAttributesHandler(
   }
 }
 
+const EventBody = t.type({
+  trigger: t.string,
+})
+
+const Relationship = t.type({
+  id: t.string,
+  peer: t.string,
+  status: t.string,
+  template: t.type({
+    id: t.string,
+    content: t.partial({
+      onNewRelationship: t.partial({
+        metadata: t.partial({ sessionId: t.union([t.string, t.null]) }),
+      }),
+    }),
+  }),
+  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
+})
+type Relationship = t.TypeOf<typeof Relationship>
+const ReleationshipChangedEventBody = t.type({
+  data: Relationship,
+  trigger: t.literal('transport.relationshipChanged'),
+})
+
 /**
  * Endpoint for Connector webhook, which receives any changes within relationships and messages
  */
@@ -398,64 +415,95 @@ function createEnmeshedWebhookMiddleware(
   client: ConnectorClient,
   cache: Cache,
 ): RequestHandler {
-  async function handleRequest(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
+  async function handleRequest(req: Request, res: Response) {
     console.log('webhook reached with body: ', req.body)
 
-    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
-      return next()
-
-    const { result } = await client.account.sync()
-
-    console.log({ result })
-
-    for (const relationship of result.relationships) {
-      console.log({ relationship })
-
-      const sessionId =
-        (
-          relationship.template.content as {
-            onNewRelationship: { metadata: { sessionId: string } }
-          }
-        )?.onNewRelationship?.metadata?.sessionId ?? null
-      console.log({ sessionId })
-      for (const change of relationship.changes) {
-        console.log({ change })
-        if (
-          [ConnectorRelationshipChangeType.CREATION].includes(change.type) &&
-          [
-            ConnectorRelationshipChangeStatus.PENDING,
-            ConnectorRelationshipChangeStatus.REJECTED,
-          ].includes(change.status)
-        ) {
-          await acceptRelationshipRequest(relationship, change, client)
-          if (!sessionId) {
-            await sendWelcomeMessage({ relationship, client })
-            await sendAttributesChangeRequest({ relationship, client })
-          }
-        }
-      }
-
-      // FIXME: Uncomment next line when prototype frontend has been replaced
-      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
-      const session = await getSession(cache, sessionId)
-
-      console.log({ session })
-
-      if (session) {
-        await setSession(cache, sessionId, {
-          relationshipTemplateId: relationship.template.id,
-          content: relationship.template.content as Session['content'],
-        })
-      }
-      // FIXME: Uncomment next lines when prototype frontend has been replaced
-      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
-      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
+    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET) {
+      res.status(400).send('Wrong X-API-Key')
+      return
     }
 
+    const body = req.body as unknown
+
+    if (!EventBody.is(body)) {
+      // eslint-disable-next-line no-console
+      console.error(
+        JSON.stringify({
+          message: 'Illegal body detected',
+          body,
+          route: '/enmeshed/webhook',
+        }),
+      )
+      res.status(400).send('Illegal trigger body')
+      return
+    }
+
+    if (body.trigger !== 'transport.relationshipChanged') {
+      // eslint-disable-next-line no-console
+      console.log('We do not watch on trigger event ', body.trigger)
+      res.sendStatus(200)
+      return
+    }
+
+    if (!ReleationshipChangedEventBody.is(body)) {
+      // eslint-disable-next-line no-console
+      console.error(
+        JSON.stringify({
+          message: 'Illegal body for relationship change event',
+          body,
+          errors: PathReporter.report(ReleationshipChangedEventBody.decode(body)),
+          route: '/enmeshed/webhook',
+        }),
+      )
+      res.status(400).send('Illegal trigger body')
+      return
+    }
+
+    const relationship = body.data
+
+    console.log({ relationship })
+
+    const sessionId =
+      relationship.template.content?.onNewRelationship?.metadata?.sessionId ??
+      null
+    console.log({ sessionId })
+    for (const change of relationship.changes) {
+      console.log({ change })
+      if (
+        [ConnectorRelationshipChangeType.CREATION as string].includes(
+          change.type,
+        ) &&
+        [
+          ConnectorRelationshipChangeStatus.PENDING as string,
+          ConnectorRelationshipChangeStatus.REJECTED as string,
+        ].includes(change.status)
+      ) {
+        await acceptRelationshipRequest(relationship, change, client)
+        if (!sessionId) {
+          await sendWelcomeMessage({ relationship, client })
+          await sendAttributesChangeRequest({ relationship, client })
+        }
+      }
+    }
+
+    // FIXME: Uncomment next line when prototype frontend has been replaced
+    // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
+
+    console.log({ session })
+
+    if (session) {
+      await setSession(cache, sessionId, {
+        relationshipTemplateId: relationship.template.id,
+        content: relationship.template.content as Session['content'],
+      })
+    }
+    // FIXME: Uncomment next lines when prototype frontend has been replaced
+    // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
+    // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
+
+    // TODO
+    /*
     for (const message of result.messages) {
       console.log({ message })
 
@@ -478,12 +526,13 @@ function createEnmeshedWebhookMiddleware(
           })
         }
       }
-    }
+    }*/
+
     console.log('Webhook finished')
     res.status(200).end('')
   }
-  return (request, response, next) => {
-    handleRequest(request, response, next).catch((error: Error) => {
+  return (request, response) => {
+    handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
         error,
         errorContext: { headers: request.headers },
@@ -497,8 +546,8 @@ function createEnmeshedWebhookMiddleware(
  * Accepts pending relationship request
  */
 async function acceptRelationshipRequest(
-  relationship: ConnectorRelationship,
-  change: ConnectorRelationshipChange,
+  relationship: Relationship,
+  change: { id: string },
   client: ConnectorClient,
 ): Promise<void> {
   const acceptRelationshipResponse =
@@ -521,7 +570,7 @@ async function sendWelcomeMessage({
   relationship,
   client,
 }: {
-  relationship: ConnectorRelationship
+  relationship: Relationship
   client: ConnectorClient
 }): Promise<void> {
   const expiresAt = new Date()
@@ -570,7 +619,7 @@ async function sendAttributesChangeRequest({
   relationship,
   client,
 }: {
-  relationship: ConnectorRelationship
+  relationship: Relationship
   client: ConnectorClient
 }): Promise<void> {
   const request = await client.outgoingRequests.createRequest({
