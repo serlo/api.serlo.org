@@ -403,12 +403,18 @@ function createEnmeshedWebhookMiddleware(
     res: Response,
     next: NextFunction,
   ) {
+    console.log('webhook reached with body: ', req.body)
+
     if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
       return next()
 
     const { result } = await client.account.sync()
 
+    console.log({ result })
+
     for (const relationship of result.relationships) {
+      console.log({ relationship })
+
       const sessionId =
         (
           relationship.template.content as {
@@ -437,6 +443,8 @@ function createEnmeshedWebhookMiddleware(
       // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
       const session = await getSession(cache, sessionId)
 
+      console.log({ session })
+
       if (session) {
         await setSession(cache, sessionId, {
           relationshipTemplateId: relationship.template.id,
@@ -449,6 +457,8 @@ function createEnmeshedWebhookMiddleware(
     }
 
     for (const message of result.messages) {
+      console.log({ message })
+
       const content = message.content as {
         '@type': string
         attributes: { name: string; value: string }[]
@@ -469,7 +479,7 @@ function createEnmeshedWebhookMiddleware(
         }
       }
     }
-
+    console.log('Webhook finished')
     res.status(200).end('')
   }
   return (request, response, next) => {
