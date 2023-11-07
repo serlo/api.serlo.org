@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.7](https://github.com/serlo/api.serlo.org/compare/v0.57.6..v0.57.7) - November 7, 2023
+
+### Fixed
+
+- Re-enable user journey in enmeshed middleware
+
 ## [v0.57.6](https://github.com/serlo/api.serlo.org/compare/v0.57.5..v0.57.6) - October 18, 2023
 
 ### Fixed
