@@ -1592,6 +1592,11 @@ async function exec(): Promise<void> {
         date: '2023-10-18',
         fixed: ['Actualize enmeshed relationship template schema to version 2'],
       },
+      {
+        tagName: 'v0.57.7',
+        date: '2023-11-07',
+        fixed: ['Re-enable user journey in enmeshed middleware'],
+      },
     ],
   })
 
