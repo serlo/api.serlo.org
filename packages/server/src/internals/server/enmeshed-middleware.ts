@@ -28,7 +28,6 @@ import {
 } from '@nmshd/connector-sdk'
 import express, { Express, RequestHandler, Request, Response } from 'express'
 import { option as O } from 'fp-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
 import * as t from 'io-ts'
 
 import { Cache } from '../cache'
@@ -59,6 +58,42 @@ export function applyEnmeshedMiddleware({
   )
   return `${basePath}/init`
 }
+
+const EventBody = t.type({
+  trigger: t.string,
+})
+
+const Relationship = t.type({
+  id: t.string,
+  peer: t.string,
+  status: t.string,
+  template: t.type({
+    id: t.string,
+    content: t.partial({
+      onNewRelationship: t.partial({
+        metadata: t.partial({ sessionId: t.union([t.string, t.null]) }),
+      }),
+    }),
+  }),
+  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
+})
+
+type Relationship = t.TypeOf<typeof Relationship>
+
+const RelationshipChangedEventBody = t.type({
+  data: Relationship,
+  trigger: t.literal('transport.relationshipChanged'),
+})
+
+const Session = t.intersection([
+  t.type({ relationshipTemplateId: t.string }),
+  t.partial({
+    enmeshedId: t.string,
+    content: t.UnknownRecord,
+  }),
+])
+
+type Session = t.TypeOf<typeof Session>
 
 /**
  * Endpoint for enmeshed relationship initialization.
@@ -384,30 +419,6 @@ function createSetAttributesHandler(
   }
 }
 
-const EventBody = t.type({
-  trigger: t.string,
-})
-
-const Relationship = t.type({
-  id: t.string,
-  peer: t.string,
-  status: t.string,
-  template: t.type({
-    id: t.string,
-    content: t.partial({
-      onNewRelationship: t.partial({
-        metadata: t.partial({ sessionId: t.union([t.string, t.null]) }),
-      }),
-    }),
-  }),
-  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
-})
-type Relationship = t.TypeOf<typeof Relationship>
-const ReleationshipChangedEventBody = t.type({
-  data: Relationship,
-  trigger: t.literal('transport.relationshipChanged'),
-})
-
 /**
  * Endpoint for Connector webhook, which receives any changes within relationships and messages
  */
@@ -416,8 +427,6 @@ function createEnmeshedWebhookMiddleware(
   cache: Cache,
 ): RequestHandler {
   async function handleRequest(req: Request, res: Response) {
-    console.log('webhook reached with body: ', req.body)
-
     if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET) {
       res.status(400).send('Wrong X-API-Key')
       return
@@ -426,49 +435,31 @@ function createEnmeshedWebhookMiddleware(
     const body = req.body as unknown
 
     if (!EventBody.is(body)) {
-      // eslint-disable-next-line no-console
-      console.error(
-        JSON.stringify({
-          message: 'Illegal body detected',
-          body,
-          route: '/enmeshed/webhook',
-        }),
-      )
       res.status(400).send('Illegal trigger body')
       return
     }
 
     if (body.trigger !== 'transport.relationshipChanged') {
-      // eslint-disable-next-line no-console
-      console.log('We do not watch on trigger event ', body.trigger)
       res.sendStatus(200)
       return
     }
 
-    if (!ReleationshipChangedEventBody.is(body)) {
-      // eslint-disable-next-line no-console
-      console.error(
-        JSON.stringify({
-          message: 'Illegal body for relationship change event',
-          body,
-          errors: PathReporter.report(ReleationshipChangedEventBody.decode(body)),
-          route: '/enmeshed/webhook',
-        }),
-      )
+    if (!RelationshipChangedEventBody.is(body)) {
+      captureErrorEvent({
+        error: new Error('Illegal body for relationship change event'),
+        errorContext: { body, route: '/enmeshed/webhook' },
+      })
       res.status(400).send('Illegal trigger body')
       return
     }
 
     const relationship = body.data
 
-    console.log({ relationship })
-
     const sessionId =
       relationship.template.content?.onNewRelationship?.metadata?.sessionId ??
       null
-    console.log({ sessionId })
+
     for (const change of relationship.changes) {
-      console.log({ change })
       if (
         [ConnectorRelationshipChangeType.CREATION as string].includes(
           change.type,
@@ -490,45 +481,13 @@ function createEnmeshedWebhookMiddleware(
     // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
     const session = await getSession(cache, sessionId)
 
-    console.log({ session })
-
     if (session) {
       await setSession(cache, sessionId, {
         relationshipTemplateId: relationship.template.id,
         content: relationship.template.content as Session['content'],
       })
     }
-    // FIXME: Uncomment next lines when prototype frontend has been replaced
-    // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
-    // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
 
-    // TODO
-    /*
-    for (const message of result.messages) {
-      console.log({ message })
-
-      const content = message.content as {
-        '@type': string
-        attributes: { name: string; value: string }[]
-      }
-
-      if (content['@type'] == 'CreateAttributeRequestItem') {
-        const sessionId = await getSessionId(cache, message.createdBy)
-        const session = await getSession(cache, sessionId)
-        if (session) {
-          await setSession(cache, sessionId, {
-            ...session,
-            enmeshedId: message.createdBy,
-            content: {
-              ...session.content,
-              ...getSessionAttributes(Object.values(content.attributes ?? {})),
-            },
-          })
-        }
-      }
-    }*/
-
-    console.log('Webhook finished')
     res.status(200).end('')
   }
   return (request, response) => {
@@ -695,8 +654,10 @@ function handleConnectorError({
   if (response) {
     return response.status(500).end(log)
   } else {
-    // eslint-disable-next-line no-console
-    console.log(log)
+    captureErrorEvent({
+      error: new Error(log),
+      errorContext: { error },
+    })
   }
 }
 
@@ -710,15 +671,6 @@ function validationError(res: Response, message: string) {
   )
 }
 
-const Session = t.intersection([
-  t.type({ relationshipTemplateId: t.string }),
-  t.partial({
-    enmeshedId: t.string,
-    content: t.UnknownRecord,
-  }),
-])
-type Session = t.TypeOf<typeof Session>
-
 async function getSession(
   cache: Cache,
   sessionId: string | null,
@@ -729,16 +681,6 @@ async function getSession(
     if (Session.is(cachedValue.value.value)) {
       return cachedValue.value.value
     }
-  }
-
-  return null
-}
-
-async function getSessionId(cache: Cache, id: string): Promise<string | null> {
-  const cachedValue = await cache.get({ key: getIdentityKey(id) })
-
-  if (!O.isNone(cachedValue)) {
-    return cachedValue.value.value as string
   }
 
   return null
@@ -771,12 +713,6 @@ function getSessionKey(sessionId: string | null) {
 
 function getIdentityKey(id: string) {
   return `enmeshed:${id}`
-}
-
-function getSessionAttributes(
-  attributeList: { name: string; value: string }[],
-) {
-  return attributeList.reduce((al, a) => ({ ...al, [a.name]: a.value }), {})
 }
 
 function readQuery(req: ExpressRequest, key: string): string | null {
