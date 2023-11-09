@@ -8,5 +8,5 @@ type AiQuery {
 
 type ExecutePromptResponse {
   success: Boolean!
-  record: String!
+  record: JSONObject!
 }

@@ -4,14 +4,14 @@ import { HttpResponse, ResponseResolver, http } from 'msw'
 import { user as baseUser } from '../../__fixtures__'
 import { Client, given, hasInternalServerError } from '../__utils__'
 
-const mockContentGenerationServiceResponse = JSON.stringify({
+const mockContentGenerationServiceResponse = {
   heading: 'Exercises for 7th grade',
   subtasks: [
     {
       question: 'What is the 2nd binomial formula?',
     },
   ],
-})
+}
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
 
@@ -31,7 +31,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
 
 beforeAll(() => {
   givenContentGenerationService(() => {
-    return new HttpResponse(mockContentGenerationServiceResponse, {
+    return HttpResponse.json(mockContentGenerationServiceResponse, {
       status: 200,
     })
   })
