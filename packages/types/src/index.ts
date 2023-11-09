@@ -1166,7 +1166,7 @@ export type EventRevisionCursor = {
 
 export type ExecutePromptResponse = {
   __typename?: 'ExecutePromptResponse';
-  record: Scalars['String']['output'];
+  record: Scalars['JSONObject']['output'];
   success: Scalars['Boolean']['output'];
 };
 
