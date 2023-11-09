@@ -1,5 +1,3 @@
-scalar JSONObject
-
 extend type Query {
   ai: AiQuery!
 }
