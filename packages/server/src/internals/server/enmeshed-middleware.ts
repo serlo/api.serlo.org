@@ -22,23 +22,14 @@
 import {
   ConnectorClient,
   ConnectorError,
+  ConnectorRelationshipChangeStatus,
+  ConnectorRelationshipChangeType,
   ConnectorRequestContent,
 } from '@nmshd/connector-sdk'
-import express, {
-  Express,
-  RequestHandler,
-  Request,
-  Response,
-  NextFunction,
-} from 'express'
+import express, { Express, RequestHandler, Request, Response } from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import {
-  EnmeshedWebhookPayload,
-  Relationship,
-  RelationshipChange,
-} from './enmeshed-payload'
 import { Cache } from '../cache'
 import { captureErrorEvent } from '../error-event'
 
@@ -67,6 +58,42 @@ export function applyEnmeshedMiddleware({
   )
   return `${basePath}/init`
 }
+
+const EventBody = t.type({
+  trigger: t.string,
+})
+
+const Relationship = t.type({
+  id: t.string,
+  peer: t.string,
+  status: t.string,
+  template: t.type({
+    id: t.string,
+    content: t.partial({
+      onNewRelationship: t.partial({
+        metadata: t.partial({ sessionId: t.union([t.string, t.null]) }),
+      }),
+    }),
+  }),
+  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
+})
+
+type Relationship = t.TypeOf<typeof Relationship>
+
+const RelationshipChangedEventBody = t.type({
+  data: Relationship,
+  trigger: t.literal('transport.relationshipChanged'),
+})
+
+const Session = t.intersection([
+  t.type({ relationshipTemplateId: t.string }),
+  t.partial({
+    enmeshedId: t.string,
+    content: t.UnknownRecord,
+  }),
+])
+
+type Session = t.TypeOf<typeof Session>
 
 /**
  * Endpoint for enmeshed relationship initialization.
@@ -110,9 +137,9 @@ function createEnmeshedInitMiddleware(
         })
       }
 
-      // TODO: Handle privacy and Lernstand-Mathe See https://github.com/serlo/api.serlo.org/blob/main/packages/server/src/internals/server/enmeshed-middleware.ts#L525
+      // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
       const attributesContent: ConnectorRequestContent = {
-        metadata: { sessionId: sessionId ?? 'session-id' },
+        metadata: { sessionId: sessionId },
         items: [
           {
             '@type': 'RequestItemGroup',
@@ -147,7 +174,7 @@ function createEnmeshedInitMiddleware(
                   owner: '',
                   value: {
                     '@type': 'GivenName',
-                    value: nameParts.length > 0 ? nameParts[0] : 'Alex',
+                    value: nameParts.length > 0 ? nameParts[0] : '',
                   },
                 },
               },
@@ -162,7 +189,7 @@ function createEnmeshedInitMiddleware(
                     value:
                       nameParts.length > 1
                         ? nameParts[nameParts.length - 1]
-                        : 'Janowski',
+                        : '',
                   },
                 },
               },
@@ -175,6 +202,21 @@ function createEnmeshedInitMiddleware(
                   value: {
                     '@type': 'Nationality',
                     value: 'DE',
+                  },
+                },
+              },
+              {
+                '@type': 'CreateAttributeRequestItem',
+                mustBeAccepted: true,
+                attribute: {
+                  owner: '',
+                  key: 'LernstandMathe',
+                  confidentiality: 'public',
+                  '@type': 'RelationshipAttribute',
+                  value: {
+                    '@type': 'ProprietaryString',
+                    title: 'LernstandMathe',
+                    value: '',
                   },
                 },
               },
@@ -213,11 +255,9 @@ function createEnmeshedInitMiddleware(
         })
       }
 
-      await setSession(cache, sessionId, {
-        relationshipTemplateId: createRelationshipResponse.result.id,
-        content: createRelationshipResponse.result
-          .content as Session['content'],
-      })
+      relationshipTemplateId = createRelationshipResponse.result.id
+
+      await setSession(cache, sessionId, { relationshipTemplateId })
     }
 
     const createTokenResponse =
@@ -263,7 +303,7 @@ function createGetAttributesHandler(cache: Cache): RequestHandler {
       res.status(200).end(
         JSON.stringify({
           status: 'success',
-          attributes: session.content['onNewRelationship'],
+          attributes: session.content,
         }),
       )
     } else {
@@ -292,13 +332,6 @@ function createSetAttributesHandler(
     if (!sessionId)
       return validationError(res, 'Missing required parameter: sessionId.')
     const session = await getSession(cache, sessionId)
-
-    const name = readQuery(req, 'name')
-    if (!name) return validationError(res, 'Missing required parameter: name.')
-    const value = readQuery(req, 'value')
-    if (!value)
-      return validationError(res, 'Missing required parameter: value.')
-
     if (!session)
       return validationError(
         res,
@@ -307,44 +340,74 @@ function createSetAttributesHandler(
     if (!session.enmeshedId)
       return validationError(res, 'Relationship not accepted yet.')
 
-    const getIdentityResponse = await client.account.getIdentityInfo()
-    if (getIdentityResponse.isError) {
-      return handleConnectorError({
-        error: getIdentityResponse.error,
-        message: 'Error retrieving connector identity info',
-        response: res,
-      })
-    }
+    const name = readQuery(req, 'name')
+    if (!name) return validationError(res, 'Missing required parameter: name.')
+    const value = readQuery(req, 'value')
+    if (!value)
+      return validationError(res, 'Missing required parameter: value.')
 
-    // See: https://enmeshed.eu/explore/schema#attributeschangerequest
-    const sendMessageResponse = await client.messages.sendMessage({
-      recipients: [session.enmeshedId],
+    const request = await client.outgoingRequests.createRequest({
       content: {
-        '@type': 'RequestMail',
-        to: [session.enmeshedId],
-        cc: [],
-        subject: 'Aktualisierung deines Lernstands',
-        body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
-        requests: [
+        items: [
           {
-            '@type': 'AttributesChangeRequest',
-            attributes: [{ name, value }],
-            applyTo: session.enmeshedId,
-            reason:
-              'Neuer Lernstand nach erfolgreicher Durchführung des Kurses zum logistischen Wachstum',
+            '@type': 'CreateAttributeRequestItem',
+            mustBeAccepted: true,
+            attribute: {
+              key: name,
+              owner: '',
+              confidentiality: 'public',
+              '@type': 'RelationshipAttribute',
+              value: {
+                '@type': 'ProprietaryString',
+                title: name,
+                value: value,
+              },
+            },
           },
         ],
       },
+      peer: session.enmeshedId,
     })
+
+    if (request.isError) {
+      return handleConnectorError({
+        error: request.error,
+        message: 'Failed to create request to change attribute:',
+      })
+    }
+
+    const sendMessageResponse = await client.messages.sendMessage({
+      recipients: [session.enmeshedId],
+      content: {
+        '@type': 'Mail',
+        to: [session.enmeshedId],
+        subject: 'Aktualisierung deines Lernstands',
+        body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
+      },
+    })
+
     if (sendMessageResponse.isError) {
       return handleConnectorError({
         error: sendMessageResponse.error,
-        message: 'Error retrieving connector identity info',
-        response: res,
+        message: 'Failed to send message:',
       })
     }
+
+    const attributeChangeResponse = await client.messages.sendMessage({
+      recipients: [session.enmeshedId],
+      content: request.result.content,
+    })
+
+    if (attributeChangeResponse.isError) {
+      return handleConnectorError({
+        error: attributeChangeResponse.error,
+        message: 'Failed to send attribute change request:',
+      })
+    }
+
     res.status(200).end(JSON.stringify({ status: 'success' }))
   }
+
   return (request, response) => {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
@@ -363,82 +426,72 @@ function createEnmeshedWebhookMiddleware(
   client: ConnectorClient,
   cache: Cache,
 ): RequestHandler {
-  async function handleRequest(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
-    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET)
-      return next()
+  async function handleRequest(req: Request, res: Response) {
+    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET) {
+      res.status(400).send('Wrong X-API-Key')
+      return
+    }
 
-    const payload = req.body as EnmeshedWebhookPayload
-    if (!payload || !(payload.relationships || payload.messages)) return next()
+    const body = req.body as unknown
 
-    for (const relationship of payload.relationships) {
-      const sessionId = relationship.template.content.metadata.sessionId ?? null
-      // FIXME: Uncomment next line when prototype frontend has been replaced
-      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
-      const session = await getSession(cache, sessionId)
+    if (!EventBody.is(body)) {
+      res.status(400).send('Illegal trigger body')
+      return
+    }
 
-      // FIXME: Uncomment next lines when prototype frontend has been replaced
-      // if (!session) return validationError(res, 'Session not found. Please create a QR code first.')
-      // if (relationship.template.id !== session.relationshipTemplateId) return validationError(res, 'Mismatching relationship template ID.')
+    if (body.trigger !== 'transport.relationshipChanged') {
+      res.sendStatus(200)
+      return
+    }
 
-      for (const change of relationship.changes) {
-        if (
-          ['Creation', 'RelationshipRequest'].includes(change.type) &&
-          ['Pending', 'Revoked'].includes(change.status)
-        ) {
-          await acceptRelationshipRequest(relationship, change, client)
+    if (!RelationshipChangedEventBody.is(body)) {
+      captureErrorEvent({
+        error: new Error('Illegal body for relationship change event'),
+        errorContext: { body, route: '/enmeshed/webhook' },
+      })
+      res.status(400).send('Illegal trigger body')
+      return
+    }
 
-          if (session) {
-            await setSession(cache, sessionId, {
-              ...session,
-              enmeshedId: relationship.peer,
-              content: {
-                ...session.content,
-                ...getSessionAttributes(
-                  Object.values(change.request.content?.attributes ?? {}),
-                ),
-              },
-            })
-          } else {
-            const payload = { relationship, client }
-            await sendWelcomeMessage(payload)
-            await sendAttributesChangeRequest(payload)
-          }
+    const relationship = body.data
+
+    const sessionId =
+      relationship.template.content?.onNewRelationship?.metadata?.sessionId ??
+      null
+
+    for (const change of relationship.changes) {
+      if (
+        [ConnectorRelationshipChangeType.CREATION as string].includes(
+          change.type,
+        ) &&
+        [
+          ConnectorRelationshipChangeStatus.PENDING as string,
+          ConnectorRelationshipChangeStatus.REJECTED as string,
+        ].includes(change.status)
+      ) {
+        await acceptRelationshipRequest(relationship, change, client)
+        if (!sessionId) {
+          await sendWelcomeMessage({ relationship, client })
+          await sendAttributesChangeRequest({ relationship, client })
         }
       }
     }
 
-    for (const message of payload.messages) {
-      if (message.content['@type'] == 'AttributesChangeRequest') {
-        const sessionId = await getSessionId(cache, message.createdBy)
-        const session = await getSession(cache, sessionId)
-        if (session) {
-          await setSession(cache, sessionId, {
-            ...session,
-            enmeshedId: message.createdBy,
-            content: {
-              ...session.content,
-              ...getSessionAttributes(message.content.attributes),
-            },
-          })
-          // eslint-disable-next-line no-console
-          console.log(`Received attributes`)
-        }
-      } else {
-        // eslint-disable-next-line no-console
-        console.log('Received message:')
-        // eslint-disable-next-line no-console
-        console.log(message.content)
-      }
+    // FIXME: Uncomment next line when prototype frontend has been replaced
+    // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+    const session = await getSession(cache, sessionId)
+
+    if (session) {
+      await setSession(cache, sessionId, {
+        relationshipTemplateId: relationship.template.id,
+        content: relationship.template.content as Session['content'],
+      })
     }
 
     res.status(200).end('')
   }
-  return (request, response, next) => {
-    handleRequest(request, response, next).catch((error: Error) => {
+  return (request, response) => {
+    handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({
         error,
         errorContext: { headers: request.headers },
@@ -453,27 +506,20 @@ function createEnmeshedWebhookMiddleware(
  */
 async function acceptRelationshipRequest(
   relationship: Relationship,
-  change: RelationshipChange,
+  change: { id: string },
   client: ConnectorClient,
-): Promise<boolean> {
+): Promise<void> {
   const acceptRelationshipResponse =
     await client.relationships.acceptRelationshipChange(
       relationship.id,
       change.id,
-      {
-        content: {
-          // FIXME: The documentation is unclear on what should be submitted here
-          prop1: 'value',
-          prop2: 1,
-        },
-      },
     )
   if (acceptRelationshipResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(acceptRelationshipResponse)
-    return false
+    handleConnectorError({
+      error: acceptRelationshipResponse.error,
+      message: 'Failed while accepting relationship request',
+    })
   }
-  return true
 }
 
 /**
@@ -485,22 +531,24 @@ async function sendWelcomeMessage({
 }: {
   relationship: Relationship
   client: ConnectorClient
-}): Promise<boolean> {
+}): Promise<void> {
   const expiresAt = new Date()
   expiresAt.setHours(expiresAt.getHours() + 1)
   const uploadFileResponse = await client.files.uploadOwnFile({
     title: 'Serlo Testdatei',
     description: 'Test file created by Serlo',
     file: Buffer.from(
-      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! – Dies ist eine Testdatei.</p></body></html>',
+      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! - Dies ist eine Testdatei.</p></body></html>',
     ),
     filename: 'serlo-test.html',
     expiresAt: expiresAt.toISOString(),
   })
+
   if (uploadFileResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(uploadFileResponse)
-    return false
+    handleConnectorError({
+      error: uploadFileResponse.error,
+      message: 'Failed to upload file in welcome message',
+    })
   }
 
   const sendMessageResponse = await client.messages.sendMessage({
@@ -513,12 +561,13 @@ async function sendWelcomeMessage({
     },
     attachments: [uploadFileResponse.result.id],
   })
+
   if (sendMessageResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(sendMessageResponse)
-    return false
+    handleConnectorError({
+      error: sendMessageResponse.error,
+      message: 'Failed to upload file in welcome message',
+    })
   }
-  return true
 }
 
 /**
@@ -531,52 +580,65 @@ async function sendAttributesChangeRequest({
 }: {
   relationship: Relationship
   client: ConnectorClient
-}): Promise<boolean> {
-  const getIdentityResponse = await client.account.getIdentityInfo()
-  if (getIdentityResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(getIdentityResponse)
-    return false
-  }
-  const connectorIdentity = getIdentityResponse.result.address
-
-  // Send message to create/change attribute
-  // See: https://enmeshed.eu/explore/schema#attributeschangerequest
-  const sendMessageResponse = await client.messages.sendMessage({
-    recipients: [relationship.peer],
+}): Promise<void> {
+  const request = await client.outgoingRequests.createRequest({
     content: {
-      '@type': 'RequestMail',
-      to: [relationship.peer],
-      cc: [],
-      subject: 'Dein Lernstand',
-      body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand und teile ihn mit uns.\nDein Serlo-Team',
-      requests: [
+      items: [
         {
-          '@type': 'AttributesChangeRequest',
-          attributes: [
-            {
-              name: 'lenabi.level',
+          '@type': 'CreateAttributeRequestItem',
+          mustBeAccepted: true,
+          attribute: {
+            key: 'LernstandMathe',
+            owner: '',
+            confidentiality: 'public',
+            '@type': 'RelationshipAttribute',
+            value: {
+              '@type': 'ProprietaryString',
+              title: 'LernstandMathe',
               value: '42',
             },
-          ],
-          applyTo: relationship.peer,
-          reason: 'Lernstand',
-        },
-        {
-          '@type': 'AttributesShareRequest',
-          attributes: ['lenabi.level'],
-          recipients: [connectorIdentity],
-          reason: 'Lernstand',
+          },
         },
       ],
     },
+    peer: relationship.peer,
   })
-  if (sendMessageResponse.isError) {
-    // eslint-disable-next-line no-console
-    console.log(sendMessageResponse)
-    return false
+
+  if (request.isError) {
+    handleConnectorError({
+      error: request.error,
+      message: 'Failed to create request to change attribute:',
+    })
   }
-  return true
+
+  const sendMailResponse = await client.messages.sendMessage({
+    recipients: [relationship.peer],
+    content: {
+      '@type': 'Mail',
+      to: [relationship.peer],
+      subject: 'Dein Lernstand',
+      body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand.\nDein Serlo-Team',
+    },
+  })
+
+  if (sendMailResponse.isError) {
+    handleConnectorError({
+      error: sendMailResponse.error,
+      message: 'Failed to send mail',
+    })
+  }
+
+  const attributeChangeResponse = await client.messages.sendMessage({
+    recipients: [relationship.peer],
+    content: request.result.content,
+  })
+
+  if (attributeChangeResponse.isError) {
+    handleConnectorError({
+      error: attributeChangeResponse.error,
+      message: 'Failed to send attribute change request:',
+    })
+  }
 }
 
 function handleConnectorError({
@@ -586,9 +648,17 @@ function handleConnectorError({
 }: {
   error: ConnectorError
   message: string
-  response: Response
+  response?: Response
 }) {
-  return response.status(500).end(`${message}: ${error.code} ${error.message}`)
+  const log = `${message}: ${error.code} ${error.message}`
+  if (response) {
+    return response.status(500).end(log)
+  } else {
+    captureErrorEvent({
+      error: new Error(log),
+      errorContext: { error },
+    })
+  }
 }
 
 function validationError(res: Response, message: string) {
@@ -601,15 +671,6 @@ function validationError(res: Response, message: string) {
   )
 }
 
-const Session = t.intersection([
-  t.type({ relationshipTemplateId: t.string }),
-  t.partial({
-    enmeshedId: t.string,
-    content: t.UnknownRecord,
-  }),
-])
-type Session = t.TypeOf<typeof Session>
-
 async function getSession(
   cache: Cache,
   sessionId: string | null,
@@ -620,16 +681,6 @@ async function getSession(
     if (Session.is(cachedValue.value.value)) {
       return cachedValue.value.value
     }
-  }
-
-  return null
-}
-
-async function getSessionId(cache: Cache, id: string): Promise<string | null> {
-  const cachedValue = await cache.get({ key: getIdentityKey(id) })
-
-  if (!O.isNone(cachedValue)) {
-    return cachedValue.value.value as string
   }
 
   return null
@@ -662,12 +713,6 @@ function getSessionKey(sessionId: string | null) {
 
 function getIdentityKey(id: string) {
   return `enmeshed:${id}`
-}
-
-function getSessionAttributes(
-  attributeList: { name: string; value: string }[],
-) {
-  return attributeList.reduce((al, a) => ({ ...al, [a.name]: a.value }), {})
 }
 
 function readQuery(req: ExpressRequest, key: string): string | null {
