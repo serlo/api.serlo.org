@@ -7,7 +7,11 @@ export const PayloadDecoder = t.strict({
   prompt: t.string,
 })
 
-export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
+type AnyJsonResponse = Record<string, unknown>
+
+export async function makeRequest({
+  prompt,
+}: t.TypeOf<typeof PayloadDecoder>): Promise<Record<string, unknown>> {
   const url = new URL(
     `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
   )
@@ -17,11 +21,12 @@ export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
   const response = await fetch(url.href)
 
   if (response.status === 200) {
-    return await response.text()
+    const responseJson = (await response.json()) as unknown as AnyJsonResponse
+    return responseJson
   } else if (response.status === 400) {
-    const responseText = await response.text()
+    const responseJson = (await response.json()) as unknown as AnyJsonResponse
     const reason = F.pipe(
-      O.tryCatch(() => JSON.parse(responseText) as unknown),
+      O.tryCatch(() => responseJson as unknown),
       O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
       O.map((json) => json.reason),
       O.getOrElse(() => 'Bad Request'),
