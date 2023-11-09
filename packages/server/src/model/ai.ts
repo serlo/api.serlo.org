@@ -1,4 +1,4 @@
-import { option as O, function as F, either as Either } from 'fp-ts'
+import { either } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
@@ -41,7 +41,7 @@ export async function makeRequest({
     const reasonDecoder = t.type({ reason: t.string })
     const result = reasonDecoder.decode(responseJson)
 
-    if (Either.isRight(result)) {
+    if (either.isRight(result)) {
       throw new UserInputError(result.right.reason)
     } else {
       throw new UserInputError('Bad Request')
