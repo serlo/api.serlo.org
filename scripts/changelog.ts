@@ -1597,6 +1597,13 @@ async function exec(): Promise<void> {
         date: '2023-11-07',
         fixed: ['Re-enable user journey in enmeshed middleware'],
       },
+      {
+        tagName: 'v0.57.8',
+        date: '2023-11-09',
+        fixed: [
+          'Return arbitrary JSON instead of a string from content generation service',
+        ],
+      },
     ],
   })
 
