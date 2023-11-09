@@ -1,13 +1,8 @@
 import gql from 'graphql-tag'
-import { rest } from 'msw'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 
 import { user as baseUser } from '../../__fixtures__'
-import {
-  Client,
-  RestResolver,
-  given,
-  hasInternalServerError,
-} from '../__utils__'
+import { Client, given, hasInternalServerError } from '../__utils__'
 
 const mockContentGenerationServiceResponse = JSON.stringify({
   heading: 'Exercises for 7th grade',
@@ -35,8 +30,10 @@ const query = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeAll(() => {
-  givenContentGenerationService((_req, res, ctx) => {
-    return res(ctx.status(200), ctx.text(mockContentGenerationServiceResponse))
+  givenContentGenerationService(() => {
+    return new HttpResponse(mockContentGenerationServiceResponse, {
+      status: 200,
+    })
   })
 })
 
@@ -69,10 +66,10 @@ test('fails when internal server error in content generation service occurs', as
   await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
-function givenContentGenerationService(resolver: RestResolver) {
+function givenContentGenerationService(resolver: ResponseResolver) {
   // server is a global variable that is defined in __config__/setup.ts
   server.use(
-    rest.get(
+    http.get(
       `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
       resolver,
     ),

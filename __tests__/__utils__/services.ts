@@ -4,14 +4,7 @@ import type {
   IdentityApiDeleteIdentityRequest,
   IdentityApiListIdentitiesRequest,
 } from '@ory/client'
-import {
-  RestRequest,
-  ResponseResolver,
-  rest,
-  restContext,
-  PathParams,
-  DefaultBodyType,
-} from 'msw'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { Identity, KratosDB } from '~/internals/authentication'
@@ -82,30 +75,36 @@ export function createFakeIdentity(user: Model<'User'>): Identity {
 
 const spreadsheets: Record<string, string[][] | undefined> = {}
 
-export function givenSpreadheetApi(resolver: SpreadsheetApiResolver) {
+export function givenSpreadheetApi(resolver: ResponseResolver) {
   const url =
     'https://sheets.googleapis.com/v4/spreadsheets/:spreadsheetId/values/:range'
 
-  global.server.use(rest.get(url, resolver))
+  global.server.use(http.get(url, resolver))
 }
 
-export function defaultSpreadsheetApi(): SpreadsheetApiResolver {
-  return (req, res, ctx) => {
-    const searchParams = req.url.searchParams
+export function defaultSpreadsheetApi(): ResponseResolver {
+  return ({ request, params }) => {
+    const url = new URL(request.url)
+    const { searchParams } = url
 
     if (searchParams.get('key') !== process.env.GOOGLE_SPREADSHEET_API_SECRET) {
-      return res(ctx.status(403))
+      return new HttpResponse(null, {
+        status: 403,
+      })
     }
 
-    const { spreadsheetId } = req.params
-    const range = decodeURIComponent(req.params.range)
+    const { spreadsheetId } = params
+    const range = decodeURIComponent(params.range)
     const majorDimension = searchParams.get('majorDimension') as MajorDimension
 
     const values = spreadsheets[toKey({ spreadsheetId, range, majorDimension })]
 
-    if (values === undefined) return res(ctx.status(404))
+    if (values === undefined)
+      return new HttpResponse(null, {
+        status: 404,
+      })
 
-    return res(ctx.json({ range, majorDimension, values }))
+    return HttpResponse.json({ range, majorDimension, values })
   }
 }
 
@@ -121,36 +120,20 @@ export function returnsJson({
 }: {
   status?: number
   json: unknown
-}): RestResolver {
-  return (_req, res, ctx) =>
-    res(ctx.status(status), ctx.json(json as Record<string, unknown>))
+}): ResponseResolver {
+  return () => HttpResponse.json(json as Record<string, unknown>, { status })
 }
 
-export function returnsMalformedJson(): RestResolver {
-  return (_req, res, ctx) => res(ctx.body('MALFORMED JSON'))
+export function returnsMalformedJson(): ResponseResolver {
+  return () => new HttpResponse('MALFORMED JSON')
 }
 
-export function hasInternalServerError(): RestResolver {
-  return (_req, res, ctx) => res(ctx.status(500))
+export function hasInternalServerError(): ResponseResolver {
+  return () => new HttpResponse(null, { status: 500 })
 }
-
-export type RestResolver<
-  RequestBodyType extends DefaultBodyType = DefaultBodyType,
-  RequestParamsType extends PathParams = PathParams,
-> = ResponseResolver<
-  RestRequest<RequestBodyType, RequestParamsType>,
-  typeof restContext
->
 
 function toKey(query: SpreadsheetQuery) {
   return [query.spreadsheetId, query.range, query.majorDimension].join('/')
-}
-
-type SpreadsheetApiResolver = RestResolver<never, SpreadsheetQueryBasic>
-
-interface SpreadsheetQueryBasic extends PathParams {
-  range: string
-  spreadsheetId: string
 }
 
 interface SpreadsheetQuery {

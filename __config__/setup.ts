@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { SetupServer, setupServer } from 'msw/node'
 
 import {
@@ -63,17 +63,13 @@ export async function createBeforeEach() {
   givenSpreadheetApi(defaultSpreadsheetApi())
 
   global.server.use(
-    rest.post<Sentry.Event>(
-      'https://127.0.0.1/api/0/envelope',
-      async (req, res, ctx) => {
-        global.sentryEvents.push(
-          ...(await req.text())
-            .split('\n')
-            .map((x) => JSON.parse(x) as Sentry.Event),
-        )
-        return res(ctx.status(200))
-      },
-    ),
+    http.post('https://127.0.0.1/api/0/envelope', async ({ request }) => {
+      const text = await request.text()
+      global.sentryEvents.push(
+        ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
+      )
+      return new HttpResponse(null, { status: 200 })
+    }),
   )
 
   await global.cache.flush()
