@@ -1633,7 +1633,7 @@ export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
   emailSent: Scalars['Boolean']['output'];
-  event: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
+  event?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   id: Scalars['Int']['output'];
   unread: Scalars['Boolean']['output'];
 };
@@ -4450,7 +4450,7 @@ export type NavigationNodeEdgeResolvers<ContextType = Context, ParentType extend
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
   email?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   emailSent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  event?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
+  event?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
