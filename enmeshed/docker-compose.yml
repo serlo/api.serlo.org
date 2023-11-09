@@ -4,6 +4,7 @@ services:
   enmeshed-connector:
     container_name: enmeshed-connector
     image: ghcr.io/nmshd/connector:latest
+    pull_policy: always
     environment:
       CUSTOM_CONFIG_LOCATION: '/config.json'
     ports:
