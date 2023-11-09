@@ -9,14 +9,14 @@ import {
   hasInternalServerError,
 } from '../__utils__'
 
-const mockContentGenerationServiceResponse = JSON.stringify({
+const mockContentGenerationServiceResponse = {
   heading: 'Exercises for 7th grade',
   subtasks: [
     {
       question: 'What is the 2nd binomial formula?',
     },
   ],
-})
+}
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
 
@@ -36,7 +36,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
 
 beforeAll(() => {
   givenContentGenerationService((_req, res, ctx) => {
-    return res(ctx.status(200), ctx.text(mockContentGenerationServiceResponse))
+    return res(ctx.status(200), ctx.json(mockContentGenerationServiceResponse))
   })
 })
 

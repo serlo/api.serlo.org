@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.8](https://github.com/serlo/api.serlo.org/compare/v0.57.7..v0.57.8) - November 9, 2023
+
+### Fixed
+
+- Return arbitrary JSON instead of a string from content generation service
+
 ## [v0.57.7](https://github.com/serlo/api.serlo.org/compare/v0.57.6..v0.57.7) - November 7, 2023
 
 ### Fixed
