@@ -42,6 +42,10 @@ interface AbstractEntityRevision {
   changes: String!
 }
 
+type License {
+  id: Int!
+}
+
 type AbstractEntityConnection {
   edges: [AbstractEntityCursor!]!
   nodes: [AbstractEntity!]!

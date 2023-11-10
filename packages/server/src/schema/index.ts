@@ -5,7 +5,6 @@ import { connectionSchema } from './connection'
 import { dateTimeSchema } from './date-time'
 import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
 import { instanceSchema } from './instance'
-import { licenseSchema } from './license'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
 import { notificationSchema } from './notification'
@@ -26,7 +25,6 @@ export const schema = mergeSchemas(
   dateTimeSchema,
   instanceSchema,
   defaultGraphQLDefinitionsSchema,
-  licenseSchema,
   mediaSchema,
   metadataSchema,
   notificationSchema,
