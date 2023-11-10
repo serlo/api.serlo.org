@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.9](https://github.com/serlo/api.serlo.org/compare/v0.57.8..v0.57.9) - November 10, 2023
+
+### Fixed
+
+- Return `null` when event cannot be loaded
+
+- enmeshed: Do not set name outside of user journey
+
 ## [v0.57.8](https://github.com/serlo/api.serlo.org/compare/v0.57.7..v0.57.8) - November 9, 2023
 
 ### Fixed
