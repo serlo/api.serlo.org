@@ -1604,6 +1604,14 @@ async function exec(): Promise<void> {
           'Return arbitrary JSON instead of a string from content generation service',
         ],
       },
+      {
+        tagName: 'v0.57.9',
+        date: '2023-11-10',
+        fixed: [
+          'Return `null` when event cannot be loaded',
+          'enmeshed: Do not set name outside of user journey',
+        ],
+      },
     ],
   })
 
