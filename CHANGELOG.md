@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.10](https://github.com/serlo/api.serlo.org/compare/v0.57.9..v0.57.10) - November 10, 2023
+
+### Fixed
+
+- enmeshed: Do not set surname and given name on init
+
 ## [v0.57.9](https://github.com/serlo/api.serlo.org/compare/v0.57.8..v0.57.9) - November 10, 2023
 
 ### Fixed

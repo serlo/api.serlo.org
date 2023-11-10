@@ -146,43 +146,6 @@ function createEnmeshedInitMiddleware(
             '@type': 'CreateAttributeRequestItem',
             mustBeAccepted: true,
             attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'GivenName',
-                value: nameParts.length > 0 ? nameParts[0] : '',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'Surname',
-                value:
-                  nameParts.length > 1 ? nameParts[nameParts.length - 1] : '',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'Nationality',
-                value: 'DE',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
               owner: '',
               key: 'LernstandMathe',
               confidentiality: 'public',
