@@ -1629,7 +1629,7 @@ export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
   emailSent: Scalars['Boolean']['output'];
-  event: AbstractNotificationEvent;
+  event?: Maybe<AbstractNotificationEvent>;
   id: Scalars['Int']['output'];
   unread: Scalars['Boolean']['output'];
 };

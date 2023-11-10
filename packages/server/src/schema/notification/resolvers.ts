@@ -27,13 +27,9 @@ export const resolvers: TypeResolvers<Notification> &
   },
   Notification: {
     async event(parent, _args, { dataSources }) {
-      const event = await dataSources.model.serlo.getNotificationEvent({
+      return await dataSources.model.serlo.getNotificationEvent({
         id: parent.eventId,
       })
-
-      if (event === null) throw new Error('event cannot be null')
-
-      return event
     },
   },
   Query: {
