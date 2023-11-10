@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 
 import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
-import { Instance } from '~/types'
 
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
