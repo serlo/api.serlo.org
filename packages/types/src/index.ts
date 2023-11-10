@@ -1496,36 +1496,7 @@ export type InstanceAware = {
 
 export type License = {
   __typename?: 'License';
-  agreement: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  default: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
-  instance: Instance;
-  shortTitle: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type LicenseQuery = {
-  __typename?: 'LicenseQuery';
-  defaultLicense: License;
-  license?: Maybe<License>;
-  licenses: Array<License>;
-};
-
-
-export type LicenseQueryDefaultLicenseArgs = {
-  instance: Instance;
-};
-
-
-export type LicenseQueryLicenseArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type LicenseQueryLicensesArgs = {
-  instance?: InputMaybe<Instance>;
 };
 
 export type MediaQuery = {
@@ -1863,7 +1834,6 @@ export type Query = {
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license: LicenseQuery;
   media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;

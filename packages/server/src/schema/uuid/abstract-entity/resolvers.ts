@@ -3,7 +3,6 @@ import { instanceToScope } from '@serlo/authorization'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
-import { licenses } from '~/config'
 import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
@@ -178,14 +177,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       const { licenseId, entityId } = input
 
-      const newLicense = licenses.find((license) => {
-        return license.id === licenseId
-      })
-
-      if (!newLicense) {
-        throw new UserInputError(`License with id ${licenseId} does not exist.`)
-      }
-
       const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: entityId,
         decoder: EntityDecoder,
@@ -197,12 +188,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
         message: 'You are not allowed to set the license for this entity.',
         guard: serloAuth.Entity.updateLicense(instanceToScope(entity.instance)),
       })
-
-      if (entity.instance !== newLicense.instance) {
-        throw new UserInputError(
-          'The instance of the entity does not match the instance of the license.',
-        )
-      }
 
       await dataSources.model.serlo.setEntityLicense({
         entityId,
