@@ -657,12 +657,14 @@ async function setSession(
   await cache.set({
     key: getSessionKey(sessionId),
     value: session,
+    ttlInSeconds: 20 * 60,
     source: 'enmeshed-middleware',
   })
   if (session.enmeshedId) {
     await cache.set({
       key: getIdentityKey(session.enmeshedId),
       value: sessionId,
+      ttlInSeconds: 20 * 60,
       source: 'enmeshed-middleware',
     })
   }
