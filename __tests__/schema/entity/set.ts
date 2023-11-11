@@ -25,13 +25,13 @@ import {
   videoRevision,
 } from '../../../__fixtures__'
 import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
+import { autoreviewTaxonomyIds } from '~/config'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { castToUuid, DiscriminatorType, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
-import { autoreviewTaxonomyIds } from '~/config'
-import { Instance } from '@serlo/api'
+import { Instance } from '~/types'
 
 interface EntityFields {
   title: string
