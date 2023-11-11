@@ -1617,6 +1617,12 @@ async function exec(): Promise<void> {
         date: '2023-11-10',
         fixed: ['enmeshed: Do not set surname and given name on init'],
       },
+      {
+        tagName: 'v0.57.11',
+        date: '2023-11-11',
+        internal: ['Remove solutions'],
+        fixed: ['enmeshed: Store cache only for 20min'],
+      },
     ],
   })
 
