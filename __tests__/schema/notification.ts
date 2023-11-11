@@ -723,7 +723,12 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ actor)', async () => {
-      given('UuidQuery').for(user)
+      const actor = {
+        ...user,
+        id: createEntityLinkNotificationEvent.actorId,
+      }
+
+      given('UuidQuery').for(actor)
 
       await client
         .prepareQuery({
@@ -742,9 +747,7 @@ describe('notificationEvent', () => {
         })
         .withVariables(createEntityLinkNotificationEvent)
         .shouldReturnData({
-          notificationEvent: {
-            actor: getTypenameAndId(user),
-          },
+          notificationEvent: { actor: getTypenameAndId(actor) },
         })
     })
 
