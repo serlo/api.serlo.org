@@ -1592,6 +1592,31 @@ async function exec(): Promise<void> {
         date: '2023-10-18',
         fixed: ['Actualize enmeshed relationship template schema to version 2'],
       },
+      {
+        tagName: 'v0.57.7',
+        date: '2023-11-07',
+        fixed: ['Re-enable user journey in enmeshed middleware'],
+      },
+      {
+        tagName: 'v0.57.8',
+        date: '2023-11-09',
+        fixed: [
+          'Return arbitrary JSON instead of a string from content generation service',
+        ],
+      },
+      {
+        tagName: 'v0.57.9',
+        date: '2023-11-10',
+        fixed: [
+          'Return `null` when event cannot be loaded',
+          'enmeshed: Do not set name outside of user journey',
+        ],
+      },
+      {
+        tagName: 'v0.57.10',
+        date: '2023-11-10',
+        fixed: ['enmeshed: Do not set surname and given name on init'],
+      },
     ],
   })
 
