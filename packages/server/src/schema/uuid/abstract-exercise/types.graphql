@@ -16,7 +16,6 @@ interface AbstractExercise {
     instance: Instance
     actorId: Int
   ): AbstractNotificationEventConnection!
-  solution: Solution
 }
 
 interface AbstractExerciseRevision {

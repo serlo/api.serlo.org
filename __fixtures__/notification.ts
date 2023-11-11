@@ -1,13 +1,13 @@
 import {
   article,
   articleRevision,
-  exercise,
-  solution,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
   comment,
+  coursePage,
+  course,
 } from './uuid'
 import { Model } from '~/internals/graphql'
 import { castToUuid, NotificationEventType } from '~/model/decoder'
@@ -69,9 +69,9 @@ export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificat
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
-    objectId: solution.id,
-    parentId: exercise.id,
-    childId: solution.id,
+    objectId: coursePage.id,
+    parentId: course.id,
+    childId: coursePage.id,
   }
 
 export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificationEvent'> =
@@ -81,9 +81,9 @@ export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificat
     instance: Instance.De,
     date: '2014-03-01T20:45:56Z',
     actorId: user.id,
-    objectId: solution.id,
-    parentId: exercise.id,
-    childId: solution.id,
+    objectId: coursePage.id,
+    parentId: course.id,
+    childId: coursePage.id,
   }
 
 export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionNotificationEvent'> =
