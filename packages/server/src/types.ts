@@ -1163,7 +1163,7 @@ export type EventRevisionCursor = {
 
 export type ExecutePromptResponse = {
   __typename?: 'ExecutePromptResponse';
-  record: Scalars['String']['output'];
+  record: Scalars['JSONObject']['output'];
   success: Scalars['Boolean']['output'];
 };
 
@@ -1624,7 +1624,7 @@ export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
   emailSent: Scalars['Boolean']['output'];
-  event: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
+  event?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   id: Scalars['Int']['output'];
   unread: Scalars['Boolean']['output'];
 };
@@ -4090,7 +4090,7 @@ export type EventRevisionCursorResolvers<ContextType = Context, ParentType exten
 };
 
 export type ExecutePromptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExecutePromptResponse'] = ResolversParentTypes['ExecutePromptResponse']> = {
-  record?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  record?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4334,7 +4334,7 @@ export type NavigationNodeEdgeResolvers<ContextType = Context, ParentType extend
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
   email?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   emailSent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  event?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
+  event?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

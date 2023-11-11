@@ -173,6 +173,7 @@ describe('notifications', () => {
         .shouldFailWithError('BAD_USER_INPUT')
     })
   })
+
   test('notifications (w/ event)', async () => {
     given('NotificationsQuery')
       .withPayload({
@@ -230,6 +231,52 @@ describe('notifications', () => {
             },
           ],
         },
+      })
+  })
+
+  test('notifications (with an event which cannot be loaded)', async () => {
+    given('NotificationsQuery')
+      .withPayload({
+        userId: user.id,
+      })
+      .returns({
+        notifications: [
+          {
+            id: 1,
+            unread: false,
+            eventId: checkoutRevisionNotificationEvent.id,
+            email: false,
+            emailSent: false,
+          },
+        ],
+        userId: user.id,
+      })
+    given('EventQuery').returnsNotFound()
+
+    await new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          {
+            notifications {
+              totalCount
+              nodes {
+                event {
+                  __typename
+                  ... on CheckoutRevisionNotificationEvent {
+                    id
+                    instance
+                    date
+                    objectId
+                    reason
+                  }
+                }
+              }
+            }
+          }
+        `,
+      })
+      .shouldReturnData({
+        notifications: { totalCount: 1, nodes: [{ event: null }] },
       })
   })
 })
