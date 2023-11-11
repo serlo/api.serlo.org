@@ -30,6 +30,8 @@ import { DatabaseLayer } from '~/model'
 import { castToUuid, DiscriminatorType, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
+import { autoreviewTaxonomyIds } from '~/config'
+import { Instance } from '@serlo/api'
 
 interface EntityFields {
   title: string
@@ -490,5 +492,161 @@ testCases.forEach((testCase) => {
         })
       })
     })
+  })
+})
+
+test('uses default license of the instance', async () => {
+  const exerciseEn = { ...exercise, instance: Instance.En }
+
+  given('UuidQuery').for(exerciseEn, taxonomyTermSubject, taxonomyTermRoot)
+  given('EntityCreateMutation')
+    .withPayload({
+      userId: 1,
+      entityType: EntityType.Exercise,
+      input: {
+        changes: 'changes',
+        licenseId: 9,
+        needsReview: true,
+        subscribeThis: true,
+        subscribeThisByEmail: true,
+        fields: { content: 'Hello World' },
+        parentId: exerciseEn.id,
+      },
+    })
+    .returns(exercise)
+
+  await new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation ($input: SetGenericEntityInput!) {
+          entity {
+            setExercise(input: $input) {
+              success
+            }
+          }
+        }
+      `,
+    })
+    .withInput({
+      changes: 'changes',
+      subscribeThis: true,
+      subscribeThisByEmail: true,
+      needsReview: true,
+      parentId: exerciseEn.id,
+      content: 'Hello World',
+    })
+    .shouldReturnData({ entity: { setExercise: { success: true } } })
+})
+
+describe('Autoreview entities', () => {
+  const input = {
+    changes: 'changes',
+    needsReview: true,
+    subscribeThis: false,
+    subscribeThisByEmail: false,
+    content: 'content',
+  }
+
+  const mutation = new Client({ userId: user.id }).prepareQuery({
+    query: gql`
+      mutation ($input: SetGenericEntityInput!) {
+        entity {
+          setExercise(input: $input) {
+            record {
+              ... on Exercise {
+                currentRevision {
+                  id
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+  })
+
+  const oldRevisionId = exercise.currentRevisionId
+  const newRevisionId = castToUuid(789)
+
+  const taxonomy = { ...taxonomyTermSubject, id: castToUuid(106082) }
+  const entity: typeof exercise = {
+    ...exercise,
+    currentRevisionId: oldRevisionId,
+    taxonomyTermIds: [taxonomy.id],
+  }
+
+  const newRevision = { ...exerciseRevision, id: newRevisionId }
+
+  beforeEach(() => {
+    given('UuidQuery').for(
+      entity,
+      groupedExercise,
+      exerciseRevision,
+      article,
+      taxonomy,
+    )
+
+    given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
+      given('UuidQuery').for(newRevision)
+
+      if (!req.body.payload.input.needsReview)
+        given('UuidQuery').for({ ...entity, currentRevisionId: newRevisionId })
+
+      return res(ctx.json({ success: true, revisionId: newRevisionId }))
+    })
+
+    given('EntityCreateMutation').isDefinedBy((req, res, ctx) => {
+      given('UuidQuery').for(newRevision)
+
+      return res(
+        ctx.json({
+          ...entity,
+          currentRevisionId: req.body.payload.input.needsReview
+            ? oldRevisionId
+            : newRevisionId,
+        }),
+      )
+    })
+  })
+
+  describe('checks out revision without need of review, even if needsReview initially true', () => {
+    test('when a new revision is added', async () => {
+      await mutation
+        .withInput({ ...input, entityId: entity.id })
+        .shouldReturnData({
+          entity: {
+            setExercise: { record: { currentRevision: { id: newRevisionId } } },
+          },
+        })
+    })
+
+    test('when a new entity is created', async () => {
+      await mutation
+        .withInput({ ...input, parentId: taxonomy.id })
+        .shouldReturnData({
+          entity: {
+            setExercise: { record: { currentRevision: { id: newRevisionId } } },
+          },
+        })
+    })
+  })
+
+  test('autoreview is ignored when entity is also in non-autoreview taxonomy term', async () => {
+    const taxonomyTermIds = [autoreviewTaxonomyIds[0], taxonomyTermRoot.id].map(
+      castToUuid,
+    )
+    given('UuidQuery').for(
+      { ...exercise, taxonomyTermIds },
+      { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
+      taxonomyTermRoot,
+    )
+
+    await mutation
+      .withInput({ ...input, entityId: entity.id })
+      .shouldReturnData({
+        entity: {
+          setExercise: { record: { currentRevision: { id: oldRevisionId } } },
+        },
+      })
   })
 })
