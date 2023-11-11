@@ -65,10 +65,10 @@ export const createEntityNotificationEvent: Model<'CreateEntityNotificationEvent
 export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateEntityLink,
-    id: castToUuid(2115),
+    id: castToUuid(43103),
     instance: Instance.De,
-    date: '2014-03-01T20:45:56Z',
-    actorId: user.id,
+    date: '2014-03-17T12:24:54Z',
+    actorId: castToUuid(324),
     objectId: coursePage.id,
     parentId: course.id,
     childId: coursePage.id,
