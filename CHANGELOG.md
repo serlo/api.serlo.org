@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.57.11](https://github.com/serlo/api.serlo.org/compare/v0.57.10..v0.57.11) - November 11, 2023
+
+### Fixed
+
+- enmeshed: Store cache only for 20min
+
+### Internal
+
+- Remove solutions
+
 ## [v0.57.10](https://github.com/serlo/api.serlo.org/compare/v0.57.9..v0.57.10) - November 10, 2023
 
 ### Fixed
