@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.58.0](https://github.com/serlo/api.serlo.org/compare/v0.57.11..v0.58.0) - November 13, 2023
+
+### Changed
+
+- remove license queries, simplify `License` type
+
+### Internal
+
+- Move content generation service logic to api
+
 ## [v0.57.11](https://github.com/serlo/api.serlo.org/compare/v0.57.10..v0.57.11) - November 11, 2023
 
 ### Fixed
