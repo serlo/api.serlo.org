@@ -22,7 +22,10 @@ export const resolvers: Queries<'ai'> = {
         dataSources,
       })
 
-      const record = await dataSources.model.serlo.executePrompt(payload)
+      const record = await dataSources.model.serlo.executePrompt({
+        ...payload,
+        userId,
+      })
 
       return { success: true, record }
     },
