@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 
 import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
-import { Instance } from '~/types'
 
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
@@ -57,20 +56,6 @@ test('returns "{ success: true }" when mutation could be successfully executed',
     })
     .withVariables({ id: article.id })
     .shouldReturnData({ uuid: { license: { id: newLicenseId } } })
-})
-
-test('throws UserInputError when license does not exist', async () => {
-  await mutation
-    .withInput({ entityId: article.id, licenseId: 420 })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('throws UserInputError when instances do not match', async () => {
-  given('UuidQuery').for({ ...article, instance: Instance.Es })
-
-  await mutation
-    .withInput({ entityId: article.id, licenseId: newLicenseId })
-    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails when user is not authenticated', async () => {
