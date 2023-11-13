@@ -181,7 +181,6 @@ export async function assertErrorEvent(args?: {
       for (const contextName in args.errorContext) {
         const contextValue = event.contexts?.error?.[contextName]
         const targetValue = args.errorContext[contextName]
-
         if (!R.equals(destringifyProperties(contextValue), targetValue))
           return false
       }
