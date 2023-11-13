@@ -63,14 +63,12 @@ export const PayloadDecoder = t.strict({
   userId: t.union([t.number, t.null]),
 })
 
-const UnknownRecord = t.UnknownRecord
-
-type AnyJsonResponse = t.TypeOf<typeof UnknownRecord>
+type AnyJsonResponse = t.TypeOf<typeof t.UnknownRecord>
 
 export const isAnyJsonResponse = (
   response: unknown,
 ): response is AnyJsonResponse => {
-  return UnknownRecord.is(response)
+  return t.UnknownRecord.is(response)
 }
 
 export async function makeRequest({
