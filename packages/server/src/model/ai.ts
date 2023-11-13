@@ -1,7 +1,5 @@
 import * as t from 'io-ts'
 import { APIError, OpenAI } from 'openai'
-// eslint-disable-next-line import/no-internal-modules
-import { ChatCompletion } from 'openai/resources'
 
 import { UserInputError } from '~/errors'
 
@@ -20,7 +18,7 @@ interface ExecutePromptParams {
 async function executePrompt({
   prompt,
   user,
-}: ExecutePromptParams): Promise<ChatCompletion> {
+}: ExecutePromptParams): Promise<OpenAI.ChatCompletion> {
   if (!prompt || prompt.trim() === '') {
     throw new UserInputError('Missing prompt parameter')
   }

@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
 import { rest } from 'msw'
-// eslint-disable-next-line import/no-internal-modules
-import { ChatCompletion } from 'openai/resources'
+import type { OpenAI } from 'openai'
 
 import { user as baseUser } from '../../__fixtures__'
 import {
@@ -12,7 +11,7 @@ import {
 } from '../__utils__'
 
 interface ChoicesFromChatCompletion {
-  choices: ChatCompletion['choices']
+  choices: OpenAI.ChatCompletion['choices']
 }
 
 const mockedOpenAiResponse: ChoicesFromChatCompletion = {
