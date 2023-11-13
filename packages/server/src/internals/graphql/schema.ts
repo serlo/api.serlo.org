@@ -65,12 +65,12 @@ export type ModelMapping = {
       ? P[0]
       : never
     : '__isTypeOf' extends keyof GetResolver<R>
-    ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
-        ...args: infer P
-      ) => unknown
-      ? P[0]
+      ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
+          ...args: infer P
+        ) => unknown
+        ? P[0]
+        : never
       : never
-    : never
 }
 
 /**
