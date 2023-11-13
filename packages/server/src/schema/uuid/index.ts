@@ -14,7 +14,6 @@ import { exerciseSchema } from './exercise'
 import { exerciseGroupSchema } from './exercise-group'
 import { groupedExerciseSchema } from './grouped-exercise'
 import { pageSchema } from './page'
-import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
 import { userSchema } from './user'
 import { videoSchema } from './video'
@@ -37,7 +36,6 @@ export const uuidSchema = mergeSchemas(
   exerciseGroupSchema,
   groupedExerciseSchema,
   pageSchema,
-  solutionSchema,
   taxonomyTermSchema,
   userSchema,
   videoSchema,

@@ -1,14 +1,30 @@
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
+import type { OpenAI } from 'openai'
 
 import { user as baseUser } from '../../__fixtures__'
 import { Client, given, hasInternalServerError } from '../__utils__'
 
-const mockContentGenerationServiceResponse = {
-  heading: 'Exercises for 7th grade',
-  subtasks: [
+interface ChoicesFromChatCompletion {
+  choices: OpenAI.ChatCompletion['choices']
+}
+
+const mockedOpenAiResponse: ChoicesFromChatCompletion = {
+  choices: [
     {
-      question: 'What is the 2nd binomial formula?',
+      finish_reason: 'stop',
+      index: 0,
+      message: {
+        role: 'assistant',
+        content: JSON.stringify({
+          heading: 'Exercises for 7th grade',
+          subtasks: [
+            {
+              question: 'What is the 2nd binomial formula?',
+            },
+          ],
+        }),
+      },
     },
   ],
 }
@@ -26,12 +42,12 @@ const query = new Client({ userId: user.id }).prepareQuery({
       }
     }
   `,
-  variables: { prompt: 'Generate exercise for 7th grade math' },
+  variables: { prompt: 'Generate exercise for 7th grade math in json' },
 })
 
 beforeAll(() => {
-  givenContentGenerationService(() => {
-    return HttpResponse.json(mockContentGenerationServiceResponse, {
+  mockOpenAIServer(() => {
+    return HttpResponse.json(mockedOpenAiResponse, {
       status: 200,
     })
   })
@@ -46,7 +62,9 @@ test('successfully generate content', async () => {
     ai: {
       executePrompt: {
         success: true,
-        record: mockContentGenerationServiceResponse,
+        record: JSON.parse(
+          mockedOpenAiResponse.choices[0].message.content || '',
+        ) as ChoicesFromChatCompletion,
       },
     },
   })
@@ -60,18 +78,15 @@ test('fails for unauthorized user (wrong roles)', async () => {
   await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
 })
 
-test('fails when internal server error in content generation service occurs', async () => {
-  givenContentGenerationService(hasInternalServerError())
+test('fails when internal server error open ai api occurs', async () => {
+  mockOpenAIServer(hasInternalServerError())
 
   await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
-function givenContentGenerationService(resolver: ResponseResolver) {
+function mockOpenAIServer(resolver: ResponseResolver) {
   // server is a global variable that is defined in __config__/setup.ts
-  server.use(
-    http.get(
-      `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
-      resolver,
-    ),
+  global.server.use(
+    http.post('https://api.openai.com/v1/chat/completions', resolver),
   )
 }

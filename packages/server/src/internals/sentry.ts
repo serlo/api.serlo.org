@@ -120,10 +120,10 @@ function stringifyContextValue(value: unknown) {
   return Array.isArray(value)
     ? R.map(stringify, value)
     : typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(stringify, value)
-    : value === null
-    ? JSON.stringify(value)
-    : value
+      ? R.mapObjIndexed(stringify, value)
+      : value === null
+        ? JSON.stringify(value)
+        : value
 }
 
 function stringify(value: unknown) {

@@ -82,7 +82,6 @@ export type AbstractExercise = {
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
-  solution?: Maybe<Solution>;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -949,7 +948,6 @@ export type EntityMutation = {
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
   setGroupedExercise: SetEntityResponse;
-  setSolution: SetEntityResponse;
   setVideo: SetEntityResponse;
   sort: EntitySortResponse;
   updateLicense: EntityUpdateLicenseResponse;
@@ -1002,11 +1000,6 @@ export type EntityMutationSetExerciseGroupArgs = {
 
 
 export type EntityMutationSetGroupedExerciseArgs = {
-  input: SetGenericEntityInput;
-};
-
-
-export type EntityMutationSetSolutionArgs = {
   input: SetGenericEntityInput;
 };
 
@@ -1180,7 +1173,6 @@ export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & 
   instance: Instance;
   license: License;
   revisions: ExerciseRevisionConnection;
-  solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
   threads: ThreadsConnection;
@@ -1390,7 +1382,6 @@ export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractReposi
   instance: Instance;
   license: License;
   revisions: GroupedExerciseRevisionConnection;
-  solution?: Maybe<Solution>;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -1496,36 +1487,7 @@ export type InstanceAware = {
 
 export type License = {
   __typename?: 'License';
-  agreement: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  default: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
-  instance: Instance;
-  shortTitle: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type LicenseQuery = {
-  __typename?: 'LicenseQuery';
-  defaultLicense: License;
-  license?: Maybe<License>;
-  licenses: Array<License>;
-};
-
-
-export type LicenseQueryDefaultLicenseArgs = {
-  instance: Instance;
-};
-
-
-export type LicenseQueryLicenseArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type LicenseQueryLicensesArgs = {
-  instance?: InputMaybe<Instance>;
 };
 
 export type MediaQuery = {
@@ -1629,7 +1591,7 @@ export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
   emailSent: Scalars['Boolean']['output'];
-  event: AbstractNotificationEvent;
+  event?: Maybe<AbstractNotificationEvent>;
   id: Scalars['Int']['output'];
   unread: Scalars['Boolean']['output'];
 };
@@ -1863,7 +1825,6 @@ export type Query = {
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license: LicenseQuery;
   media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<AbstractNotificationEvent>;
@@ -2176,101 +2137,6 @@ export type SetVideoInput = {
   subscribeThisByEmail: Scalars['Boolean']['input'];
   title: Scalars['String']['input'];
   url: Scalars['String']['input'];
-};
-
-export type Solution = AbstractEntity & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
-  __typename?: 'Solution';
-  alias: Scalars['String']['output'];
-  currentRevision?: Maybe<SolutionRevision>;
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  exercise: AbstractExercise;
-  id: Scalars['Int']['output'];
-  instance: Instance;
-  license: License;
-  revisions: SolutionRevisionConnection;
-  subject?: Maybe<Subject>;
-  threads: ThreadsConnection;
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type SolutionEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type SolutionRevisionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  unrevised?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type SolutionThreadsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  trashed?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type SolutionRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
-  __typename?: 'SolutionRevision';
-  alias: Scalars['String']['output'];
-  author: User;
-  changes: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  repository: Solution;
-  threads: ThreadsConnection;
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type SolutionRevisionEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type SolutionRevisionThreadsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  trashed?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type SolutionRevisionConnection = {
-  __typename?: 'SolutionRevisionConnection';
-  edges: Array<SolutionRevisionCursor>;
-  nodes: Array<SolutionRevision>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type SolutionRevisionCursor = {
-  __typename?: 'SolutionRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: SolutionRevision;
 };
 
 export type Subject = {

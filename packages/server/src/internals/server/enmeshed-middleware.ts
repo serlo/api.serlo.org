@@ -115,8 +115,8 @@ function createEnmeshedInitMiddleware(
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId
     } else {
-      const name = readQuery(req, 'name') ?? 'Alex Janowski'
-      const nameParts = name.split(' ')
+      const name = readQuery(req, 'name')
+      const nameParts = name?.split(' ') ?? []
 
       const createAttributeResponse = await client.attributes.createAttribute({
         content: {
@@ -124,7 +124,7 @@ function createEnmeshedInitMiddleware(
           owner: (await client.account.getIdentityInfo()).result.address,
           value: {
             '@type': 'DisplayName',
-            value: 'LENABI Demo 1',
+            value: 'LENABI Demo',
           },
         },
       })
@@ -136,6 +136,29 @@ function createEnmeshedInitMiddleware(
           response: res,
         })
       }
+
+      const requestGroup = {
+        '@type': 'RequestItemGroup',
+        mustBeAccepted: true,
+        title: 'Requested Attributes',
+        items: [
+          {
+            '@type': 'CreateAttributeRequestItem',
+            mustBeAccepted: true,
+            attribute: {
+              owner: '',
+              key: 'LernstandMathe',
+              confidentiality: 'public',
+              '@type': 'RelationshipAttribute',
+              value: {
+                '@type': 'ProprietaryString',
+                title: 'LernstandMathe',
+                value: '',
+              },
+            },
+          },
+        ],
+      } as ConnectorRequestContent['items'][number]
 
       // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
       const attributesContent: ConnectorRequestContent = {
@@ -154,74 +177,14 @@ function createEnmeshedInitMiddleware(
                   owner: '',
                   value: {
                     '@type': 'DisplayName',
-                    value: 'LENABI Demo 1',
+                    value: 'LENABI Demo',
                   },
                 },
                 sourceAttributeId: createAttributeResponse.result.id,
               },
             ],
           },
-          {
-            '@type': 'RequestItemGroup',
-            mustBeAccepted: true,
-            title: 'Requested Attributes',
-            items: [
-              {
-                '@type': 'CreateAttributeRequestItem',
-                mustBeAccepted: true,
-                attribute: {
-                  '@type': 'IdentityAttribute',
-                  owner: '',
-                  value: {
-                    '@type': 'GivenName',
-                    value: nameParts.length > 0 ? nameParts[0] : '',
-                  },
-                },
-              },
-              {
-                '@type': 'CreateAttributeRequestItem',
-                mustBeAccepted: true,
-                attribute: {
-                  '@type': 'IdentityAttribute',
-                  owner: '',
-                  value: {
-                    '@type': 'Surname',
-                    value:
-                      nameParts.length > 1
-                        ? nameParts[nameParts.length - 1]
-                        : '',
-                  },
-                },
-              },
-              {
-                '@type': 'CreateAttributeRequestItem',
-                mustBeAccepted: true,
-                attribute: {
-                  '@type': 'IdentityAttribute',
-                  owner: '',
-                  value: {
-                    '@type': 'Nationality',
-                    value: 'DE',
-                  },
-                },
-              },
-              {
-                '@type': 'CreateAttributeRequestItem',
-                mustBeAccepted: true,
-                attribute: {
-                  owner: '',
-                  key: 'LernstandMathe',
-                  confidentiality: 'public',
-                  '@type': 'RelationshipAttribute',
-                  value: {
-                    '@type': 'ProprietaryString',
-                    title: 'LernstandMathe',
-                    value: '',
-                  },
-                },
-              },
-            ],
-          },
+          ...(nameParts.length > 0 ? [requestGroup] : []),
         ],
       }
 
@@ -694,12 +657,14 @@ async function setSession(
   await cache.set({
     key: getSessionKey(sessionId),
     value: session,
+    ttlInSeconds: 20 * 60,
     source: 'enmeshed-middleware',
   })
   if (session.enmeshedId) {
     await cache.set({
       key: getIdentityKey(session.enmeshedId),
       value: sessionId,
+      ttlInSeconds: 20 * 60,
       source: 'enmeshed-middleware',
     })
   }

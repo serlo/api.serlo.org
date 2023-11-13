@@ -28,7 +28,6 @@ export const groupedExercise: Model<'GroupedExercise'> = {
   currentRevisionId: castToUuid(2220),
   revisionIds: [2220].map(castToUuid),
   licenseId: license.id,
-  solutionId: castToUuid(29648),
   parentId: exerciseGroup.id,
   canonicalSubjectId: castToUuid(5),
 }

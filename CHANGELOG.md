@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.58.0](https://github.com/serlo/api.serlo.org/compare/v0.57.11..v0.58.0) - November 13, 2023
+
+### Changed
+
+- remove license queries, simplify `License` type
+
+### Internal
+
+- Move content generation service logic to api
+
+## [v0.57.11](https://github.com/serlo/api.serlo.org/compare/v0.57.10..v0.57.11) - November 11, 2023
+
+### Fixed
+
+- enmeshed: Store cache only for 20min
+
+### Internal
+
+- Remove solutions
+
+## [v0.57.10](https://github.com/serlo/api.serlo.org/compare/v0.57.9..v0.57.10) - November 10, 2023
+
+### Fixed
+
+- enmeshed: Do not set surname and given name on init
+
+## [v0.57.9](https://github.com/serlo/api.serlo.org/compare/v0.57.8..v0.57.9) - November 10, 2023
+
+### Fixed
+
+- Return `null` when event cannot be loaded
+
+- enmeshed: Do not set name outside of user journey
+
 ## [v0.57.8](https://github.com/serlo/api.serlo.org/compare/v0.57.7..v0.57.8) - November 9, 2023
 
 ### Fixed
