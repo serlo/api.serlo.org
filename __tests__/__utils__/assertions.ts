@@ -218,10 +218,10 @@ function destringifyProperties(value: unknown) {
   return Array.isArray(value)
     ? value.map(destringify)
     : typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(destringify, value)
-    : value === 'null'
-    ? null
-    : value
+      ? R.mapObjIndexed(destringify, value)
+      : value === 'null'
+        ? null
+        : value
 }
 
 function destringify(value: unknown) {

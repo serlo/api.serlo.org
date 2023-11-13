@@ -1,52 +1,97 @@
-import { either } from 'fp-ts'
 import * as t from 'io-ts'
+import { APIError, OpenAI } from 'openai'
 
 import { UserInputError } from '~/errors'
 
-export const PayloadDecoder = t.strict({
-  prompt: t.string,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 })
 
-const UnknownRecord = t.UnknownRecord
+interface ExecutePromptParams {
+  prompt: string
+  // If we want to monitor abuse and receive more actionable feedback from
+  // OpenAI, we can pass the user to the model. See
+  // https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids
+  user?: string
+}
 
-type AnyJsonResponse = t.TypeOf<typeof UnknownRecord>
+async function executePrompt({
+  prompt,
+  user,
+}: ExecutePromptParams): Promise<OpenAI.ChatCompletion> {
+  if (!prompt || prompt.trim() === '') {
+    throw new UserInputError('Missing prompt parameter')
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4-1106-preview',
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.4,
+      ...(user && { user }),
+      response_format: { type: 'json_object' },
+    })
+
+    return response
+  } catch (error) {
+    if (error instanceof APIError) {
+      const detailedMessage = [
+        'OpenAI API error when executing prompt.',
+        `Status: ${error.status}`,
+        `Type: ${error.type}`,
+        `Code: ${error.code}`,
+        `Param: ${error.param}`,
+        `Message: ${error.message}`,
+      ].join('\n')
+
+      throw new Error(detailedMessage)
+    } else if (error instanceof Error) {
+      throw new Error(`Error when executing prompt: ${error.message}`)
+    } else {
+      throw new Error('Unknown error occurred in executing prompt')
+    }
+  }
+}
+
+export const PayloadDecoder = t.strict({
+  prompt: t.string,
+  userId: t.union([t.number, t.null]),
+})
+
+type AnyJsonResponse = t.TypeOf<typeof t.UnknownRecord>
 
 export const isAnyJsonResponse = (
   response: unknown,
 ): response is AnyJsonResponse => {
-  return UnknownRecord.is(response)
+  return t.UnknownRecord.is(response)
 }
 
 export async function makeRequest({
+  userId,
   prompt,
 }: t.TypeOf<typeof PayloadDecoder>): Promise<AnyJsonResponse> {
-  const url = new URL(
-    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
-  )
+  const response = await executePrompt({ prompt, user: String(userId) })
 
-  url.searchParams.append('prompt', prompt)
-
-  const response = await fetch(url.href)
-
-  if (response.status === 200) {
-    const responseJson = (await response.json()) as unknown
-
-    if (!isAnyJsonResponse(responseJson)) {
-      throw new Error('Invalid JSON format of content-generation-service')
-    }
-
-    return responseJson
-  } else if (response.status === 400) {
-    const responseJson = (await response.json()) as unknown
-    const reasonDecoder = t.type({ reason: t.string })
-    const result = reasonDecoder.decode(responseJson)
-
-    if (either.isRight(result)) {
-      throw new UserInputError(result.right.reason)
-    } else {
-      throw new UserInputError('Bad Request')
-    }
-  } else {
-    throw new Error(`${response.status}`)
+  // As we now have the response_format defined as json_object, we shouldn't
+  // need to call JSON.parse on the stringMessage. However, right now the OpenAI
+  // types seem to be broken (thinking the API is returning a string or null).
+  // Instead of fighting the types, we can simply adjust this in the next
+  // version.
+  const stringMessage = response.choices[0].message.content
+  if (!stringMessage) {
+    throw new Error('No content received from LLM!')
   }
+
+  const message = JSON.parse(stringMessage) as unknown
+
+  if (!isAnyJsonResponse(message)) {
+    throw new Error('Invalid JSON format of content-generation-service')
+  }
+
+  return message
 }

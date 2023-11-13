@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { exercise, groupedExercise, solution } from '../../../__fixtures__'
+import { exercise, groupedExercise } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
@@ -12,24 +12,22 @@ const exerciseFixtures: Record<string, Model<'AbstractExercise'>> = {
 }
 const exerciseCases = R.toPairs(exerciseFixtures)
 
-test.each(exerciseCases)('%s by id (w/ solution)', async (_type, entity) => {
-  given('UuidQuery').for(entity, solution)
+test.each(exerciseCases)('%s by id', async (_type, entity) => {
+  given('UuidQuery').for(entity)
 
   await new Client()
     .prepareQuery({
       query: gql`
-        query solution($id: Int!) {
+        query exercise($id: Int!) {
           uuid(id: $id) {
             ... on AbstractExercise {
-              solution {
-                __typename
-                id
-              }
+              __typename
+              id
             }
           }
         }
       `,
     })
     .withVariables({ id: entity.id })
-    .shouldReturnData({ uuid: { solution: getTypenameAndId(solution) } })
+    .shouldReturnData({ uuid: getTypenameAndId(entity) })
 })
