@@ -1,5 +1,5 @@
 import { Pact } from '@pact-foundation/pact'
-import { http, HttpResponse } from 'msw'
+import { DefaultBodyType, http, HttpResponse } from 'msw'
 import path from 'path'
 
 import {
@@ -41,10 +41,8 @@ beforeEach(async () => {
       async ({ request }) => {
         const url = new URL(request.url)
         const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`)
-        const body = (await pactRes.json()) as unknown
-        return new HttpResponse(JSON.stringify(body), {
-          status: pactRes.status,
-        })
+        const body = (await pactRes.json()) as DefaultBodyType
+        return HttpResponse.json(body, { status: pactRes.status })
       },
     ),
     http.post(
@@ -60,11 +58,9 @@ beforeEach(async () => {
             'Content-Type': request.headers.get('Content-Type')!,
           },
         })
-        const pactBody = (await pactRes.json()) as unknown
+        const pactBody = (await pactRes.json()) as DefaultBodyType
         return pactRes.headers.get('Content-Type')
-          ? new HttpResponse(JSON.stringify(pactBody), {
-              status: pactRes.status,
-            })
+          ? HttpResponse.json(pactBody, { status: pactRes.status })
           : new HttpResponse(null, { status: pactRes.status })
       },
     ),
