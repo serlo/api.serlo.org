@@ -6,6 +6,8 @@ import {
   articleRevision,
   checkoutRevisionNotificationEvent,
   comment,
+  course,
+  coursePage,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -13,7 +15,6 @@ import {
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
-  exercise,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
@@ -22,7 +23,6 @@ import {
   setTaxonomyTermNotificationEvent,
   setThreadStateNotificationEvent,
   setUuidStateNotificationEvent,
-  solution,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
@@ -723,7 +723,12 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ actor)', async () => {
-      given('UuidQuery').for(user)
+      const actor = {
+        ...user,
+        id: createEntityLinkNotificationEvent.actorId,
+      }
+
+      given('UuidQuery').for(actor)
 
       await client
         .prepareQuery({
@@ -742,14 +747,12 @@ describe('notificationEvent', () => {
         })
         .withVariables(createEntityLinkNotificationEvent)
         .shouldReturnData({
-          notificationEvent: {
-            actor: getTypenameAndId(user),
-          },
+          notificationEvent: { actor: getTypenameAndId(actor) },
         })
     })
 
     test('by id (w/ parent)', async () => {
-      given('UuidQuery').for(exercise)
+      given('UuidQuery').for(course)
 
       await client
         .prepareQuery({
@@ -759,7 +762,7 @@ describe('notificationEvent', () => {
                 ... on CreateEntityLinkNotificationEvent {
                   parent {
                     __typename
-                    ... on Exercise {
+                    ... on Course {
                       id
                     }
                   }
@@ -771,13 +774,13 @@ describe('notificationEvent', () => {
         .withVariables(createEntityLinkNotificationEvent)
         .shouldReturnData({
           notificationEvent: {
-            parent: getTypenameAndId(exercise),
+            parent: getTypenameAndId(course),
           },
         })
     })
 
     test('by id (w/ child)', async () => {
-      given('UuidQuery').for(solution)
+      given('UuidQuery').for(coursePage)
 
       await client
         .prepareQuery({
@@ -787,7 +790,7 @@ describe('notificationEvent', () => {
                 ... on CreateEntityLinkNotificationEvent {
                   child {
                     __typename
-                    ... on Solution {
+                    ... on CoursePage {
                       id
                     }
                   }
@@ -799,7 +802,7 @@ describe('notificationEvent', () => {
         .withVariables(createEntityLinkNotificationEvent)
         .shouldReturnData({
           notificationEvent: {
-            child: getTypenameAndId(solution),
+            child: getTypenameAndId(coursePage),
           },
         })
     })
@@ -863,7 +866,7 @@ describe('notificationEvent', () => {
     })
 
     test('by id (w/ parent)', async () => {
-      given('UuidQuery').for(exercise)
+      given('UuidQuery').for(course)
 
       await client
         .prepareQuery({
@@ -873,7 +876,7 @@ describe('notificationEvent', () => {
                 ... on RemoveEntityLinkNotificationEvent {
                   parent {
                     __typename
-                    ... on Exercise {
+                    ... on Course {
                       id
                     }
                   }
@@ -885,13 +888,13 @@ describe('notificationEvent', () => {
         .withVariables(removeEntityLinkNotificationEvent)
         .shouldReturnData({
           notificationEvent: {
-            parent: getTypenameAndId(exercise),
+            parent: getTypenameAndId(course),
           },
         })
     })
 
     test('by id (w/ child)', async () => {
-      given('UuidQuery').for(solution)
+      given('UuidQuery').for(coursePage)
 
       await client
         .prepareQuery({
@@ -901,7 +904,7 @@ describe('notificationEvent', () => {
                 ... on RemoveEntityLinkNotificationEvent {
                   child {
                     __typename
-                    ... on Solution {
+                    ... on CoursePage {
                       id
                     }
                   }
@@ -913,7 +916,7 @@ describe('notificationEvent', () => {
         .withVariables(removeEntityLinkNotificationEvent)
         .shouldReturnData({
           notificationEvent: {
-            child: getTypenameAndId(solution),
+            child: getTypenameAndId(coursePage),
           },
         })
     })
