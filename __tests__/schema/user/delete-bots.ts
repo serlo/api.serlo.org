@@ -1,12 +1,11 @@
 import gql from 'graphql-tag'
-import { rest } from 'msw'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 
 import { article, user, user2 } from '../../../__fixtures__'
 import {
   given,
   Client,
   Query,
-  RestResolver,
   castToUuid,
   returnsJson,
   assertErrorEvent,
@@ -44,59 +43,66 @@ beforeEach(() => {
   }
 
   given('UuidQuery').for(users, article)
-  given('UserDeleteBotsMutation').isDefinedBy((req, res, ctx) => {
-    const { botIds } = req.body.payload
+  given('UserDeleteBotsMutation').isDefinedBy(async ({ request }) => {
+    const body = await request.json()
+    const { botIds } = body.payload
 
     for (const id of botIds) {
       given('UuidQuery').withPayload({ id }).returnsNotFound()
     }
 
-    return res(
-      ctx.json({
-        success: true,
-        emailHashes: botIds.map((id) => emailHash({ id })),
-      }),
-    )
+    return HttpResponse.json({
+      success: true,
+      emailHashes: botIds.map((id) => emailHash({ id })),
+    })
   })
 
   chatUsers = [user.username]
 
-  givenChatDeleteUserEndpoint((req, res, ctx) => {
-    const { headers, body } = req
+  givenChatDeleteUserEndpoint(async ({ request }) => {
+    const body = (await request.json()) as {
+      username: string
+    }
+    const { headers } = request
 
     if (
       headers.get('X-Auth-Token') !== process.env.ROCKET_CHAT_API_AUTH_TOKEN ||
       headers.get('X-User-Id') !== process.env.ROCKET_CHAT_API_USER_ID
     )
-      return res(ctx.status(400))
+      return new HttpResponse(null, { status: 400 })
 
     const { username } = body
 
     if (chatUsers.includes(username)) {
       chatUsers = chatUsers.filter((x) => x !== username)
 
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     } else {
-      return res(ctx.json({ success: false, errorType: 'error-invalid-user' }))
+      return HttpResponse.json({
+        success: false,
+        errorType: 'error-invalid-user',
+      })
     }
   })
 
-  givenMailchimpDeleteEmailEndpoint((req, res, ctx) => {
-    const authHeader = req.headers.get('Authorization') ?? ''
+  givenMailchimpDeleteEmailEndpoint(({ request, params }) => {
+    const authHeader = request.headers.get('Authorization') ?? ''
     const key = Buffer.from(authHeader.slice('Basic '.length), 'base64')
       .toString()
       .split(':')[1]
 
-    if (key !== process.env.MAILCHIMP_API_KEY) return res(ctx.status(405))
+    if (key !== process.env.MAILCHIMP_API_KEY)
+      return new HttpResponse(null, { status: 405 })
 
-    const { emailHash } = req.params
+    const typedParams = params as { emailHash: string }
+    const { emailHash } = typedParams
 
     if (mailchimpEmails.includes(emailHash)) {
       mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)
 
-      return res(ctx.status(204))
+      return new HttpResponse(null, { status: 204 })
     } else {
-      return res(ctx.status(404))
+      return new HttpResponse(null, { status: 404 })
     }
   })
 })
@@ -232,22 +238,18 @@ test('fails when kratos has an error', async () => {
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
-function givenChatDeleteUserEndpoint(
-  resolver: RestResolver<{ username: string }>,
-) {
+function givenChatDeleteUserEndpoint(resolver: ResponseResolver) {
   global.server.use(
-    rest.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver),
+    http.post(`${process.env.ROCKET_CHAT_URL}api/v1/users.delete`, resolver),
   )
 }
 
-function givenMailchimpDeleteEmailEndpoint(
-  resolver: RestResolver<never, { emailHash: string }>,
-) {
+function givenMailchimpDeleteEmailEndpoint(resolver: ResponseResolver) {
   const url =
     `https://us5.api.mailchimp.com/3.0/` +
     `lists/a7bb2bbc4f/members/:emailHash/actions/delete-permanent`
 
-  global.server.use(rest.post(url, resolver))
+  global.server.use(http.post(url, resolver))
 }
 
 function emailHash(user: { id: number }) {

@@ -1,14 +1,9 @@
 import gql from 'graphql-tag'
-import { rest } from 'msw'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 import type { OpenAI } from 'openai'
 
 import { user as baseUser } from '../../__fixtures__'
-import {
-  Client,
-  RestResolver,
-  given,
-  hasInternalServerError,
-} from '../__utils__'
+import { Client, given, hasInternalServerError } from '../__utils__'
 
 interface ChoicesFromChatCompletion {
   choices: OpenAI.ChatCompletion['choices']
@@ -51,8 +46,10 @@ const query = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeAll(() => {
-  mockOpenAIServer((_req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockedOpenAiResponse))
+  mockOpenAIServer(() => {
+    return HttpResponse.json(mockedOpenAiResponse, {
+      status: 200,
+    })
   })
 })
 
@@ -87,9 +84,9 @@ test('fails when internal server error open ai api occurs', async () => {
   await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
-function mockOpenAIServer(resolver: RestResolver) {
+function mockOpenAIServer(resolver: ResponseResolver) {
   // server is a global variable that is defined in __config__/setup.ts
   global.server.use(
-    rest.post('https://api.openai.com/v1/chat/completions', resolver),
+    http.post('https://api.openai.com/v1/chat/completions', resolver),
   )
 }

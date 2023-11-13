@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
@@ -30,12 +31,13 @@ beforeEach(() => {
     })
     .withInput({ users: users.map(R.pick(['id', 'username'])) })
 
-  given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
-    const { userId } = req.body.payload
+  given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
+    const body = await request.json()
+    const { userId } = body.payload
 
     given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
-    return res(ctx.json({ success: true }))
+    return HttpResponse.json({ success: true })
   })
 
   given('UuidQuery').for(users)
@@ -56,15 +58,16 @@ test('runs successfully when mutation could be successfully executed', async () 
 })
 
 test('runs partially when one of the mutations failed', async () => {
-  given('UserDeleteRegularUsersMutation').isDefinedBy((req, res, ctx) => {
-    const { userId } = req.body.payload
+  given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
+    const body = await request.json()
+    const { userId } = body.payload
 
     if (userId === user.id)
-      return res(ctx.json({ success: false, reason: 'failure!' }))
+      return HttpResponse.json({ success: false, reason: 'failure!' })
 
     given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
 
-    return res(ctx.json({ success: true }))
+    return HttpResponse.json({ success: true })
   })
 
   expect(global.kratos.identities).toHaveLength(users.length)

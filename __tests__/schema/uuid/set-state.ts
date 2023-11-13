@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { article, page, user as baseUser } from '../../../__fixtures__'
 import { nextUuid, Client, given } from '../../__utils__'
@@ -28,8 +29,14 @@ beforeEach(() => {
   given('UuidQuery').for(user, articles)
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
-    .isDefinedBy((req, res, ctx) => {
-      const { ids, trashed } = req.body.payload
+    .isDefinedBy(async ({ request }) => {
+      const body = (await request.json()) as {
+        payload: {
+          ids: number[]
+          trashed: boolean
+        }
+      }
+      const { ids, trashed } = body.payload
 
       for (const id of ids) {
         const article = articles.find((x) => x.id === id)
@@ -37,11 +44,15 @@ beforeEach(() => {
         if (article != null) {
           article.trashed = trashed
         } else {
-          return res(ctx.status(500))
+          return new HttpResponse(null, {
+            status: 500,
+          })
         }
       }
 
-      return res(ctx.status(200))
+      return new HttpResponse(null, {
+        status: 200,
+      })
     })
 })
 
