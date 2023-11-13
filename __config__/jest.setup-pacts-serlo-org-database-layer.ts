@@ -1,5 +1,5 @@
 import { Pact } from '@pact-foundation/pact'
-import { DefaultBodyType, http, HttpResponse } from 'msw'
+import { http } from 'msw'
 import path from 'path'
 
 import {
@@ -40,28 +40,14 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async ({ request }) => {
         const url = new URL(request.url)
-        const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`)
-        const body = (await pactRes.json()) as DefaultBodyType
-        return HttpResponse.json(body, { status: pactRes.status })
+        return fetch(`http://127.0.0.1:${port}${url.pathname}`)
       },
     ),
     http.post(
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async ({ request }) => {
         const url = new URL(request.url)
-        const body = await request.json()
-        const pactRes = await fetch(`http://127.0.0.1:${port}${url.pathname}`, {
-          method: 'POST',
-          body:
-            typeof body === 'object' ? JSON.stringify(body) : (body as string),
-          headers: {
-            'Content-Type': request.headers.get('Content-Type')!,
-          },
-        })
-        const pactBody = (await pactRes.json()) as DefaultBodyType
-        return pactRes.headers.get('Content-Type')
-          ? HttpResponse.json(pactBody, { status: pactRes.status })
-          : new HttpResponse(null, { status: pactRes.status })
+        return fetch(`http://127.0.0.1:${port}${url.pathname}`, request)
       },
     ),
   )
