@@ -1491,36 +1491,7 @@ export type InstanceAware = {
 
 export type License = {
   __typename?: 'License';
-  agreement: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  default: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
-  instance: Instance;
-  shortTitle: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type LicenseQuery = {
-  __typename?: 'LicenseQuery';
-  defaultLicense: License;
-  license?: Maybe<License>;
-  licenses: Array<License>;
-};
-
-
-export type LicenseQueryDefaultLicenseArgs = {
-  instance: Instance;
-};
-
-
-export type LicenseQueryLicenseArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type LicenseQueryLicensesArgs = {
-  instance?: InputMaybe<Instance>;
 };
 
 export type MediaQuery = {
@@ -1858,7 +1829,6 @@ export type Query = {
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  license: LicenseQuery;
   media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
@@ -3131,7 +3101,6 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<ModelOf<Scalars['JSON']['output']>>;
   JSONObject: ResolverTypeWrapper<ModelOf<Scalars['JSONObject']['output']>>;
   License: ResolverTypeWrapper<ModelOf<License>>;
-  LicenseQuery: ResolverTypeWrapper<ModelOf<LicenseQuery>>;
   MediaQuery: ResolverTypeWrapper<ModelOf<MediaQuery>>;
   MediaType: ResolverTypeWrapper<ModelOf<MediaType>>;
   MediaUpload: ResolverTypeWrapper<ModelOf<MediaUpload>>;
@@ -3346,7 +3315,6 @@ export type ResolversParentTypes = {
   JSON: ModelOf<Scalars['JSON']['output']>;
   JSONObject: ModelOf<Scalars['JSONObject']['output']>;
   License: ModelOf<License>;
-  LicenseQuery: ModelOf<LicenseQuery>;
   MediaQuery: ModelOf<MediaQuery>;
   MediaUpload: ModelOf<MediaUpload>;
   MetadataQuery: ModelOf<MetadataQuery>;
@@ -4255,21 +4223,7 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type LicenseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['License'] = ResolversParentTypes['License']> = {
-  agreement?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  default?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type LicenseQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['LicenseQuery'] = ResolversParentTypes['LicenseQuery']> = {
-  defaultLicense?: Resolver<ResolversTypes['License'], ParentType, ContextType, RequireFields<LicenseQueryDefaultLicenseArgs, 'instance'>>;
-  license?: Resolver<Maybe<ResolversTypes['License']>, ParentType, ContextType, RequireFields<LicenseQueryLicenseArgs, 'id'>>;
-  licenses?: Resolver<Array<ResolversTypes['License']>, ParentType, ContextType, Partial<LicenseQueryLicensesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4458,7 +4412,6 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
-  license?: Resolver<ResolversTypes['LicenseQuery'], ParentType, ContextType>;
   media?: Resolver<ResolversTypes['MediaQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
@@ -5023,7 +4976,6 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   License?: LicenseResolvers<ContextType>;
-  LicenseQuery?: LicenseQueryResolvers<ContextType>;
   MediaQuery?: MediaQueryResolvers<ContextType>;
   MediaUpload?: MediaUploadResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;

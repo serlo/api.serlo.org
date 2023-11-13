@@ -26,7 +26,6 @@ import {
   videoRevision,
 } from '../../../__fixtures__'
 import { nextUuid, getTypenameAndId, given, Client } from '../../__utils__'
-import { getDefaultLicense } from '~/config/licenses'
 import { Model } from '~/internals/graphql'
 import {
   EntityRevisionType,
@@ -225,13 +224,6 @@ describe('Repository', () => {
                 ... on AbstractRepository {
                   license {
                     id
-                    instance
-                    default
-                    title
-                    shortTitle
-                    url
-                    content
-                    agreement
                   }
                 }
               }
@@ -240,32 +232,6 @@ describe('Repository', () => {
         })
         .withVariables({ id: repository.id })
         .shouldReturnData({ uuid: { license } })
-    },
-  )
-
-  test.each(repositoryCases)(
-    '%s uses default license if licenseId is not supported',
-    async (_type, { repository }) => {
-      given('UuidQuery').for({ ...repository, licenseId: 42 })
-
-      await new Client({ userId: user.id })
-        .prepareQuery({
-          query: gql`
-            query license($id: Int!) {
-              uuid(id: $id) {
-                ... on AbstractRepository {
-                  license {
-                    id
-                  }
-                }
-              }
-            }
-          `,
-        })
-        .withVariables({ id: repository.id })
-        .shouldReturnData({
-          uuid: { license: { id: getDefaultLicense(repository.instance).id } },
-        })
     },
   )
 

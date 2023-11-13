@@ -41,13 +41,6 @@ describe('Page', () => {
               ... on Page {
                 license {
                   id
-                  instance
-                  default
-                  title
-                  url
-                  content
-                  shortTitle
-                  agreement
                 }
               }
             }
