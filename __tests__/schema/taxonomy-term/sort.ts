@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   article,
@@ -36,8 +37,9 @@ const mutation = new Client({ userId: user.id })
 beforeEach(() => {
   given('UuidQuery').for(user, taxonomyTerm)
 
-  given('TaxonomySortMutation').isDefinedBy((req, res, ctx) => {
-    const { childrenIds } = req.body.payload
+  given('TaxonomySortMutation').isDefinedBy(async ({ request }) => {
+    const body = await request.json()
+    const { childrenIds } = body.payload
     if (
       [...childrenIds].sort().join(',') !==
       [...taxonomyTerm.childrenIds].sort().join(',')
@@ -52,7 +54,7 @@ beforeEach(() => {
       childrenIds: childrenIds.map(castToUuid),
     })
 
-    return res(ctx.json({ success: true }))
+    return HttpResponse.json({ success: true })
   })
 })
 

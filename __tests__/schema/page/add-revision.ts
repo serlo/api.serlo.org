@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import { page, pageRevision, user as baseUser } from '../../../__fixtures__'
@@ -32,11 +33,12 @@ describe('PageAddRevisionMutation', () => {
 
   beforeEach(() => {
     given('UuidQuery').for(user, page, pageRevision)
-    given('PageAddRevisionMutation').isDefinedBy((req, res, ctx) => {
+    given('PageAddRevisionMutation').isDefinedBy(async ({ request }) => {
+      const body = await request.json()
       // const { title, content } = req.body.payload
       const newRevision = {
         ...pageRevision,
-        ...R.pick(['title', 'content'], req.body.payload),
+        ...R.pick(['title', 'content'], body.payload),
         id: newRevisionId,
       }
       given('UuidQuery').for(newRevision)
@@ -45,7 +47,7 @@ describe('PageAddRevisionMutation', () => {
         revisionIds: [newRevision.id, ...page.revisionIds],
         currentRevisionId: newRevision.id,
       })
-      return res(ctx.json({ success: true, revisionId: newRevision.id }))
+      return HttpResponse.json({ success: true, revisionId: newRevision.id })
     })
   })
 

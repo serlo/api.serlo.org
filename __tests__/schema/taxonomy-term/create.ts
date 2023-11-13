@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   taxonomyTermCurriculumTopic,
@@ -68,7 +69,7 @@ describe('TaxonomyTermCreateMutation', () => {
 
       given('TaxonomyTermCreateMutation')
         .withPayload(payload)
-        .isDefinedBy((_req, res, ctx) => {
+        .isDefinedBy(() => {
           given('UuidQuery').for(taxonomyTermTopic)
 
           const updatedParent = {
@@ -79,7 +80,7 @@ describe('TaxonomyTermCreateMutation', () => {
             ],
           }
           given('UuidQuery').for(updatedParent)
-          return res(ctx.json(taxonomyTermTopic))
+          return HttpResponse.json(taxonomyTermTopic)
         })
 
       const query = new Client({ userId: user.id })
