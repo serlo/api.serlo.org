@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   article,
@@ -37,7 +38,7 @@ beforeEach(() => {
 
   given('TaxonomyDeleteEntityLinksMutation')
     .withPayload({ ...input, userId: user.id })
-    .isDefinedBy((_req, res, ctx) => {
+    .isDefinedBy(() => {
       given('UuidQuery').for({
         ...article,
         taxonomyTermIds: [],
@@ -46,7 +47,7 @@ beforeEach(() => {
         ...taxonomyTermCurriculumTopic,
         childrenIds: [],
       })
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     })
 })
 

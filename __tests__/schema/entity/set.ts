@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 import R from 'ramda'
 
 import {
@@ -390,13 +391,16 @@ testCases.forEach((testCase) => {
             ...entityAddRevisionPayload,
             input: { ...entityAddRevisionPayload.input, needsReview: false },
           })
-          .isDefinedBy((_, res, ctx) => {
+          .isDefinedBy(() => {
             given('UuidQuery').for(
               { ...testCase.entity, currentRevisionId: newRevision.id },
               newRevision,
             )
 
-            return res(ctx.json({ success: true, revisionId: newRevision.id }))
+            return HttpResponse.json({
+              success: true,
+              revisionId: newRevision.id,
+            })
           })
 
         given('SubscriptionsQuery')
@@ -595,26 +599,40 @@ describe('Autoreview entities', () => {
       { ...taxonomyTermSubject, id: castToUuid(106082) },
     )
 
-    given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
+    given('EntityAddRevisionMutation').isDefinedBy(async ({ request }) => {
+      const body = (await request.json()) as {
+        payload: {
+          input: {
+            needsReview: boolean
+          }
+        }
+      }
+
       given('UuidQuery').for(newRevision)
 
-      if (!req.body.payload.input.needsReview)
+      if (!body.payload.input.needsReview)
         given('UuidQuery').for({ ...entity, currentRevisionId: newRevisionId })
 
-      return res(ctx.json({ success: true, revisionId: newRevisionId }))
+      return HttpResponse.json({ success: true, revisionId: newRevisionId })
     })
 
-    given('EntityCreateMutation').isDefinedBy((req, res, ctx) => {
+    given('EntityCreateMutation').isDefinedBy(async ({ request }) => {
+      const body = (await request.json()) as {
+        payload: {
+          input: {
+            needsReview: boolean
+          }
+        }
+      }
+
       given('UuidQuery').for(newRevision)
 
-      return res(
-        ctx.json({
-          ...entity,
-          currentRevisionId: req.body.payload.input.needsReview
-            ? oldRevisionId
-            : newRevisionId,
-        }),
-      )
+      return HttpResponse.json({
+        ...entity,
+        currentRevisionId: body.payload.input.needsReview
+          ? oldRevisionId
+          : newRevisionId,
+      })
     })
   })
 

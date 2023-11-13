@@ -44,7 +44,8 @@ describe('How to create a mutation in a data source: update the content of an ar
       http.put(
         'http://database-api.serlo.org/articles/:id',
         async ({ request, params }) => {
-          const id = parseInt(params.id)
+          const typedParams = params as { id: string }
+          const id = parseInt(typedParams.id)
 
           // given id is not a number -> return with "400 Bad Request"
           if (Number.isNaN(id))
@@ -53,7 +54,9 @@ describe('How to create a mutation in a data source: update the content of an ar
             })
 
           if (contentDatabase[id] !== undefined) {
-            const body = (await request.json()) as unknown
+            const body = (await request.json()) as {
+              newContent: string
+            }
             // article with given id is in database
             contentDatabase[id] = body.newContent
 

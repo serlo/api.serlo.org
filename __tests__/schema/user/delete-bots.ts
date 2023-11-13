@@ -44,7 +44,11 @@ beforeEach(() => {
 
   given('UuidQuery').for(users, article)
   given('UserDeleteBotsMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as unknown
+    const body = (await request.json()) as {
+      payload: {
+        botIds: number[]
+      }
+    }
     const { botIds } = body.payload
 
     for (const id of botIds) {
@@ -60,7 +64,9 @@ beforeEach(() => {
   chatUsers = [user.username]
 
   givenChatDeleteUserEndpoint(async ({ request }) => {
-    const body = (await request.json()) as unknown
+    const body = (await request.json()) as {
+      username: string
+    }
     const { headers } = request
 
     if (
@@ -92,7 +98,8 @@ beforeEach(() => {
     if (key !== process.env.MAILCHIMP_API_KEY)
       return new HttpResponse(null, { status: 405 })
 
-    const { emailHash } = params
+    const typedParams = params as { emailHash: string }
+    const { emailHash } = typedParams
 
     if (mailchimpEmails.includes(emailHash)) {
       mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)

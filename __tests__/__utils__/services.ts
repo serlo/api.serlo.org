@@ -93,8 +93,13 @@ export function defaultSpreadsheetApi(): ResponseResolver {
       })
     }
 
-    const { spreadsheetId } = params
-    const range = decodeURIComponent(params.range)
+    const typedParams = params as {
+      spreadsheetId: string
+      range: string
+    }
+
+    const { spreadsheetId } = typedParams
+    const range = decodeURIComponent(typedParams.range)
     const majorDimension = searchParams.get('majorDimension') as MajorDimension
 
     const values = spreadsheets[toKey({ spreadsheetId, range, majorDimension })]
