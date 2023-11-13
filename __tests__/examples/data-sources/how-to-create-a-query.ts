@@ -37,7 +37,8 @@ describe('How to create a query in a data source: Fetching the content of an art
     // /article/:id with which the content of an article can be fetched.
     global.server.use(
       http.get('http://database-api.serlo.org/article/:id', ({ params }) => {
-        const id = parseInt(params.id)
+        const typedParams = params as { id: string }
+        const id = parseInt(typedParams.id)
 
         // given id is not a number -> return with "400 Bad Request"
         if (Number.isNaN(id))

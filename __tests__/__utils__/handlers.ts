@@ -244,7 +244,11 @@ function createDatabaseLayerHandler<
 
   return http.post(
     getDatabaseLayerUrl({ path: '/' }),
-    withTypeAndPayload(resolver, matchType, matchPayloads),
+    withTypeAndPayload(resolver, matchType, matchPayloads) as ResponseResolver<
+      HttpRequestResolverExtras<PathParams>,
+      DefaultBodyType,
+      undefined
+    >,
     options,
   )
 }

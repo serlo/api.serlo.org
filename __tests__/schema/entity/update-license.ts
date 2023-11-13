@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { article, user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
@@ -29,10 +30,10 @@ beforeEach(() => {
       entityId: article.id,
       licenseId: 4,
     })
-    .isDefinedBy((_req, res, ctx) => {
+    .isDefinedBy(() => {
       given('UuidQuery').for({ ...article, licenseId: newLicenseId })
 
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     })
 })
 

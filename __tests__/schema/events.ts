@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import {
@@ -381,8 +382,17 @@ test('AbstractEntity.events returns events for this entity', async () => {
 })
 
 function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
-  given('EventsQuery').isDefinedBy((req, res, ctx) => {
-    const { after, objectId, actorId, first, instance } = req.body.payload
+  given('EventsQuery').isDefinedBy(async ({ request }) => {
+    const body = (await request.json()) as {
+      payload: {
+        after: number
+        objectId: number
+        actorId: number
+        first: number
+        instance: Instance
+      }
+    }
+    const { after, objectId, actorId, first, instance } = body.payload
 
     const filteredEvents = [...allEvents]
       .reverse()
@@ -393,12 +403,10 @@ function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
       .filter((event) => objectId == null || event.objectId === objectId)
       .filter((event) => after == null || event.id < after)
 
-    return res(
-      ctx.json({
-        events: filteredEvents.slice(0, first),
-        hasNextPage: filteredEvents.length > first,
-      }),
-    )
+    return HttpResponse.json({
+      events: filteredEvents.slice(0, first),
+      hasNextPage: filteredEvents.length > first,
+    })
   })
 }
 

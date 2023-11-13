@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { page as basePage } from '../../../__fixtures__'
 import { given, Client, Query, nextUuid } from '../../__utils__'
@@ -26,13 +27,18 @@ beforeEach(() => {
   })
 
   given('UuidQuery').for(page, page2)
-  given('PagesQuery').isDefinedBy((req, res, ctx) => {
-    const { instance } = req.body.payload
+  given('PagesQuery').isDefinedBy(async ({ request }) => {
+    const body = (await request.json()) as {
+      payload: {
+        instance: Instance
+      }
+    }
+    const { instance } = body.payload
 
     if (instance === Instance.En) {
-      return res(ctx.json({ success: true, pages: [page.id] }))
+      return HttpResponse.json({ success: true, pages: [page.id] })
     }
-    return res(ctx.json({ success: true, pages: [page.id, page2.id] }))
+    return HttpResponse.json({ success: true, pages: [page.id, page2.id] })
   })
 })
 

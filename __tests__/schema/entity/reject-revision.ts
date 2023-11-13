@@ -1,5 +1,6 @@
 import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   article as baseArticle,
@@ -46,11 +47,11 @@ beforeEach(() => {
       reason: 'reason',
       revisionId: currentRevision.id,
     })
-    .isDefinedBy((_req, res, ctx) => {
+    .isDefinedBy(() => {
       given('UuidQuery').for({ ...currentRevision, trashed: true })
       given('UnrevisedEntitiesQuery').for([])
 
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     })
 })
 
