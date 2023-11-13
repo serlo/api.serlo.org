@@ -1612,6 +1612,17 @@ async function exec(): Promise<void> {
           'enmeshed: Do not set name outside of user journey',
         ],
       },
+      {
+        tagName: 'v0.57.10',
+        date: '2023-11-10',
+        fixed: ['enmeshed: Do not set surname and given name on init'],
+      },
+      {
+        tagName: 'v0.57.11',
+        date: '2023-11-11',
+        internal: ['Remove solutions'],
+        fixed: ['enmeshed: Store cache only for 20min'],
+      },
     ],
   })
 

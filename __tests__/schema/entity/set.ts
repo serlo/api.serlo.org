@@ -10,7 +10,6 @@ import {
   exercise,
   exerciseGroup,
   groupedExercise,
-  solution,
   taxonomyTermSubject,
   taxonomyTermRoot,
   user,
@@ -23,11 +22,10 @@ import {
   exerciseRevision,
   exerciseGroupRevision,
   groupedExerciseRevision,
-  solutionRevision,
   videoRevision,
 } from '../../../__fixtures__'
 import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
-import { autoreviewTaxonomyIds } from '~/config/autoreview-taxonomies'
+import { autoreviewTaxonomyIds } from '~/config'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
 import { castToUuid, DiscriminatorType, EntityType } from '~/model/decoder'
@@ -73,7 +71,6 @@ const fieldKeys: Record<
   [EntityType.Exercise]: ['content'],
   [EntityType.ExerciseGroup]: ['cohesive', 'content'],
   [EntityType.GroupedExercise]: ['content'],
-  [EntityType.Solution]: ['content'],
   [EntityType.Video]: ['title', 'content', 'url'],
 }
 const entities = [
@@ -85,7 +82,6 @@ const entities = [
   exercise,
   exerciseGroup,
   groupedExercise,
-  solution,
   video,
 ]
 
@@ -103,11 +99,9 @@ class EntitySetTestCase {
   }
 
   get inputName() {
-    return [
-      EntityType.Exercise,
-      EntityType.GroupedExercise,
-      EntityType.Solution,
-    ].includes(this.entityType)
+    return [EntityType.Exercise, EntityType.GroupedExercise].includes(
+      this.entityType,
+    )
       ? 'SetGenericEntityInput'
       : `Set${this.entityType}Input`
   }
@@ -118,8 +112,6 @@ class EntitySetTestCase {
         return course
       case EntityType.GroupedExercise:
         return exerciseGroup
-      case EntityType.Solution:
-        return exercise
       default:
         return taxonomyTermSubject
     }
@@ -166,8 +158,6 @@ class EntitySetTestCase {
         return exerciseGroupRevision
       case EntityType.GroupedExercise:
         return groupedExerciseRevision
-      case EntityType.Solution:
-        return solutionRevision
       case EntityType.Video:
         return videoRevision
     }
@@ -512,7 +502,7 @@ test('uses default license of the instance', async () => {
   given('EntityCreateMutation')
     .withPayload({
       userId: 1,
-      entityType: EntityType.Solution,
+      entityType: EntityType.Exercise,
       input: {
         changes: 'changes',
         licenseId: 9,
@@ -523,14 +513,14 @@ test('uses default license of the instance', async () => {
         parentId: exerciseEn.id,
       },
     })
-    .returns(solution)
+    .returns(exercise)
 
   await new Client({ userId: user.id })
     .prepareQuery({
       query: gql`
         mutation ($input: SetGenericEntityInput!) {
           entity {
-            setSolution(input: $input) {
+            setExercise(input: $input) {
               success
             }
           }
@@ -545,7 +535,7 @@ test('uses default license of the instance', async () => {
       parentId: exerciseEn.id,
       content: 'Hello World',
     })
-    .shouldReturnData({ entity: { setSolution: { success: true } } })
+    .shouldReturnData({ entity: { setExercise: { success: true } } })
 })
 
 describe('Autoreview entities', () => {
@@ -559,11 +549,11 @@ describe('Autoreview entities', () => {
 
   const mutation = new Client({ userId: user.id }).prepareQuery({
     query: gql`
-      mutation set($input: SetGenericEntityInput!) {
+      mutation ($input: SetGenericEntityInput!) {
         entity {
-          setSolution(input: $input) {
+          setExercise(input: $input) {
             record {
-              ... on Solution {
+              ... on Exercise {
                 currentRevision {
                   id
                 }
@@ -575,24 +565,25 @@ describe('Autoreview entities', () => {
     `,
   })
 
-  const oldRevisionId = solution.currentRevisionId
+  const oldRevisionId = exercise.currentRevisionId
   const newRevisionId = castToUuid(789)
 
-  const entity = {
-    ...solution,
-    parentId: groupedExercise.id,
+  const taxonomy = { ...taxonomyTermSubject, id: castToUuid(106082) }
+  const entity: typeof exercise = {
+    ...exercise,
     currentRevisionId: oldRevisionId,
+    taxonomyTermIds: [taxonomy.id],
   }
-  const newRevision = { ...solutionRevision, id: newRevisionId }
+
+  const newRevision = { ...exerciseRevision, id: newRevisionId }
 
   beforeEach(() => {
     given('UuidQuery').for(
       entity,
       groupedExercise,
-      solutionRevision,
+      exerciseRevision,
       article,
-      { ...exerciseGroup, taxonomyTermIds: [106082].map(castToUuid) },
-      { ...taxonomyTermSubject, id: castToUuid(106082) },
+      taxonomy,
     )
 
     given('EntityAddRevisionMutation').isDefinedBy((req, res, ctx) => {
@@ -624,17 +615,17 @@ describe('Autoreview entities', () => {
         .withInput({ ...input, entityId: entity.id })
         .shouldReturnData({
           entity: {
-            setSolution: { record: { currentRevision: { id: newRevisionId } } },
+            setExercise: { record: { currentRevision: { id: newRevisionId } } },
           },
         })
     })
 
     test('when a new entity is created', async () => {
       await mutation
-        .withInput({ ...input, parentId: groupedExercise.id })
+        .withInput({ ...input, parentId: taxonomy.id })
         .shouldReturnData({
           entity: {
-            setSolution: { record: { currentRevision: { id: newRevisionId } } },
+            setExercise: { record: { currentRevision: { id: newRevisionId } } },
           },
         })
     })
@@ -645,7 +636,7 @@ describe('Autoreview entities', () => {
       castToUuid,
     )
     given('UuidQuery').for(
-      { ...exerciseGroup, taxonomyTermIds },
+      { ...exercise, taxonomyTermIds },
       { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
       taxonomyTermRoot,
     )
@@ -654,7 +645,7 @@ describe('Autoreview entities', () => {
       .withInput({ ...input, entityId: entity.id })
       .shouldReturnData({
         entity: {
-          setSolution: { record: { currentRevision: { id: oldRevisionId } } },
+          setExercise: { record: { currentRevision: { id: oldRevisionId } } },
         },
       })
   })

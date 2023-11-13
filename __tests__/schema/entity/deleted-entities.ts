@@ -3,7 +3,6 @@ import gql from 'graphql-tag'
 import {
   article as baseArticle,
   coursePage as baseCoursePage,
-  solution as baseSolution,
 } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { Instance } from '~/types'
@@ -27,10 +26,9 @@ const query = new Client().prepareQuery({
 
 const coursePage = { ...baseCoursePage, instance: Instance.En }
 const article = { ...baseArticle, date: '2015-03-01T20:45:56Z' }
-const solution = { ...baseSolution, date: '2016-03-01T20:45:56Z' }
 
 beforeEach(() => {
-  given('DeletedEntitiesQuery').for(article, coursePage, solution)
+  given('DeletedEntitiesQuery').for(article, coursePage)
 })
 
 test('returns deleted entities', async () => {
@@ -45,10 +43,6 @@ test('returns deleted entities', async () => {
           {
             dateOfDeletion: coursePage.date,
             entity: { id: coursePage.id },
-          },
-          {
-            dateOfDeletion: solution.date,
-            entity: { id: solution.id },
           },
         ],
       },
@@ -74,8 +68,8 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
     .withVariables({
       after: Buffer.from(
         JSON.stringify({
-          id: article.id,
-          dateOfDeletion: article.date,
+          id: coursePage.id,
+          dateOfDeletion: coursePage.date,
         }),
       ).toString('base64'),
     })
@@ -84,8 +78,8 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
         deletedEntities: {
           nodes: [
             {
-              dateOfDeletion: solution.date,
-              entity: { id: solution.id },
+              dateOfDeletion: article.date,
+              entity: { id: article.id },
             },
           ],
         },

@@ -20,7 +20,6 @@ export const exercise: Model<'Exercise'> = {
   currentRevisionId: castToUuid(29638),
   revisionIds: [29638].map(castToUuid),
   licenseId: license.id,
-  solutionId: castToUuid(29648),
   taxonomyTermIds: [5].map(castToUuid),
   canonicalSubjectId: castToUuid(5),
 }

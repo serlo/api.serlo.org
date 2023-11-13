@@ -34,6 +34,7 @@ export interface Cache {
     payload: {
       key: string
       source: string
+      ttlInSeconds?: number
       priority?: Priority
     } & FunctionOrValue<T>,
   ): Promise<void>
@@ -62,9 +63,10 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       key: string
       source: string
       priority?: Priority
+      ttlInSeconds?: number
     } & FunctionOrValue<T>,
   ) {
-    const { key, priority = Priority.High, source } = payload
+    const { key, priority = Priority.High, source, ttlInSeconds } = payload
     const lockManager = lockManagers[priority]
 
     const lock = await lockManager.lock(key)
@@ -92,6 +94,10 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       }
       const packedValue = msgpack.encode(valueWithTimestamp)
       await client.set(key, packedValue)
+
+      if (ttlInSeconds != null) {
+        await client.expire(key, ttlInSeconds)
+      }
     } catch (e) {
       log.error(`Failed to set key "${key}":`, e)
       throw e

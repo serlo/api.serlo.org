@@ -38,8 +38,6 @@ import {
   SetTaxonomyTermNotificationEventDecoder,
   SetThreadStateNotificationEventDecoder,
   SetUuidStateNotificationEventDecoder,
-  SolutionDecoder,
-  SolutionRevisionDecoder,
   SubscriptionsDecoder,
   TaxonomyTermDecoder,
   UserDecoder,
@@ -74,8 +72,6 @@ export interface Models {
   SubscriptionInfo: t.TypeOf<
     typeof SubscriptionsDecoder
   >['subscriptions'][number]
-  Solution: t.TypeOf<typeof SolutionDecoder>
-  SolutionRevision: t.TypeOf<typeof SolutionRevisionDecoder>
   TaxonomyTerm: t.TypeOf<typeof TaxonomyTermDecoder>
   Thread: {
     __typename: 'Thread'

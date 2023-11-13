@@ -123,10 +123,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       entityType: EntityType.GroupedExercise,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
-    setSolution: createSetEntityResolver({
-      entityType: EntityType.Solution,
-      mandatoryFieldKeys: ['changes', 'content'],
-    }),
     setVideo: createSetEntityResolver({
       entityType: EntityType.Video,
       mandatoryFieldKeys: ['changes', 'title', 'url'],

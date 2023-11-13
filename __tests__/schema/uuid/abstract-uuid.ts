@@ -22,8 +22,6 @@ import {
   groupedExerciseRevision,
   page,
   pageRevision,
-  solution,
-  solutionRevision,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
@@ -64,7 +62,6 @@ const abstractUuidFixtures: Record<
   [EntityType.ExerciseGroup]: exerciseGroup,
   [EntityType.Event]: event,
   [EntityType.GroupedExercise]: groupedExercise,
-  [EntityType.Solution]: solution,
   [EntityType.Video]: video,
   [EntityRevisionType.AppletRevision]: appletRevision,
   [EntityRevisionType.ArticleRevision]: articleRevision,
@@ -74,7 +71,6 @@ const abstractUuidFixtures: Record<
   [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
   [EntityRevisionType.EventRevision]: eventRevision,
   [EntityRevisionType.GroupedExerciseRevision]: groupedExerciseRevision,
-  [EntityRevisionType.SolutionRevision]: solutionRevision,
   [EntityRevisionType.VideoRevision]: videoRevision,
 }
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
@@ -300,11 +296,6 @@ describe('property "title"', () => {
         },
       ],
       '123',
-    ],
-    [
-      'solution revision',
-      [solutionRevision, solution, exercise, taxonomyTermSubject],
-      taxonomyTermSubject.name,
     ],
     ['exercise', [exercise, taxonomyTermSubject], taxonomyTermSubject.name],
     [

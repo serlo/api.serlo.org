@@ -146,43 +146,6 @@ function createEnmeshedInitMiddleware(
             '@type': 'CreateAttributeRequestItem',
             mustBeAccepted: true,
             attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'GivenName',
-                value: nameParts.length > 0 ? nameParts[0] : '',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'Surname',
-                value:
-                  nameParts.length > 1 ? nameParts[nameParts.length - 1] : '',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
-              '@type': 'IdentityAttribute',
-              owner: '',
-              value: {
-                '@type': 'Nationality',
-                value: 'DE',
-              },
-            },
-          },
-          {
-            '@type': 'CreateAttributeRequestItem',
-            mustBeAccepted: true,
-            attribute: {
               owner: '',
               key: 'LernstandMathe',
               confidentiality: 'public',
@@ -694,12 +657,14 @@ async function setSession(
   await cache.set({
     key: getSessionKey(sessionId),
     value: session,
+    ttlInSeconds: 20 * 60,
     source: 'enmeshed-middleware',
   })
   if (session.enmeshedId) {
     await cache.set({
       key: getIdentityKey(session.enmeshedId),
       value: sessionId,
+      ttlInSeconds: 20 * 60,
       source: 'enmeshed-middleware',
     })
   }
