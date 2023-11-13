@@ -1623,6 +1623,12 @@ async function exec(): Promise<void> {
         internal: ['Remove solutions'],
         fixed: ['enmeshed: Store cache only for 20min'],
       },
+      {
+        tagName: 'v0.58.0',
+        date: '2023-11-13',
+        changed: ['remove license queries, simplify `License` type'],
+        internal: ['Move content generation service logic to api'],
+      },
     ],
   })
 
