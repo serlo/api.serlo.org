@@ -34,12 +34,7 @@ describe('PageAddRevisionMutation', () => {
   beforeEach(() => {
     given('UuidQuery').for(user, page, pageRevision)
     given('PageAddRevisionMutation').isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          title: string
-          content: string
-        }
-      }
+      const body = await request.json()
       // const { title, content } = req.body.payload
       const newRevision = {
         ...pageRevision,

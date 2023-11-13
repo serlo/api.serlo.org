@@ -44,11 +44,7 @@ beforeEach(() => {
 
   given('UuidQuery').for(users, article)
   given('UserDeleteBotsMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        botIds: number[]
-      }
-    }
+    const body = await request.json()
     const { botIds } = body.payload
 
     for (const id of botIds) {

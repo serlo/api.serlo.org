@@ -6,6 +6,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
+import { Payload } from '~/model/database-layer'
 
 describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
   const user = { ...baseUser, roles: ['de_architect'] }
@@ -102,10 +103,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
       })
       .isDefinedBy(async ({ request }) => {
         const body = (await request.json()) as {
-          payload: {
-            name: string
-            description: string
-          }
+          payload: Payload<'TaxonomyTermSetNameAndDescriptionMutation'>
         }
         const { name, description } = body.payload
 

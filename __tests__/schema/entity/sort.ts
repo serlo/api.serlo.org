@@ -49,11 +49,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 
 test('updates the cache of groupedExercise', async () => {
   given('EntitySortMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        childrenIds: number[]
-      }
-    }
+    const body = await request.json()
     const { childrenIds } = body.payload
 
     given('UuidQuery').for({
@@ -98,11 +94,7 @@ test('updates the cache of groupedExercise', async () => {
 
 test('updates the cache of Course', async () => {
   given('EntitySortMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        childrenIds: number[]
-      }
-    }
+    const body = await request.json()
     const { childrenIds } = body.payload
 
     given('UuidQuery').for({
