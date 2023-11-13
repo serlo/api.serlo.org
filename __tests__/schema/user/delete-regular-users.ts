@@ -32,11 +32,7 @@ beforeEach(() => {
     .withInput({ users: users.map(R.pick(['id', 'username'])) })
 
   given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        userId: number
-      }
-    }
+    const body = await request.json()
     const { userId } = body.payload
 
     given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
@@ -63,11 +59,7 @@ test('runs successfully when mutation could be successfully executed', async () 
 
 test('runs partially when one of the mutations failed', async () => {
   given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        userId: number
-      }
-    }
+    const body = await request.json()
     const { userId } = body.payload
 
     if (userId === user.id)

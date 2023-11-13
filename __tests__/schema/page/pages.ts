@@ -28,11 +28,7 @@ beforeEach(() => {
 
   given('UuidQuery').for(page, page2)
   given('PagesQuery').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        instance: Instance
-      }
-    }
+    const body = await request.json()
     const { instance } = body.payload
 
     if (instance === Instance.En) {

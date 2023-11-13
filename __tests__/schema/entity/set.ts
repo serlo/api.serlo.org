@@ -600,13 +600,7 @@ describe('Autoreview entities', () => {
     )
 
     given('EntityAddRevisionMutation').isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          input: {
-            needsReview: boolean
-          }
-        }
-      }
+      const body = await request.json()
 
       given('UuidQuery').for(newRevision)
 
@@ -617,13 +611,7 @@ describe('Autoreview entities', () => {
     })
 
     given('EntityCreateMutation').isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          input: {
-            needsReview: boolean
-          }
-        }
-      }
+      const body = await request.json()
 
       given('UuidQuery').for(newRevision)
 

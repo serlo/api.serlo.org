@@ -38,11 +38,7 @@ beforeEach(() => {
   given('UuidQuery').for(user, taxonomyTerm)
 
   given('TaxonomySortMutation').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        childrenIds: number[]
-      }
-    }
+    const body = await request.json()
     const { childrenIds } = body.payload
     if (
       [...childrenIds].sort().join(',') !==

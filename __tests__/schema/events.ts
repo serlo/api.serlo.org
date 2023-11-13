@@ -383,15 +383,7 @@ test('AbstractEntity.events returns events for this entity', async () => {
 
 function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
   given('EventsQuery').isDefinedBy(async ({ request }) => {
-    const body = (await request.json()) as {
-      payload: {
-        after: number
-        objectId: number
-        actorId: number
-        first: number
-        instance: Instance
-      }
-    }
+    const body = await request.json()
     const { after, objectId, actorId, first, instance } = body.payload
 
     const filteredEvents = [...allEvents]

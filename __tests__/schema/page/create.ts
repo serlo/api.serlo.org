@@ -43,15 +43,7 @@ describe('PageCreateMutation', () => {
     given('UuidQuery').for(user)
 
     given('PageCreateMutation').isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          content: string
-          instance: Instance
-          licenseId: number
-          title: string
-          userId: number
-        }
-      }
+      const body = await request.json()
       const { content, instance, licenseId, title, userId } = body.payload
 
       const newPageRevisionId = castToUuid(19769)

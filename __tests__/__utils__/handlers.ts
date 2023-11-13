@@ -13,6 +13,7 @@ import * as R from 'ramda'
 import { createFakeIdentity } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
+import { Payload } from '~/model/database-layer'
 import { DiscriminatorType } from '~/model/decoder'
 
 const ForDefinitions = {
@@ -55,13 +56,7 @@ const ForDefinitions = {
       }),
     )
     given('DeletedEntitiesQuery').isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          first?: number
-          after: string | number | Date
-          instance: unknown
-        }
-      }
+      const body = await request.json()
       const { first, after, instance } = body.payload
 
       const entitiesByInstance = instance
@@ -133,7 +128,12 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         },
       }
     },
-    isDefinedBy(resolver: ResponseResolver) {
+    isDefinedBy(
+      resolver: ResponseResolver<
+        Record<string, unknown>,
+        { payload: Payload<M> }
+      >,
+    ) {
       global.server.use(
         createDatabaseLayerHandler({ matchType: type, resolver }),
       )
@@ -237,7 +237,7 @@ function createDatabaseLayerHandler<
 >(args: {
   matchType: MessageType
   matchPayloads?: Partial<Payload>[]
-  resolver: ResponseResolver
+  resolver: ResponseResolver<Record<string, unknown>, { payload: Payload }>
   options?: { once: boolean }
 }) {
   const { matchType, matchPayloads, resolver, options } = args
@@ -246,7 +246,7 @@ function createDatabaseLayerHandler<
     getDatabaseLayerUrl({ path: '/' }),
     withTypeAndPayload(resolver, matchType, matchPayloads) as ResponseResolver<
       HttpRequestResolverExtras<PathParams>,
-      DefaultBodyType,
+      { payload: Payload },
       undefined
     >,
     options,
@@ -257,14 +257,14 @@ function withTypeAndPayload<
   MessageType extends string = string,
   Payload = DefaultPayloadType,
 >(
-  resolver: ResponseResolver,
+  resolver: ResponseResolver<Record<string, unknown>, { payload: Payload }>,
   expectedType: MessageType,
   expectedPayloads?: Partial<Payload>[],
 ) {
   return async (
     args: ResponseResolverInfo<
       HttpRequestResolverExtras<PathParams>,
-      DefaultBodyType
+      { payload: Payload }
     >,
   ) => {
     const { request } = args
