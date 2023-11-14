@@ -75,18 +75,10 @@ async function executePrompt({
   }
 }
 
-type AnyJsonResponse = t.TypeOf<typeof t.UnknownRecord>
-
-export const isAnyJsonResponse = (
-  response: unknown,
-): response is AnyJsonResponse => {
-  return t.UnknownRecord.is(response)
-}
-
 export async function makeRequest(args: {
   userId: number | null
   prompt: string
-}): Promise<AnyJsonResponse> {
+}): Promise<Record<string, unknown>> {
   const { userId, prompt } = args
   const response = await executePrompt({ prompt, user: String(userId) })
 
@@ -102,7 +94,7 @@ export async function makeRequest(args: {
 
   const message = JSON.parse(stringMessage) as unknown
 
-  if (!isAnyJsonResponse(message)) {
+  if (!t.UnknownRecord.is(message)) {
     throw new Error('Invalid JSON format of content-generation-service')
   }
 
