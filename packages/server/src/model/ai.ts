@@ -75,11 +75,6 @@ async function executePrompt({
   }
 }
 
-export const PayloadDecoder = t.strict({
-  prompt: t.string,
-  userId: t.union([t.number, t.null]),
-})
-
 type AnyJsonResponse = t.TypeOf<typeof t.UnknownRecord>
 
 export const isAnyJsonResponse = (
@@ -88,10 +83,11 @@ export const isAnyJsonResponse = (
   return t.UnknownRecord.is(response)
 }
 
-export async function makeRequest({
-  userId,
-  prompt,
-}: t.TypeOf<typeof PayloadDecoder>): Promise<AnyJsonResponse> {
+export async function makeRequest(args: {
+  userId: number | null
+  prompt: string
+}): Promise<AnyJsonResponse> {
+  const { userId, prompt } = args
   const response = await executePrompt({ prompt, user: String(userId) })
 
   // As we now have the response_format defined as json_object, we shouldn't
