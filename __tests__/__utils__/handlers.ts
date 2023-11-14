@@ -108,7 +108,12 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             }),
           )
         },
-        isDefinedBy(resolver: ResponseResolver) {
+        isDefinedBy(
+          resolver: ResponseResolver<
+            Record<string, unknown>,
+            { payload: Payload<M> }
+          >,
+        ) {
           global.server.use(
             createDatabaseLayerHandler({
               matchType: type,
