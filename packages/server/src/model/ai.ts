@@ -8,13 +8,7 @@ import { UserInputError } from '~/errors'
 let openai: OpenAI | undefined
 
 function getOpenAIInstance() {
-  if (!process.env.OPENAI_API_KEY) {
-    // eslint-disable-next-line no-console
-    console.error('OpenAI API key is not defined.')
-    return undefined
-  }
-
-  if (!openai) {
+  if (process.env.OPENAI_API_KEY !== undefined && openai === undefined) {
     openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     })
