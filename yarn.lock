@@ -3061,16 +3061,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/cookies@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@mswjs/cookies@npm:1.0.0"
-  checksum: 5ae38a399162fb96b367b9d0da24c1cf64dea9f5a0a07255a14c4b047da788049268059b0350a0b7788f37a32834c9fbef2fc5f60755d0d98bcf95bcb6ffe92e
+"@mswjs/cookies@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@mswjs/cookies@npm:1.1.0"
+  checksum: 1d9be44548907b92ff6acd46795292968661be19f1c04c43fdb2beb98bc7e58b8ffcef3be19d0f2cb58df07a36a6b53b4bbc0ea34e023b7366dbc28ffee90338
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.25.1":
-  version: 0.25.7
-  resolution: "@mswjs/interceptors@npm:0.25.7"
+"@mswjs/interceptors@npm:^0.25.11":
+  version: 0.25.11
+  resolution: "@mswjs/interceptors@npm:0.25.11"
   dependencies:
     "@open-draft/deferred-promise": ^2.2.0
     "@open-draft/logger": ^0.3.0
@@ -3078,7 +3078,7 @@ __metadata:
     is-node-process: ^1.2.0
     outvariant: ^1.2.1
     strict-event-emitter: ^0.5.1
-  checksum: d9dc1bf11e088b52ba01a4fbcedb3bf7451592bd0255e3591a6478f5465caf0fbd9264c7a32b0aad5bbd31baa2c9eabd6a36b5deace23a82061e34c884eb5fcb
+  checksum: 93dbc44428393c1d9e3a5fa2a4e8cab6faaf278737ec0ed1f9feffd341d925235955047fdccb182f944e696b11f2509c75edd859bda7fcd2fede1bb9b6aa005b
   languageName: node
   linkType: hard
 
@@ -3923,7 +3923,7 @@ __metadata:
     jest: ^29.7.0
     jest-transform-graphql: ^2.1.0
     lerna: ^7.4.2
-    msw: ^2.0.3
+    msw: ^2.0.6
     npm-run-all: ^4.1.5
     prettier: ^3.0.3
     prettier-plugin-packagejson: ^2.4.6
@@ -4453,17 +4453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.1":
-  version: 2.6.4
-  resolution: "@types/node-fetch@npm:2.6.4"
-  dependencies:
-    "@types/node": "*"
-    form-data: ^3.0.0
-  checksum: f3e1d881bb42269e676ecaf49f0e096ab345e22823a2b2d071d60619414817fe02df48a31a8d05adb23054028a2a65521bdb3906ceb763ab6d3339c8d8775058
-  languageName: node
-  linkType: hard
-
-"@types/node-fetch@npm:^2.6.4":
+"@types/node-fetch@npm:^2.6.1, @types/node-fetch@npm:^2.6.4":
   version: 2.6.9
   resolution: "@types/node-fetch@npm:2.6.9"
   dependencies:
@@ -9646,17 +9636,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "form-data@npm:3.0.1"
-  dependencies:
-    asynckit: ^0.4.0
-    combined-stream: ^1.0.8
-    mime-types: ^2.1.12
-  checksum: b019e8d35c8afc14a2bd8a7a92fa4f525a4726b6d5a9740e8d2623c30e308fbb58dc8469f90415a856698933c8479b01646a9dff33c87cc4e76d72aedbbf860d
-  languageName: node
-  linkType: hard
-
 "form-data@npm:^4.0.0":
   version: 4.0.0
   resolution: "form-data@npm:4.0.0"
@@ -9679,7 +9658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formdata-node@npm:4.4.1, formdata-node@npm:^4.3.2":
+"formdata-node@npm:^4.3.2":
   version: 4.4.1
   resolution: "formdata-node@npm:4.4.1"
   dependencies:
@@ -14722,22 +14701,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "msw@npm:2.0.3"
+"msw@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "msw@npm:2.0.6"
   dependencies:
     "@bundled-es-modules/cookie": ^2.0.0
     "@bundled-es-modules/js-levenshtein": ^2.0.1
     "@bundled-es-modules/statuses": ^1.0.1
-    "@mswjs/cookies": ^1.0.0
-    "@mswjs/interceptors": ^0.25.1
+    "@mswjs/cookies": ^1.1.0
+    "@mswjs/interceptors": ^0.25.11
     "@open-draft/until": ^2.1.0
     "@types/cookie": ^0.4.1
     "@types/js-levenshtein": ^1.1.1
     "@types/statuses": ^2.0.1
     chalk: ^4.1.2
     chokidar: ^3.4.2
-    formdata-node: 4.4.1
     graphql: ^16.8.1
     headers-polyfill: ^4.0.1
     inquirer: ^8.2.0
@@ -14756,7 +14734,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 3c0ef3c2fc11064dc76d6b6769e0fe575efd3c0b8a189ed280b0bd6b04b601a7a80c270e02a76d839e497243202a81cb4daec54a08429ad4802d33cc87efa131
+  checksum: 5171e9522d2ac6d5989010dfefc1e15e1f8c6ec2b7dc9df8aff1596a4a0508190ce130749a17865181b04790f90ff03bc0b901dfaa1fc00281aac6453ef817a1
   languageName: node
   linkType: hard
 
