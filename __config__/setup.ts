@@ -1,4 +1,4 @@
-import { http } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { SetupServer, setupServer } from 'msw/node'
 
 import {
@@ -68,7 +68,7 @@ export async function createBeforeEach() {
       global.sentryEvents.push(
         ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
       )
-      return new Response()
+      return new HttpResponse()
     }),
   )
 
