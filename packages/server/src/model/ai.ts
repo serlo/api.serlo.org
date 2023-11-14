@@ -17,18 +17,15 @@ function getOpenAIInstance() {
   return openai
 }
 
-interface ExecutePromptParams {
-  prompt: string
+export async function executePrompt(args: {
   // If we want to monitor abuse and receive more actionable feedback from
   // OpenAI, we can pass the user to the model. See
   // https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids
-  user?: string
-}
+  userId: number | null
+  prompt: string
+}): Promise<Record<string, unknown>> {
+  const { userId, prompt } = args
 
-async function executePrompt({
-  prompt,
-  user,
-}: ExecutePromptParams): Promise<OpenAI.ChatCompletion> {
   if (!prompt || prompt.trim() === '') {
     throw new UserInputError('Missing prompt parameter')
   }
@@ -50,11 +47,28 @@ async function executePrompt({
         },
       ],
       temperature: 0.4,
-      ...(user && { user }),
+      user: String(userId),
       response_format: { type: 'json_object' },
     })
 
-    return response
+    // As we now have the response_format defined as json_object, we shouldn't
+    // need to call JSON.parse on the stringMessage. However, right now the OpenAI
+    // types seem to be broken (thinking the API is returning a string or null).
+    // Instead of fighting the types, we can simply adjust this in the next
+    // version.
+    const stringMessage = response.choices[0].message.content
+
+    if (!stringMessage) {
+      throw new Error('No content received from LLM!')
+    }
+
+    const message = JSON.parse(stringMessage) as unknown
+
+    if (!t.UnknownRecord.is(message)) {
+      throw new Error('Invalid JSON format of content-generation-service')
+    }
+
+    return message
   } catch (error) {
     if (error instanceof APIError) {
       const detailedMessage = [
@@ -73,30 +87,4 @@ async function executePrompt({
       throw new Error('Unknown error occurred in executing prompt')
     }
   }
-}
-
-export async function makeRequest(args: {
-  userId: number | null
-  prompt: string
-}): Promise<Record<string, unknown>> {
-  const { userId, prompt } = args
-  const response = await executePrompt({ prompt, user: String(userId) })
-
-  // As we now have the response_format defined as json_object, we shouldn't
-  // need to call JSON.parse on the stringMessage. However, right now the OpenAI
-  // types seem to be broken (thinking the API is returning a string or null).
-  // Instead of fighting the types, we can simply adjust this in the next
-  // version.
-  const stringMessage = response.choices[0].message.content
-  if (!stringMessage) {
-    throw new Error('No content received from LLM!')
-  }
-
-  const message = JSON.parse(stringMessage) as unknown
-
-  if (!t.UnknownRecord.is(message)) {
-    throw new Error('Invalid JSON format of content-generation-service')
-  }
-
-  return message
 }
