@@ -1629,6 +1629,11 @@ async function exec(): Promise<void> {
         changed: ['remove license queries, simplify `License` type'],
         internal: ['Move content generation service logic to api'],
       },
+      {
+        tagName: 'v0.58.1',
+        date: '2023-11-14',
+        fixed: ['Only initialize openAi instance if AI endpoint is called'],
+      },
     ],
   })
 

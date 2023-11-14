@@ -3,9 +3,19 @@ import { APIError, OpenAI } from 'openai'
 
 import { UserInputError } from '~/errors'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// singleton instance so that it doesn't have to be reinitialized on every
+// request
+let openai: OpenAI | undefined
+
+function getOpenAIInstance() {
+  if (process.env.OPENAI_API_KEY !== undefined && openai === undefined) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  }
+
+  return openai
+}
 
 interface ExecutePromptParams {
   prompt: string
@@ -24,6 +34,13 @@ async function executePrompt({
   }
 
   try {
+    const openai = getOpenAIInstance()
+    if (!openai) {
+      throw new Error(
+        'OpenAI instance could not be created due to missing API key.',
+      )
+    }
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4-1106-preview',
       messages: [
