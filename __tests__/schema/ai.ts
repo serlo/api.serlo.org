@@ -47,9 +47,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
 
 beforeAll(() => {
   mockOpenAIServer(() => {
-    return HttpResponse.json(mockedOpenAiResponse, {
-      status: 200,
-    })
+    return HttpResponse.json(mockedOpenAiResponse)
   })
 })
 

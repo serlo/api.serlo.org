@@ -94,8 +94,7 @@ beforeEach(() => {
     if (key !== process.env.MAILCHIMP_API_KEY)
       return new HttpResponse(null, { status: 405 })
 
-    const typedParams = params as { emailHash: string }
-    const { emailHash } = typedParams
+    const { emailHash } = params
 
     if (mailchimpEmails.includes(emailHash)) {
       mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)
