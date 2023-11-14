@@ -6,6 +6,8 @@ import {
   setup,
 } from './setup'
 
+process.env.OPENAI_API_KEY = 'fake-test-key-we-are-mocking-responses'
+
 jest.mock('@google-cloud/storage', () => {
   return {
     Storage: jest.fn().mockImplementation(() => ({
