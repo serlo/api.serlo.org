@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 
 import {
   article,
@@ -47,7 +46,7 @@ beforeEach(() => {
         ...taxonomyTermCurriculumTopic,
         childrenIds: [],
       })
-      return HttpResponse.json({ success: true })
+      return Response.json({ success: true })
     })
 })
 

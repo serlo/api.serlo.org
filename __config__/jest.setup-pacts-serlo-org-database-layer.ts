@@ -36,13 +36,6 @@ beforeAll(async () => {
 beforeEach(async () => {
   await createBeforeEach()
   global.server.use(
-    http.get(
-      new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
-      async ({ request }) => {
-        const url = new URL(request.url)
-        return fetch(`http://127.0.0.1:${port}${url.pathname}`)
-      },
-    ),
     http.post(
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async ({ request }) => {
