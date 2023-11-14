@@ -45,7 +45,7 @@ beforeEach(() => {
         }
       }
 
-      return new Response()
+      return new HttpResponse()
     })
 })
 
