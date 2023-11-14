@@ -278,7 +278,9 @@ function withTypeAndPayload<
       return
     }
 
-    return resolver(args)
+    // Without the `as` we get a TypeScript error which is a bug in
+    // `msw` itself. Let's fix it at some point in the future :-)
+    return resolver(args) as HttpResponse
   }
 }
 
