@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.58.1](https://github.com/serlo/api.serlo.org/compare/v0.58.0..v0.58.1) - November 14, 2023
+
+### Fixed
+
+- Only initialize openAi instance if AI endpoint is called
+
 ## [v0.58.0](https://github.com/serlo/api.serlo.org/compare/v0.57.11..v0.58.0) - November 13, 2023
 
 ### Changed
