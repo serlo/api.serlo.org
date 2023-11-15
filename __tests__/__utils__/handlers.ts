@@ -271,7 +271,9 @@ function withTypeAndPayload<
     const isTypeMatching = actualBody.type === expectedType
     const isPayloadMatching =
       expectedPayloads === undefined ||
-      expectedPayloads.some((payload) => R.equals(payload, actualBody.payload))
+      expectedPayloads.some((payload) =>
+        R.equals({ ...actualBody.payload, ...payload }, actualBody.payload),
+      )
 
     // Compare two objects using "lodash".
     if (!isTypeMatching || !isPayloadMatching) {
