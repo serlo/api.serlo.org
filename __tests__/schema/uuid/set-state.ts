@@ -30,12 +30,7 @@ beforeEach(() => {
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
     .isDefinedBy(async ({ request }) => {
-      const body = (await request.json()) as {
-        payload: {
-          ids: number[]
-          trashed: boolean
-        }
-      }
+      const body = await request.json()
       const { ids, trashed } = body.payload
 
       for (const id of ids) {
@@ -50,9 +45,7 @@ beforeEach(() => {
         }
       }
 
-      return new HttpResponse(null, {
-        status: 200,
-      })
+      return new HttpResponse()
     })
 })
 

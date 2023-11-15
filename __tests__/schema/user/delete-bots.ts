@@ -94,8 +94,7 @@ beforeEach(() => {
     if (key !== process.env.MAILCHIMP_API_KEY)
       return new HttpResponse(null, { status: 405 })
 
-    const typedParams = params as { emailHash: string }
-    const { emailHash } = typedParams
+    const { emailHash } = params
 
     if (mailchimpEmails.includes(emailHash)) {
       mailchimpEmails = mailchimpEmails.filter((x) => x !== emailHash)
@@ -244,13 +243,19 @@ function givenChatDeleteUserEndpoint(resolver: ResponseResolver) {
   )
 }
 
-function givenMailchimpDeleteEmailEndpoint(resolver: ResponseResolver) {
+function givenMailchimpDeleteEmailEndpoint(
+  resolver: MailchimpResponseResolver,
+) {
   const url =
     `https://us5.api.mailchimp.com/3.0/` +
     `lists/a7bb2bbc4f/members/:emailHash/actions/delete-permanent`
 
   global.server.use(http.post(url, resolver))
 }
+
+type MailchimpResponseResolver = ResponseResolver<{
+  params: { emailHash: string }
+}>
 
 function emailHash(user: { id: number }) {
   return `${user.id}@example.org`

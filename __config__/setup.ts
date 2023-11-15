@@ -68,7 +68,7 @@ export async function createBeforeEach() {
       global.sentryEvents.push(
         ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
       )
-      return new HttpResponse(null, { status: 200 })
+      return new HttpResponse()
     }),
   )
 
