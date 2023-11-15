@@ -1,13 +1,4 @@
-import {
-  DefaultBodyType,
-  HttpResponse,
-  PathParams,
-  ResponseResolver,
-  StrictRequest,
-  http,
-} from 'msw'
-import { HttpRequestResolverExtras } from 'msw/lib/core/handlers/HttpHandler'
-import { ResponseResolverInfo } from 'msw/lib/core/handlers/RequestHandler'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 import * as R from 'ramda'
 
 import { createFakeIdentity } from './services'
@@ -117,7 +108,12 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             }),
           )
         },
-        isDefinedBy(resolver: ResponseResolver) {
+        isDefinedBy(
+          resolver: ResponseResolver<
+            Record<string, unknown>,
+            { payload: Payload<M> }
+          >,
+        ) {
           global.server.use(
             createDatabaseLayerHandler({
               matchType: type,
@@ -244,11 +240,7 @@ function createDatabaseLayerHandler<
 
   return http.post(
     getDatabaseLayerUrl({ path: '/' }),
-    withTypeAndPayload(resolver, matchType, matchPayloads) as ResponseResolver<
-      HttpRequestResolverExtras<PathParams>,
-      { payload: Payload },
-      undefined
-    >,
+    withTypeAndPayload(resolver, matchType, matchPayloads),
     options,
   )
 }
@@ -260,17 +252,12 @@ function withTypeAndPayload<
   resolver: ResponseResolver<Record<string, unknown>, { payload: Payload }>,
   expectedType: MessageType,
   expectedPayloads?: Partial<Payload>[],
-) {
-  return async (
-    args: ResponseResolverInfo<
-      HttpRequestResolverExtras<PathParams>,
-      { payload: Payload }
-    >,
-  ) => {
+): ResponseResolver<Record<string, unknown>, { payload: Payload }> {
+  return async (args) => {
     const { request } = args
 
     // Ignore requests that have a non-JSON body.
-    const contentType = request.headers.get('Content-Type') || ''
+    const contentType = request.headers.get('Content-Type') ?? ''
     if (!contentType.includes('application/json')) {
       return
     }
@@ -278,7 +265,7 @@ function withTypeAndPayload<
     // Clone the request and read it as JSON.
     const actualBody = (await request.clone().json()) as {
       type: string
-      payload: DefaultPayloadType[]
+      payload: Payload
     }
 
     const isTypeMatching = actualBody.type === expectedType
@@ -293,7 +280,9 @@ function withTypeAndPayload<
       return
     }
 
-    return resolver(args)
+    // Without the `as` we get a TypeScript error which is a bug in
+    // `msw` itself. Let's fix it at some point in the future :-)
+    return resolver(args) as HttpResponse
   }
 }
 
@@ -349,11 +338,7 @@ function createCommunityChatHandler({
     return HttpResponse.json(body)
   })
 
-  handler.predicate = ({
-    request,
-  }: {
-    request: StrictRequest<DefaultBodyType>
-  }) => {
+  handler.predicate = ({ request }) => {
     return R.toPairs(parameters).every(([name, value]) => {
       const url = new URL(request.url)
       return url.searchParams.get(name) === value
