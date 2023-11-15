@@ -2,7 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { makeRequest as executePrompt } from './ai'
+import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
