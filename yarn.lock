@@ -3511,11 +3511,11 @@ __metadata:
   linkType: hard
 
 "@ory/client@npm:^1.2.17":
-  version: 1.2.17
-  resolution: "@ory/client@npm:1.2.17"
+  version: 1.4.0
+  resolution: "@ory/client@npm:1.4.0"
   dependencies:
-    axios: ^0.21.4
-  checksum: 2ee8c9df970085d12e0828b43d38a27adbff3b25a480767725b123f0f8892a4f5e6b56c574a7ef90abf990d42f2616448d585c609fb46c14d286546566ffbb6e
+    axios: ^0.27.2
+  checksum: 6990213c768a47ad1c93f4d699e813e21c92d86bd0ffbec598e319afaec2ded176153dcf4c48ef54aa5a46671c3fd7c960263f77ed96fd392eb6c23b046c79bb
   languageName: node
   linkType: hard
 
@@ -5799,15 +5799,6 @@ __metadata:
   version: 4.3.5
   resolution: "axe-core@npm:4.3.5"
   checksum: 973c6a80f0aaa663820b209d4202de7a0c240a2dea2f3cff168b09c0f221b27179b1f0988f00ad11ed63cbc50535920f8ca779de1c60dc82090ab2d275f71fdd
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.21.4":
-  version: 0.21.4
-  resolution: "axios@npm:0.21.4"
-  dependencies:
-    follow-redirects: ^1.14.0
-  checksum: 44245f24ac971e7458f3120c92f9d66d1fc695e8b97019139de5b0cc65d9b8104647db01e5f46917728edfc0cfd88eb30fc4c55e6053eef4ace76768ce95ff3c
   languageName: node
   linkType: hard
 
@@ -9575,7 +9566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.9, follow-redirects@npm:^1.15.0":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.9, follow-redirects@npm:^1.15.0":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
