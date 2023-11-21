@@ -1,6 +1,5 @@
 import * as serloAuth from '@serlo/authorization'
 
-import { resolveTaxonomyTermPath } from './utils'
 import {
   TypeResolvers,
   Mutations,
@@ -74,34 +73,6 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
           return node.id.toString()
         },
       })
-    },
-    async navigation(taxonomyTerm, _args, context) {
-      const taxonomyPath = await resolveTaxonomyTermPath(taxonomyTerm, context)
-
-      for (let i = 0; i < taxonomyPath.length; i++) {
-        const currentIndex = taxonomyPath.length - (i + 1)
-        const current = taxonomyPath[currentIndex]
-        const navigation = await context.dataSources.model.serlo.getNavigation({
-          instance: taxonomyTerm.instance,
-          id: current.id,
-        })
-
-        if (navigation !== null) {
-          return {
-            path: [
-              ...navigation.path,
-              ...taxonomyPath.slice(currentIndex + 1).map((term) => {
-                return {
-                  label: term.name,
-                  url: term.alias ?? null,
-                  id: term.id,
-                }
-              }),
-            ],
-          }
-        }
-      }
-      return null
     },
   },
   TaxonomyTermMutation: {

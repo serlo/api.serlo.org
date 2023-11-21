@@ -5,7 +5,7 @@ enum TaxonomyTermType {
   exerciseFolder
 }
 
-type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAware & ThreadAware {
+type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -39,7 +39,6 @@ type TaxonomyTerm implements AbstractUuid & AbstractNavigationChild & InstanceAw
     first: Int
     last: Int
   ): AbstractUuidConnection!
-  navigation: Navigation
 }
 
 extend type Mutation {

@@ -1,4 +1,4 @@
-type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild & InstanceAware & ThreadAware {
+type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -30,7 +30,6 @@ type Page implements AbstractUuid & AbstractRepository & AbstractNavigationChild
     last: Int
     unrevised: Boolean
   ): PageRevisionConnection!
-  navigation: Navigation
 }
 
 type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {

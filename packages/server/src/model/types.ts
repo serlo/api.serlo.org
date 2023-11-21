@@ -44,7 +44,6 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Payload } from '~/internals/model'
 import { Role } from '~/types'
 
 export interface Models {
@@ -65,7 +64,6 @@ export interface Models {
   ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
   GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
   GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
-  Navigation: Payload<'serlo', 'getNavigation'>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Subject: { taxonomyTermId: number }
