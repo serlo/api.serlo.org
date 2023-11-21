@@ -5,10 +5,8 @@ import type {
   IdentityApiListIdentitiesRequest,
 } from '@ory/client'
 import { HttpResponse, ResponseResolver, http } from 'msw'
-import { v4 as uuidv4 } from 'uuid'
 
 import type { Identity, KratosDB } from '~/internals/authentication'
-import { Model } from '~/internals/graphql'
 import type { MajorDimension } from '~/model'
 
 export class MockKratos {
@@ -48,29 +46,6 @@ export class MockKratos {
       )
     },
   } as unknown as KratosDB
-}
-
-export function createFakeIdentity(user: Model<'User'>): Identity {
-  return {
-    id: uuidv4(),
-    created_at: user.date,
-    schema_id: 'default',
-    state: 'active',
-    state_changed_at: user.date,
-    updated_at: user.date,
-    traits: {
-      username: user.username,
-      email: `${user.username}@serlo.org`,
-      description: user.description,
-      language: user.language,
-      motivation: null,
-      profile_image: null,
-    },
-    metadata_public: {
-      legacy_id: user.id,
-      lastLogin: user.lastLogin,
-    },
-  }
 }
 
 const spreadsheets: Record<string, string[][] | undefined> = {}

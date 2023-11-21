@@ -43,14 +43,14 @@ export type Payload<
   P extends keyof AllPayloads[M],
 > = AllPayloads[M][P]
 
-export type AllPayloads = {
+type AllPayloads = {
   [M in keyof ModelFactories]: Payloads<ReturnType<ModelFactories[M]>>
 }
-export type Payloads<M> = {
+type Payloads<M> = {
   [F in keyof M]: NonNullable<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     A.Await<M[F] extends (...args: any) => infer R ? R : never>
   >
 }
 
-export type ModelFactories = typeof modelFactories
+type ModelFactories = typeof modelFactories

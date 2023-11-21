@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
-import { Instance, Role, TaxonomyTermType } from '~/types'
+import { Instance, TaxonomyTermType } from '~/types'
 
 export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.De),
@@ -10,17 +10,6 @@ export const InstanceDecoder: t.Type<Instance> = t.union([
   t.literal(Instance.Fr),
   t.literal(Instance.Hi),
   t.literal(Instance.Ta),
-])
-
-export const RoleDecoder: t.Type<Role> = t.union([
-  t.literal(Role.Admin),
-  t.literal(Role.Architect),
-  t.literal(Role.Guest),
-  t.literal(Role.Login),
-  t.literal(Role.Moderator),
-  t.literal(Role.Reviewer),
-  t.literal(Role.StaticPagesBuilder),
-  t.literal(Role.Sysadmin),
 ])
 
 export enum DiscriminatorType {
@@ -66,7 +55,7 @@ export enum EntityRevisionType {
 // the app more robust against malformed responses from the database layer.
 const MAX_UUID = 1e7
 
-export interface Brands {
+interface Brands {
   readonly Alias: unique symbol
   readonly NonEmptyString: unique symbol
   readonly Uuid: unique symbol
@@ -79,7 +68,7 @@ export const Uuid = t.brand(
 )
 export type Uuid = t.TypeOf<typeof Uuid>
 
-export function castTo<A>(decoder: t.Type<A, unknown>, value: unknown): A {
+function castTo<A>(decoder: t.Type<A, unknown>, value: unknown): A {
   if (decoder.is(value)) {
     return value
   } else {
@@ -102,18 +91,18 @@ export function castToAlias(alias: string): Alias {
   return castTo(Alias, alias)
 }
 
-export const NonEmptyString = t.brand(
+const NonEmptyString = t.brand(
   t.string,
   (text): text is t.Branded<string, Brands> => text.length > 0,
   'NonEmptyString',
 )
-export type NonEmptyString = t.TypeOf<typeof NonEmptyString>
+type NonEmptyString = t.TypeOf<typeof NonEmptyString>
 
 export function castToNonEmptyString(text: string): NonEmptyString {
   return castTo(NonEmptyString, text)
 }
 
-export const AbstractUuidDecoder = t.type({
+const AbstractUuidDecoder = t.type({
   id: Uuid,
   trashed: t.boolean,
   alias: Alias,
@@ -131,7 +120,7 @@ export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Video),
 ])
 
-export const AbstractEntityDecoder = t.intersection([
+const AbstractEntityDecoder = t.intersection([
   AbstractUuidDecoder,
   t.type({
     __typename: EntityTypeDecoder,
@@ -156,7 +145,7 @@ export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.VideoRevision),
 ])
 
-export const AbstractEntityRevisionDecoder = t.intersection([
+const AbstractEntityRevisionDecoder = t.intersection([
   AbstractUuidDecoder,
   t.type({
     __typename: EntityRevisionTypeDecoder,
@@ -237,7 +226,7 @@ export const PageRevisionDecoder = t.exact(
   ]),
 )
 
-export const TaxonomyTermTypeDecoder = t.union([
+const TaxonomyTermTypeDecoder = t.union([
   t.literal('blog'),
   t.literal('curriculum'),
   t.literal('curriculumTopic'),
@@ -499,7 +488,7 @@ export const UserDecoder = t.exact(
   ]),
 )
 
-export const AbstractExerciseDecoder = t.union([
+const AbstractExerciseDecoder = t.union([
   ExerciseDecoder,
   GroupedExerciseDecoder,
 ])
@@ -561,7 +550,7 @@ export enum NotificationEventType {
   SetUuidState = 'SetUuidStateNotificationEvent',
 }
 
-export const AbstractNotificationEventDecoder = t.type({
+const AbstractNotificationEventDecoder = t.type({
   id: Uuid,
   instance: InstanceDecoder,
   date: t.string,

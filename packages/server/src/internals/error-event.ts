@@ -81,7 +81,7 @@ export function captureErrorEvent(event: ErrorEvent) {
   })
 }
 
-export interface ErrorContext {
+interface ErrorContext {
   location?: string
   fingerprint?: string[]
   locationContext?: Record<string, unknown>

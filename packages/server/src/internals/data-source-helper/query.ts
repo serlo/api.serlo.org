@@ -165,7 +165,7 @@ export interface QuerySpec<Payload, Result> {
 /**
  * The specification object of a query extended by some helper functions.
  */
-export interface QuerySpecWithHelpers<Payload, Result>
+interface QuerySpecWithHelpers<Payload, Result>
   extends QuerySpec<Payload, Result> {
   /**
    * Function to update the cache of one or many values.
