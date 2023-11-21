@@ -3,8 +3,6 @@ import R from 'ramda'
 
 import {
   article,
-  navigation,
-  page,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
@@ -12,7 +10,6 @@ import {
   taxonomyTermTopicFolder,
 } from '../../../__fixtures__'
 import { Client, getTypenameAndId, given } from '../../__utils__'
-import { Instance } from '~/types'
 
 const client = new Client()
 
@@ -118,35 +115,6 @@ describe('TaxonomyTerm root', () => {
         },
       })
   })
-
-  test('by id (w/ navigation)', async () => {
-    given('NavigationQuery')
-      .withPayload({ instance: Instance.De })
-      .returns(navigation)
-
-    await client
-      .prepareQuery({
-        query: gql`
-          query taxonomyTerm($id: Int!) {
-            uuid(id: $id) {
-              ... on TaxonomyTerm {
-                navigation {
-                  path {
-                    nodes {
-                      id
-                      label
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: taxonomyTermRoot.id })
-      .shouldReturnData({ uuid: { navigation: null } })
-  })
 })
 
 describe('TaxonomyTerm subject', () => {
@@ -229,55 +197,6 @@ describe('TaxonomyTerm subject', () => {
         },
       })
   })
-
-  test('by id (w/ navigation)', async () => {
-    given('UuidQuery').for(taxonomyTermRoot, page)
-    given('NavigationQuery')
-      .withPayload({ instance: Instance.De })
-      .returns(navigation)
-
-    await client
-      .prepareQuery({
-        query: gql`
-          query taxonomyTerm($id: Int!) {
-            uuid(id: $id) {
-              ... on TaxonomyTerm {
-                navigation {
-                  path {
-                    nodes {
-                      id
-                      label
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: taxonomyTermSubject.id })
-      .shouldReturnData({
-        uuid: {
-          navigation: {
-            path: {
-              nodes: [
-                {
-                  id: page.id,
-                  label: navigation.data[0].label,
-                  url: page.alias,
-                },
-                {
-                  id: taxonomyTermSubject.id,
-                  label: navigation.data[0].children?.[0].label,
-                  url: taxonomyTermSubject.alias,
-                },
-              ],
-            },
-          },
-        },
-      })
-  })
 })
 
 describe('TaxonomyTerm curriculumTopic', () => {
@@ -350,60 +269,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
       .withVariables({ id: taxonomyTermCurriculumTopic.id })
       .shouldReturnData({
         uuid: { children: { nodes: [getTypenameAndId(article)] } },
-      })
-  })
-
-  test('by id (w/ navigation)', async () => {
-    given('UuidQuery').for(taxonomyTermRoot, taxonomyTermSubject, page)
-    given('NavigationQuery')
-      .withPayload({ instance: Instance.De })
-      .returns(navigation)
-
-    await client
-      .prepareQuery({
-        query: gql`
-          query taxonomyTerm($id: Int!) {
-            uuid(id: $id) {
-              ... on TaxonomyTerm {
-                navigation {
-                  path {
-                    nodes {
-                      id
-                      label
-                      url
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: taxonomyTermCurriculumTopic.id })
-      .shouldReturnData({
-        uuid: {
-          navigation: {
-            path: {
-              nodes: [
-                {
-                  id: page.id,
-                  label: navigation.data[0].label,
-                  url: page.alias,
-                },
-                {
-                  id: taxonomyTermSubject.id,
-                  label: navigation.data[0].children?.[0].label,
-                  url: taxonomyTermSubject.alias,
-                },
-                {
-                  id: taxonomyTermCurriculumTopic.id,
-                  label: taxonomyTermCurriculumTopic.name,
-                  url: taxonomyTermCurriculumTopic.alias,
-                },
-              ],
-            },
-          },
-        },
       })
   })
 })

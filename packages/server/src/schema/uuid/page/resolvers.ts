@@ -28,15 +28,7 @@ export const resolvers: TypeResolvers<Page> &
   Mutation: {
     page: createNamespace(),
   },
-  Page: {
-    ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
-    navigation(page, _args, { dataSources }) {
-      return dataSources.model.serlo.getNavigation({
-        instance: page.instance,
-        id: page.id,
-      })
-    },
-  },
+  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
     async addRevision(_parent, { input }, { dataSources, userId }) {
