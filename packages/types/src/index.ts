@@ -1818,9 +1818,6 @@ export type PageRevisionCursor = {
 
 export type Query = {
   __typename?: 'Query';
-  activeAuthors: UserConnection;
-  activeDonors: UserConnection;
-  activeReviewers: UserConnection;
   ai: AiQuery;
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
@@ -1836,30 +1833,6 @@ export type Query = {
   user: UserQuery;
   uuid?: Maybe<AbstractUuid>;
   version: Scalars['String']['output'];
-};
-
-
-export type QueryActiveAuthorsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryActiveDonorsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryActiveReviewersArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

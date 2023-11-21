@@ -1822,9 +1822,6 @@ export type PageRevisionCursor = {
 
 export type Query = {
   __typename?: 'Query';
-  activeAuthors: UserConnection;
-  activeDonors: UserConnection;
-  activeReviewers: UserConnection;
   ai: AiQuery;
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
@@ -1840,30 +1837,6 @@ export type Query = {
   user: UserQuery;
   uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
   version: Scalars['String']['output'];
-};
-
-
-export type QueryActiveAuthorsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryActiveDonorsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryActiveReviewersArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -4405,9 +4378,6 @@ export type PageRevisionCursorResolvers<ContextType = Context, ParentType extend
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  activeAuthors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveAuthorsArgs>>;
-  activeDonors?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveDonorsArgs>>;
-  activeReviewers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<QueryActiveReviewersArgs>>;
   ai?: Resolver<ResolversTypes['AiQuery'], ParentType, ContextType>;
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;

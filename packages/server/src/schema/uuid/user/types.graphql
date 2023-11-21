@@ -55,24 +55,6 @@ type User implements AbstractUuid & ThreadAware {
 }
 
 extend type Query {
-  activeAuthors(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserConnection!
-  activeDonors(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserConnection!
-  activeReviewers(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserConnection!
   user: UserQuery!
 }
 
