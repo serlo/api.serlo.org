@@ -118,10 +118,6 @@ export type AbstractExerciseRevisionEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type AbstractNavigationChild = {
-  navigation?: Maybe<Navigation>;
-};
-
 export type AbstractNotificationEvent = {
   actor: User;
   date: Scalars['DateTime']['output'];
@@ -1553,40 +1549,6 @@ export type Mutation = {
   uuid: UuidMutation;
 };
 
-export type Navigation = {
-  __typename?: 'Navigation';
-  path: NavigationNodeConnection;
-};
-
-
-export type NavigationPathArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type NavigationNode = {
-  __typename?: 'NavigationNode';
-  id?: Maybe<Scalars['Int']['output']>;
-  label: Scalars['String']['output'];
-  url?: Maybe<Scalars['String']['output']>;
-};
-
-export type NavigationNodeConnection = {
-  __typename?: 'NavigationNodeConnection';
-  edges?: Maybe<Array<Maybe<NavigationNodeEdge>>>;
-  nodes: Array<NavigationNode>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type NavigationNodeEdge = {
-  __typename?: 'NavigationNodeEdge';
-  cursor: Scalars['String']['output'];
-  node: NavigationNode;
-};
-
 export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
@@ -1664,7 +1626,7 @@ export type OauthMutationAcceptLogoutArgs = {
   challenge: Scalars['String']['input'];
 };
 
-export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
+export type Page = AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
   alias: Scalars['String']['output'];
   currentRevision?: Maybe<PageRevision>;
@@ -1673,7 +1635,6 @@ export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid &
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
-  navigation?: Maybe<Navigation>;
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -2242,7 +2203,7 @@ export type TaxonomyEntityLinksResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
+export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias: Scalars['String']['output'];
   children: AbstractUuidConnection;
@@ -2251,7 +2212,6 @@ export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAwar
   id: Scalars['Int']['output'];
   instance: Instance;
   name: Scalars['String']['output'];
-  navigation?: Maybe<Navigation>;
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int']['output'];
   threads: ThreadsConnection;

@@ -317,17 +317,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  NavigationQuery: {
-    examples: [
-      [
-        { instance: Instance.De },
-        {
-          instance: Instance.De,
-          data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
-        },
-      ],
-    ],
-  },
   NotificationsQuery: {
     examples: [
       [

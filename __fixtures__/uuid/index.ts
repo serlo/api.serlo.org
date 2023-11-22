@@ -1,4 +1,3 @@
-export * from './abstract-navigation-node'
 export * from './applet'
 export * from './article'
 export * from './course'

@@ -122,10 +122,6 @@ export type AbstractExerciseRevisionEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type AbstractNavigationChild = {
-  navigation?: Maybe<Navigation>;
-};
-
 export type AbstractNotificationEvent = {
   actor: User;
   date: Scalars['DateTime']['output'];
@@ -1557,40 +1553,6 @@ export type Mutation = {
   uuid: UuidMutation;
 };
 
-export type Navigation = {
-  __typename?: 'Navigation';
-  path: NavigationNodeConnection;
-};
-
-
-export type NavigationPathArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type NavigationNode = {
-  __typename?: 'NavigationNode';
-  id?: Maybe<Scalars['Int']['output']>;
-  label: Scalars['String']['output'];
-  url?: Maybe<Scalars['String']['output']>;
-};
-
-export type NavigationNodeConnection = {
-  __typename?: 'NavigationNodeConnection';
-  edges?: Maybe<Array<Maybe<NavigationNodeEdge>>>;
-  nodes: Array<NavigationNode>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type NavigationNodeEdge = {
-  __typename?: 'NavigationNodeEdge';
-  cursor: Scalars['String']['output'];
-  node: NavigationNode;
-};
-
 export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
@@ -1668,7 +1630,7 @@ export type OauthMutationAcceptLogoutArgs = {
   challenge: Scalars['String']['input'];
 };
 
-export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
+export type Page = AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Page';
   alias: Scalars['String']['output'];
   currentRevision?: Maybe<PageRevision>;
@@ -1677,7 +1639,6 @@ export type Page = AbstractNavigationChild & AbstractRepository & AbstractUuid &
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
-  navigation?: Maybe<Navigation>;
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -2246,7 +2207,7 @@ export type TaxonomyEntityLinksResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAware & ThreadAware & {
+export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias: Scalars['String']['output'];
   children: AbstractUuidConnection;
@@ -2255,7 +2216,6 @@ export type TaxonomyTerm = AbstractNavigationChild & AbstractUuid & InstanceAwar
   id: Scalars['Int']['output'];
   instance: Instance;
   name: Scalars['String']['output'];
-  navigation?: Maybe<Navigation>;
   parent?: Maybe<TaxonomyTerm>;
   taxonomyId: Scalars['Int']['output'];
   threads: ThreadsConnection;
@@ -2994,7 +2954,6 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
   AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<VideoRevision> );
   AbstractExercise: ( ModelOf<Exercise> ) | ( ModelOf<GroupedExercise> );
   AbstractExerciseRevision: ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> );
-  AbstractNavigationChild: ( ModelOf<Page> ) | ( ModelOf<TaxonomyTerm> );
   AbstractNotificationEvent: ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> );
   AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
@@ -3012,7 +2971,6 @@ export type ResolversTypes = {
   AbstractEntityRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevision']>;
   AbstractExercise: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExercise']>;
   AbstractExerciseRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExerciseRevision']>;
-  AbstractNavigationChild: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNavigationChild']>;
   AbstractNotificationEvent: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNotificationEvent']>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
   AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
@@ -3106,10 +3064,6 @@ export type ResolversTypes = {
   MediaUpload: ResolverTypeWrapper<ModelOf<MediaUpload>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
   Mutation: ResolverTypeWrapper<{}>;
-  Navigation: ResolverTypeWrapper<ModelOf<Navigation>>;
-  NavigationNode: ResolverTypeWrapper<ModelOf<NavigationNode>>;
-  NavigationNodeConnection: ResolverTypeWrapper<ModelOf<NavigationNodeConnection>>;
-  NavigationNodeEdge: ResolverTypeWrapper<ModelOf<NavigationNodeEdge>>;
   Notification: ResolverTypeWrapper<ModelOf<Notification>>;
   NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
   NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
@@ -3228,7 +3182,6 @@ export type ResolversParentTypes = {
   AbstractEntityRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevision'];
   AbstractExercise: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExercise'];
   AbstractExerciseRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExerciseRevision'];
-  AbstractNavigationChild: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNavigationChild'];
   AbstractNotificationEvent: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNotificationEvent'];
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
   AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
@@ -3319,10 +3272,6 @@ export type ResolversParentTypes = {
   MediaUpload: ModelOf<MediaUpload>;
   MetadataQuery: ModelOf<MetadataQuery>;
   Mutation: {};
-  Navigation: ModelOf<Navigation>;
-  NavigationNode: ModelOf<NavigationNode>;
-  NavigationNodeConnection: ModelOf<NavigationNodeConnection>;
-  NavigationNodeEdge: ModelOf<NavigationNodeEdge>;
   Notification: ModelOf<Notification>;
   NotificationConnection: ModelOf<NotificationConnection>;
   NotificationEdge: ModelOf<NotificationEdge>;
@@ -3492,11 +3441,6 @@ export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType 
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-};
-
-export type AbstractNavigationChildResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNavigationChild'] = ResolversParentTypes['AbstractNavigationChild']> = {
-  __resolveType: TypeResolveFn<'Page' | 'TaxonomyTerm', ParentType, ContextType>;
-  navigation?: Resolver<Maybe<ResolversTypes['Navigation']>, ParentType, ContextType>;
 };
 
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -4259,32 +4203,6 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   uuid?: Resolver<ResolversTypes['UuidMutation'], ParentType, ContextType>;
 };
 
-export type NavigationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Navigation'] = ResolversParentTypes['Navigation']> = {
-  path?: Resolver<ResolversTypes['NavigationNodeConnection'], ParentType, ContextType, Partial<NavigationPathArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type NavigationNodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NavigationNode'] = ResolversParentTypes['NavigationNode']> = {
-  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type NavigationNodeConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NavigationNodeConnection'] = ResolversParentTypes['NavigationNodeConnection']> = {
-  edges?: Resolver<Maybe<Array<Maybe<ResolversTypes['NavigationNodeEdge']>>>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['NavigationNode']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type NavigationNodeEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NavigationNodeEdge'] = ResolversParentTypes['NavigationNodeEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['NavigationNode'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
   email?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   emailSent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -4340,7 +4258,6 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
-  navigation?: Resolver<Maybe<ResolversTypes['Navigation']>, ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['PageRevisionConnection'], ParentType, ContextType, Partial<PageRevisionsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<PageThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4610,7 +4527,6 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  navigation?: Resolver<Maybe<ResolversTypes['Navigation']>, ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
@@ -4899,7 +4815,6 @@ export type Resolvers<ContextType = Context> = {
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
   AbstractExercise?: AbstractExerciseResolvers<ContextType>;
   AbstractExerciseRevision?: AbstractExerciseRevisionResolvers<ContextType>;
-  AbstractNavigationChild?: AbstractNavigationChildResolvers<ContextType>;
   AbstractNotificationEvent?: AbstractNotificationEventResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
   AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
@@ -4980,10 +4895,6 @@ export type Resolvers<ContextType = Context> = {
   MediaUpload?: MediaUploadResolvers<ContextType>;
   MetadataQuery?: MetadataQueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Navigation?: NavigationResolvers<ContextType>;
-  NavigationNode?: NavigationNodeResolvers<ContextType>;
-  NavigationNodeConnection?: NavigationNodeConnectionResolvers<ContextType>;
-  NavigationNodeEdge?: NavigationNodeEdgeResolvers<ContextType>;
   Notification?: NotificationResolvers<ContextType>;
   NotificationConnection?: NotificationConnectionResolvers<ContextType>;
   NotificationEdge?: NotificationEdgeResolvers<ContextType>;
