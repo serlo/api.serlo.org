@@ -6,7 +6,6 @@ const { pathsToModuleNameMapper } = require('ts-jest')
 const { compilerOptions } = require('./tsconfig.json')
 
 module.exports = {
-  preset: 'ts-jest',
   modulePaths: ['<rootDir>/packages'],
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   moduleNameMapper: {
@@ -22,7 +21,9 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '/__tests-pacts__/index\\.ts',
   transform: {
+    '^.+\\.tsx?$': ['ts-jest', { useESM: true, isolatedModules: true }],
     '^.+\\.graphql$': './transform-graphql-jest-28-shim.cjs',
   },
+  extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts'],
   watchPathIgnorePatterns: ['<rootDir>/pacts/'],
 }
