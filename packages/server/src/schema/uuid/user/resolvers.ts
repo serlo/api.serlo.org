@@ -20,59 +20,27 @@ import {
   createNamespace,
   generateRole,
   isGlobalRole,
-  LegacyQueries,
-  Model,
   Mutations,
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityDecoder,
-  RevisionDecoder,
-  UserDecoder,
-} from '~/model/decoder'
+import { EntityDecoder, RevisionDecoder, UserDecoder } from '~/model/decoder'
 import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import {
   getPermissionsForRole,
   getRolesWithInheritance,
 } from '~/schema/authorization/roles'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
-import { ConnectionPayload } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, User } from '~/types'
 
-export const resolvers: LegacyQueries<
-  'activeAuthors' | 'activeReviewers' | 'activeDonors'
-> &
-  TypeResolvers<User> &
+export const resolvers: TypeResolvers<User> &
   Queries<'user'> &
   Mutations<'user'> = {
   Query: {
-    async activeAuthors(_parent, payload, context) {
-      return resolveUserConnectionFromIds({
-        ids: await context.dataSources.model.serlo.getActiveAuthorIds(),
-        payload,
-        context,
-      })
-    },
-    async activeDonors(_parent, payload, context) {
-      return resolveUserConnectionFromIds({
-        ids: await activeDonorIDs(context),
-        payload,
-        context,
-      })
-    },
-    async activeReviewers(_parent, payload, context) {
-      return resolveUserConnectionFromIds({
-        ids: await context.dataSources.model.serlo.getActiveReviewerIds(),
-        payload,
-        context,
-      })
-    },
     user: createNamespace(),
   },
   UserQuery: {
@@ -481,34 +449,6 @@ export const resolvers: LegacyQueries<
       return { ...result, email: input.email }
     },
   },
-}
-
-async function resolveUserConnectionFromIds({
-  ids,
-  payload,
-  context,
-}: {
-  ids: number[]
-  payload: ConnectionPayload
-  context: Context
-}) {
-  const uuids = await Promise.all(
-    ids.map(async (id) => context.dataSources.model.serlo.getUuid({ id })),
-  )
-  const users = assertAll({
-    assertion(uuid: Model<'AbstractUuid'> | null): uuid is Model<'User'> {
-      return uuid !== null && uuid.__typename == DiscriminatorType.User
-    },
-    error: new Error('Invalid user found'),
-  })(uuids)
-
-  return resolveConnection({
-    nodes: users,
-    payload,
-    createCursor(node) {
-      return node.id.toString()
-    },
-  })
 }
 
 async function activeDonorIDs({ dataSources }: Context) {
