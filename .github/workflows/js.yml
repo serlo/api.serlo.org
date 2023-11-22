@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
+      - run: yarn --check-cache
   build:
     runs-on: ubuntu-latest
     steps:
