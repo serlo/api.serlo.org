@@ -1,6 +1,5 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import * as R from 'ramda'
 
 import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
@@ -10,7 +9,6 @@ import {
   DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
-  NavigationDataDecoder,
   PageDecoder,
   PageRevisionDecoder,
   UserDecoder,
@@ -211,96 +209,6 @@ export function createSerloModel({
     decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
     mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
       return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
-    },
-  })
-
-  const getNavigationPayload = createQuery(
-    {
-      decoder: DatabaseLayer.getDecoderFor('NavigationQuery'),
-      getCurrentValue: (payload: DatabaseLayer.Payload<'NavigationQuery'>) => {
-        return DatabaseLayer.makeRequest('NavigationQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { hour: 1 },
-      getKey: ({ instance }) => {
-        return `${instance}.serlo.org/api/navigation`
-      },
-      getPayload: (key: string) => {
-        const instance = getInstanceFromKey(key)
-        return instance && key === `${instance}.serlo.org/api/navigation`
-          ? O.some({ instance })
-          : O.none
-      },
-      examplePayload: { instance: Instance.De },
-    },
-    environment,
-  )
-
-  const getNavigation = createRequest({
-    decoder: t.union([NavigationDataDecoder, t.null]),
-    async getCurrentValue({
-      instance,
-      id,
-    }: {
-      instance: Instance
-      id: number
-    }) {
-      const payload = await getNavigationPayload({ instance })
-      const { data } = payload
-
-      type NodeData = (typeof data)[number]
-
-      const leaves: Record<string, number> = {}
-
-      const findLeaves = (node: NodeData): number[] => {
-        return [
-          ...(node.id ? [node.id] : []),
-          ...R.flatten(R.map(findLeaves, node.children || [])),
-        ]
-      }
-
-      for (let i = 0; i < data.length; i++) {
-        findLeaves(data[i]).forEach((id) => {
-          leaves[id] = i
-        })
-      }
-
-      const treeIndex = leaves[id]
-
-      if (treeIndex === undefined) return null
-
-      const findPathToLeaf = (node: NodeData, leaf: number): NodeData[] => {
-        if (node.id !== undefined && node.id === leaf) {
-          return [node]
-        }
-
-        if (node.children === undefined) return []
-
-        const childPaths = node.children.map((childNode) => {
-          return findPathToLeaf(childNode, leaf)
-        })
-        const goodPaths = childPaths.filter((path) => {
-          return path.length > 0
-        })
-        if (goodPaths.length === 0) return []
-        return [node, ...goodPaths[0]]
-      }
-
-      const nodes = findPathToLeaf(data[treeIndex], id)
-      const path = []
-
-      for (let i = 0; i < nodes.length; i++) {
-        const nodeData = nodes[i]
-        const uuid = nodeData.id ? await getUuid({ id: nodeData.id }) : null
-        const node = {
-          label: nodeData.label,
-          url: (uuid ? uuid.alias : null) || nodeData.url || null,
-          id: uuid ? uuid.id : null,
-        }
-        path.push(node)
-      }
-
-      return { path }
     },
   })
 
@@ -1185,8 +1093,6 @@ export function createSerloModel({
     getEntitiesMetadata,
     getEvents,
     getEventsAfter,
-    getNavigation,
-    getNavigationPayload,
     getNotificationEvent,
     getNotifications,
     getPotentialSpamUsers,

@@ -8,7 +8,6 @@ import {
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
-  NavigationDecoder,
   NotificationDecoder,
   NotificationEventDecoder,
   PageDecoder,
@@ -183,11 +182,6 @@ export const spec = {
       events: t.array(NotificationEventDecoder),
       hasNextPage: t.boolean,
     }),
-    canBeNull: false,
-  },
-  NavigationQuery: {
-    payload: t.type({ instance: InstanceDecoder }),
-    response: NavigationDecoder,
     canBeNull: false,
   },
   NotificationSetStateMutation: {
