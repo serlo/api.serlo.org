@@ -77,6 +77,7 @@
     "@types/node": "^18.18.9",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
+    "default-import": "^1.1.5",
     "depcheck": "^1.4.7",
     "esbuild": "^0.19.7",
     "eslint": "^8.53.0",
