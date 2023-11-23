@@ -1,9 +1,11 @@
-import graphqlLoaderPlugin from '@luckycatfactory/esbuild-graphql-loader'
+import graphqlLoaderPlugin_ from '@luckycatfactory/esbuild-graphql-loader'
+import { defaultImport } from 'default-import'
 import * as esbuild from 'esbuild'
 import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
 
+const graphqlLoaderPlugin = defaultImport(graphqlLoaderPlugin_)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const root = path.join(__dirname, '..')
@@ -31,8 +33,6 @@ async function main() {
     format: 'cjs',
     target: 'node18',
     outfile,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    // @ts-expect-error
-    plugins: [graphqlLoaderPlugin.default()],
+    plugins: [graphqlLoaderPlugin()],
   })
 }
