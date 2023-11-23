@@ -22,5 +22,9 @@ RUN yarn build:swr-queue-worker
 FROM node:18-alpine as release
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/dist dist
+# The package `bee-queue` need to be loaded as external dependency
+#
+# TODO: Use the version which is locked in yarn.lock
+RUN npm install bee-queue
 ENTRYPOINT ["node", "dist/swr-queue-worker.cjs"]
 EXPOSE 3000
