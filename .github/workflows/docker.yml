@@ -2,8 +2,6 @@ name: Docker
 on:
   pull_request:
   merge_group:
-env:
-  PR_NUMBER: ${{ github.event.number }}
 jobs:
   build-docker-images:
     name: Build docker images
@@ -27,7 +25,7 @@ jobs:
           push: false
           load: true
           file: ${{ matrix.dockerfile }}
-          tags: api-${{ matrix.image }}-local-build:PR-${{ env.PR_NUMBER }}
+          tags: api-${{ matrix.image }}-local-build:latest
       - uses: serlo/configure-repositories/actions/setup-node@main
       - name: Start redis
         run: yarn start:redis
