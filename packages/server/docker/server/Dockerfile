@@ -1,4 +1,4 @@
-FROM node:18 as build
+FROM node:18 as base
 WORKDIR /usr/src/app
 COPY .yarn .yarn
 COPY .yarnrc.yml .
@@ -12,6 +12,8 @@ COPY packages/types/package.json packages/types/package.json
 COPY package.json .
 COPY lerna.json .
 COPY yarn.lock .
+
+FROM base as build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
 COPY packages/server packages/server
@@ -19,8 +21,12 @@ COPY packages/graphql-modules packages/graphql-modules
 COPY packages/types packages/types
 RUN yarn build:server
 
+FROM base as build_node_modules
+RUN yarn workspaces focus @serlo/api.serlo.org --production
+
 FROM node:18-alpine as release
 WORKDIR /usr/src/app
-COPY --from=build /usr/src/app/dist dist
+COPY --from=build_dist /usr/src/app/dist dist
+COPY --from=build_node_modules /usr/src/app/node_modules node_modules
 ENTRYPOINT ["node", "dist/server.cjs"]
 EXPOSE 3000
