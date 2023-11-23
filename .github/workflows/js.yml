@@ -12,14 +12,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn --check-cache
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
-      - run: yarn build
-      - run: yarn build:server
-      - run: yarn build:swr-queue-worker
   eslint:
     runs-on: ubuntu-latest
     steps:
