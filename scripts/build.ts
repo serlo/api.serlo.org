@@ -32,6 +32,13 @@ async function main() {
     platform: 'node',
     format: 'cjs',
     target: 'node18',
+    // Bundling `bee-queue` inside the run package would result in an error
+    //
+    //    Error: node_redis: The EVALSHA command contains a invalid argument
+    //    type of "undefined".
+    //
+    // We rather install it seperately.
+    external: ['bee-queue'],
     outfile,
     plugins: [graphqlLoaderPlugin()],
   })
