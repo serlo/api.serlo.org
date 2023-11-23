@@ -257,16 +257,9 @@ export type AbstractUuidEventsArgs = {
 
 export type AbstractUuidConnection = {
   __typename?: 'AbstractUuidConnection';
-  edges: Array<AbstractUuidCursor>;
   nodes: Array<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AbstractUuidCursor = {
-  __typename?: 'AbstractUuidCursor';
-  cursor: Scalars['String']['output'];
-  node: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
 };
 
 export type AddRevisionResponse = {
@@ -393,16 +386,9 @@ export type AppletRevisionThreadsArgs = {
 
 export type AppletRevisionConnection = {
   __typename?: 'AppletRevisionConnection';
-  edges: Array<AppletRevisionCursor>;
   nodes: Array<AppletRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AppletRevisionCursor = {
-  __typename?: 'AppletRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: AppletRevision;
 };
 
 export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -498,16 +484,9 @@ export type ArticleRevisionThreadsArgs = {
 
 export type ArticleRevisionConnection = {
   __typename?: 'ArticleRevisionConnection';
-  edges: Array<ArticleRevisionCursor>;
   nodes: Array<ArticleRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ArticleRevisionCursor = {
-  __typename?: 'ArticleRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: ArticleRevision;
 };
 
 export type CacheRemoveInput = {
@@ -589,16 +568,9 @@ export type CommentEventsArgs = {
 
 export type CommentConnection = {
   __typename?: 'CommentConnection';
-  edges: Array<CommentEdge>;
   nodes: Array<Comment>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CommentEdge = {
-  __typename?: 'CommentEdge';
-  cursor: Scalars['String']['output'];
-  node: Comment;
 };
 
 export enum CommentStatus {
@@ -751,16 +723,9 @@ export type CoursePageRevisionThreadsArgs = {
 
 export type CoursePageRevisionConnection = {
   __typename?: 'CoursePageRevisionConnection';
-  edges: Array<CoursePageRevisionCursor>;
   nodes: Array<CoursePageRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CoursePageRevisionCursor = {
-  __typename?: 'CoursePageRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: CoursePageRevision;
 };
 
 export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
@@ -801,16 +766,9 @@ export type CourseRevisionThreadsArgs = {
 
 export type CourseRevisionConnection = {
   __typename?: 'CourseRevisionConnection';
-  edges: Array<CourseRevisionCursor>;
   nodes: Array<CourseRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CourseRevisionCursor = {
-  __typename?: 'CourseRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: CourseRevision;
 };
 
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2952,7 +2910,6 @@ export type ResolversTypes = {
   AbstractTaxonomyTermChild: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractTaxonomyTermChild']>;
   AbstractUuid: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractUuid']>;
   AbstractUuidConnection: ResolverTypeWrapper<ModelOf<AbstractUuidConnection>>;
-  AbstractUuidCursor: ResolverTypeWrapper<ModelOf<AbstractUuidCursor>>;
   AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AiQuery: ResolverTypeWrapper<ModelOf<AiQuery>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
@@ -2960,11 +2917,9 @@ export type ResolversTypes = {
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
   AppletRevision: ResolverTypeWrapper<ModelOf<AppletRevision>>;
   AppletRevisionConnection: ResolverTypeWrapper<ModelOf<AppletRevisionConnection>>;
-  AppletRevisionCursor: ResolverTypeWrapper<ModelOf<AppletRevisionCursor>>;
   Article: ResolverTypeWrapper<ModelOf<Article>>;
   ArticleRevision: ResolverTypeWrapper<ModelOf<ArticleRevision>>;
   ArticleRevisionConnection: ResolverTypeWrapper<ModelOf<ArticleRevisionConnection>>;
-  ArticleRevisionCursor: ResolverTypeWrapper<ModelOf<ArticleRevisionCursor>>;
   Boolean: ResolverTypeWrapper<ModelOf<Scalars['Boolean']['output']>>;
   CacheRemoveInput: ResolverTypeWrapper<ModelOf<CacheRemoveInput>>;
   CacheRemoveResponse: ResolverTypeWrapper<ModelOf<CacheRemoveResponse>>;
@@ -2977,16 +2932,13 @@ export type ResolversTypes = {
   CheckoutRevisionResponse: ResolverTypeWrapper<ModelOf<CheckoutRevisionResponse>>;
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
-  CommentEdge: ResolverTypeWrapper<ModelOf<CommentEdge>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
   Course: ResolverTypeWrapper<ModelOf<Course>>;
   CoursePage: ResolverTypeWrapper<ModelOf<CoursePage>>;
   CoursePageRevision: ResolverTypeWrapper<ModelOf<CoursePageRevision>>;
   CoursePageRevisionConnection: ResolverTypeWrapper<ModelOf<CoursePageRevisionConnection>>;
-  CoursePageRevisionCursor: ResolverTypeWrapper<ModelOf<CoursePageRevisionCursor>>;
   CourseRevision: ResolverTypeWrapper<ModelOf<CourseRevision>>;
   CourseRevisionConnection: ResolverTypeWrapper<ModelOf<CourseRevisionConnection>>;
-  CourseRevisionCursor: ResolverTypeWrapper<ModelOf<CourseRevisionCursor>>;
   CreateCommentNotificationEvent: ResolverTypeWrapper<ModelOf<CreateCommentNotificationEvent>>;
   CreateEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityLinkNotificationEvent>>;
   CreateEntityNotificationEvent: ResolverTypeWrapper<ModelOf<CreateEntityNotificationEvent>>;
@@ -3163,7 +3115,6 @@ export type ResolversParentTypes = {
   AbstractTaxonomyTermChild: ResolversInterfaceTypes<ResolversParentTypes>['AbstractTaxonomyTermChild'];
   AbstractUuid: ResolversInterfaceTypes<ResolversParentTypes>['AbstractUuid'];
   AbstractUuidConnection: ModelOf<AbstractUuidConnection>;
-  AbstractUuidCursor: ModelOf<AbstractUuidCursor>;
   AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AiQuery: ModelOf<AiQuery>;
   AliasInput: ModelOf<AliasInput>;
@@ -3171,11 +3122,9 @@ export type ResolversParentTypes = {
   Applet: ModelOf<Applet>;
   AppletRevision: ModelOf<AppletRevision>;
   AppletRevisionConnection: ModelOf<AppletRevisionConnection>;
-  AppletRevisionCursor: ModelOf<AppletRevisionCursor>;
   Article: ModelOf<Article>;
   ArticleRevision: ModelOf<ArticleRevision>;
   ArticleRevisionConnection: ModelOf<ArticleRevisionConnection>;
-  ArticleRevisionCursor: ModelOf<ArticleRevisionCursor>;
   Boolean: ModelOf<Scalars['Boolean']['output']>;
   CacheRemoveInput: ModelOf<CacheRemoveInput>;
   CacheRemoveResponse: ModelOf<CacheRemoveResponse>;
@@ -3188,15 +3137,12 @@ export type ResolversParentTypes = {
   CheckoutRevisionResponse: ModelOf<CheckoutRevisionResponse>;
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
-  CommentEdge: ModelOf<CommentEdge>;
   Course: ModelOf<Course>;
   CoursePage: ModelOf<CoursePage>;
   CoursePageRevision: ModelOf<CoursePageRevision>;
   CoursePageRevisionConnection: ModelOf<CoursePageRevisionConnection>;
-  CoursePageRevisionCursor: ModelOf<CoursePageRevisionCursor>;
   CourseRevision: ModelOf<CourseRevision>;
   CourseRevisionConnection: ModelOf<CourseRevisionConnection>;
-  CourseRevisionCursor: ModelOf<CourseRevisionCursor>;
   CreateCommentNotificationEvent: ModelOf<CreateCommentNotificationEvent>;
   CreateEntityLinkNotificationEvent: ModelOf<CreateEntityLinkNotificationEvent>;
   CreateEntityNotificationEvent: ModelOf<CreateEntityNotificationEvent>;
@@ -3487,16 +3433,9 @@ export type AbstractUuidResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuidConnection'] = ResolversParentTypes['AbstractUuidConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['AbstractUuidCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AbstractUuid']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AbstractUuidCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuidCursor'] = ResolversParentTypes['AbstractUuidCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3556,16 +3495,9 @@ export type AppletRevisionResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type AppletRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AppletRevisionConnection'] = ResolversParentTypes['AppletRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['AppletRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AppletRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AppletRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AppletRevisionCursor'] = ResolversParentTypes['AppletRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AppletRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3604,16 +3536,9 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
 };
 
 export type ArticleRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevisionConnection'] = ResolversParentTypes['ArticleRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ArticleRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['ArticleRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ArticleRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ArticleRevisionCursor'] = ResolversParentTypes['ArticleRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['ArticleRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3667,16 +3592,9 @@ export type CommentResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type CommentConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentConnection'] = ResolversParentTypes['CommentConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['CommentEdge']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CommentEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentEdge'] = ResolversParentTypes['CommentEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3731,16 +3649,9 @@ export type CoursePageRevisionResolvers<ContextType = Context, ParentType extend
 };
 
 export type CoursePageRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePageRevisionConnection'] = ResolversParentTypes['CoursePageRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['CoursePageRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['CoursePageRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CoursePageRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CoursePageRevisionCursor'] = ResolversParentTypes['CoursePageRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['CoursePageRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3761,16 +3672,9 @@ export type CourseRevisionResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type CourseRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CourseRevisionConnection'] = ResolversParentTypes['CourseRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['CourseRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['CourseRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CourseRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CourseRevisionCursor'] = ResolversParentTypes['CourseRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['CourseRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4793,18 +4697,15 @@ export type Resolvers<ContextType = Context> = {
   AbstractTaxonomyTermChild?: AbstractTaxonomyTermChildResolvers<ContextType>;
   AbstractUuid?: AbstractUuidResolvers<ContextType>;
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
-  AbstractUuidCursor?: AbstractUuidCursorResolvers<ContextType>;
   AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   AiQuery?: AiQueryResolvers<ContextType>;
   AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
   AppletRevisionConnection?: AppletRevisionConnectionResolvers<ContextType>;
-  AppletRevisionCursor?: AppletRevisionCursorResolvers<ContextType>;
   Article?: ArticleResolvers<ContextType>;
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
-  ArticleRevisionCursor?: ArticleRevisionCursorResolvers<ContextType>;
   CacheRemoveResponse?: CacheRemoveResponseResolvers<ContextType>;
   CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
   CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
@@ -4812,15 +4713,12 @@ export type Resolvers<ContextType = Context> = {
   CheckoutRevisionResponse?: CheckoutRevisionResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
-  CommentEdge?: CommentEdgeResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CoursePage?: CoursePageResolvers<ContextType>;
   CoursePageRevision?: CoursePageRevisionResolvers<ContextType>;
   CoursePageRevisionConnection?: CoursePageRevisionConnectionResolvers<ContextType>;
-  CoursePageRevisionCursor?: CoursePageRevisionCursorResolvers<ContextType>;
   CourseRevision?: CourseRevisionResolvers<ContextType>;
   CourseRevisionConnection?: CourseRevisionConnectionResolvers<ContextType>;
-  CourseRevisionCursor?: CourseRevisionCursorResolvers<ContextType>;
   CreateCommentNotificationEvent?: CreateCommentNotificationEventResolvers<ContextType>;
   CreateEntityLinkNotificationEvent?: CreateEntityLinkNotificationEventResolvers<ContextType>;
   CreateEntityNotificationEvent?: CreateEntityNotificationEventResolvers<ContextType>;
