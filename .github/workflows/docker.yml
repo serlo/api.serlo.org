@@ -11,11 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [api-server, api-swr-queue-worker]
+        image: [server, swr-queue-worker]
         include:
-          - image: api-server
+          - image: server
             dockerfile: packages/server/docker/server/Dockerfile
-          - image: api-swr-queue-worker
+          - image: swr-queue-worker
             dockerfile: packages/server/docker/swr-queue-worker/Dockerfile
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,10 @@ jobs:
           push: false
           load: true
           file: ${{ matrix.dockerfile }}
-          tags: ${{ matrix.image }}:PR-${{ env.PR_NUMBER }}
-      - name: Test for node in the ${{ matrix.image }} image
-        run: docker run --entrypoint='' --rm ${{ matrix.image }}:PR-${{ env.PR_NUMBER }} node --version
+          tags: api-${{ matrix.image }}-local-build:PR-${{ env.PR_NUMBER }}
+      - name: Start redis
+        run: yarn start:redis
+      - name: Run the ${{ matrix.image }} docker image
+        run: yarn docker:run:$${{ matrix.image }}
+      - name: Test the docker container ${{ matrix.image }}
+        run: yarn test:docker:${{ matrix.image }}
