@@ -32,6 +32,6 @@ jobs:
       - name: Start redis
         run: yarn start:redis
       - name: Run the ${{ matrix.image }} docker image
-        run: yarn docker:run:$${{ matrix.image }}
+        run: yarn docker:run:${{ matrix.image }}
       - name: Test the docker container ${{ matrix.image }}
         run: yarn test:docker:${{ matrix.image }}
