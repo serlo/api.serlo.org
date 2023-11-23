@@ -28,6 +28,7 @@ jobs:
           load: true
           file: ${{ matrix.dockerfile }}
           tags: api-${{ matrix.image }}-local-build:PR-${{ env.PR_NUMBER }}
+      - uses: serlo/configure-repositories/actions/setup-node@main
       - name: Start redis
         run: yarn start:redis
       - name: Run the ${{ matrix.image }} docker image
