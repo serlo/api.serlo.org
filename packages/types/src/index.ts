@@ -253,16 +253,9 @@ export type AbstractUuidEventsArgs = {
 
 export type AbstractUuidConnection = {
   __typename?: 'AbstractUuidConnection';
-  edges: Array<AbstractUuidCursor>;
   nodes: Array<AbstractUuid>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AbstractUuidCursor = {
-  __typename?: 'AbstractUuidCursor';
-  cursor: Scalars['String']['output'];
-  node: AbstractUuid;
 };
 
 export type AddRevisionResponse = {
@@ -389,16 +382,9 @@ export type AppletRevisionThreadsArgs = {
 
 export type AppletRevisionConnection = {
   __typename?: 'AppletRevisionConnection';
-  edges: Array<AppletRevisionCursor>;
   nodes: Array<AppletRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AppletRevisionCursor = {
-  __typename?: 'AppletRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: AppletRevision;
 };
 
 export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -494,16 +480,9 @@ export type ArticleRevisionThreadsArgs = {
 
 export type ArticleRevisionConnection = {
   __typename?: 'ArticleRevisionConnection';
-  edges: Array<ArticleRevisionCursor>;
   nodes: Array<ArticleRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ArticleRevisionCursor = {
-  __typename?: 'ArticleRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: ArticleRevision;
 };
 
 export type CacheRemoveInput = {
@@ -585,16 +564,9 @@ export type CommentEventsArgs = {
 
 export type CommentConnection = {
   __typename?: 'CommentConnection';
-  edges: Array<CommentEdge>;
   nodes: Array<Comment>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CommentEdge = {
-  __typename?: 'CommentEdge';
-  cursor: Scalars['String']['output'];
-  node: Comment;
 };
 
 export enum CommentStatus {
@@ -747,16 +719,9 @@ export type CoursePageRevisionThreadsArgs = {
 
 export type CoursePageRevisionConnection = {
   __typename?: 'CoursePageRevisionConnection';
-  edges: Array<CoursePageRevisionCursor>;
   nodes: Array<CoursePageRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CoursePageRevisionCursor = {
-  __typename?: 'CoursePageRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: CoursePageRevision;
 };
 
 export type CourseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
@@ -797,16 +762,9 @@ export type CourseRevisionThreadsArgs = {
 
 export type CourseRevisionConnection = {
   __typename?: 'CourseRevisionConnection';
-  edges: Array<CourseRevisionCursor>;
   nodes: Array<CourseRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type CourseRevisionCursor = {
-  __typename?: 'CourseRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: CourseRevision;
 };
 
 export type CreateCommentNotificationEvent = AbstractNotificationEvent & InstanceAware & {

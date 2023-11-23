@@ -14,15 +14,9 @@ interface AbstractUuid {
 }
 
 type AbstractUuidConnection {
-  edges: [AbstractUuidCursor!]!
   nodes: [AbstractUuid!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type AbstractUuidCursor {
-  cursor: String!
-  node: AbstractUuid!
 }
 
 type Query {

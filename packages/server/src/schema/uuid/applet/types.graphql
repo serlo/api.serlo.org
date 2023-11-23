@@ -71,13 +71,7 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
 }
 
 type AppletRevisionConnection {
-  edges: [AppletRevisionCursor!]!
   nodes: [AppletRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type AppletRevisionCursor {
-  cursor: String!
-  node: AppletRevision!
 }
