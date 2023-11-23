@@ -1,6 +1,6 @@
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { Sentry } from '~/internals/sentry'
 

@@ -1,6 +1,6 @@
 import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   Model,
