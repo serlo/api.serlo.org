@@ -63,13 +63,7 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
 }
 
 type CoursePageRevisionConnection {
-  edges: [CoursePageRevisionCursor!]!
   nodes: [CoursePageRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type CoursePageRevisionCursor {
-  cursor: String!
-  node: CoursePageRevision!
 }

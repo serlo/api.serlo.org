@@ -68,15 +68,9 @@ type ThreadsCursor {
 }
 
 type CommentConnection {
-  edges: [CommentEdge!]!
   nodes: [Comment!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type CommentEdge {
-  cursor: String!
-  node: Comment!
 }
 
 extend type Query {
