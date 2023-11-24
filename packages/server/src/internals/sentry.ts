@@ -3,7 +3,7 @@ import type {
   GraphQLRequestContextDidEncounterErrors,
 } from '@apollo/server'
 import * as Sentry from '@sentry/node'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { InvalidValueFromListener } from './data-source'
 import { InvalidCurrentValueError } from './data-source-helper'
