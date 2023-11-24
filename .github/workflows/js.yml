@@ -12,32 +12,28 @@ jobs:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn --check-cache
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
-      - run: yarn build
-      - run: yarn build:server
-      - run: yarn build:swr-queue-worker
+
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn lint:eslint
+
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn lint:prettier
+
   tsc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn lint:tsc
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +41,7 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start:redis
       - run: yarn test
+
   codegen:
     runs-on: ubuntu-latest
     steps:
