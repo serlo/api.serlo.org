@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig.prod.json",
   "ts-node": {
-    "esm": true
+    "moduleTypes": {
+      "packages/server/scripts/deploy.ts": "esm",
+      "scripts/changelog.ts": "esm",
+      "scripts/publish-pacts.ts": "esm"
+    }
   },
   "compilerOptions": {
     "importHelpers": false,
