@@ -8,6 +8,7 @@
   "main": "dist/index.js",
   "module": "dist/authorization.esm.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "_build": "tsdx build --transpileOnly --tsconfig tsconfig.prod.json",
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
