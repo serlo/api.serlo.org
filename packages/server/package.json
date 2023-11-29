@@ -8,12 +8,13 @@
   "main": "dist/index.js",
   "module": "dist/authorization.esm.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "_build": "tsdx build --transpileOnly --tsconfig tsconfig.prod.json",
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
-    "deploy:image": "NODE_OPTIONS='--experimental-specifier-resolution=node' ts-node-esm scripts/deploy.ts",
+    "deploy:image": "ts-node --experimental-specifier-resolution=node scripts/deploy",
     "prestart": "lerna run build",
     "start": "tsdx watch --transpileOnly --format cjs --target node --entry src/server.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\"",
     "start:swr-queue-worker": "tsdx watch --transpileOnly --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
