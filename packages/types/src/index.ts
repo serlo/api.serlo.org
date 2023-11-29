@@ -272,7 +272,7 @@ export type AiQuery = {
 
 
 export type AiQueryExecutePromptArgs = {
-  prompt: Scalars['String']['input'];
+  messages: Array<ChatCompletionMessageParam>;
 };
 
 export type AliasInput = {
@@ -513,6 +513,11 @@ export type CacheUpdateInput = {
 export type CacheUpdateResponse = {
   __typename?: 'CacheUpdateResponse';
   success: Scalars['Boolean']['output'];
+};
+
+export type ChatCompletionMessageParam = {
+  content: Scalars['String']['input'];
+  role: Scalars['String']['input'];
 };
 
 export type CheckoutRevisionInput = {

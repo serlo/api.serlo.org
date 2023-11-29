@@ -22,12 +22,16 @@ export async function executePrompt(args: {
   // OpenAI, we can pass the user to the model. See
   // https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids
   userId: number | null
-  prompt: string
+  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 }): Promise<Record<string, unknown>> {
-  const { userId, prompt } = args
+  const { userId, messages } = args
 
-  if (!prompt || prompt.trim() === '') {
-    throw new UserInputError('Missing prompt parameter')
+  if (
+    !messages[0].content ||
+    (typeof messages[0].content === 'string' &&
+      messages[0].content.trim() === '')
+  ) {
+    throw new UserInputError('Missing prompt within message')
   }
 
   try {
@@ -40,28 +44,23 @@ export async function executePrompt(args: {
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4-1106-preview',
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+      messages,
       temperature: 0.4,
       user: String(userId),
       response_format: { type: 'json_object' },
     })
 
-    // As we now have the response_format defined as json_object, we shouldn't
-    // need to call JSON.parse on the stringMessage. However, right now the OpenAI
-    // types seem to be broken (thinking the API is returning a string or null).
-    // Instead of fighting the types, we can simply adjust this in the next
-    // version.
     const stringMessage = response.choices[0].message.content
 
     if (!stringMessage) {
       throw new Error('No content received from LLM!')
     }
 
+    // As we now have the response_format defined as json_object, we shouldn't
+    // need to call JSON.parse on the stringMessage. However, right now the OpenAI
+    // types seem to be broken (thinking the API is returning a string or null).
+    // Instead of fighting the types, we can simply adjust this in the next
+    // version.
     const message = JSON.parse(stringMessage) as unknown
 
     if (!t.UnknownRecord.is(message)) {
