@@ -276,7 +276,7 @@ export type AiQuery = {
 
 
 export type AiQueryExecutePromptArgs = {
-  prompt: Scalars['String']['input'];
+  messages: Array<ChatCompletionMessageParam>;
 };
 
 export type AliasInput = {
@@ -517,6 +517,11 @@ export type CacheUpdateInput = {
 export type CacheUpdateResponse = {
   __typename?: 'CacheUpdateResponse';
   success: Scalars['Boolean']['output'];
+};
+
+export type ChatCompletionMessageParam = {
+  content: Scalars['String']['input'];
+  role: Scalars['String']['input'];
 };
 
 export type CheckoutRevisionInput = {
@@ -2927,6 +2932,7 @@ export type ResolversTypes = {
   CacheSetResponse: ResolverTypeWrapper<ModelOf<CacheSetResponse>>;
   CacheUpdateInput: ResolverTypeWrapper<ModelOf<CacheUpdateInput>>;
   CacheUpdateResponse: ResolverTypeWrapper<ModelOf<CacheUpdateResponse>>;
+  ChatCompletionMessageParam: ResolverTypeWrapper<ModelOf<ChatCompletionMessageParam>>;
   CheckoutRevisionInput: ResolverTypeWrapper<ModelOf<CheckoutRevisionInput>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
   CheckoutRevisionResponse: ResolverTypeWrapper<ModelOf<CheckoutRevisionResponse>>;
@@ -3132,6 +3138,7 @@ export type ResolversParentTypes = {
   CacheSetResponse: ModelOf<CacheSetResponse>;
   CacheUpdateInput: ModelOf<CacheUpdateInput>;
   CacheUpdateResponse: ModelOf<CacheUpdateResponse>;
+  ChatCompletionMessageParam: ModelOf<ChatCompletionMessageParam>;
   CheckoutRevisionInput: ModelOf<CheckoutRevisionInput>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
   CheckoutRevisionResponse: ModelOf<CheckoutRevisionResponse>;
@@ -3447,7 +3454,7 @@ export type AddRevisionResponseResolvers<ContextType = Context, ParentType exten
 };
 
 export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
-  executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'prompt'>>;
+  executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'messages'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
