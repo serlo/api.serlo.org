@@ -42,8 +42,8 @@ jobs:
           cache: yarn
           node-version-file: .tool-versions
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn --immutable --immutable-cache --check-cache
-      - run: yarn build
+      - run: yarn --immutable --immutable-cache
+      - run: yarn build:packages
       - run: echo //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN} > .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
