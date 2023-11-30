@@ -16,4 +16,3 @@ jobs:
             echo "There are uncommitted changes in the repository."
             exit 1
           fi
-
