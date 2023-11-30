@@ -1,6 +1,5 @@
 import * as auth from '@serlo/authorization'
 import { Scope } from '@serlo/authorization'
-import { either as E } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
@@ -10,12 +9,13 @@ import {
   createNamespace,
   Queries,
 } from '~/internals/graphql'
+import { OpenAIMessages } from '~/model/ai'
 
 const ChatCompletionMessageParamType = t.type({
   // Restricts role to 'user' or 'system'. Right now, we don't want to allow
   // assistant-, tool-, or function calls. See
   // https://github.com/openai/openai-node/blob/a048174c0e53269a01993a573a10f96c4c9ec79e/src/resources/chat/completions.ts#L405
-  role: t.union([t.literal("user"), t.literal("system")]),
+  role: t.union([t.literal('user'), t.literal('system')]),
   content: t.string,
 })
 
@@ -46,7 +46,7 @@ export const resolvers: Queries<'ai'> = {
 
       const record = await dataSources.model.serlo.executePrompt({
         ...payload,
-        messages: validationResult.right.messages,
+        messages: messages as OpenAIMessages,
         userId,
       })
 

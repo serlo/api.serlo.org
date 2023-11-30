@@ -17,12 +17,15 @@ function getOpenAIInstance() {
   return openai
 }
 
+export type OpenAIMessages =
+  OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+
 export async function executePrompt(args: {
   // If we want to monitor abuse and receive more actionable feedback from
   // OpenAI, we can pass the user to the model. See
   // https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids
   userId: number | null
-  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+  messages: OpenAIMessages
 }): Promise<Record<string, unknown>> {
   const { userId, messages } = args
 
