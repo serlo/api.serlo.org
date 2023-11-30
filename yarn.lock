@@ -4096,7 +4096,7 @@ __metadata:
     "@nmshd/connector-sdk": ^2.2.4
     "@ory/client": ^1.4.3
     "@sentry/node": ^7.82.0
-    "@serlo/authorization": ^0.59.0
+    "@serlo/authorization": ^0.59.1
     "@types/basic-auth": ^1.1.6
     "@types/bull-arena": ^3.0.10
     "@types/graphql-modules": ^0.59.0
@@ -4149,7 +4149,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.59.0, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.59.1, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   languageName: unknown
