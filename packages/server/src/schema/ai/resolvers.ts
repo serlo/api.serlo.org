@@ -15,7 +15,7 @@ const ChatCompletionMessageParamType = t.type({
   // Restricts role to 'user' or 'system'. Right now, we don't want to allow
   // assistant-, tool-, or function calls. See
   // https://github.com/openai/openai-node/blob/a048174c0e53269a01993a573a10f96c4c9ec79e/src/resources/chat/completions.ts#L405
-  role: t.keyof({ user: null, system: null }),
+  role: t.union([t.literal("user"), t.literal("system")]),
   content: t.string,
 })
 
