@@ -6,7 +6,6 @@ COPY scripts/build.ts scripts/build.ts
 COPY tsconfig.json .
 COPY tsconfig.prod.json .
 COPY packages/authorization/package.json packages/authorization/package.json
-COPY packages/graphql-modules/package.json packages/graphql-modules/package.json
 COPY packages/server/package.json packages/server/package.json
 COPY package.json .
 COPY lerna.json .
@@ -16,7 +15,6 @@ FROM base as build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
 COPY packages/server packages/server
-COPY packages/graphql-modules packages/graphql-modules
 RUN yarn build:server
 
 FROM base as build_node_modules
