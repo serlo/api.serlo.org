@@ -4096,10 +4096,10 @@ __metadata:
     "@nmshd/connector-sdk": ^2.2.4
     "@ory/client": ^1.4.3
     "@sentry/node": ^7.82.0
-    "@serlo/authorization": ^0.58.0
+    "@serlo/authorization": ^0.59.0
     "@types/basic-auth": ^1.1.6
     "@types/bull-arena": ^3.0.10
-    "@types/graphql-modules": ^0.58.0
+    "@types/graphql-modules": ^0.59.0
     "@types/jsonwebtoken": ^9.0.5
     "@types/pg": ^8.10.9
     "@types/ramda": ^0.29.9
@@ -4138,7 +4138,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.58.0, @serlo/api@workspace:packages/types":
+"@serlo/api@^0.59.0, @serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -4149,11 +4149,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/authorization@^0.58.0, @serlo/authorization@workspace:packages/authorization":
+"@serlo/authorization@^0.59.0, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
   dependencies:
-    "@serlo/api": ^0.58.0
+    "@serlo/api": ^0.59.0
   languageName: unknown
   linkType: soft
 
@@ -4433,7 +4433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-modules@^0.58.0, @types/graphql-modules@workspace:packages/graphql-modules":
+"@types/graphql-modules@^0.59.0, @types/graphql-modules@workspace:packages/graphql-modules":
   version: 0.0.0-use.local
   resolution: "@types/graphql-modules@workspace:packages/graphql-modules"
   languageName: unknown

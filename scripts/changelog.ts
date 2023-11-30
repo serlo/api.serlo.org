@@ -1634,6 +1634,17 @@ async function exec(): Promise<void> {
         date: '2023-11-14',
         fixed: ['Only initialize openAi instance if AI endpoint is called'],
       },
+      {
+        tagName: 'v0.59.0',
+        date: '2023-11-30',
+        breakingChanges: [
+          'AI: Add possibility to add multiple prompts / messages',
+        ],
+        internal: [
+          'Update dependencies',
+          'Use esbuild for the docker container',
+        ],
+      },
     ],
   })
 
