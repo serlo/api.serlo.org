@@ -1,9 +1,16 @@
+input ChatCompletionMessageParam {
+  role: String!
+  content: String!
+}
+
 extend type Query {
   ai: AiQuery!
 }
 
 type AiQuery {
-  executePrompt(prompt: String!): ExecutePromptResponse!
+  executePrompt(
+    messages: [ChatCompletionMessageParam!]!
+  ): ExecutePromptResponse!
 }
 
 type ExecutePromptResponse {

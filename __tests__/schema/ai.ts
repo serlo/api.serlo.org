@@ -33,16 +33,20 @@ const user = { ...baseUser, roles: ['de_reviewer'] }
 
 const query = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    query ($prompt: String!) {
+    query ($messages: [ChatCompletionMessageParam!]!) {
       ai {
-        executePrompt(prompt: $prompt) {
+        executePrompt(messages: $messages) {
           success
           record
         }
       }
     }
   `,
-  variables: { prompt: 'Generate exercise for 7th grade math in json' },
+  variables: {
+    messages: [
+      { role: 'user', content: 'Generate exercise for 7th grade math in json' },
+    ],
+  },
 })
 
 beforeAll(() => {
