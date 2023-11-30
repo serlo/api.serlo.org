@@ -9,7 +9,6 @@ import {
   createNamespace,
   Queries,
 } from '~/internals/graphql'
-import { OpenAIMessages } from '~/model/ai'
 
 const ChatCompletionMessageParamType = t.type({
   // Restricts role to 'user' or 'system'. Right now, we don't want to allow
@@ -44,7 +43,7 @@ export const resolvers: Queries<'ai'> = {
 
       const record = await dataSources.model.serlo.executePrompt({
         ...payload,
-        messages: messages as OpenAIMessages,
+        messages,
         userId,
       })
 
