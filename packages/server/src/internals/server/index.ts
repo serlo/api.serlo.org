@@ -12,8 +12,7 @@ import { createTimer } from '../timer'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
-export * from './graphql-middleware'
-export * from './swr-queue-dashboard-middleware'
+export { getGraphQLOptions } from './graphql-middleware'
 
 export async function start() {
   dotenv.config({

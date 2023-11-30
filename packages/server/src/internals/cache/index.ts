@@ -23,7 +23,7 @@ export enum Priority {
   High,
 }
 
-export interface UpdateFunction<T> {
+interface UpdateFunction<T> {
   getValue: (current?: T) => AsyncOrSync<T | undefined>
 }
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
