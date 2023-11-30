@@ -4138,7 +4138,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@^0.59.0, @serlo/api@workspace:packages/types":
+"@serlo/api@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@serlo/api@workspace:packages/types"
   dependencies:
@@ -4152,8 +4152,6 @@ __metadata:
 "@serlo/authorization@^0.59.0, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
-  dependencies:
-    "@serlo/api": ^0.59.0
   languageName: unknown
   linkType: soft
 
