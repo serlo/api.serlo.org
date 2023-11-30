@@ -38,8 +38,7 @@ export const resolvers: Queries<'ai'> = {
       })
       const { messages } = payload
 
-      const validationResult = ExecutePromptRequestType.decode({ messages })
-      if (E.isLeft(validationResult)) {
+      if (!ExecutePromptRequestType.is({ messages })) {
         throw new UserInputError(
           'Must contain exclusively user or system messages',
         )
