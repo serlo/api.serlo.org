@@ -42,7 +42,7 @@ jobs:
           cache: yarn
           node-version-file: .tool-versions
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn --immutable --immutable-cache --check-cache
+      - run: yarn --immutable --immutable-cache
       - run: yarn build
       - run: echo //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN} > .npmrc
         env:
