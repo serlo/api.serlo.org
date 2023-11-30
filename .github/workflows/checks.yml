@@ -62,7 +62,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn codegen
-      - id: changes
-        uses: UnicornGlobal/has-changes-action@v1.0.12
-      - run: echo "Outdated types. Please run \`yarn codegen\` and commit your changes." && exit 1
-        if: steps.changes.outputs.changed == 1
+      - name: Check for uncommitted changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "There are uncommitted changes in the repository."
+            exit 1
+          fi
