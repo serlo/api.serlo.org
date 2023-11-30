@@ -1645,6 +1645,11 @@ async function exec(): Promise<void> {
           'Use esbuild for the docker container',
         ],
       },
+      {
+        tagName: 'v0.59.1',
+        date: '2023-11-30',
+        internal: ['`@serlo/authorization`: Remove dependency of `@ſerlo/api`'],
+      },
     ],
   })
 
