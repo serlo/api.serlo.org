@@ -29,12 +29,12 @@ export async function executePrompt(args: {
 }): Promise<Record<string, unknown>> {
   const { userId, messages } = args
 
-  if (
-    !messages[0].content ||
-    (typeof messages[0].content === 'string' &&
-      messages[0].content.trim() === '')
-  ) {
-    throw new UserInputError('Missing prompt within message')
+  const hasEmptyMessage = messages.some(
+    ({ content }) => typeof content === 'string' && content.trim() === '',
+  )
+
+  if (hasEmptyMessage) {
+    throw new UserInputError('Missing prompt within a message')
   }
 
   try {
