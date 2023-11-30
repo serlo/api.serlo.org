@@ -17,8 +17,7 @@ function getOpenAIInstance() {
   return openai
 }
 
-export type OpenAIMessages =
-  OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+type OpenAIMessages = OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 
 export async function executePrompt(args: {
   // If we want to monitor abuse and receive more actionable feedback from
