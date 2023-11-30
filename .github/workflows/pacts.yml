@@ -10,3 +10,10 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start:redis
       - run: yarn pacts
+      - name: Check for uncommitted changes
+        run: |
+          if ! git diff --exit-code; then
+            echo "There are uncommitted changes in the repository."
+            exit 1
+          fi
+
