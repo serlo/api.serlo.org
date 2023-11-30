@@ -24,8 +24,8 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
+import { CellValues, MajorDimension } from '~/model'
 import { EntityDecoder, RevisionDecoder, UserDecoder } from '~/model/decoder'
-import { CellValues, MajorDimension } from '~/model/google-spreadsheet-api'
 import {
   getPermissionsForRole,
   getRolesWithInheritance,

@@ -36,7 +36,7 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
  * Argument type for the function {@link createMutation} with which a mutation
  * in a data source can be created.
  */
-export interface MutationSpec<Payload, Result> {
+interface MutationSpec<Payload, Result> {
   /**
    * io-ts decoder to control the returned value of the
    * mutation during runtime. An error is thrown when the returned value does not
