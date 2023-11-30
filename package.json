@@ -61,8 +61,8 @@
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.cjs --runInBand --forceExit",
-    "test:docker:server": "curl -X POST -H 'Content-type: application/json' --data '{\"query\": \"query { version }\" }' http://localhost:3001/graphql",
-    "test:docker:swr-queue-worker": "curl -s http://localhost:3030/.well-known/health | grep OK",
+    "test:docker:server": "curl --verbose -X POST -H 'Content-type: application/json' --data '{\"query\": \"query { version }\" }' http://localhost:3001/graphql",
+    "test:docker:swr-queue-worker": "curl --verbose http://localhost:3030/.well-known/health | grep OK",
     "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
