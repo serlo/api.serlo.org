@@ -9,7 +9,7 @@ export interface LockManager {
   quit(): Promise<void>
 }
 
-export interface Lock {
+interface Lock {
   unlock(): Promise<void>
 }
 

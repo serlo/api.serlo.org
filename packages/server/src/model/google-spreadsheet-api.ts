@@ -30,7 +30,7 @@ const ValueRange = t.intersection([
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
 
-export interface Arguments {
+interface Arguments {
   spreadsheetId: string
   range: string
   majorDimension?: MajorDimension

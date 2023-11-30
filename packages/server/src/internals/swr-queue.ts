@@ -26,7 +26,7 @@ export interface SwrQueue {
   _queue: never
 }
 
-export interface UpdateJob {
+interface UpdateJob {
   key: string
 }
 
