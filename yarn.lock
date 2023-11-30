@@ -4068,7 +4068,6 @@ __metadata:
     graphql: ^16.8.1
     graphql-tag: ^2.12.6
     jest: ^29.7.0
-    jest-transform-graphql: ^2.1.0
     lerna: ^8.0.0
     msw: ^2.0.9
     npm-run-all: ^4.1.5
@@ -12745,15 +12744,6 @@ __metadata:
     pretty-format: ^29.7.0
     semver: ^7.5.3
   checksum: 86821c3ad0b6899521ce75ee1ae7b01b17e6dfeff9166f2cf17f012e0c5d8c798f30f9e4f8f7f5bed01ea7b55a6bc159f5eda778311162cbfa48785447c237ad
-  languageName: node
-  linkType: hard
-
-"jest-transform-graphql@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "jest-transform-graphql@npm:2.1.0"
-  peerDependencies:
-    graphql-tag: ^2.0.0
-  checksum: 2701672d4a7f8e5ad6ac13a8092737a582c7d86be56da3b3e7775a450a661875e87e5317f61760446dbbe57aa63ef018e93cea59e042d2edcff80de74398f45a
   languageName: node
   linkType: hard
 
