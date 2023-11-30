@@ -1,4 +1,3 @@
-import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
 
@@ -8,6 +7,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { given, nextUuid, Client } from '../../__utils__'
+import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
