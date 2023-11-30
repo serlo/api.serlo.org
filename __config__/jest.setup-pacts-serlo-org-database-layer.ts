@@ -7,7 +7,6 @@ import {
   createAfterEach,
   createBeforeAll,
   createBeforeEach,
-  setup,
 } from './setup'
 import { createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
@@ -16,8 +15,6 @@ import { createSerloModel } from '~/model'
 const pactDir = path.join(__dirname, '..', 'pacts')
 
 const port = 9009
-
-setup()
 
 jest.setTimeout(60 * 1000)
 

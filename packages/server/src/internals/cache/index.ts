@@ -169,6 +169,29 @@ export function createEmptyCache(): Cache {
   }
 }
 
+export function createNamespacedCache(cache: Cache, namespace: string): Cache {
+  return {
+    get(args) {
+      return cache.get({ ...args, key: namespace + args.key })
+    },
+    set(args) {
+      return cache.set({ ...args, key: namespace + args.key })
+    },
+    remove(args) {
+      return cache.remove({ ...args, key: namespace + args.key })
+    },
+    ready() {
+      return cache.ready()
+    },
+    flush() {
+      return cache.flush()
+    },
+    quit() {
+      return cache.quit()
+    },
+  }
+}
+
 export interface CacheEntry<Value> {
   value: Value
   lastModified: number
