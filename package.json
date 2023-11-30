@@ -19,6 +19,7 @@
     "_build": "ts-node --experimental-specifier-resolution=node scripts/build",
     "build:server": "yarn _build packages/server/src/server.ts server.cjs",
     "build:swr-queue-worker": "yarn _build packages/server/src/swr-queue-worker.ts swr-queue-worker.cjs",
+    "build:packages": "yarn lerna run build",
     "changelog": "ts-node-esm scripts/changelog.ts",
     "check:all": "scripts/run_all_checks.sh",
     "check:unused-dependencies": "depcheck",
