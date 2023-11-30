@@ -20,10 +20,6 @@ updates:
     directory: 'packages/server'
     schedule:
       interval: 'weekly'
-  - package-ecosystem: 'npm'
-    directory: 'packages/types'
-    schedule:
-      interval: 'weekly'
 
   - package-ecosystem: 'docker'
     directory: 'packages/server/docker/server'
