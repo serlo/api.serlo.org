@@ -1578,12 +1578,12 @@
         "body": {
           "__typename": "RemoveEntityLinkNotificationEvent",
           "actorId": 1,
-          "childId": 29648,
+          "childId": 18521,
           "date": "2014-03-01T20:45:56Z",
           "id": 55273,
           "instance": "de",
-          "objectId": 29648,
-          "parentId": 29637
+          "objectId": 18521,
+          "parentId": 18514
         },
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
@@ -4016,7 +4016,6 @@
           "revisionIds": [
             2220
           ],
-          "solutionId": 29648,
           "trashed": false
         },
         "headers": {
@@ -4054,9 +4053,6 @@
           "$.body.revisionIds": {
             "match": "type",
             "min": 1
-          },
-          "$.body.solutionId": {
-            "match": "type"
           },
           "$.body.trashed": {
             "match": "type"
@@ -4228,7 +4224,6 @@
           "revisionIds": [
             29638
           ],
-          "solutionId": 29648,
           "taxonomyTermIds": [
             5
           ],
@@ -4266,9 +4261,6 @@
           "$.body.revisionIds": {
             "match": "type",
             "min": 1
-          },
-          "$.body.solutionId": {
-            "match": "type"
           },
           "$.body.taxonomyTermIds": {
             "match": "type",
