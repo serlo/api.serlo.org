@@ -1,5 +1,3 @@
-import { Instance } from '@serlo/api'
-
 export enum Scope {
   Serlo = 'serlo.org',
   Serlo_De = 'serlo.org:de',
@@ -8,6 +6,15 @@ export enum Scope {
   Serlo_Fr = 'serlo.org:fr',
   Serlo_Hi = 'serlo.org:hi',
   Serlo_Ta = 'serlo.org:ta',
+}
+
+enum Instance {
+  De = 'de',
+  En = 'en',
+  Es = 'es',
+  Fr = 'fr',
+  Hi = 'hi',
+  Ta = 'ta',
 }
 
 export function formatScope(scope: string): Scope {
