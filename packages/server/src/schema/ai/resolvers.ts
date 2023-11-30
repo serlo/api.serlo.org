@@ -19,9 +19,7 @@ const ChatCompletionMessageParamType = t.type({
   content: t.string,
 })
 
-const ExecutePromptRequestType = t.type({
-  messages: t.array(ChatCompletionMessageParamType),
-})
+const ExecutePromptRequestType = t.array(ChatCompletionMessageParamType)
 
 export const resolvers: Queries<'ai'> = {
   Query: {
