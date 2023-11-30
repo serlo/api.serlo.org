@@ -4138,17 +4138,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/api@workspace:packages/types":
-  version: 0.0.0-use.local
-  resolution: "@serlo/api@workspace:packages/types"
-  dependencies:
-    "@graphql-codegen/add": ^5.0.0
-    "@graphql-codegen/cli": ^5.0.0
-    "@graphql-codegen/typescript": ^4.0.1
-    graphql: ^16.8.1
-  languageName: unknown
-  linkType: soft
-
 "@serlo/authorization@^0.59.0, @serlo/authorization@workspace:packages/authorization":
   version: 0.0.0-use.local
   resolution: "@serlo/authorization@workspace:packages/authorization"
