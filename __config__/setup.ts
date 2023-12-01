@@ -35,21 +35,19 @@ export class MockTimer implements Timer {
   }
 }
 
-export function createBeforeAll() {
+export async function createBeforeAll() {
   initializeSentry({
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
     context: 'testing',
   })
 
-  const timer = new MockTimer()
-  const server = setupServer()
-  const kratos = new MockKratos()
+  global.timer = new MockTimer()
+  global.baseCache = createCache({ timer: global.timer })
+  global.server = setupServer()
+  global.kratos = new MockKratos()
 
-  global.server = server
-  global.timer = timer
-  global.kratos = kratos
-
+  await global.baseCache.ready()
   global.server.listen({
     async onUnhandledRequest(req) {
       // eslint-disable-next-line no-console
@@ -64,11 +62,8 @@ export function createBeforeAll() {
   })
 }
 
-export async function createBeforeEach() {
-  const baseCache = createCache({ timer: global.timer })
+export function createBeforeEach() {
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
-
-  await global.cache.ready()
 
   givenSpreadheetApi(defaultSpreadsheetApi())
 
@@ -92,14 +87,14 @@ export async function createBeforeEach() {
 export async function createAfterEach() {
   await flushSentry()
   global.server.resetHandlers()
-  await global.cache.quit()
+}
+
+export async function createAfterAll() {
+  global.server.close()
+  await global.baseCache.quit()
   // redis.quit() creates a thread to close the connection.
   // We wait until all threads have been run once to ensure the connection closes.
   await new Promise((resolve) => setImmediate(resolve))
-}
-
-export function createAfterAll() {
-  global.server.close()
 }
 
 function generateRandomString(length: number) {

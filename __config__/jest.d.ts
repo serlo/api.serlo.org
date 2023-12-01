@@ -9,6 +9,7 @@ export {}
 declare global {
   /* eslint-disable no-var */
   var cache: Cache
+  var baseCache: Cache
   var server: ReturnType<typeof import('msw/node').setupServer>
   var timer: MockTimer
   var sentryEvents: Event[]
