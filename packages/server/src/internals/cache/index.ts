@@ -6,7 +6,6 @@ import * as R from 'ramda'
 
 import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
-import { redisUrl } from '../redis-url'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
 import { AsyncOrSync } from '~/utils'
@@ -45,7 +44,7 @@ export interface Cache {
 }
 
 export function createCache({ timer }: { timer: Timer }): Cache {
-  const client = new Redis(redisUrl)
+  const client = new Redis(process.env.REDIS_URL)
   const lockManagers: Record<Priority, LockManager> = {
     [Priority.Low]: createLockManager({
       retryCount: 0,
