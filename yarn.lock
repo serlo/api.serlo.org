@@ -4099,7 +4099,6 @@ __metadata:
     "@serlo/authorization": ^0.59.1
     "@types/basic-auth": ^1.1.6
     "@types/bull-arena": ^3.0.10
-    "@types/graphql-modules": ^0.59.0
     "@types/jsonwebtoken": ^9.0.5
     "@types/pg": ^8.10.9
     "@types/ramda": ^0.29.9
@@ -4419,12 +4418,6 @@ __metadata:
   checksum: c3070ccdc9ca0f40df747bced1c96c71a61992d6f7c767e8fd24bb6a3c2de26e8b84135ede000b7e79db530a23e7e88dcd9db60eee6395d0f4ce1dae91369dd4
   languageName: node
   linkType: hard
-
-"@types/graphql-modules@^0.59.0, @types/graphql-modules@workspace:packages/graphql-modules":
-  version: 0.0.0-use.local
-  resolution: "@types/graphql-modules@workspace:packages/graphql-modules"
-  languageName: unknown
-  linkType: soft
 
 "@types/ioredis@npm:^4.28.10":
   version: 4.28.10
