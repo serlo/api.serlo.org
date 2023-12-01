@@ -35,7 +35,6 @@
     "@serlo/authorization": "^0.59.1-staging.0",
     "@types/basic-auth": "^1.1.6",
     "@types/bull-arena": "^3.0.10",
-    "@types/graphql-modules": "^0.59.1-staging.0",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/pg": "^8.10.9",
     "@types/ramda": "^0.29.9",

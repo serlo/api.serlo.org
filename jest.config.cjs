@@ -1,15 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires,import/no-commonjs */
-const { pathsToModuleNameMapper } = require('ts-jest')
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,import/extensions
-const { compilerOptions } = require('./tsconfig.json')
-
 module.exports = {
   modulePaths: ['<rootDir>/packages'],
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   moduleNameMapper: {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument
-    ...pathsToModuleNameMapper(compilerOptions.paths),
+    '^~/(.*)$': 'server/src/$1',
     '@serlo/api': '@serlo/api/src',
     '@serlo/authorization': '@serlo/authorization/src',
   },

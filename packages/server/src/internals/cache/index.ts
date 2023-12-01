@@ -6,7 +6,6 @@ import * as R from 'ramda'
 
 import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
-import { redisUrl } from '../redis-url'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
 import { AsyncOrSync } from '~/utils'
@@ -23,7 +22,7 @@ export enum Priority {
   High,
 }
 
-export interface UpdateFunction<T> {
+interface UpdateFunction<T> {
   getValue: (current?: T) => AsyncOrSync<T | undefined>
 }
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
@@ -45,7 +44,7 @@ export interface Cache {
 }
 
 export function createCache({ timer }: { timer: Timer }): Cache {
-  const client = new Redis(redisUrl)
+  const client = new Redis(process.env.REDIS_URL)
   const lockManagers: Record<Priority, LockManager> = {
     [Priority.Low]: createLockManager({
       retryCount: 0,
@@ -95,9 +94,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       const packedValue = msgpack.encode(valueWithTimestamp)
       await client.set(key, packedValue)
 
-      if (ttlInSeconds != null) {
-        await client.expire(key, ttlInSeconds)
-      }
+      await client.expire(key, ttlInSeconds ?? 60 * 60 * 24 * 3)
     } catch (e) {
       log.error(`Failed to set key "${key}":`, e)
       throw e
@@ -166,6 +163,29 @@ export function createEmptyCache(): Cache {
     ready: async () => {},
     flush: async () => {},
     quit: async () => {},
+  }
+}
+
+export function createNamespacedCache(cache: Cache, namespace: string): Cache {
+  return {
+    get(args) {
+      return cache.get({ ...args, key: namespace + args.key })
+    },
+    set(args) {
+      return cache.set({ ...args, key: namespace + args.key })
+    },
+    remove(args) {
+      return cache.remove({ ...args, key: namespace + args.key })
+    },
+    ready() {
+      return cache.ready()
+    },
+    flush() {
+      return cache.flush()
+    },
+    quit() {
+      return cache.quit()
+    },
   }
 }
 

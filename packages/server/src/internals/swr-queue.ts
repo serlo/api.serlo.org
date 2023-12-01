@@ -9,7 +9,6 @@ import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
 import { log } from './log'
-import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
 
@@ -26,7 +25,7 @@ export interface SwrQueue {
   _queue: never
 }
 
-export interface UpdateJob {
+interface UpdateJob {
   key: string
 }
 
@@ -67,9 +66,7 @@ export function createSwrQueue({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     isWorker: false,
     removeOnFailure: true,
     removeOnSuccess: true,
@@ -162,9 +159,7 @@ export function createSwrQueueWorker({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     removeOnFailure: true,
     removeOnSuccess: true,
   })
@@ -188,6 +183,7 @@ export function createSwrQueueWorker({
 
       await cache.set({
         key,
+        ttlInSeconds: spec.maxAge ? timeToSeconds(spec.maxAge) : undefined,
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
@@ -313,7 +309,7 @@ export interface Time {
   seconds?: number
 }
 
-export function timeToMilliseconds({
+export function timeToSeconds({
   day = 0,
   days = 0,
   hour = 0,
@@ -323,7 +319,7 @@ export function timeToMilliseconds({
   second = 0,
   seconds = 0,
 }: Time) {
-  const SECOND = 1000
+  const SECOND = 1
   const MINUTE = 60 * SECOND
   const HOUR = 60 * MINUTE
   const DAY = 24 * HOUR
@@ -334,6 +330,10 @@ export function timeToMilliseconds({
     (minute + minutes) * MINUTE +
     (second + seconds) * SECOND
   )
+}
+
+export function timeToMilliseconds(time: Time) {
+  return timeToSeconds(time) * 1000
 }
 
 function reportError({

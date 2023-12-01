@@ -1,4 +1,3 @@
-import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
 
@@ -10,6 +9,7 @@ import {
 } from '../../../__fixtures__'
 import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
 import { encodeSubjectId } from '~/schema/subject/utils'
+import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {

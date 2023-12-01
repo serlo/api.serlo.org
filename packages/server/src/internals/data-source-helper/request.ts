@@ -7,7 +7,7 @@ import { InvalidCurrentValueError } from './common'
 /**
  * Specification object for a request function.
  */
-export interface RequestSpec<Payload, Result> {
+interface RequestSpec<Payload, Result> {
   /**
    * io-ts decoder which is used during runtime to check whether the returned
    * value is of the aspected type.
@@ -23,7 +23,7 @@ export interface RequestSpec<Payload, Result> {
 /**
  * Type of a request operation in a data source.
  */
-export type Request<Payload, Result> = (Payload extends undefined
+type Request<Payload, Result> = (Payload extends undefined
   ? () => Promise<Result>
   : (payload: Payload) => Promise<Result>) & {
   _querySpec: RequestSpec<Payload, Result>
