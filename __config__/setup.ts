@@ -1,3 +1,4 @@
+import { flush as flushSentry } from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { SetupServer, setupServer } from 'msw/node'
@@ -61,7 +62,7 @@ export async function createBeforeEach() {
   givenSpreadheetApi(defaultSpreadsheetApi())
 
   global.server.use(
-    http.post('https://127.0.0.1/api/0/envelope', async ({ request }) => {
+    http.post('https://127.0.0.1/api/0/envelope/', async ({ request }) => {
       const text = await request.text()
       global.sentryEvents.push(
         ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
@@ -78,6 +79,7 @@ export async function createBeforeEach() {
 }
 
 export async function createAfterEach() {
+  await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()
   // redis.quit() creates a thread to close the connection.
