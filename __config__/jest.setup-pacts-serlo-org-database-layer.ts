@@ -26,7 +26,11 @@ global.pact = new Pact({
 })
 
 beforeAll(async () => {
-  await createBeforeAll({ onUnhandledRequest: 'bypass' })
+  createBeforeAll({
+    onUnhandledRequest(req) {
+      return bypass(req)
+    },
+  })
   await global.pact.setup()
 })
 
