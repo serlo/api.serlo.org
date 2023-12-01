@@ -5,8 +5,3 @@ services:
     image: redis:6.0
     ports:
       - '6379:6379'
-
-  redis-test:
-    image: redis:6.0
-    ports:
-      - '6380:6379'
