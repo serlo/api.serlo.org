@@ -51,19 +51,14 @@ export function createBeforeAll() {
   global.kratos = kratos
 
   global.server.listen({
-    onUnhandledRequest(req) {
-      if (
-        req.method === 'POST' &&
-        req.url.includes(process.env.SERLO_ORG_DATABASE_LAYER_HOST)
-      ) {
-        console.error('Found an unhandled request for message %s', req.text())
-      } else {
-        console.error(
-          'Found an unhandled %s request to %s',
-          req.method,
-          req.url,
-        )
-      }
+    async onUnhandledRequest(req) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'Found an unhandled %s request to %s with body %s',
+        req.method,
+        req.url,
+        await req.text(),
+      )
     },
   })
 }
