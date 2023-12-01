@@ -1,5 +1,5 @@
 import { Pact } from '@pact-foundation/pact'
-import { bypass, http } from 'msw'
+import { bypass, http, passthrough } from 'msw'
 import path from 'path'
 
 import {
@@ -26,11 +26,7 @@ global.pact = new Pact({
 })
 
 beforeAll(async () => {
-  createBeforeAll({
-    onUnhandledRequest(req) {
-      return bypass(req)
-    },
-  })
+  createBeforeAll({})
   await global.pact.setup()
 })
 
@@ -41,7 +37,7 @@ beforeEach(async () => {
       new RegExp(process.env.SERLO_ORG_DATABASE_LAYER_HOST.replace('.', '\\.')),
       async ({ request }) => {
         const url = new URL(request.url)
-        return fetch(`http://127.0.0.1:${port}${url.pathname}`, request)
+        return fetch(bypass(`http://127.0.0.1:${port}${url.pathname}`, request))
       },
     ),
   )
