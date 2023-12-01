@@ -13,15 +13,7 @@ updates:
     schedule:
       interval: 'weekly'
   - package-ecosystem: 'npm'
-    directory: 'packages/graphql-modules'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'npm'
     directory: 'packages/server'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'npm'
-    directory: 'packages/types'
     schedule:
       interval: 'weekly'
 
