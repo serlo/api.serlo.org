@@ -43,6 +43,7 @@ export function createGoogleSpreadsheetApiModel({
 }) {
   const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
     {
+      type: 'google-spreadsheets-api',
       enableSwr: true,
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
