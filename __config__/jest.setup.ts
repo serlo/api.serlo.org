@@ -25,24 +25,7 @@ jest.mock('@google-cloud/storage', () => {
   }
 })
 
-beforeAll(() => {
-  createBeforeAll({
-    onUnhandledRequest(req) {
-      if (
-        req.method === 'POST' &&
-        req.url.includes(process.env.SERLO_ORG_DATABASE_LAYER_HOST)
-      ) {
-        console.error('Found an unhandled request for message %s', req.text())
-      } else {
-        console.error(
-          'Found an unhandled %s request to %s',
-          req.method,
-          req.url,
-        )
-      }
-    },
-  })
-})
+beforeAll(createBeforeAll)
 
 beforeEach(createBeforeEach)
 
