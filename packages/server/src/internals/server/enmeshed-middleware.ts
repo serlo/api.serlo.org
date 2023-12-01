@@ -59,7 +59,7 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-const EventBody = t.type({
+const GenericEventBody = t.type({
   trigger: t.string,
 })
 
@@ -80,9 +80,24 @@ const Relationship = t.type({
 
 type Relationship = t.TypeOf<typeof Relationship>
 
-const RelationshipChangedEventBody = t.type({
-  data: Relationship,
-  trigger: t.literal('transport.relationshipChanged'),
+const Attribute = t.type({
+  id: t.string,
+  content: t.type({
+    '@type': t.union([
+      t.literal('IdentityAttribute'),
+      t.literal('RelationshipAttribute'),
+    ]),
+    owner: t.string,
+    value: t.unknown,
+  }),
+})
+
+const EventBody = t.type({
+  data: t.union([Relationship, Attribute]),
+  trigger: t.union([
+    t.literal('transport.relationshipChanged'),
+    t.literal('consumption.attributeCreated'),
+  ]),
 })
 
 const Session = t.intersection([
@@ -397,62 +412,68 @@ function createEnmeshedWebhookMiddleware(
 
     const body = req.body as unknown
 
-    if (!EventBody.is(body)) {
+    if (!GenericEventBody.is(body)) {
       res.status(400).send('Illegal trigger body')
       return
     }
 
-    if (body.trigger !== 'transport.relationshipChanged') {
+    if (
+      body.trigger !== 'transport.relationshipChanged' &&
+      body.trigger !== 'consumption.attributeCreated'
+    ) {
       res.sendStatus(200)
       return
     }
 
-    if (!RelationshipChangedEventBody.is(body)) {
+    if (!EventBody.is(body)) {
       captureErrorEvent({
-        error: new Error('Illegal body for relationship change event'),
+        error: new Error('Illegal body event'),
         errorContext: { body, route: '/enmeshed/webhook' },
       })
       res.status(400).send('Illegal trigger body')
       return
     }
 
-    const relationship = body.data
+    const data = body.data
 
-    const sessionId =
-      relationship.template.content?.onNewRelationship?.metadata?.sessionId ??
-      null
+    if (Relationship.is(data)) {
+      const sessionId =
+        data.template.content?.onNewRelationship?.metadata?.sessionId ?? null
 
-    for (const change of relationship.changes) {
-      if (
-        [ConnectorRelationshipChangeType.CREATION as string].includes(
-          change.type,
-        ) &&
-        [
-          ConnectorRelationshipChangeStatus.PENDING as string,
-          ConnectorRelationshipChangeStatus.REJECTED as string,
-        ].includes(change.status)
-      ) {
-        await acceptRelationshipRequest(relationship, change, client)
-        if (!sessionId) {
-          await sendWelcomeMessage({ relationship, client })
-          await sendAttributesChangeRequest({ relationship, client })
+      for (const change of data.changes) {
+        if (
+          [ConnectorRelationshipChangeType.CREATION as string].includes(
+            change.type,
+          ) &&
+          [
+            ConnectorRelationshipChangeStatus.PENDING as string,
+            ConnectorRelationshipChangeStatus.REJECTED as string,
+          ].includes(change.status)
+        ) {
+          await acceptRelationshipRequest(data, change, client)
+          if (!sessionId) {
+            await sendWelcomeMessage({ relationship: data, client })
+            await sendAttributesChangeRequest({ relationship: data, client })
+          }
         }
       }
-    }
 
-    // FIXME: Uncomment next line when prototype frontend has been replaced
-    // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
-    const session = await getSession(cache, sessionId)
+      // FIXME: Uncomment next line when prototype frontend has been replaced
+      // if (!sessionId) return validationError(res, 'Missing required parameter: sessionId.')
+      const session = await getSession(cache, sessionId)
 
-    if (session) {
-      await setSession(cache, sessionId, {
-        relationshipTemplateId: relationship.template.id,
-        content: relationship.template.content as Session['content'],
-      })
+      if (session) {
+        await setSession(cache, sessionId, {
+          relationshipTemplateId: data.template.id,
+          enmeshedId: data.peer,
+          content: data.template.content as Session['content'],
+        })
+      }
     }
 
     res.status(200).end('')
   }
+
   return (request, response) => {
     handleRequest(request, response).catch((error: Error) => {
       captureErrorEvent({

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.59.2](https://github.com/serlo/api.serlo.org/compare/v0.59.1..v0.59.2) - December 1, 2023
+
+### Fixed
+
+- Fix enmeshed endpoints to reenable user journey
+
+- Set always a ttl for each key
+
+### Internal
+
+- Add pact tests to github repo
+
+- Remove unnecessary test redis
+
+- Improve CI speed
+
+- Make tests run parallel
+
 ## [v0.59.1](https://github.com/serlo/api.serlo.org/compare/v0.59.0..v0.59.1) - November 30, 2023
 
 ### Internal
