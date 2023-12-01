@@ -46,6 +46,7 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
+        payload,
         validationErrors: reporter.report(decodedResult),
       })
     }
