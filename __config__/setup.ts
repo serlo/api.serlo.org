@@ -62,7 +62,7 @@ export async function createBeforeEach() {
   givenSpreadheetApi(defaultSpreadsheetApi())
 
   global.server.use(
-    http.post('https://127.0.0.1/api/0/envelope', async ({ request }) => {
+    http.post('https://127.0.0.1/api/0/envelope/', async ({ request }) => {
       const text = await request.text()
       global.sentryEvents.push(
         ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
