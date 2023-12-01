@@ -26,7 +26,7 @@ global.pact = new Pact({
 })
 
 beforeAll(async () => {
-  createBeforeAll({})
+  createBeforeAll()
   await global.pact.setup()
 })
 
