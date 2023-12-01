@@ -23,6 +23,7 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
         validationErrors: reporter.report(decodedResult),
+        payload,
       })
     }
   }

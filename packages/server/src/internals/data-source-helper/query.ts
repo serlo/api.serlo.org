@@ -67,6 +67,7 @@ export function createQuery<P, R>(
         invalidCurrentValue: value,
         decoder: decoder.name,
         validationErrors: reporter.report(decoded),
+        payload,
         key,
       })
     }
