@@ -3,7 +3,6 @@ import Bee from 'bee-queue'
 import createMiddleware from 'bull-arena'
 import { Express, RequestHandler } from 'express'
 
-import { redisUrl } from '~/internals/redis-url'
 import { queueName } from '~/internals/swr-queue'
 
 export function applySwrQueueDashboardMiddleware({ app }: { app: Express }) {
@@ -42,7 +41,7 @@ function createDashboardMiddleware(): RequestHandler {
           name: queueName,
           hostId: 'SWR Queue',
           type: 'bee',
-          url: redisUrl,
+          url: process.env.REDIS_URL,
         },
       ],
     },

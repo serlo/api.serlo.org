@@ -2,7 +2,6 @@ import Redis from 'ioredis'
 import Redlock from 'redlock'
 
 import { log } from '../log'
-import { redisUrl } from '../redis-url'
 
 export interface LockManager {
   lock(key: string): Promise<Lock>
@@ -18,7 +17,7 @@ export function createLockManager({
 }: {
   retryCount: number
 }): LockManager {
-  const client = new Redis(redisUrl)
+  const client = new Redis(process.env.REDIS_URL)
   const redlock = new Redlock([client], { retryCount })
 
   redlock.on('clientError', function (err) {
