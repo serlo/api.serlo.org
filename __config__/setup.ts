@@ -1,7 +1,7 @@
 import { flush as flushSentry } from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
-import { SetupServer, setupServer } from 'msw/node'
+import { setupServer } from 'msw/node'
 
 import {
   defaultSpreadsheetApi,
@@ -35,7 +35,7 @@ export class MockTimer implements Timer {
   }
 }
 
-export function createBeforeAll(options: Parameters<SetupServer['listen']>[0]) {
+export function createBeforeAll() {
   initializeSentry({
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
@@ -50,7 +50,18 @@ export function createBeforeAll(options: Parameters<SetupServer['listen']>[0]) {
   global.timer = timer
   global.kratos = kratos
 
-  global.server.listen(options)
+  global.server.listen({
+    async onUnhandledRequest(req) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'Found an unhandled %s request to %s with body %s',
+        req.method,
+        req.url,
+        await req.text(),
+      )
+      return 'error'
+    },
+  })
 }
 
 export async function createBeforeEach() {
