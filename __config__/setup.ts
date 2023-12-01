@@ -59,6 +59,7 @@ export function createBeforeAll() {
         req.url,
         await req.text(),
       )
+      return 'error'
     },
   })
 }
