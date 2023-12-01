@@ -1650,6 +1650,20 @@ async function exec(): Promise<void> {
         date: '2023-11-30',
         internal: ['`@serlo/authorization`: Remove dependency of `@ſerlo/api`'],
       },
+      {
+        tagName: 'v0.59.2',
+        date: '2023-12-01',
+        internal: [
+          'Add pact tests to github repo',
+          'Remove unnecessary test redis',
+          'Improve CI speed',
+          'Make tests run parallel',
+        ],
+        fixed: [
+          'Fix enmeshed endpoints to reenable user journey',
+          'Set always a ttl for each key',
+        ],
+      },
     ],
   })
 
