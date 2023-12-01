@@ -25,8 +25,8 @@ jest.mock('@google-cloud/storage', () => {
   }
 })
 
-beforeAll(async () => {
-  await createBeforeAll({
+beforeAll(() => {
+  createBeforeAll({
     onUnhandledRequest(req) {
       if (
         req.method === 'POST' &&
