@@ -1,5 +1,6 @@
 import express, { Express } from 'express'
 import type { Server } from 'http'
+import { bypass } from 'msw'
 
 import { given } from '../__utils__'
 import { Kratos } from '~/internals/authentication'
@@ -135,28 +136,30 @@ function fetchKratosRegister({
   withKratosKey?: boolean
   body?: unknown
 }) {
-  return fetch(`http://localhost:${port}/kratos/register`, {
-    method: 'POST',
-    headers: {
-      'x-msw-bypass': 'true',
-      'content-type': `application/json`,
-      ...(withKratosKey
-        ? { 'x-kratos-key': process.env.SERVER_KRATOS_SECRET }
-        : {}),
-    },
-    ...(body != null ? { body: JSON.stringify(body) } : {}),
-  })
+  return fetch(
+    bypass(`http://localhost:${port}/kratos/register`, {
+      method: 'POST',
+      headers: {
+        'content-type': `application/json`,
+        ...(withKratosKey
+          ? { 'x-kratos-key': process.env.SERVER_KRATOS_SECRET }
+          : {}),
+      },
+      ...(body != null ? { body: JSON.stringify(body) } : {}),
+    }),
+  )
 }
 
 function fetchKratosSingleLogout(body?: string | undefined) {
-  return fetch(`http://localhost:${port}/kratos/single-logout`, {
-    method: 'POST',
-    headers: {
-      'x-msw-bypass': 'true',
-      'content-type': `application/x-www-form-urlencoded`,
-    },
-    ...(body != null ? { body } : {}),
-  })
+  return fetch(
+    bypass(`http://localhost:${port}/kratos/single-logout`, {
+      method: 'POST',
+      headers: {
+        'content-type': `application/x-www-form-urlencoded`,
+      },
+      ...(body != null ? { body } : {}),
+    }),
+  )
 }
 
 function createKratosMiddlewareBeforeEach(done: jest.DoneCallback) {
