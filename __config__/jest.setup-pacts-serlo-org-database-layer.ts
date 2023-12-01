@@ -1,5 +1,5 @@
 import { Pact } from '@pact-foundation/pact'
-import { http } from 'msw'
+import { bypass, http } from 'msw'
 import path from 'path'
 
 import {
@@ -58,7 +58,7 @@ afterEach(async () => {
   try {
     await global.pact.verify()
   } finally {
-    createAfterEach()
+    await createAfterEach()
   }
 })
 
@@ -66,7 +66,7 @@ afterAll(async () => {
   try {
     await global.pact.finalize()
   } finally {
-    await createAfterAll()
+    createAfterAll()
   }
 })
 
