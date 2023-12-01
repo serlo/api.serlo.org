@@ -9,7 +9,6 @@ import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
 import { log } from './log'
-import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
 
@@ -67,9 +66,7 @@ export function createSwrQueue({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     isWorker: false,
     removeOnFailure: true,
     removeOnSuccess: true,
@@ -162,9 +159,7 @@ export function createSwrQueueWorker({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     removeOnFailure: true,
     removeOnSuccess: true,
   })
