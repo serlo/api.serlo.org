@@ -13,6 +13,7 @@ import { DatabaseLayer } from '~/model'
 const basePath = '/kratos'
 
 const createLegacyUser = createRequest({
+  type: 'UserCreateMutation',
   decoder: DatabaseLayer.getDecoderFor('UserCreateMutation'),
   async getCurrentValue(payload: DatabaseLayer.Payload<'UserCreateMutation'>) {
     return DatabaseLayer.makeRequest('UserCreateMutation', payload)

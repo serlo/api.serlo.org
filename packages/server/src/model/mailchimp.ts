@@ -4,6 +4,7 @@ import { createMutation } from '~/internals/data-source-helper'
 
 export function createMailchimpModel() {
   const deleteEmailPermanently = createMutation({
+    type: 'mailchimp/delete-user',
     decoder: t.union([
       t.strict({ success: t.literal(true) }),
       t.strict({ success: t.literal(false), mailchimpResponse: t.unknown }),

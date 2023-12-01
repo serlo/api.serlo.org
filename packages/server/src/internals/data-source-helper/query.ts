@@ -68,6 +68,7 @@ export function createQuery<P, R>(
         decoder: decoder.name,
         validationErrors: reporter.report(decoded),
         payload,
+        type: spec.type,
         key,
       })
     }
@@ -165,6 +166,8 @@ export interface QuerySpec<Payload, Result> {
   getPayload: (key: string) => O.Option<Payload>
 
   examplePayload: Payload
+
+  type: string
 }
 
 /**

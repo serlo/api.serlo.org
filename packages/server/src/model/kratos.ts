@@ -14,6 +14,7 @@ export function createKratosModel({
 }) {
   const getUserLanguage = createQuery(
     {
+      type: 'kratos.serlo.org/get-user-language',
       decoder: t.union([InstanceDecoder, t.null]),
       enableSwr: true,
       staleAfter: { days: 30 },
@@ -49,6 +50,7 @@ export function createKratosModel({
 
   const getLastLogin = createQuery(
     {
+      type: 'kratos.serlo.org/get-last-login',
       decoder: t.union([t.string, t.null]),
       enableSwr: true,
       staleAfter: { days: 1 },

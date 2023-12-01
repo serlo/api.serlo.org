@@ -8,6 +8,7 @@ export class InvalidCurrentValueError extends Error {
       invalidCurrentValue: unknown
       decoder: string
       validationErrors: string[]
+      type?: string
       payload: unknown
       key?: string
     },
