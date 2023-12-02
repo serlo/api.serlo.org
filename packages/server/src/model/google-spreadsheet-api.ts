@@ -82,7 +82,7 @@ export function createGoogleSpreadsheetApiModel({
           return specifyErrorLocation(E.left({ error: E.toError(error) }))
         }
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { hours: 1 },
       getKey: (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows

@@ -299,37 +299,19 @@ async function shouldProcessJob({
 }
 
 export interface Time {
-  day?: number
   days?: number
-  hour?: number
   hours?: number
-  minute?: number
   minutes?: number
-  second?: number
   seconds?: number
 }
 
 export function timeToSeconds({
-  day = 0,
   days = 0,
-  hour = 0,
   hours = 0,
-  minute = 0,
   minutes = 0,
-  second = 0,
   seconds = 0,
 }: Time) {
-  const SECOND = 1
-  const MINUTE = 60 * SECOND
-  const HOUR = 60 * MINUTE
-  const DAY = 24 * HOUR
-
-  return (
-    (day + days) * DAY +
-    (hour + hours) * HOUR +
-    (minute + minutes) * MINUTE +
-    (second + seconds) * SECOND
-  )
+  return ((days * 24 + hours) * 60 + minutes) * 60 + seconds
 }
 
 export function timeToMilliseconds(time: Time) {
