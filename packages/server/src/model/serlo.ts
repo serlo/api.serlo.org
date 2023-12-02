@@ -39,7 +39,7 @@ export function createSerloModel({
         const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
         return isSupportedUuid(uuid) ? uuid : null
       },
-      staleAfter: { day: 1 },
+      staleAfter: { days: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -86,7 +86,7 @@ export function createSerloModel({
       getCurrentValue() {
         return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { hours: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-authors'
       },
@@ -106,7 +106,7 @@ export function createSerloModel({
       getCurrentValue() {
         return DatabaseLayer.makeRequest('ActiveReviewersQuery', undefined)
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { hours: 1 },
       getKey: () => {
         return 'de.serlo.org/api/user/active-reviewers'
       },
@@ -225,7 +225,7 @@ export function createSerloModel({
         })
       },
       enableSwr: true,
-      staleAfter: { day: 1 },
+      staleAfter: { days: 1 },
       getKey: ({ path, instance }) => {
         const cleanPath = encodePath(decodePath(path))
         return `${instance}.serlo.org/api/alias${cleanPath}`
@@ -249,7 +249,7 @@ export function createSerloModel({
         return DatabaseLayer.makeRequest('SubjectsQuery', {})
       },
       enableSwr: true,
-      staleAfter: { day: 1 },
+      staleAfter: { days: 1 },
       getKey: () => 'serlo.org/subjects',
       getPayload: (key) => {
         return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
@@ -267,7 +267,7 @@ export function createSerloModel({
       },
       enableSwr: true,
       staleAfter: { minutes: 2 },
-      maxAge: { hour: 1 },
+      maxAge: { hours: 1 },
       getKey: () => 'serlo.org/unrevised',
       getPayload: (key) => {
         return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
@@ -307,7 +307,7 @@ export function createSerloModel({
         return isSupportedNotificationEvent(event) ? event : null
       },
       enableSwr: true,
-      staleAfter: { day: 1 },
+      staleAfter: { days: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/event/${id}`
       },
@@ -355,8 +355,8 @@ export function createSerloModel({
         }
       },
       enableSwr: true,
-      staleAfter: { minute: 2 },
-      maxAge: { hour: 1 },
+      staleAfter: { minutes: 2 },
+      maxAge: { hours: 1 },
       examplePayload: { first: 5 },
     },
     environment,
@@ -416,7 +416,7 @@ export function createSerloModel({
       ) => {
         return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { hours: 1 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/subscriptions/${userId}`
       },
@@ -477,7 +477,7 @@ export function createSerloModel({
         return DatabaseLayer.makeRequest('ThreadsQuery', payload)
       },
       enableSwr: true,
-      staleAfter: { day: 1 },
+      staleAfter: { days: 1 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/threads/${id}`
       },
