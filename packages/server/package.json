@@ -20,18 +20,18 @@
     "start:swr-queue-worker": "tsdx watch --transpileOnly --format cjs --target node --entry src/swr-queue-worker.ts --tsconfig tsconfig.prod.json --onSuccess \"node dist\""
   },
   "dependencies": {
-    "bee-queue": "^1.7.0"
+    "bee-queue": "^1.7.1"
   },
   "devDependencies": {
     "@apollo/server": "^4.9.5",
-    "@google-cloud/storage": "^7.6.0",
+    "@google-cloud/storage": "^7.7.0",
     "@graphql-codegen/add": "^5.0.0",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-resolvers": "^4.0.1",
     "@nmshd/connector-sdk": "^2.2.4",
     "@ory/client": "^1.4.3",
-    "@sentry/node": "^7.82.0",
+    "@sentry/node": "^7.84.0",
     "@serlo/authorization": "^0.59.2",
     "@types/basic-auth": "^1.1.6",
     "@types/bull-arena": "^3.0.10",
@@ -53,7 +53,7 @@
     "graphql": "^16.8.1",
     "graphql-playground-middleware-express": "^1.7.23",
     "graphql-type-json": "^0.3.2",
-    "io-ts": "^2.2.20",
+    "io-ts": "^2.2.21",
     "io-ts-reporters": "^2.0.1",
     "io-ts-types": "^0.5.19",
     "ioredis": "^5.3.2",
@@ -62,7 +62,7 @@
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
     "newtype-ts": "^0.3.5",
-    "openai": "^4.20.0",
+    "openai": "^4.20.1",
     "pg": "^8.11.3",
     "ramda": "^0.29.1",
     "redlock": "^5.0.0-beta2",
