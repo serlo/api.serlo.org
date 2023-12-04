@@ -1,5 +1,4 @@
 import { ForbiddenError } from '~/errors'
-import { Service } from '~/internals/authentication'
 import { createNamespace, Mutations } from '~/internals/graphql'
 
 const allowedUserIds = [
@@ -17,38 +16,18 @@ export const resolvers: Mutations<'_cache'> = {
     _cache: createNamespace(),
   },
   _cacheMutation: {
-    async remove(_parent, { input }, { dataSources, service, userId }) {
-      checkPermission({
-        service,
-        userId,
-        operation: 'remove',
-        allowedServices: [Service.Serlo],
-      })
+    async remove(_parent, { input }, { dataSources, userId }) {
+      if (
+        process.env.ENVIRONMENT !== 'local' &&
+        (userId === null || !allowedUserIds.includes(userId))
+      ) {
+        throw new ForbiddenError(
+          `You do not have the permissions to remove the cache`,
+        )
+      }
 
       await dataSources.model.removeCacheValue({ keys: input.keys })
       return { success: true, query: {} }
     },
   },
-}
-
-function checkPermission({
-  service,
-  allowedServices,
-  userId,
-  operation,
-}: {
-  service: Service
-  allowedServices: Service[]
-  userId: number | null
-  operation: string
-}) {
-  if (
-    process.env.ENVIRONMENT !== 'local' &&
-    !allowedServices.includes(service) &&
-    (userId === null || !allowedUserIds.includes(userId))
-  ) {
-    throw new ForbiddenError(
-      `You do not have the permissions to ${operation} the cache`,
-    )
-  }
 }
