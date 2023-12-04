@@ -16,10 +16,8 @@ import {
 } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
-import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
-import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
@@ -40,7 +38,7 @@ export async function applyGraphQLMiddleware({
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
-  const server = new ApolloServer<Context>(getGraphQLOptions(environment))
+  const server = new ApolloServer<Context>(getGraphQLOptions())
   await server.start()
 
   app.use(json({ limit: '2mb' }))
@@ -95,7 +93,7 @@ export async function applyGraphQLMiddleware({
   return graphQLPath
 }
 
-export function getGraphQLOptions(environment: Environment) {
+export function getGraphQLOptions() {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
@@ -104,7 +102,6 @@ export function getGraphQLOptions(environment: Environment) {
     plugins: [
       // We add the playground via express middleware in src/index.ts
       ApolloServerPluginLandingPageDisabled(),
-      createInvalidCurrentValueErrorPlugin({ environment }),
       createSentryPlugin(),
     ],
     formatError(error: GraphQLFormattedError) {
