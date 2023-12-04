@@ -3,10 +3,8 @@ import { createNamespace, Mutations } from '~/internals/graphql'
 
 const allowedUserIds = [
   26217, // kulla
-  15473, // inyono
   131536, // dal
   32543, // botho
-  178145, // CarolinJaser
   178807, // HugoBT
   245844, // MoeHome
 ]
