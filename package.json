@@ -16,7 +16,7 @@
     "_eslint": "eslint \"{{__fixtures__,__tests-pacts__,__tests__,scripts,packages/*/src}/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "auth": "scripts/authenticate.sh",
-    "_build": "ts-node --experimental-specifier-resolution=node scripts/build",
+    "_build": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/build",
     "build:server": "yarn _build packages/server/src/server.ts server.cjs",
     "build:swr-queue-worker": "yarn _build packages/server/src/swr-queue-worker.ts swr-queue-worker.cjs",
     "build:packages": "yarn lerna run build",
