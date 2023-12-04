@@ -499,26 +499,6 @@ export type CacheRemoveResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type CacheSetInput = {
-  key: Scalars['String']['input'];
-  value: Scalars['JSON']['input'];
-};
-
-export type CacheSetResponse = {
-  __typename?: 'CacheSetResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
-export type CacheUpdateInput = {
-  keys: Array<Scalars['String']['input']>;
-};
-
-export type CacheUpdateResponse = {
-  __typename?: 'CacheUpdateResponse';
-  success: Scalars['Boolean']['output'];
-};
-
 export type ChatCompletionMessageParam = {
   content: Scalars['String']['input'];
   role: Scalars['String']['input'];
@@ -2797,23 +2777,11 @@ export type VideoRevisionCursor = {
 export type _CacheMutation = {
   __typename?: '_cacheMutation';
   remove: CacheRemoveResponse;
-  set: CacheSetResponse;
-  update: CacheUpdateResponse;
 };
 
 
 export type _CacheMutationRemoveArgs = {
   input: CacheRemoveInput;
-};
-
-
-export type _CacheMutationSetArgs = {
-  input: CacheSetInput;
-};
-
-
-export type _CacheMutationUpdateArgs = {
-  input: CacheUpdateInput;
 };
 
 
@@ -2928,10 +2896,6 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<ModelOf<Scalars['Boolean']['output']>>;
   CacheRemoveInput: ResolverTypeWrapper<ModelOf<CacheRemoveInput>>;
   CacheRemoveResponse: ResolverTypeWrapper<ModelOf<CacheRemoveResponse>>;
-  CacheSetInput: ResolverTypeWrapper<ModelOf<CacheSetInput>>;
-  CacheSetResponse: ResolverTypeWrapper<ModelOf<CacheSetResponse>>;
-  CacheUpdateInput: ResolverTypeWrapper<ModelOf<CacheUpdateInput>>;
-  CacheUpdateResponse: ResolverTypeWrapper<ModelOf<CacheUpdateResponse>>;
   ChatCompletionMessageParam: ResolverTypeWrapper<ModelOf<ChatCompletionMessageParam>>;
   CheckoutRevisionInput: ResolverTypeWrapper<ModelOf<CheckoutRevisionInput>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
@@ -3134,10 +3098,6 @@ export type ResolversParentTypes = {
   Boolean: ModelOf<Scalars['Boolean']['output']>;
   CacheRemoveInput: ModelOf<CacheRemoveInput>;
   CacheRemoveResponse: ModelOf<CacheRemoveResponse>;
-  CacheSetInput: ModelOf<CacheSetInput>;
-  CacheSetResponse: ModelOf<CacheSetResponse>;
-  CacheUpdateInput: ModelOf<CacheUpdateInput>;
-  CacheUpdateResponse: ModelOf<CacheUpdateResponse>;
   ChatCompletionMessageParam: ModelOf<ChatCompletionMessageParam>;
   CheckoutRevisionInput: ModelOf<CheckoutRevisionInput>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
@@ -3551,17 +3511,6 @@ export type ArticleRevisionConnectionResolvers<ContextType = Context, ParentType
 
 export type CacheRemoveResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheRemoveResponse'] = ResolversParentTypes['CacheRemoveResponse']> = {
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CacheSetResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheSetResponse'] = ResolversParentTypes['CacheSetResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CacheUpdateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CacheUpdateResponse'] = ResolversParentTypes['CacheUpdateResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4684,8 +4633,6 @@ export type VideoRevisionCursorResolvers<ContextType = Context, ParentType exten
 
 export type _CacheMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['_cacheMutation'] = ResolversParentTypes['_cacheMutation']> = {
   remove?: Resolver<ResolversTypes['CacheRemoveResponse'], ParentType, ContextType, RequireFields<_CacheMutationRemoveArgs, 'input'>>;
-  set?: Resolver<ResolversTypes['CacheSetResponse'], ParentType, ContextType, RequireFields<_CacheMutationSetArgs, 'input'>>;
-  update?: Resolver<ResolversTypes['CacheUpdateResponse'], ParentType, ContextType, RequireFields<_CacheMutationUpdateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4714,8 +4661,6 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   CacheRemoveResponse?: CacheRemoveResponseResolvers<ContextType>;
-  CacheSetResponse?: CacheSetResponseResolvers<ContextType>;
-  CacheUpdateResponse?: CacheUpdateResponseResolvers<ContextType>;
   CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
   CheckoutRevisionResponse?: CheckoutRevisionResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
