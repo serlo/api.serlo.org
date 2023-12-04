@@ -1,8 +1,5 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
-import { option as O, either as E } from 'fp-ts'
-import reporter from 'io-ts-reporters'
 
-import { isQuery } from './data-source-helper'
 import { Environment } from '~/internals/environment'
 import {
   createGoogleSpreadsheetApiModel,
