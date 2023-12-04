@@ -92,10 +92,10 @@ describe('How to create a query in a data source: Fetching the content of an art
             enableSwr: true,
 
             // After one hour, a cached value shall be considered to be stale
-            staleAfter: { hour: 1 },
+            staleAfter: { hours: 1 },
 
             // After one day, no cached value shall be used
-            maxAge: { day: 1 },
+            maxAge: { days: 1 },
 
             getKey({ id }) {
               return `article/${id}`
