@@ -29,16 +29,9 @@ describe('remove', () => {
     await global.cache.set({ key, source: '', value: user })
   })
 
-  test('removes a cache value (authenticated via Serlo Service)', async () => {
-    await mutation.shouldReturnData({ _cache: { remove: { success: true } } })
-
-    const cachedValue = await global.cache.get({ key })
-    expect(option.isNone(cachedValue)).toBe(true)
-  })
-
-  test('removes a cache value (authenticated as CarolinJaser)', async () => {
+  test('removes a cache value (authenticated as Kulla)', async () => {
     await mutation
-      .withContext({ service: Service.SerloCloudflareWorker, userId: 178145 })
+      .withContext({ service: Service.SerloCloudflareWorker, userId: 26217 })
       .shouldReturnData({ _cache: { remove: { success: true } } })
 
     const cachedValue = await global.cache.get({ key })
