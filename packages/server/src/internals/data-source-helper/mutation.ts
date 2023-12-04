@@ -23,6 +23,8 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
         validationErrors: reporter.report(decodedResult),
+        type: spec.type,
+        payload,
       })
     }
   }
@@ -54,6 +56,8 @@ interface MutationSpec<Payload, Result> {
    * executed and the result of the mutation matches the decoder.
    */
   updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
+
+  type: string
 }
 
 /**

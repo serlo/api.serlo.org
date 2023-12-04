@@ -111,6 +111,9 @@ describe('How to create a query in a data source: Fetching the content of an art
 
             // Add an example payload which is used in tests
             examplePayload: { id: 1 },
+
+            // Add a name for sentry logs
+            type: 'ExampleQuery',
           },
           // In the actual code you will pass the `environment` variable here
           createTestEnvironment(),

@@ -18,6 +18,8 @@ interface RequestSpec<Payload, Result> {
    * Function which does the actual query operation.
    */
   getCurrentValue: (payload: Payload) => Promise<unknown>
+
+  type: string
 }
 
 /**
@@ -46,6 +48,8 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
+        payload,
+        type: spec.type,
         validationErrors: reporter.report(decodedResult),
       })
     }

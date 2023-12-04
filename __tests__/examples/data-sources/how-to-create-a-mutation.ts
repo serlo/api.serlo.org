@@ -102,6 +102,8 @@ describe('How to create a mutation in a data source: update the content of an ar
             // the right values.
             return (await res.json()) as unknown
           },
+
+          type: 'ExampleMutation',
         }),
       },
     }
