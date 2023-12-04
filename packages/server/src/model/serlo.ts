@@ -33,6 +33,7 @@ export function createSerloModel({
 }) {
   const getUuid = createQuery(
     {
+      type: 'UuidQuery',
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
@@ -60,6 +61,7 @@ export function createSerloModel({
   }
 
   const setUuidState = createMutation({
+    type: 'UuidSetStateMutation',
     decoder: DatabaseLayer.getDecoderFor('UuidSetStateMutation'),
     mutate(payload: DatabaseLayer.Payload<'UuidSetStateMutation'>) {
       return DatabaseLayer.makeRequest('UuidSetStateMutation', payload)
@@ -81,6 +83,7 @@ export function createSerloModel({
 
   const getActiveAuthorIds = createQuery(
     {
+      type: 'ActiveAuthorsQuery',
       decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
       enableSwr: true,
       getCurrentValue() {
@@ -101,6 +104,7 @@ export function createSerloModel({
 
   const getActiveReviewerIds = createQuery(
     {
+      type: 'ActiveReviewersQuery',
       decoder: DatabaseLayer.getDecoderFor('ActiveReviewersQuery'),
       enableSwr: true,
       getCurrentValue() {
@@ -121,6 +125,7 @@ export function createSerloModel({
 
   const getActivityByType = createQuery(
     {
+      type: 'ActivityByTypeQuery',
       decoder: DatabaseLayer.getDecoderFor('ActivityByTypeQuery'),
       enableSwr: true,
       getCurrentValue: (
@@ -147,6 +152,7 @@ export function createSerloModel({
   )
 
   const getPotentialSpamUsers = createRequest({
+    type: 'UserPotentialSpamUsersQuery',
     decoder: DatabaseLayer.getDecoderFor('UserPotentialSpamUsersQuery'),
     getCurrentValue(
       payload: DatabaseLayer.Payload<'UserPotentialSpamUsersQuery'>,
@@ -156,6 +162,7 @@ export function createSerloModel({
   })
 
   const deleteBots = createMutation({
+    type: 'UserDeleteBotsMutation',
     decoder: DatabaseLayer.getDecoderFor('UserDeleteBotsMutation'),
     mutate(payload: DatabaseLayer.Payload<'UserDeleteBotsMutation'>) {
       return DatabaseLayer.makeRequest('UserDeleteBotsMutation', payload)
@@ -170,6 +177,7 @@ export function createSerloModel({
   })
 
   const deleteRegularUsers = createMutation({
+    type: 'UserDeleteRegularUsersMutation',
     decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
     mutate: (
       payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>,
@@ -187,6 +195,7 @@ export function createSerloModel({
   })
 
   const setDescription = createMutation({
+    type: 'UserSetDescriptionMutation',
     decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
       return DatabaseLayer.makeRequest('UserSetDescriptionMutation', payload)
@@ -206,6 +215,7 @@ export function createSerloModel({
   })
 
   const setEmail = createMutation({
+    type: 'UserSetEmailMutation',
     decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
     mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
       return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
@@ -214,6 +224,7 @@ export function createSerloModel({
 
   const getAlias = createQuery(
     {
+      type: 'AliasQuery',
       decoder: DatabaseLayer.getDecoderFor('AliasQuery'),
       getCurrentValue: ({
         path,
@@ -244,6 +255,7 @@ export function createSerloModel({
 
   const getSubjects = createQuery(
     {
+      type: 'SubjectsQuery',
       decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
       getCurrentValue: () => {
         return DatabaseLayer.makeRequest('SubjectsQuery', {})
@@ -261,6 +273,7 @@ export function createSerloModel({
 
   const getUnrevisedEntities = createQuery(
     {
+      type: 'UnrevisedEntitiesQuery',
       decoder: DatabaseLayer.getDecoderFor('UnrevisedEntitiesQuery'),
       getCurrentValue: () => {
         return DatabaseLayer.makeRequest('UnrevisedEntitiesQuery', {})
@@ -278,6 +291,7 @@ export function createSerloModel({
   )
 
   const getUnrevisedEntitiesPerSubject = createRequest({
+    type: 'getUnrevisedEntitiesPerSubject',
     decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
     async getCurrentValue(_payload: undefined) {
       const { unrevisedEntityIds } = await getUnrevisedEntities()
@@ -300,6 +314,7 @@ export function createSerloModel({
 
   const getNotificationEvent = createQuery(
     {
+      type: 'EventQuery',
       decoder: DatabaseLayer.getDecoderFor('EventQuery'),
       async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
         const event = await DatabaseLayer.makeRequest('EventQuery', payload)
@@ -323,6 +338,7 @@ export function createSerloModel({
   )
 
   const getEventsAfter = createRequest({
+    type: 'getEventsAfter',
     decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
     async getCurrentValue(
       payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number },
@@ -333,6 +349,7 @@ export function createSerloModel({
 
   const getEvents = createQuery(
     {
+      type: 'EventsQuery',
       decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
       async getCurrentValue(payload: DatabaseLayer.Payload<'EventsQuery'>) {
         return DatabaseLayer.makeRequest('EventsQuery', payload)
@@ -364,6 +381,7 @@ export function createSerloModel({
 
   const getNotifications = createQuery(
     {
+      type: 'NotificationsQuery',
       decoder: DatabaseLayer.getDecoderFor('NotificationsQuery'),
       getCurrentValue(payload: DatabaseLayer.Payload<'NotificationsQuery'>) {
         return DatabaseLayer.makeRequest('NotificationsQuery', payload)
@@ -386,6 +404,7 @@ export function createSerloModel({
   )
 
   const setNotificationState = createMutation({
+    type: 'NotificationSetStateMutation',
     decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
     mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
       return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
@@ -409,6 +428,7 @@ export function createSerloModel({
 
   const getSubscriptions = createQuery(
     {
+      type: 'SubjectsQuery',
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
       getCurrentValue: (
@@ -432,6 +452,7 @@ export function createSerloModel({
   )
 
   const setSubscription = createMutation({
+    type: 'SubscriptionSetMutation',
     decoder: DatabaseLayer.getDecoderFor('SubscriptionSetMutation'),
     async mutate(payload: DatabaseLayer.Payload<'SubscriptionSetMutation'>) {
       await DatabaseLayer.makeRequest('SubscriptionSetMutation', payload)
@@ -464,6 +485,7 @@ export function createSerloModel({
   })
 
   const getAllThreads = createRequest({
+    type: 'AllThreadsQuery',
     decoder: DatabaseLayer.getDecoderFor('AllThreadsQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'AllThreadsQuery'>) {
       return DatabaseLayer.makeRequest('AllThreadsQuery', payload)
@@ -472,6 +494,7 @@ export function createSerloModel({
 
   const getThreadIds = createQuery(
     {
+      type: 'ThreadsQuery',
       decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
       async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
         return DatabaseLayer.makeRequest('ThreadsQuery', payload)
@@ -493,6 +516,7 @@ export function createSerloModel({
   )
 
   const createThread = createMutation({
+    type: 'ThreadCreateThreadMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
     async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
       return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
@@ -516,6 +540,7 @@ export function createSerloModel({
   })
 
   const createComment = createMutation({
+    type: 'ThreadCreateCommentMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
     async mutate(
       payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>,
@@ -542,6 +567,7 @@ export function createSerloModel({
   })
 
   const editComment = createMutation({
+    type: 'ThreadEditCommentMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadEditCommentMutation'),
     async mutate(payload: DatabaseLayer.Payload<'ThreadEditCommentMutation'>) {
       return DatabaseLayer.makeRequest('ThreadEditCommentMutation', payload)
@@ -566,6 +592,7 @@ export function createSerloModel({
   })
 
   const archiveThread = createMutation({
+    type: 'ThreadSetThreadArchivedMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
     async mutate(
       payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>,
@@ -593,6 +620,7 @@ export function createSerloModel({
   })
 
   const setThreadStatus = createMutation({
+    type: 'ThreadSetThreadStatusMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
     async mutate(
       payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
@@ -614,6 +642,7 @@ export function createSerloModel({
   })
 
   const createEntity = createMutation({
+    type: 'EntityCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
       return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
@@ -657,6 +686,7 @@ export function createSerloModel({
   })
 
   const addEntityRevision = createMutation({
+    type: 'EntityAddRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
       return DatabaseLayer.makeRequest('EntityAddRevisionMutation', payload)
@@ -718,6 +748,7 @@ export function createSerloModel({
   })
 
   const checkoutEntityRevision = createMutation({
+    type: 'EntityCheckoutRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
     async mutate(
       payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>,
@@ -758,6 +789,7 @@ export function createSerloModel({
   })
 
   const createPage = createMutation({
+    type: 'PageCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'PageCreateMutation'>) => {
       return DatabaseLayer.makeRequest('PageCreateMutation', payload)
@@ -765,6 +797,7 @@ export function createSerloModel({
   })
 
   const addPageRevision = createMutation({
+    type: 'PageAddRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('PageAddRevisionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
       return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
@@ -777,6 +810,7 @@ export function createSerloModel({
   })
 
   const checkoutPageRevision = createMutation({
+    type: 'PageCheckoutRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
     mutate(payload: DatabaseLayer.Payload<'PageCheckoutRevisionMutation'>) {
       return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
@@ -810,6 +844,7 @@ export function createSerloModel({
   })
 
   const rejectEntityRevision = createMutation({
+    type: 'EntityRejectRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
     mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
       return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
@@ -829,6 +864,7 @@ export function createSerloModel({
   })
 
   const rejectPageRevision = createMutation({
+    type: 'PageRejectRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('PageRejectRevisionMutation'),
     mutate(payload: DatabaseLayer.Payload<'PageRejectRevisionMutation'>) {
       return DatabaseLayer.makeRequest('PageRejectRevisionMutation', payload)
@@ -846,6 +882,7 @@ export function createSerloModel({
   })
 
   const getDeletedEntities = createRequest({
+    type: 'DeletedEntitiesQuery',
     decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
     async getCurrentValue(
       payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>,
@@ -855,6 +892,7 @@ export function createSerloModel({
   })
 
   const getEntitiesMetadata = createRequest({
+    type: 'EntitiesMetadataQuery',
     decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
     async getCurrentValue(
       payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>,
@@ -864,6 +902,7 @@ export function createSerloModel({
   })
 
   const linkEntitiesToTaxonomy = createMutation({
+    type: 'TaxonomyCreateEntityLinksMutation',
     decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
     mutate: (
       payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>,
@@ -886,6 +925,7 @@ export function createSerloModel({
   })
 
   const unlinkEntitiesFromTaxonomy = createMutation({
+    type: 'TaxonomyCreateEntityLinksMutation',
     decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
     mutate: (
       payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>,
@@ -908,6 +948,7 @@ export function createSerloModel({
   })
 
   const createTaxonomyTerm = createMutation({
+    type: 'TaxonomyTermCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
     mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
       return DatabaseLayer.makeRequest('TaxonomyTermCreateMutation', payload)
@@ -920,6 +961,7 @@ export function createSerloModel({
   })
 
   const sortEntity = createMutation({
+    type: 'EntitySortMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntitySortMutation'>) => {
       return DatabaseLayer.makeRequest('EntitySortMutation', payload)
@@ -933,6 +975,7 @@ export function createSerloModel({
   })
 
   const sortTaxonomyTerm = createMutation({
+    type: 'TaxonomySortMutation',
     decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
     mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
       return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
@@ -953,6 +996,7 @@ export function createSerloModel({
   })
 
   const setEntityLicense = createMutation({
+    type: 'EntitySetLicenseMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
     mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
       return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
@@ -971,6 +1015,7 @@ export function createSerloModel({
   })
 
   const getPages = createRequest({
+    type: 'PagesQuery',
     decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
       return DatabaseLayer.makeRequest('PagesQuery', payload)
@@ -978,6 +1023,7 @@ export function createSerloModel({
   })
 
   const setTaxonomyTermNameAndDescription = createMutation({
+    type: 'TaxonomyTermSetNameAndDescriptionMutation',
     decoder: DatabaseLayer.getDecoderFor(
       'TaxonomyTermSetNameAndDescriptionMutation',
     ),
@@ -1004,6 +1050,7 @@ export function createSerloModel({
   })
 
   const addRole = createMutation({
+    type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
       return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
@@ -1033,6 +1080,7 @@ export function createSerloModel({
   })
 
   const removeRole = createMutation({
+    type: 'UserRemoveRoleMutation',
     decoder: DatabaseLayer.getDecoderFor('UserRemoveRoleMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>) => {
       return DatabaseLayer.makeRequest('UserRemoveRoleMutation', payload)
@@ -1062,6 +1110,7 @@ export function createSerloModel({
   })
 
   const getUsersByRole = createRequest({
+    type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'UsersByRoleQuery'>) {
       return DatabaseLayer.makeRequest('UsersByRoleQuery', payload)
