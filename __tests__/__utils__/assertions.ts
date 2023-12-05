@@ -19,9 +19,7 @@ export class Client {
     this.context = context
     this.apolloServer = new ApolloServer<
       Partial<Pick<Context, 'service' | 'userId'>>
-    >({
-      ...getGraphQLOptions(createTestEnvironment()),
-    })
+    >(getGraphQLOptions())
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
