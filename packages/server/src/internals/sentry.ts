@@ -5,7 +5,6 @@ import type {
 import * as Sentry from '@sentry/node'
 import * as R from 'ramda'
 
-import { InvalidValueFromListener } from './data-source'
 import { InvalidCurrentValueError } from './data-source-helper'
 import { Context } from '~/internals/graphql'
 
@@ -86,17 +85,6 @@ export function createSentryPlugin(): ApolloServerPlugin {
                   'invalid-value',
                   'data-source',
                   JSON.stringify(errorContext.invalidCurrentValue),
-                ])
-                scope.setContext('error', errorContext)
-              }
-
-              if (originalError instanceof InvalidValueFromListener) {
-                const { errorContext } = originalError
-
-                scope.setFingerprint([
-                  'invalid-value',
-                  'listener',
-                  errorContext.key,
                 ])
                 scope.setContext('error', errorContext)
               }
