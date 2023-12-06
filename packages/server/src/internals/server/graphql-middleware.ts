@@ -1,9 +1,10 @@
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
+import { defaultImport } from 'default-import'
 import { Express, json } from 'express'
 import { GraphQLError, GraphQLFormattedError } from 'graphql'
-import createPlayground from 'graphql-playground-middleware-express'
+import createPlayground_ from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
@@ -20,6 +21,8 @@ import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
+
+const createPlayground = defaultImport(createPlayground_)
 
 const SessionDecoder = t.type({
   identity: IdentityDecoder,
