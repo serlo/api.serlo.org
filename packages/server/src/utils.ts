@@ -13,6 +13,9 @@ export function isDateString(text: string) {
  * https://www.npmjs.com/package/default-import for an example). This function
  * extracts the default value from such libraries only iff we are currently
  * in ESM mode.
+ *
+ * Note: Once also our tests run in ESM mode we should be able to delete this
+ * function and use `default-import` as a static import.
  */
 export async function useDefaultImport<A>(value: A): Promise<A> {
   // The function `require` does only exists in CommonJS mode
