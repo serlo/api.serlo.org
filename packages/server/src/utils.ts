@@ -18,8 +18,10 @@ export function isDateString(text: string) {
  * function and use `default-import` as a static import.
  */
 export async function useDefaultImport<A>(value: A): Promise<A> {
-  // The function `require` does only exists in CommonJS mode
-  if (typeof require === 'function') return value
+  // In our tests we are still using the CommonJS format
+  // where loading `default-import` would result in an error.
+  // However in CommonJS no changes are necessary.
+  if (typeof jest === 'object') return value
 
   // Since `default-import` is a ESM only library do not import it statically
   // because otherwise we would get an error in CommonJS runtime mode.
