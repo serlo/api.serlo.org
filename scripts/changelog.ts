@@ -1664,6 +1664,23 @@ async function exec(): Promise<void> {
           'Set always a ttl for each key',
         ],
       },
+      {
+        tagName: 'v0.60.0',
+        date: '2023-12-07',
+        breakingChanges: [
+          'Remove mutations for setting and updating the cache.',
+        ],
+        internal: [
+          'Remove plugin invalid-current-value-error-plugin.ts',
+          'Add type and payload to sentry logging',
+          'refactor(time interface): remove duplicate properties',
+          'Refactorings of tests',
+        ],
+        fixed: [
+          'Fix import of playground in docker container',
+          'Set always a ttl for each key',
+        ],
+      },
     ],
   })
 

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.60.0](https://github.com/serlo/api.serlo.org/compare/v0.59.2..v0.60.0) - December 7, 2023
+
+### Breaking Changes
+
+- Remove mutations for setting and updating the cache.
+
+### Fixed
+
+- Fix import of playground in docker container
+
+- Set always a ttl for each key
+
+### Internal
+
+- Remove plugin invalid-current-value-error-plugin.ts
+
+- Add type and payload to sentry logging
+
+- refactor(time interface): remove duplicate properties
+
+- Refactorings of tests
+
 ## [v0.59.2](https://github.com/serlo/api.serlo.org/compare/v0.59.1..v0.59.2) - December 1, 2023
 
 ### Fixed
