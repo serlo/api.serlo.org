@@ -23,9 +23,8 @@ export async function useDefaultImport<A>(value: A): Promise<A> {
 
   // Since `default-import` is a ESM only library do not import it statically
   // because otherwise we would get an error in CommonJS runtime mode.
-  const { default: defaultImport } = await import('default-import')
+  const { defaultImport } = await import('default-import')
 
-  // @ts-expect-error The types do not really match with the dynamic import ->
   // Let's ignore this error for now...
   return defaultImport(value) as A
 }
