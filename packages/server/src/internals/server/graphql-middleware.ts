@@ -3,7 +3,7 @@ import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { Express, json } from 'express'
 import { GraphQLError, GraphQLFormattedError } from 'graphql'
-import createPlayground from 'graphql-playground-middleware-express'
+import createPlayground_ from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
@@ -20,6 +20,7 @@ import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
+import { useDefaultImport } from '~/utils'
 
 const SessionDecoder = t.type({
   identity: IdentityDecoder,
@@ -39,6 +40,7 @@ export async function applyGraphQLMiddleware({
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
   const server = new ApolloServer<Context>(getGraphQLOptions())
+  const createPlayground = await useDefaultImport(createPlayground_)
   await server.start()
 
   app.use(json({ limit: '2mb' }))

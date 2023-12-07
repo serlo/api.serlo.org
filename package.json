@@ -61,7 +61,9 @@
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
     "stop:redis": "docker-compose stop",
     "test": "jest --config jest.config.cjs --forceExit",
-    "test:docker:server": "curl --verbose -H 'Content-type: application/json' --data '{\"query\": \"query { version }\" }' http://localhost:3001/graphql",
+    "test:docker:server": "run-s \"test:docker:server:*\"",
+    "test:docker:server:playground": "curl --verbose http://localhost:3001/___graphql | grep '<title>GraphQL Playground</title>'",
+    "test:docker:server:graphql": "curl --verbose -H 'Content-type: application/json' --data '{\"query\": \"query { version }\" }' http://localhost:3001/graphql",
     "test:docker:swr-queue-worker": "curl --verbose http://localhost:3030/.well-known/health | grep OK",
     "update-version": "./scripts/update_version.sh"
   },
