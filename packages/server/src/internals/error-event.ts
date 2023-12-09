@@ -9,12 +9,12 @@ export interface ErrorEvent extends ErrorContext {
 }
 
 export function addContext(
-  context: ErrorContext
+  context: ErrorContext,
 ): (error: ErrorEvent) => ErrorEvent {
   return R.mergeDeepWith(
     (a: unknown, b: unknown) =>
       Array.isArray(a) && Array.isArray(b) ? R.concat(a, b) : a,
-    context
+    context,
   )
 }
 
@@ -27,13 +27,13 @@ export function consumeErrorEvent<A>(defaultValue: A) {
 }
 
 export function assertAll<A, B extends A>(
-  args: { assertion: F.Refinement<A, B> } & ErrorEvent
+  args: { assertion: F.Refinement<A, B> } & ErrorEvent,
 ): (list: A[]) => B[]
 export function assertAll<A>(
-  args: { assertion: F.Predicate<A> } & ErrorEvent
+  args: { assertion: F.Predicate<A> } & ErrorEvent,
 ): (list: A[]) => A[]
 export function assertAll(
-  args: { assertion: (x: unknown) => boolean } & ErrorEvent
+  args: { assertion: (x: unknown) => boolean } & ErrorEvent,
 ) {
   return (originalList: unknown[]) => {
     const { left, right } = A.partition(args.assertion)(originalList)
@@ -55,6 +55,7 @@ export function assertAll(
 
 export function captureErrorEvent(event: ErrorEvent) {
   if (process.env.ENVIRONMENT === 'local') {
+    // eslint-disable-next-line no-console
     console.error(event.error)
   }
 
