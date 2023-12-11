@@ -53,7 +53,7 @@ async function initializeServer({
   })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 
-  app.get(healthPath, (req, res) => {
+  app.get(healthPath, (_req, res) => {
     res.status(200).send('Okay!')
   })
 
