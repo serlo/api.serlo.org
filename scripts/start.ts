@@ -1,29 +1,12 @@
-import graphqlLoaderPlugin_ from '@luckycatfactory/esbuild-graphql-loader'
 import { spawn, ChildProcess } from 'child_process'
-import { defaultImport } from 'default-import'
 import * as esbuild from 'esbuild'
-import * as fs from 'fs'
-import * as path from 'path'
-import { fileURLToPath } from 'url'
 
-const graphqlLoaderPlugin = defaultImport(graphqlLoaderPlugin_)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-const root = path.join(__dirname, '..')
-const dist = path.join(root, 'dist')
+import { getEsbuildOptions, loadSourceAndOutput } from './build'
 
 await main()
 
 async function main() {
-  const [sourceArg, targetArg] = process.argv.slice(2)
-
-  const source = path.resolve(sourceArg)
-
-  if (!fs.statSync(source).isFile()) {
-    throw new Error(`File ${source} does not exist`)
-  }
-
-  const outfile = path.join(dist, targetArg)
+  const { source, outfile } = loadSourceAndOutput()
 
   let serverProcess: ChildProcess | null = null
 
@@ -50,23 +33,11 @@ async function main() {
     },
   }
 
+  const { plugins = [], ...options } = getEsbuildOptions(source, outfile)
+
   const ctx = await esbuild.context({
-    entryPoints: [source],
-    treeShaking: true,
-    minifySyntax: false,
-    bundle: true,
-    platform: 'node',
-    format: 'cjs',
-    target: 'node18',
-    // Bundling `bee-queue` inside the run package would result in an error
-    //
-    //    Error: node_redis: The EVALSHA command contains a invalid argument
-    //    type of "undefined".
-    //
-    // We rather install it seperately.
-    external: ['bee-queue'],
-    outfile,
-    plugins: [graphqlLoaderPlugin(), startServerPlugin],
+    ...options,
+    plugins: [...plugins, startServerPlugin],
   })
 
   await ctx.watch({})
