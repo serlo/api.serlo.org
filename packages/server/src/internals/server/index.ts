@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
 import createApp from 'express'
-import path from 'path'
 
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
@@ -15,9 +14,8 @@ import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 export { getGraphQLOptions } from './graphql-middleware'
 
 export async function start() {
-  dotenv.config({
-    path: path.join(__dirname, '..', '..', '..', '.env'),
-  })
+  dotenv.config()
+
   initializeSentry({ context: 'server' })
   const timer = createTimer()
   const cache =
