@@ -1,0 +1,19 @@
+name: Deploy to Staging
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
+      - run: gcloud auth configure-docker
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: yarn deploy:images:staging
+  # TODO: delete pod
