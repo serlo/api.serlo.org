@@ -2,7 +2,6 @@ import { spawnSync } from 'node:child_process'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const root = path.join(__dirname, '..')
@@ -14,13 +13,13 @@ function run() {
     name: 'api-server',
     Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
     context: '../..',
-    envName: 'staging'
+    envName: 'staging',
   })
   buildDockerImage({
     name: 'api-swr-queue-worker',
     Dockerfile: path.join(root, 'docker', 'swr-queue-worker', 'Dockerfile'),
     context: '../..',
-    envName: 'staging'
+    envName: 'staging',
   })
 }
 
@@ -28,18 +27,23 @@ function buildDockerImage({
   name,
   Dockerfile,
   context,
-  envName
+  envName,
 }: DockerImageOptions) {
   const remoteName = `eu.gcr.io/serlo-shared/${name}`
-  const date = new Date
+  const date = new Date()
   const timestamp = `${date.toISOString().split('T')[0]}-${date.getTime()}`
 
-  const {stdout: gitHash} = spawnSync(
-    'git',
-    ['rev-parse', '--short', 'HEAD'],
-  )
+  const { stdout: gitHashBuffer } = spawnSync('git', [
+    'rev-parse',
+    '--short',
+    'HEAD',
+  ])
 
-  const remoteTags = toTags(remoteName, [envName, timestamp, gitHash.toString()])
+  const remoteTags = toTags(remoteName, [
+    envName,
+    timestamp,
+    gitHashBuffer.toString().split('\n')[0],
+  ])
   const tags = [...remoteTags, ...toTags(name, [envName])]
 
   spawnSync(
