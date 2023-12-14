@@ -27,5 +27,5 @@ jobs:
         with:
           cluster_name: serlo-staging-cluster
           location: europe-west3-a
-      - run: kubectl delete pod -l app=server
-      - run: kubectl delete pod -l app=swr-queue-worker
+      - run: kubectl delete pod -n api -l app=server
+      - run: kubectl delete pod -n api -l app=swr-queue-worker
