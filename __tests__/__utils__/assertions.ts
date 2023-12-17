@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { DocumentNode } from 'graphql'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
