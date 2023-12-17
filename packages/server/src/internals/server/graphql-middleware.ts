@@ -7,6 +7,7 @@ import createPlayground_ from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
+import { Storage } from '@google-cloud/storage'
 
 import {
   AuthServices,
@@ -48,6 +49,7 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
+        const googleStorage = new Storage()
         const dataSources = {
           model: new ModelDataSource(environment),
         }
@@ -57,6 +59,7 @@ export async function applyGraphQLMiddleware({
             dataSources,
             service: Service.SerloCloudflareWorker,
             userId: null,
+            googleStorage,
           })
         }
         const partialContext = await handleAuthentication(
@@ -80,7 +83,7 @@ export async function applyGraphQLMiddleware({
             }
           },
         )
-        return { ...partialContext, dataSources }
+        return { ...partialContext, dataSources, googleStorage }
       },
     }),
   )
