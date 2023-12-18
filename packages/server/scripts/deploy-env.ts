@@ -1,3 +1,4 @@
+import * as t from 'io-ts'
 import { spawnSync } from 'node:child_process'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -9,17 +10,26 @@ const root = path.join(__dirname, '..')
 void run()
 
 function run() {
+  const envName = process.argv[2]
+  if (!envName) {
+    throw new Error('You have to specify environment, staging or production')
+  }
+  if (!t.union([t.literal('staging'), t.literal('production')]).is(envName)) {
+    throw new Error(
+      'Invalid environment name, please use `staging` or `production`',
+    )
+  }
   buildDockerImage({
     name: 'api-server',
     Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
     context: '../..',
-    envName: 'staging',
+    envName,
   })
   buildDockerImage({
     name: 'api-swr-queue-worker',
     Dockerfile: path.join(root, 'docker', 'swr-queue-worker', 'Dockerfile'),
     context: '../..',
-    envName: 'staging',
+    envName,
   })
 }
 

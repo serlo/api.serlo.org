@@ -1,3 +1,4 @@
+# TODO: delete this pipeline after testing deploying directly to environments
 name: Push docker image with semver version
 on:
   push:
