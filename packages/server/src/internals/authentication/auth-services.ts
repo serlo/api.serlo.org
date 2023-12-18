@@ -1,7 +1,7 @@
 import { Configuration, IdentityApi, FrontendApi, OAuth2Api } from '@ory/client'
 import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
-import { Pool, DatabaseError } from 'pg'
+import postgress, { type DatabaseError } from 'pg'
 
 import { captureErrorEvent } from '../error-event'
 
@@ -45,7 +45,7 @@ export const IdentityDecoder = t.type({
   ]),
 })
 
-export class KratosDB extends Pool {
+export class KratosDB extends postgress.Pool {
   async getIdentityByLegacyId(legacyId: number): Promise<Identity | null> {
     const identities = await this.executeSingleQuery({
       query:

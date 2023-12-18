@@ -3981,13 +3981,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scarf/scarf@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@scarf/scarf@npm:1.1.1"
-  checksum: f3205e7a76fed1ec3328643a5f276f4aab5c67d0e17ca0a414755aacae529f4a3492b44607f9ad066470ecb3ee003e72b3d9581f58dc6c507c18180611ff113e
-  languageName: node
-  linkType: hard
-
 "@sentry-internal/tracing@npm:7.86.0":
   version: 7.86.0
   resolution: "@sentry-internal/tracing@npm:7.86.0"
@@ -4110,7 +4103,6 @@ __metadata:
     graphql-playground-middleware-express: ^1.7.23
     graphql-type-json: ^0.3.2
     io-ts: ^2.2.21
-    io-ts-reporters: ^2.0.1
     io-ts-types: ^0.5.19
     ioredis: ^5.3.2
     jsonwebtoken: ^9.0.2
@@ -11261,18 +11253,6 @@ __metadata:
   dependencies:
     loose-envify: ^1.0.0
   checksum: cc3182d793aad82a8d1f0af697b462939cb46066ec48bbf1707c150ad5fad6406137e91a262022c269702e01621f35ef60269f6c0d7fd178487959809acdfb14
-  languageName: node
-  linkType: hard
-
-"io-ts-reporters@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "io-ts-reporters@npm:2.0.1"
-  dependencies:
-    "@scarf/scarf": ^1.1.1
-  peerDependencies:
-    fp-ts: ^2.10.5
-    io-ts: ^2.2.16
-  checksum: d3ffd603249417475771c3c29be8b3455d82010bf2f53b7e0fc8974c4864d0ff5366bcc58a0e0e6a3016f0ffa98c1acc8f42ef19d25d3ca89652574200d57193
   languageName: node
   linkType: hard
 
