@@ -77,7 +77,7 @@
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
-    "@pact-foundation/pact": "^11.0.2",
+    "@pact-foundation/pact": "^12.1.2",
     "@pact-foundation/pact-node": "^10.17.7",
     "@sentry/node": "^7.86.0",
     "@types/jest": "^29.5.11",
