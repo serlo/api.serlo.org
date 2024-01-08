@@ -4911,11 +4911,11 @@
   ],
   "metadata": {
     "pact-js": {
-      "version": "11.0.2"
+      "version": "12.1.2"
     },
     "pactRust": {
-      "ffi": "0.4.0",
-      "models": "1.0.4"
+      "ffi": "0.4.9",
+      "models": "1.1.11"
     },
     "pactSpecification": {
       "version": "2.0.0"
