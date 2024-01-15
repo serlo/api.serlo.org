@@ -1,7 +1,7 @@
-// eslint-disable-next-line import/no-commonjs
-const defaultConfig = require('./jest.config.cjs')
+import defaultConfig from './jest.config'
 
-module.exports = {
+// eslint-disable-next-line import/no-default-export
+export default {
   ...defaultConfig,
   setupFilesAfterEnv: [
     '<rootDir>/__config__/jest.setup-pacts-serlo-org-database-layer.ts',
