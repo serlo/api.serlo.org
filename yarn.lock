@@ -4108,7 +4108,7 @@ __metadata:
     monocle-ts: ^2.3.13
     msgpack5: ^6.0.2
     newtype-ts: ^0.3.5
-    openai: ^4.20.1
+    openai: ^4.24.7
     pg: ^8.11.3
     ramda: ^0.29.1
     redlock: ^5.0.0-beta2
@@ -15817,9 +15817,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.20.1":
-  version: 4.20.1
-  resolution: "openai@npm:4.20.1"
+"openai@npm:^4.24.7":
+  version: 4.24.7
+  resolution: "openai@npm:4.24.7"
   dependencies:
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.4
@@ -15832,7 +15832,7 @@ __metadata:
     web-streams-polyfill: ^3.2.1
   bin:
     openai: bin/cli
-  checksum: 01d2aeaf9c1a0e93159cd49207d86188edf43a6276aeb1a4aab8614727f64591452bbe19baa344f799d0a94314ff386e39c019b62f305543952606759a3927f1
+  checksum: 1b24ee208ea16d5eb2213f5cd53ec06d7f7ecb08f9a6663f0ff9297dcf33504b9b5bcb153dff10e0bf90ec24ef8db727fee6753b6bcf7ca7e2d9bec47abc2f35
   languageName: node
   linkType: hard
 
