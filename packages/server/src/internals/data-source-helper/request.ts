@@ -1,6 +1,5 @@
 import { either as E } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 
 import { InvalidCurrentValueError } from './common'
 
@@ -50,7 +49,6 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
         decoder: spec.decoder.name,
         payload,
         type: spec.type,
-        validationErrors: reporter.report(decodedResult),
       })
     }
   }

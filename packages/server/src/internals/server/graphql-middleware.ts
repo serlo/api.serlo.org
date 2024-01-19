@@ -1,6 +1,8 @@
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
+import { Storage } from '@google-cloud/storage'
+import { defaultImport } from 'default-import'
 import { Express, json } from 'express'
 import { GraphQLError, GraphQLFormattedError } from 'graphql'
 import createPlayground_ from 'graphql-playground-middleware-express'
@@ -20,7 +22,6 @@ import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
-import { useDefaultImport } from '~/utils'
 
 const SessionDecoder = t.type({
   identity: IdentityDecoder,
@@ -40,7 +41,7 @@ export async function applyGraphQLMiddleware({
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
   const server = new ApolloServer<Context>(getGraphQLOptions())
-  const createPlayground = await useDefaultImport(createPlayground_)
+  const createPlayground = defaultImport(createPlayground_)
   await server.start()
 
   app.use(json({ limit: '2mb' }))
@@ -48,6 +49,7 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
+        const googleStorage = new Storage()
         const dataSources = {
           model: new ModelDataSource(environment),
         }
@@ -57,6 +59,7 @@ export async function applyGraphQLMiddleware({
             dataSources,
             service: Service.SerloCloudflareWorker,
             userId: null,
+            googleStorage,
           })
         }
         const partialContext = await handleAuthentication(
@@ -80,7 +83,7 @@ export async function applyGraphQLMiddleware({
             }
           },
         )
-        return { ...partialContext, dataSources }
+        return { ...partialContext, dataSources, googleStorage }
       },
     }),
   )
