@@ -59,7 +59,7 @@
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
     "newtype-ts": "^0.3.5",
-    "openai": "^4.20.1",
+    "openai": "^4.24.7",
     "pg": "^8.11.3",
     "ramda": "^0.29.1",
     "redlock": "^5.0.0-beta2",
