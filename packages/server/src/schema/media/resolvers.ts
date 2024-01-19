@@ -1,4 +1,3 @@
-import { Storage } from '@google-cloud/storage'
 import { v1 as uuidv1 } from 'uuid'
 
 import {
@@ -13,14 +12,13 @@ export const resolvers: Queries<'media'> = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async newUpload(_parent, { mediaType }, { userId }) {
+    async newUpload(_parent, { mediaType }, { userId, googleStorage }) {
       assertUserIsAuthenticated(userId)
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
 
-      const storage = new Storage()
-      const [uploadUrl] = await storage
+      const [uploadUrl] = await googleStorage
         .bucket('assets.serlo.org')
         .file(`${fileHash}.${fileExtension}`)
         .getSignedUrl({
