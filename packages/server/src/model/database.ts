@@ -15,7 +15,7 @@ export const runSql = async (query: string, params?: any[]): Promise<any> => {
   try {
     connection = await pool.getConnection()
 
-    const [rows, _] = await connection.execute(query, params)
+    const [rows] = await connection.execute(query, params)
 
     return rows
   } catch (error) {
