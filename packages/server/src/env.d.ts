@@ -26,6 +26,10 @@ declare namespace NodeJS {
      */
     MAILCHIMP_API_KEY: string
     METADATA_API_VERSION: string
+    MYSQL_HOST: string
+    MYSQL_USER: string
+    MYSQL_PASSWORD: string
+    MYSQL_DB_NAME: string  
     SERVER_HYDRA_HOST: string
     SERVER_KRATOS_PUBLIC_HOST: string
     SERVER_KRATOS_ADMIN_HOST: string
