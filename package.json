@@ -72,7 +72,8 @@
     "update-version": "./scripts/update_version.sh"
   },
   "dependencies": {
-    "graphql": "^16.8.1"
+    "graphql": "^16.8.1",
+    "mysql2": "^3.7.1"
   },
   "devDependencies": {
     "@inyono/changelog": "^0.5.2",
