@@ -29,7 +29,7 @@ declare namespace NodeJS {
     MYSQL_HOST: string
     MYSQL_USER: string
     MYSQL_PASSWORD: string
-    MYSQL_DB_NAME: string  
+    MYSQL_DB_NAME: string
     SERVER_HYDRA_HOST: string
     SERVER_KRATOS_PUBLIC_HOST: string
     SERVER_KRATOS_ADMIN_HOST: string
