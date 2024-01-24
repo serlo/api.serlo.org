@@ -44,7 +44,20 @@ export interface Cache {
 }
 
 export function createCache({ timer }: { timer: Timer }): Cache {
-  const client = new Redis(process.env.REDIS_URL)
+  const url = process.env.REDIS_URL.replace('redis://', '')
+  const client = new Redis({
+    host: url.split(':')[0],
+    port: Number(url.split(':')[1]),
+    retryStrategy(times) {
+      console.log(`\nTrying to reconnect to redis, ${times}th attempt\n`)
+
+      const delay = 2000
+      // return any value that is not a number to stop retrying.
+      if(times * delay > 300_000) throw new Error('Redis connection timed out')
+      return delay
+    },
+  })
+
   const lockManagers: Record<Priority, LockManager> = {
     [Priority.Low]: createLockManager({
       retryCount: 0,
