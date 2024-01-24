@@ -71,6 +71,10 @@ export function createSwrQueue({
     removeOnSuccess: true,
   })
 
+  queue.on('error', (err) => {
+    console.log(`Queue error event - ${err.message}`);
+  });
+
   return {
     _queue: queue as unknown as never,
     async queue(updateJob) {
