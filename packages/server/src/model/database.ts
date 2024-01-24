@@ -10,7 +10,7 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig)
 
-export const runSql = async (
+const runSql = async (
   query: string,
   params?: unknown[] | undefined,
 ): Promise<unknown> => {
