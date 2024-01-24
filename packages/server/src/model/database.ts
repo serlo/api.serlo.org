@@ -22,21 +22,21 @@ export const runSql = async (
 
     return rows
   } catch (error) {
-    throw new Error("Error executing SQL query: ${(error as Error).message}")
+    throw new Error('Error executing SQL query: ${(error as Error).message}')
   } finally {
     if (connection) connection.release()
   }
 }
 
-export const setUserDescription = (
-  description: String,
+export const setUserDescription = async (
+  description: string,
   userId: number,
-) => {
+): Promise<void> => {
   if (description.length >= 64 * 1024) {
-    throw new Error("Error setting description: too long")
+    throw new Error('Error setting description: too long')
   }
-  runSql(
-    "update user set description = ? where id = ?",
-    [description, userId]
-  )
+  await runSql('update user set description = ? where id = ?', [
+    description,
+    userId,
+  ])
 }
