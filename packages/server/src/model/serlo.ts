@@ -199,8 +199,7 @@ export function createSerloModel({
     type: 'UserSetDescriptionMutation',
     decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
-      Database.setUserDescription(payload.description, payload.userId)
-      return { success: true }
+      return Database.setUserDescription(payload.description, payload.userId)
     },
     updateCache: async ({ userId, description }, { success }) => {
       if (success) {
