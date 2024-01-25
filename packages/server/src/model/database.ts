@@ -22,7 +22,7 @@ const runSql = async (
 
     return rows
   } catch (error) {
-    throw new Error('Error executing SQL query: ${(error as Error).message}')
+    throw new Error(`Error executing SQL query: ${(error as Error).message}`)
   } finally {
     if (connection) connection.release()
   }
