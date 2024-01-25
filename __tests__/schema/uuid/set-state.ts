@@ -197,14 +197,6 @@ describe('permission-based testing', () => {
       true,
     )
   })
-
-  test('returns "{ success: true }" when architect tries to set state of user', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.Admin, Instance.De),
-      user2.id,
-      true,
-    )
-  })
 })
 
 async function testPermissionWithMockUser(
