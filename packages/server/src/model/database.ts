@@ -1,5 +1,7 @@
 import * as mysql from 'mysql2/promise'
 
+import { log } from '../internals/log'
+
 const dbConfig = {
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -22,7 +24,11 @@ const runSql = async (
 
     return rows
   } catch (error) {
-    throw new Error(`Error executing SQL query: ${(error as Error).message}`)
+    const errorMessage = `Error executing SQL query: ${
+      (error as Error).message
+    }`
+    log.error(errorMessage)
+    throw new Error(errorMessage)
   } finally {
     if (connection) connection.release()
   }
