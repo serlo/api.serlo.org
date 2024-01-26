@@ -72,7 +72,7 @@ export function createSwrQueue({
   })
 
   queue.on('error', (err) => {
-    console.log(`Queue error event - ${err.message}`);
+    log.error(`Queue error event - ${err.message}`);
   });
 
   return {
