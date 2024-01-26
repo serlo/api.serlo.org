@@ -49,7 +49,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     host: url.split(':')[0],
     port: Number(url.split(':')[1]),
     retryStrategy(times) {
-      console.log(`\nTrying to reconnect to redis, ${times}th attempt\n`)
+      log.error(`\nTrying to reconnect to redis, ${times}th attempt\n`)
 
       const delay = 2000
       // return any value that is not a number to stop retrying.
