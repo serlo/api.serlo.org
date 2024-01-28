@@ -44,10 +44,10 @@ export interface Cache {
 }
 
 export function createCache({ timer }: { timer: Timer }): Cache {
-  const url = process.env.REDIS_URL.replace('redis://', '')
+  const redisUrl = new URL(process.env.REDIS_URL)
   const client = new Redis({
-    host: url.split(':')[0],
-    port: Number(url.split(':')[1]),
+    host: redisUrl.hostname,
+    port: Number(redisUrl.port),
     retryStrategy(times) {
       log.error(`\nTrying to reconnect to redis, ${times}th attempt\n`)
 
