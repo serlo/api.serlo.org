@@ -3,5 +3,6 @@
     "packages/*"
   ],
   "npmClient": "yarn",
-  "version": "0.57.6"
+  "version": "0.60.0",
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }

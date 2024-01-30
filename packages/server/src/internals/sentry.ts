@@ -3,9 +3,8 @@ import type {
   GraphQLRequestContextDidEncounterErrors,
 } from '@apollo/server'
 import * as Sentry from '@sentry/node'
-import R from 'ramda'
+import * as R from 'ramda'
 
-import { InvalidValueFromListener } from './data-source'
 import { InvalidCurrentValueError } from './data-source-helper'
 import { Context } from '~/internals/graphql'
 
@@ -90,17 +89,6 @@ export function createSentryPlugin(): ApolloServerPlugin {
                 scope.setContext('error', errorContext)
               }
 
-              if (originalError instanceof InvalidValueFromListener) {
-                const { errorContext } = originalError
-
-                scope.setFingerprint([
-                  'invalid-value',
-                  'listener',
-                  errorContext.key,
-                ])
-                scope.setContext('error', errorContext)
-              }
-
               return scope
             })
           }
@@ -120,10 +108,10 @@ function stringifyContextValue(value: unknown) {
   return Array.isArray(value)
     ? R.map(stringify, value)
     : typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(stringify, value)
-    : value === null
-    ? JSON.stringify(value)
-    : value
+      ? R.mapObjIndexed(stringify, value)
+      : value === null
+        ? JSON.stringify(value)
+        : value
 }
 
 function stringify(value: unknown) {

@@ -7,7 +7,8 @@ export class InvalidCurrentValueError extends Error {
       invalidCachedValue?: unknown
       invalidCurrentValue: unknown
       decoder: string
-      validationErrors: string[]
+      type?: string
+      payload: unknown
       key?: string
     },
   ) {

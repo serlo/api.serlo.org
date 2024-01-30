@@ -1,3 +1,3 @@
-import { licenses } from '~/config'
-
-export const license = licenses[0]
+export const license = {
+  id: 1,
+}

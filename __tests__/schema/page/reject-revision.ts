@@ -1,5 +1,5 @@
-import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   page as basePage,
@@ -7,6 +7,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { given, nextUuid, Client } from '../../__utils__'
+import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
 const page = {
@@ -41,10 +42,10 @@ beforeEach(() => {
       reason: 'reason',
       revisionId: currentRevision.id,
     })
-    .isDefinedBy((_req, res, ctx) => {
+    .isDefinedBy(() => {
       given('UuidQuery').for({ ...currentRevision, trashed: true })
 
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     })
 })
 

@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   taxonomyTermCurriculumTopic,
@@ -99,8 +100,9 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
         ...input,
         userId: user.id,
       })
-      .isDefinedBy((req, res, ctx) => {
-        const { name, description } = req.body.payload
+      .isDefinedBy(async ({ request }) => {
+        const body = await request.json()
+        const { name, description } = body.payload
 
         given('UuidQuery').for({
           ...taxonomyTermCurriculumTopic,
@@ -108,7 +110,7 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
           description,
         })
 
-        return res(ctx.json({ success: true }))
+        return HttpResponse.json({ success: true })
       })
     await mutation.shouldReturnData({
       taxonomyTerm: { setNameAndDescription: { success: true } },

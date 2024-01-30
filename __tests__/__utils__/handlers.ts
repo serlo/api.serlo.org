@@ -1,9 +1,10 @@
-import { MockedRequest, rest } from 'msw'
+import { HttpResponse, ResponseResolver, http } from 'msw'
 import * as R from 'ramda'
 
-import { createFakeIdentity, RestResolver } from './services'
+import { createFakeIdentity } from './services'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
+import { Payload } from '~/model/database-layer'
 import { DiscriminatorType } from '~/model/decoder'
 
 const ForDefinitions = {
@@ -45,8 +46,9 @@ const ForDefinitions = {
         return { ...entity, trashed: true }
       }),
     )
-    given('DeletedEntitiesQuery').isDefinedBy((req, res, ctx) => {
-      const { first, after, instance } = req.body.payload
+    given('DeletedEntitiesQuery').isDefinedBy(async ({ request }) => {
+      const body = await request.json()
+      const { first, after, instance } = body.payload
 
       const entitiesByInstance = instance
         ? entities.filter((entity) => entity.instance === instance)
@@ -66,7 +68,7 @@ const ForDefinitions = {
           dateOfDeletion: entity.date,
         }
       })
-      return res(ctx.json({ deletedEntities }))
+      return HttpResponse.json({ deletedEntities })
     })
   },
 }
@@ -106,7 +108,12 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
             }),
           )
         },
-        isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
+        isDefinedBy(
+          resolver: ResponseResolver<
+            Record<string, unknown>,
+            { payload: Payload<M> }
+          >,
+        ) {
           global.server.use(
             createDatabaseLayerHandler({
               matchType: type,
@@ -117,7 +124,12 @@ export function given<M extends DatabaseLayer.MessageType>(type: M) {
         },
       }
     },
-    isDefinedBy(resolver: MessageResolver<M, DatabaseLayer.Payload<M>>) {
+    isDefinedBy(
+      resolver: ResponseResolver<
+        Record<string, unknown>,
+        { payload: Payload<M> }
+      >,
+    ) {
       global.server.use(
         createDatabaseLayerHandler({ matchType: type, resolver }),
       )
@@ -206,14 +218,12 @@ function createMessageHandler(
     matchType: message.type,
     matchPayloads:
       message.payload === undefined ? undefined : [message.payload],
-    resolver: (_req, res, ctx) => {
-      return (once ? res.once : res)(
-        ctx.status(statusCode ?? 200),
-        ...(body === undefined
-          ? []
-          : [ctx.json(body as Record<string, unknown>)]),
-      )
+    resolver: () => {
+      return HttpResponse.json(body === undefined ? [] : body, {
+        status: statusCode ?? 200,
+      })
     },
+    options: { once },
   })
 }
 
@@ -223,35 +233,62 @@ function createDatabaseLayerHandler<
 >(args: {
   matchType: MessageType
   matchPayloads?: Partial<Payload>[]
-  resolver: MessageResolver<MessageType, Payload>
+  resolver: ResponseResolver<Record<string, unknown>, { payload: Payload }>
+  options?: { once: boolean }
 }) {
-  const { matchType, matchPayloads, resolver } = args
+  const { matchType, matchPayloads, resolver, options } = args
 
-  const handler = rest.post(getDatabaseLayerUrl({ path: '/' }), resolver)
+  return http.post(
+    getDatabaseLayerUrl({ path: '/' }),
+    withTypeAndPayload(resolver, matchType, matchPayloads),
+    options,
+  )
+}
 
-  // Only use this handler if message matches
-  handler.predicate = (req: MockedRequest<BodyType<MessageType, Payload>>) =>
-    req?.body?.type === matchType &&
-    (matchPayloads === undefined ||
-      matchPayloads.some((payload) =>
-        R.equals({ ...req.body.payload, ...payload }, req.body.payload),
-      ))
+function withTypeAndPayload<
+  MessageType extends string = string,
+  Payload = DefaultPayloadType,
+>(
+  resolver: ResponseResolver<Record<string, unknown>, { payload: Payload }>,
+  expectedType: MessageType,
+  expectedPayloads?: Partial<Payload>[],
+): ResponseResolver<Record<string, unknown>, { payload: Payload }> {
+  return async (args) => {
+    const { request } = args
 
-  return handler
+    // Ignore requests that have a non-JSON body.
+    const contentType = request.headers.get('Content-Type') ?? ''
+    if (!contentType.includes('application/json')) {
+      return
+    }
+
+    // Clone the request and read it as JSON.
+    const actualBody = (await request.clone().json()) as {
+      type: string
+      payload: Payload
+    }
+
+    const isTypeMatching = actualBody.type === expectedType
+    const isPayloadMatching =
+      expectedPayloads === undefined ||
+      expectedPayloads.some((payload) =>
+        R.equals({ ...actualBody.payload, ...payload }, actualBody.payload),
+      )
+
+    // Compare two objects using "lodash".
+    if (!isTypeMatching || !isPayloadMatching) {
+      return
+    }
+
+    // Without the `as` we get a TypeScript error which is a bug in
+    // `msw` itself. Let's fix it at some point in the future :-)
+    return resolver(args) as HttpResponse
+  }
 }
 
 function getDatabaseLayerUrl({ path }: { path: string }) {
   return `http://${process.env.SERLO_ORG_DATABASE_LAYER_HOST}${path}`
 }
-
-type MessageResolver<
-  MessageType extends string = string,
-  Payload = DefaultPayloadType,
-> = RestResolver<BodyType<MessageType, Payload>>
-type BodyType<
-  MessageType extends string = string,
-  Payload = DefaultPayloadType,
-> = Required<MessagePayload<MessageType, Payload>>
 
 interface MessagePayload<
   MessageType extends string = string,
@@ -287,20 +324,25 @@ function createCommunityChatHandler({
   body: Record<string, unknown>
 }) {
   const url = `${process.env.ROCKET_CHAT_URL}api/v1/${endpoint}`
-  const handler = rest.get(url, (req, res, ctx) => {
+  const handler = http.get(url, ({ request }) => {
     if (
-      req.headers.get('X-User-Id') !== process.env.ROCKET_CHAT_API_USER_ID ||
-      req.headers.get('X-Auth-Token') !== process.env.ROCKET_CHAT_API_AUTH_TOKEN
+      request.headers.get('X-User-Id') !==
+        process.env.ROCKET_CHAT_API_USER_ID ||
+      request.headers.get('X-Auth-Token') !==
+        process.env.ROCKET_CHAT_API_AUTH_TOKEN
     )
-      return res(ctx.status(403))
+      return new HttpResponse(null, {
+        status: 403,
+      })
 
-    return res(ctx.json(body))
+    return HttpResponse.json(body)
   })
 
-  handler.predicate = (req: MockedRequest) => {
-    return R.toPairs(parameters).every(
-      ([name, value]) => req.url.searchParams.get(name) === value,
-    )
+  handler.predicate = ({ request }) => {
+    return R.toPairs(parameters).every(([name, value]) => {
+      const url = new URL(request.url)
+      return url.searchParams.get(name) === value
+    })
   }
 
   return handler

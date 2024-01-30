@@ -2,6 +2,116 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.60.0](https://github.com/serlo/api.serlo.org/compare/v0.59.2..v0.60.0) - December 7, 2023
+
+### Breaking Changes
+
+- Remove mutations for setting and updating the cache.
+
+### Fixed
+
+- Fix import of playground in docker container
+
+- Set always a ttl for each key
+
+### Internal
+
+- Remove plugin invalid-current-value-error-plugin.ts
+
+- Add type and payload to sentry logging
+
+- refactor(time interface): remove duplicate properties
+
+- Refactorings of tests
+
+## [v0.59.2](https://github.com/serlo/api.serlo.org/compare/v0.59.1..v0.59.2) - December 1, 2023
+
+### Fixed
+
+- Fix enmeshed endpoints to reenable user journey
+
+- Set always a ttl for each key
+
+### Internal
+
+- Add pact tests to github repo
+
+- Remove unnecessary test redis
+
+- Improve CI speed
+
+- Make tests run parallel
+
+## [v0.59.1](https://github.com/serlo/api.serlo.org/compare/v0.59.0..v0.59.1) - November 30, 2023
+
+### Internal
+
+- `@serlo/authorization`: Remove dependency of `@ſerlo/api`
+
+## [v0.59.0](https://github.com/serlo/api.serlo.org/compare/v0.58.1..v0.59.0) - November 30, 2023
+
+### Breaking Changes
+
+- AI: Add possibility to add multiple prompts / messages
+
+### Internal
+
+- Update dependencies
+
+- Use esbuild for the docker container
+
+## [v0.58.1](https://github.com/serlo/api.serlo.org/compare/v0.58.0..v0.58.1) - November 14, 2023
+
+### Fixed
+
+- Only initialize openAi instance if AI endpoint is called
+
+## [v0.58.0](https://github.com/serlo/api.serlo.org/compare/v0.57.11..v0.58.0) - November 13, 2023
+
+### Changed
+
+- remove license queries, simplify `License` type
+
+### Internal
+
+- Move content generation service logic to api
+
+## [v0.57.11](https://github.com/serlo/api.serlo.org/compare/v0.57.10..v0.57.11) - November 11, 2023
+
+### Fixed
+
+- enmeshed: Store cache only for 20min
+
+### Internal
+
+- Remove solutions
+
+## [v0.57.10](https://github.com/serlo/api.serlo.org/compare/v0.57.9..v0.57.10) - November 10, 2023
+
+### Fixed
+
+- enmeshed: Do not set surname and given name on init
+
+## [v0.57.9](https://github.com/serlo/api.serlo.org/compare/v0.57.8..v0.57.9) - November 10, 2023
+
+### Fixed
+
+- Return `null` when event cannot be loaded
+
+- enmeshed: Do not set name outside of user journey
+
+## [v0.57.8](https://github.com/serlo/api.serlo.org/compare/v0.57.7..v0.57.8) - November 9, 2023
+
+### Fixed
+
+- Return arbitrary JSON instead of a string from content generation service
+
+## [v0.57.7](https://github.com/serlo/api.serlo.org/compare/v0.57.6..v0.57.7) - November 7, 2023
+
+### Fixed
+
+- Re-enable user journey in enmeshed middleware
+
 ## [v0.57.6](https://github.com/serlo/api.serlo.org/compare/v0.57.5..v0.57.6) - October 18, 2023
 
 ### Fixed

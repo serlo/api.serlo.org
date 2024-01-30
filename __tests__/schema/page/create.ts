@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { user as baseUser } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
@@ -41,8 +42,9 @@ describe('PageCreateMutation', () => {
   beforeEach(() => {
     given('UuidQuery').for(user)
 
-    given('PageCreateMutation').isDefinedBy((req, res, ctx) => {
-      const { content, instance, licenseId, title, userId } = req.body.payload
+    given('PageCreateMutation').isDefinedBy(async ({ request }) => {
+      const body = await request.json()
+      const { content, instance, licenseId, title, userId } = body.payload
 
       const newPageRevisionId = castToUuid(19769)
 
@@ -72,7 +74,7 @@ describe('PageCreateMutation', () => {
 
       given('UuidQuery').for(newPage, newPageRevision)
 
-      return res(ctx.json({ ...newPage }))
+      return HttpResponse.json({ ...newPage })
     })
   })
 

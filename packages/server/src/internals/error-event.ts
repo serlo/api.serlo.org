@@ -1,6 +1,6 @@
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { Sentry } from '~/internals/sentry'
 
@@ -54,6 +54,11 @@ export function assertAll(
 }
 
 export function captureErrorEvent(event: ErrorEvent) {
+  if (process.env.ENVIRONMENT === 'local') {
+    // eslint-disable-next-line no-console
+    console.error(event.error)
+  }
+
   Sentry.captureException(event.error, (scope) => {
     if (event.location) {
       if (!event.error.message.startsWith(event.location)) {
@@ -81,7 +86,7 @@ export function captureErrorEvent(event: ErrorEvent) {
   })
 }
 
-export interface ErrorContext {
+interface ErrorContext {
   location?: string
   fingerprint?: string[]
   locationContext?: Record<string, unknown>

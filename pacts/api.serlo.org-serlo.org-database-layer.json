@@ -1,0 +1,4927 @@
+{
+  "consumer": {
+    "name": "api.serlo.org"
+  },
+  "interactions": [
+    {
+      "description": "Message ActiveAuthorsQuery with payload undefined (case 200-response)",
+      "request": {
+        "body": {
+          "type": "ActiveAuthorsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": [
+          1
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ActiveReviewersQuery with payload undefined (case 200-response)",
+      "request": {
+        "body": {
+          "type": "ActiveReviewersQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": [
+          1
+        ],
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ActivityByTypeQuery with payload {\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "userId": 1
+          },
+          "type": "ActivityByTypeQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "comments": 11,
+          "edits": 10,
+          "reviews": 0,
+          "taxonomy": 3
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.comments": {
+            "match": "type"
+          },
+          "$.body.edits": {
+            "match": "type"
+          },
+          "$.body.reviews": {
+            "match": "type"
+          },
+          "$.body.taxonomy": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message AliasQuery with payload {\"instance\":\"de\",\"path\":\"/mathe\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "instance": "de",
+            "path": "/mathe"
+          },
+          "type": "AliasQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "id": 19767,
+          "instance": "de",
+          "path": "/mathe"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.path": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message AliasQuery with payload {\"instance\":\"de\",\"path\":\"/user/1/admin\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "instance": "de",
+            "path": "/user/1/admin"
+          },
+          "type": "AliasQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "id": 1,
+          "instance": "de",
+          "path": "/user/1/admin"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.path": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message AliasQuery with payload {\"instance\":\"en\",\"path\":\"/not-existing\"} (case 404-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "instance": "en",
+            "path": "/not-existing"
+          },
+          "type": "AliasQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 404
+      }
+    },
+    {
+      "description": "Message AllThreadsQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 1,
+            "instance": "de"
+          },
+          "type": "AllThreadsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "firstCommentIds": [
+            35435
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.firstCommentIds": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message DeletedEntitiesQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 1,
+            "instance": "de"
+          },
+          "type": "DeletedEntitiesQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "deletedEntities": [
+            {
+              "dateOfDeletion": "2014-03-01T20:46:58+01:00",
+              "id": 2167
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.deletedEntities": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.deletedEntities[*].dateOfDeletion": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.deletedEntities[*].id": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntitiesMetadataQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 1,
+            "instance": "de"
+          },
+          "type": "EntitiesMetadataQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "entities": [
+            {
+              "identifier": {
+                "value": 1495
+              }
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.entities": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.entities[*].identifier.value": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityAddRevisionMutation with payload {\"input\":{\"changes\":\"changes\",\"entityId\":16078,\"needsReview\":false,\"subscribeThis\":true,\"subscribeThisByEmail\":true,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"description\":\"description\"}},\"userId\":1,\"revisionType\":\"VideoRevision\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "input": {
+              "changes": "changes",
+              "entityId": 16078,
+              "fields": {
+                "content": "content",
+                "description": "description",
+                "title": "title"
+              },
+              "needsReview": false,
+              "subscribeThis": true,
+              "subscribeThisByEmail": true
+            },
+            "revisionType": "VideoRevision",
+            "userId": 1
+          },
+          "type": "EntityAddRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "revisionId": 456,
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.revisionId": {
+            "match": "type"
+          },
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityAddRevisionMutation with payload {\"input\":{\"changes\":\"changes\",\"entityId\":1855,\"needsReview\":true,\"subscribeThis\":false,\"subscribeThisByEmail\":false,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"metaTitle\":\"metaTitle\",\"metaDescription\":\"metaDescription\"}},\"userId\":1,\"revisionType\":\"ArticleRevision\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "input": {
+              "changes": "changes",
+              "entityId": 1855,
+              "fields": {
+                "content": "content",
+                "metaDescription": "metaDescription",
+                "metaTitle": "metaTitle",
+                "title": "title"
+              },
+              "needsReview": true,
+              "subscribeThis": false,
+              "subscribeThisByEmail": false
+            },
+            "revisionType": "ArticleRevision",
+            "userId": 1
+          },
+          "type": "EntityAddRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "revisionId": 123,
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.revisionId": {
+            "match": "type"
+          },
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityCheckoutRevisionMutation with payload {\"revisionId\":30672,\"userId\":1,\"reason\":\"\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "reason": "",
+            "revisionId": 30672,
+            "userId": 1
+          },
+          "type": "EntityCheckoutRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityCreateMutation with payload {\"entityType\":\"Article\",\"userId\":1,\"input\":{\"changes\":\"changes\",\"licenseId\":1,\"subscribeThis\":false,\"subscribeThisByEmail\":false,\"needsReview\":false,\"taxonomyTermId\":5,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"metaTitle\":\"metaTitle\",\"metaDescription\":\"metaDescription\",\"url\":\"https://url.org\"}}} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "entityType": "Article",
+            "input": {
+              "changes": "changes",
+              "fields": {
+                "content": "content",
+                "metaDescription": "metaDescription",
+                "metaTitle": "metaTitle",
+                "title": "title",
+                "url": "https://url.org"
+              },
+              "licenseId": 1,
+              "needsReview": false,
+              "subscribeThis": false,
+              "subscribeThisByEmail": false,
+              "taxonomyTermId": 5
+            },
+            "userId": 1
+          },
+          "type": "EntityCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Article",
+          "alias": "/mathe/1855/parabel",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 30674,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 1855,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            30674
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityCreateMutation with payload {\"entityType\":\"CoursePage\",\"userId\":1,\"input\":{\"changes\":\"changes\",\"licenseId\":1,\"subscribeThis\":false,\"subscribeThisByEmail\":false,\"needsReview\":true,\"parentId\":18514,\"fields\":{\"title\":\"title\",\"content\":\"content\"}}} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "entityType": "CoursePage",
+            "input": {
+              "changes": "changes",
+              "fields": {
+                "content": "content",
+                "title": "title"
+              },
+              "licenseId": 1,
+              "needsReview": true,
+              "parentId": 18514,
+              "subscribeThis": false,
+              "subscribeThisByEmail": false
+            },
+            "userId": 1
+          },
+          "type": "EntityCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CoursePage",
+          "alias": "/mathe/18521/startseite",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": null,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 18521,
+          "instance": "de",
+          "licenseId": 1,
+          "parentId": 18514,
+          "revisionIds": [
+            19277
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityRejectRevisionMutation with payload {\"revisionId\":30672,\"userId\":1,\"reason\":\"\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "reason": "",
+            "revisionId": 30672,
+            "userId": 1
+          },
+          "type": "EntityRejectRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntitySetLicenseMutation with payload {\"userId\":1,\"licenseId\":4,\"entityId\":1855} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "entityId": 1855,
+            "licenseId": 4,
+            "userId": 1
+          },
+          "type": "EntitySetLicenseMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntitySortMutation with payload {\"entityId\":2223,\"childrenIds\":[9911,2233,5075,9907]} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "childrenIds": [
+              9911,
+              2233,
+              5075,
+              9907
+            ],
+            "entityId": 2223
+          },
+          "type": "EntitySortMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":1000000} (case 404-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 1000000
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 404
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":297} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 297
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetLicenseNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 297,
+          "instance": "de",
+          "objectId": 1855,
+          "repositoryId": 1855
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":298} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 298
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateEntityNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "entityId": 1855,
+          "id": 298,
+          "instance": "de",
+          "objectId": 1855
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.entityId": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":300} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 300
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateEntityRevisionNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "entityId": 1855,
+          "entityRevisionId": 30674,
+          "id": 300,
+          "instance": "de",
+          "objectId": 30674
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.entityId": {
+            "match": "type"
+          },
+          "$.body.entityRevisionId": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":301} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 301
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CheckoutRevisionNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 301,
+          "instance": "de",
+          "objectId": 30674,
+          "reason": "reason",
+          "repositoryId": 1855,
+          "revisionId": 30674
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.reason": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.revisionId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":37374} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 37374
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateThreadNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 37374,
+          "instance": "de",
+          "objectId": 1855,
+          "threadId": 27778
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":37375} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 37375
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateCommentNotificationEvent",
+          "actorId": 1,
+          "commentId": 27778,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 37375,
+          "instance": "de",
+          "objectId": 27778,
+          "threadId": 27778
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.commentId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":38035} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 38035
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "RejectRevisionNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 38035,
+          "instance": "de",
+          "objectId": 30674,
+          "reason": "reason",
+          "repositoryId": 1855,
+          "revisionId": 30674
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.reason": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.revisionId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":38405} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 38405
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetTaxonomyTermNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 38405,
+          "instance": "de",
+          "objectId": 16048,
+          "taxonomyTermId": 16048
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.taxonomyTermId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":38513} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 38513
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetUuidStateNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 38513,
+          "instance": "de",
+          "objectId": 1855,
+          "trashed": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":40750} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 40750
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetThreadStateNotificationEvent",
+          "actorId": 1,
+          "archived": true,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 40750,
+          "instance": "de",
+          "objectId": 27778,
+          "threadId": 27778
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.archived": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":43103} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 43103
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateEntityLinkNotificationEvent",
+          "actorId": 324,
+          "childId": 18521,
+          "date": "2014-03-17T12:24:54Z",
+          "id": 43103,
+          "instance": "de",
+          "objectId": 18521,
+          "parentId": 18514
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.childId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":47414} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 47414
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetTaxonomyParentNotificationEvent",
+          "actorId": 1,
+          "childId": 16048,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 47414,
+          "instance": "de",
+          "objectId": 16048,
+          "parentId": 5,
+          "previousParentId": 3
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.childId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.previousParentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":48077} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 48077
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "RemoveTaxonomyLinkNotificationEvent",
+          "actorId": 1,
+          "childId": 1855,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 48077,
+          "instance": "de",
+          "objectId": 16048,
+          "parentId": 16048
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.childId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":55273} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 55273
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "RemoveEntityLinkNotificationEvent",
+          "actorId": 1,
+          "childId": 18521,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 55273,
+          "instance": "de",
+          "objectId": 18521,
+          "parentId": 18514
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.childId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":674} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 674
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateTaxonomyLinkNotificationEvent",
+          "actorId": 1,
+          "childId": 1855,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 674,
+          "instance": "de",
+          "objectId": 16048,
+          "parentId": 16048
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.childId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":90} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 90
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateTaxonomyTermNotificationEvent",
+          "actorId": 1,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 90,
+          "instance": "de",
+          "objectId": 16048,
+          "taxonomyTermId": 16048
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.taxonomyTermId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventsQuery with payload {\"first\":500,\"actorId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "actorId": 1,
+            "first": 500
+          },
+          "type": "EventsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "events": [
+            {
+              "__typename": "CheckoutRevisionNotificationEvent",
+              "actorId": 1,
+              "date": "2014-03-01T20:45:56Z",
+              "id": 301,
+              "instance": "de",
+              "objectId": 30674
+            }
+          ],
+          "hasNextPage": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.events": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.events[*].__typename": {
+            "match": "type"
+          },
+          "$.body.events[*].actorId": {
+            "match": "type"
+          },
+          "$.body.events[*].date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.events[*].id": {
+            "match": "type"
+          },
+          "$.body.events[*].instance": {
+            "match": "type"
+          },
+          "$.body.events[*].objectId": {
+            "match": "type"
+          },
+          "$.body.hasNextPage": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventsQuery with payload {\"first\":500,\"after\":100} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "after": 100,
+            "first": 500
+          },
+          "type": "EventsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "events": [
+            {
+              "__typename": "CheckoutRevisionNotificationEvent",
+              "actorId": 1,
+              "date": "2014-03-01T20:45:56Z",
+              "id": 301,
+              "instance": "de",
+              "objectId": 30674
+            }
+          ],
+          "hasNextPage": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.events": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.events[*].__typename": {
+            "match": "type"
+          },
+          "$.body.events[*].actorId": {
+            "match": "type"
+          },
+          "$.body.events[*].date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.events[*].id": {
+            "match": "type"
+          },
+          "$.body.events[*].instance": {
+            "match": "type"
+          },
+          "$.body.events[*].objectId": {
+            "match": "type"
+          },
+          "$.body.hasNextPage": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventsQuery with payload {\"first\":500,\"instance\":\"de\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 500,
+            "instance": "de"
+          },
+          "type": "EventsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "events": [
+            {
+              "__typename": "CheckoutRevisionNotificationEvent",
+              "actorId": 1,
+              "date": "2014-03-01T20:45:56Z",
+              "id": 301,
+              "instance": "de",
+              "objectId": 30674
+            }
+          ],
+          "hasNextPage": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.events": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.events[*].__typename": {
+            "match": "type"
+          },
+          "$.body.events[*].actorId": {
+            "match": "type"
+          },
+          "$.body.events[*].date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.events[*].id": {
+            "match": "type"
+          },
+          "$.body.events[*].instance": {
+            "match": "type"
+          },
+          "$.body.events[*].objectId": {
+            "match": "type"
+          },
+          "$.body.hasNextPage": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventsQuery with payload {\"first\":500,\"objectId\":1565} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 500,
+            "objectId": 1565
+          },
+          "type": "EventsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "events": [
+            {
+              "__typename": "CheckoutRevisionNotificationEvent",
+              "actorId": 1,
+              "date": "2014-03-01T20:45:56Z",
+              "id": 301,
+              "instance": "de",
+              "objectId": 30674
+            }
+          ],
+          "hasNextPage": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.events": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.events[*].__typename": {
+            "match": "type"
+          },
+          "$.body.events[*].actorId": {
+            "match": "type"
+          },
+          "$.body.events[*].date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.events[*].id": {
+            "match": "type"
+          },
+          "$.body.events[*].instance": {
+            "match": "type"
+          },
+          "$.body.events[*].objectId": {
+            "match": "type"
+          },
+          "$.body.hasNextPage": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventsQuery with payload {\"first\":500} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "first": 500
+          },
+          "type": "EventsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "events": [
+            {
+              "__typename": "CheckoutRevisionNotificationEvent",
+              "actorId": 1,
+              "date": "2014-03-01T20:45:56Z",
+              "id": 301,
+              "instance": "de",
+              "objectId": 30674
+            }
+          ],
+          "hasNextPage": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.events": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.events[*].__typename": {
+            "match": "type"
+          },
+          "$.body.events[*].actorId": {
+            "match": "type"
+          },
+          "$.body.events[*].date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.events[*].id": {
+            "match": "type"
+          },
+          "$.body.events[*].instance": {
+            "match": "type"
+          },
+          "$.body.events[*].objectId": {
+            "match": "type"
+          },
+          "$.body.hasNextPage": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message NotificationSetStateMutation with payload {\"ids\":[9],\"userId\":1,\"unread\":true} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "ids": [
+              9
+            ],
+            "unread": true,
+            "userId": 1
+          },
+          "type": "NotificationSetStateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "Message NotificationsQuery with payload {\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "userId": 1
+          },
+          "type": "NotificationsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "notifications": [
+            {
+              "email": false,
+              "emailSent": false,
+              "eventId": 301,
+              "id": 1,
+              "unread": true
+            }
+          ],
+          "userId": 1
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.notifications": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.notifications[*].email": {
+            "match": "type"
+          },
+          "$.body.notifications[*].emailSent": {
+            "match": "type"
+          },
+          "$.body.notifications[*].eventId": {
+            "match": "type"
+          },
+          "$.body.notifications[*].id": {
+            "match": "type"
+          },
+          "$.body.notifications[*].unread": {
+            "match": "type"
+          },
+          "$.body.userId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message PageAddRevisionMutation with payload {\"content\":\"content\",\"title\":\"title\",\"pageId\":19767,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "content": "content",
+            "pageId": 19767,
+            "title": "title",
+            "userId": 1
+          },
+          "type": "PageAddRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "revisionId": 456,
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.revisionId": {
+            "match": "type"
+          },
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message PageCheckoutRevisionMutation with payload {\"revisionId\":33220,\"userId\":1,\"reason\":\"\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "reason": "",
+            "revisionId": 33220,
+            "userId": 1
+          },
+          "type": "PageCheckoutRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message PageCreateMutation with payload {\"content\":\"content\",\"discussionsEnabled\":false,\"instance\":\"de\",\"licenseId\":1,\"title\":\"title\",\"forumId\":null,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "content": "content",
+            "discussionsEnabled": false,
+            "forumId": null,
+            "instance": "de",
+            "licenseId": 1,
+            "title": "title",
+            "userId": 1
+          },
+          "type": "PageCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Page",
+          "alias": "/19767/mathematik-startseite",
+          "currentRevisionId": 35476,
+          "date": "2015-02-28T02:06:40Z",
+          "id": 19767,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            35476
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message PageRejectRevisionMutation with payload {\"revisionId\":33220,\"userId\":1,\"reason\":\"\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "reason": "",
+            "revisionId": 33220,
+            "userId": 1
+          },
+          "type": "PageRejectRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message PagesQuery with payload {\"instance\":\"en\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "instance": "en"
+          },
+          "type": "PagesQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "pages": [
+            23579
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.pages": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message SubjectsQuery with payload {} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {},
+          "type": "SubjectsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "subjects": [
+            {
+              "instance": "de",
+              "taxonomyTermId": 5
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.subjects": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.subjects[*].instance": {
+            "match": "type"
+          },
+          "$.body.subjects[*].taxonomyTermId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message SubscriptionSetMutation with payload {\"ids\":[1855],\"userId\":1,\"subscribe\":false,\"sendEmail\":false} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "ids": [
+              1855
+            ],
+            "sendEmail": false,
+            "subscribe": false,
+            "userId": 1
+          },
+          "type": "SubscriptionSetMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "Message SubscriptionsQuery with payload {\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "userId": 1
+          },
+          "type": "SubscriptionsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "subscriptions": [
+            {
+              "objectId": 1855,
+              "sendEmail": true
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.subscriptions": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.subscriptions[*].objectId": {
+            "match": "type"
+          },
+          "$.body.subscriptions[*].sendEmail": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyCreateEntityLinksMutation with payload {\"entityIds\":[16078,1855],\"taxonomyTermId\":1288,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "entityIds": [
+              16078,
+              1855
+            ],
+            "taxonomyTermId": 1288,
+            "userId": 1
+          },
+          "type": "TaxonomyCreateEntityLinksMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyDeleteEntityLinksMutation with payload {\"entityIds\":[1949],\"taxonomyTermId\":24370,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "entityIds": [
+              1949
+            ],
+            "taxonomyTermId": 24370,
+            "userId": 1
+          },
+          "type": "TaxonomyDeleteEntityLinksMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomySortMutation with payload {\"taxonomyTermId\":1338,\"childrenIds\":[1557,1553,2107,24398,30560],\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "childrenIds": [
+              1557,
+              1553,
+              2107,
+              24398,
+              30560
+            ],
+            "taxonomyTermId": 1338,
+            "userId": 1
+          },
+          "type": "TaxonomySortMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyTermCreateMutation with payload {\"userId\":1,\"taxonomyType\":\"topic\",\"parentId\":1288,\"name\":\"a topic\",\"description\":\"a description\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": "a description",
+            "name": "a topic",
+            "parentId": 1288,
+            "taxonomyType": "topic",
+            "userId": 1
+          },
+          "type": "TaxonomyTermCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "TaxonomyTerm",
+          "alias": "/mathe/1288/geometrie",
+          "childrenIds": [],
+          "description": "a description",
+          "id": 1288,
+          "instance": "de",
+          "name": "Geometrie",
+          "parentId": 5,
+          "taxonomyId": 4,
+          "trashed": false,
+          "type": "topic",
+          "weight": 6
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.description": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.taxonomyId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.weight": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyTermCreateMutation with payload {\"userId\":1,\"taxonomyType\":\"topic-folder\",\"parentId\":1420,\"name\":\"a topic folder\",\"description\":\"a description\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": "a description",
+            "name": "a topic folder",
+            "parentId": 1420,
+            "taxonomyType": "topic-folder",
+            "userId": 1
+          },
+          "type": "TaxonomyTermCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "TaxonomyTerm",
+          "alias": "/mathe/23662/aufgaben-zu-einfachen-potenzen",
+          "childrenIds": [],
+          "description": "a description",
+          "id": 23662,
+          "instance": "de",
+          "name": "Aufgaben zu einfachen Potenzen",
+          "parentId": 1288,
+          "taxonomyId": 9,
+          "trashed": false,
+          "type": "topicFolder",
+          "weight": 1
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.description": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.taxonomyId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.weight": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyTermSetNameAndDescriptionMutation with payload {\"id\":16048,\"name\":\"description null\",\"description\":null,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": null,
+            "id": 16048,
+            "name": "description null",
+            "userId": 1
+          },
+          "type": "TaxonomyTermSetNameAndDescriptionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message TaxonomyTermSetNameAndDescriptionMutation with payload {\"id\":5,\"name\":\"name\",\"description\":\"description\",\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": "description",
+            "id": 5,
+            "name": "name",
+            "userId": 1
+          },
+          "type": "TaxonomyTermSetNameAndDescriptionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadCreateCommentMutation with payload {\"content\":\"Hello\",\"threadId\":27778,\"userId\":1,\"subscribe\":true,\"sendEmail\":false} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "content": "Hello",
+            "sendEmail": false,
+            "subscribe": true,
+            "threadId": 27778,
+            "userId": 1
+          },
+          "type": "ThreadCreateCommentMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Comment",
+          "alias": "/mathe/101/mathe",
+          "archived": false,
+          "authorId": 1,
+          "childrenIds": [],
+          "content": "Hello",
+          "date": "2014-08-25T12:51:02+02:00",
+          "id": 27778,
+          "parentId": 27778,
+          "status": "noStatus",
+          "title": null,
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.archived": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.status": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadCreateThreadMutation with payload {\"title\":\"My new thread\",\"content\":\"🔥 brand new!\",\"objectId\":1855,\"userId\":1,\"subscribe\":true,\"sendEmail\":false} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "content": "🔥 brand new!",
+            "objectId": 1855,
+            "sendEmail": false,
+            "subscribe": true,
+            "title": "My new thread",
+            "userId": 1
+          },
+          "type": "ThreadCreateThreadMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Comment",
+          "alias": "/mathe/1000/first",
+          "archived": false,
+          "authorId": 1,
+          "childrenIds": [],
+          "content": "🔥 brand new!",
+          "date": "2014-03-01T20:45:56Z",
+          "id": 1000,
+          "parentId": 1855,
+          "status": "noStatus",
+          "title": "My new thread",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.archived": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.status": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadEditCommentMutation with payload {\"content\":\"new content\",\"commentId\":17007,\"userId\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "commentId": 17007,
+            "content": "new content",
+            "userId": 1
+          },
+          "type": "ThreadEditCommentMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadSetThreadArchivedMutation with payload {\"ids\":[27144],\"userId\":1,\"archived\":true} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "archived": true,
+            "ids": [
+              27144
+            ],
+            "userId": 1
+          },
+          "type": "ThreadSetThreadArchivedMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadSetThreadStatusMutation with payload {\"ids\":[27144],\"status\":\"open\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "ids": [
+              27144
+            ],
+            "status": "open"
+          },
+          "type": "ThreadSetThreadStatusMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message ThreadsQuery with payload {\"id\":1855} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 1855
+          },
+          "type": "ThreadsQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "firstCommentIds": [
+            1
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.firstCommentIds": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UnrevisedEntitiesQuery with payload {} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {},
+          "type": "UnrevisedEntitiesQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "unrevisedEntityIds": [
+            1855
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.unrevisedEntityIds": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UserAddRoleMutation with payload {\"username\":\"1229f9c7\",\"roleName\":\"german_reviewer\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "roleName": "german_reviewer",
+            "username": "1229f9c7"
+          },
+          "type": "UserAddRoleMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UserCreateMutation with payload {\"username\":\"testUser\",\"password\":\"123456\",\"email\":\"testUser@example.org\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "email": "testUser@example.org",
+            "password": "123456",
+            "username": "testUser"
+          },
+          "type": "UserCreateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true,
+          "userId": 63216
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          },
+          "$.body.userId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UserRemoveRoleMutation with payload {\"username\":\"admin\",\"roleName\":\"sysadmin\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "roleName": "sysadmin",
+            "username": "admin"
+          },
+          "type": "UserRemoveRoleMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UserSetDescriptionMutation with payload {\"userId\":1,\"description\":\"Hello World\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": "Hello World",
+            "userId": 1
+          },
+          "type": "UserSetDescriptionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UserSetEmailMutation with payload {\"userId\":1,\"email\":\"test@example.org\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "email": "test@example.org",
+            "userId": 1
+          },
+          "type": "UserSetEmailMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true,
+          "username": "alpha"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          },
+          "$.body.username": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UsersByRoleQuery with payload {\"roleName\":\"sysadmin\",\"first\":2,\"after\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "after": 1,
+            "first": 2,
+            "roleName": "sysadmin"
+          },
+          "type": "UsersByRoleQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "usersByRole": [
+            2
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.usersByRole": {
+            "match": "type",
+            "min": 1
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":1000000} (case 404-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 1000000
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 404
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":16048} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 16048
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "TaxonomyTerm",
+          "alias": "/mathe/16048/natürliche-zahlen",
+          "childrenIds": [
+            1855
+          ],
+          "description": "description",
+          "id": 16048,
+          "instance": "de",
+          "name": "name",
+          "parentId": 5,
+          "taxonomyId": 11,
+          "trashed": false,
+          "type": "curriculumTopic",
+          "weight": 3
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.childrenIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.description": {
+            "match": "type"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.taxonomyId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.weight": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":16078} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 16078
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Video",
+          "alias": "/mathe/16078/waagrechte-und-schiefe-asymptote",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 16114,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 16078,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            16114
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":16114} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 16114
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "VideoRevision",
+          "alias": "/mathe/16114/waagrechte-und-schiefe-asymptote",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 16114,
+          "repositoryId": 16078,
+          "title": "title",
+          "trashed": false,
+          "url": "url"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.url": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":18514} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 18514
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Course",
+          "alias": "/mathe/18514/überblick-zum-satz-des-pythagoras",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 30713,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 18514,
+          "instance": "de",
+          "licenseId": 1,
+          "pageIds": [
+            18521
+          ],
+          "revisionIds": [
+            30713
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.pageIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":18521} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 18521
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CoursePage",
+          "alias": "/mathe/18521/startseite",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 19277,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 18521,
+          "instance": "de",
+          "licenseId": 1,
+          "parentId": 18514,
+          "revisionIds": [
+            19277
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":1855} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 1855
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Article",
+          "alias": "/mathe/1855/parabel",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 30674,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 1855,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            30674
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":19277} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 19277
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CoursePageRevision",
+          "alias": "/mathe/19277/startseite",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 19277,
+          "repositoryId": 18521,
+          "title": "title",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":19767} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 19767
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Page",
+          "alias": "/19767/mathematik-startseite",
+          "currentRevisionId": 35476,
+          "date": "2015-02-28T02:06:40Z",
+          "id": 19767,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            35476
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":1} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 1
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "User",
+          "alias": "/user/1/admin",
+          "date": "2014-03-01T20:36:21Z",
+          "description": null,
+          "id": 1,
+          "lastLogin": "2020-03-24T09:40:55Z",
+          "roles": [
+            "login"
+          ],
+          "trashed": false,
+          "username": "alpha"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.lastLogin": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.roles": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.username": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":2219} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 2219
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "GroupedExercise",
+          "alias": "/mathe/2219/2219",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 2220,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 2219,
+          "instance": "de",
+          "licenseId": 1,
+          "parentId": 2217,
+          "revisionIds": [
+            2220
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":2220} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 2220
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "GroupedExerciseRevision",
+          "alias": "/mathe/2220/2220",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 2220,
+          "repositoryId": 2219,
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":27778} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 27778
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Comment",
+          "alias": "/mathe/27778/applets-vertauscht",
+          "archived": false,
+          "authorId": 1,
+          "childrenIds": [],
+          "content": "Ich glaube die Applets zur allgemeinen und Scheitelpunktform müssen die Plätze tauschen ;)",
+          "date": "2014-08-25T12:51:02+02:00",
+          "id": 27778,
+          "parentId": 1855,
+          "status": "open",
+          "title": "Applets vertauscht?",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.archived": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.status": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":29637} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 29637
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Exercise",
+          "alias": "/mathe/29637/29637",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 29638,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 29637,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            29638
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":29638} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 29638
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "ExerciseRevision",
+          "alias": "/mathe/29638/29638",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 29638,
+          "repositoryId": 29637,
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":30674} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 30674
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "ArticleRevision",
+          "alias": "/mathe/30674/parabel",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 30674,
+          "metaDescription": "metaDescription",
+          "metaTitle": "metaTitle",
+          "repositoryId": 1855,
+          "title": "title",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.metaDescription": {
+            "match": "type"
+          },
+          "$.body.metaTitle": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":30713} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 30713
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CourseRevision",
+          "alias": "/mathe/30713/überblick-zum-satz-des-pythagoras",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 30713,
+          "metaDescription": "metaDescription",
+          "repositoryId": 18514,
+          "title": "title",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.metaDescription": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":35476} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 35476
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "PageRevision",
+          "alias": "/entity/repository/compare/0/35476",
+          "authorId": 1,
+          "content": "content",
+          "date": "2015-02-28T02:06:40Z",
+          "id": 35476,
+          "repositoryId": 19767,
+          "title": "title",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":35554} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 35554
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Event",
+          "alias": "/mathe/35554/beispielveranstaltung",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 35555,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 35554,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            35555
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":35555} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 35555
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "EventRevision",
+          "alias": "/mathe/35555/beispielveranstaltung",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 35555,
+          "metaDescription": "metaDescription",
+          "metaTitle": "metaTitle",
+          "repositoryId": 35554,
+          "title": "title",
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.metaDescription": {
+            "match": "type"
+          },
+          "$.body.metaTitle": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":35596} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 35596
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Applet",
+          "alias": "/math/35596/example-applet",
+          "canonicalSubjectId": 23593,
+          "currentRevisionId": 35597,
+          "date": "2014-03-01T20:45:56Z",
+          "id": 35596,
+          "instance": "en",
+          "licenseId": 1,
+          "revisionIds": [
+            35597
+          ],
+          "taxonomyTermIds": [
+            5
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":35597} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 35597
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "AppletRevision",
+          "alias": "/math/35597/example-applet",
+          "authorId": 1,
+          "changes": "changes",
+          "content": "content",
+          "date": "2014-09-15T15:28:35Z",
+          "id": 35597,
+          "metaDescription": "metaDescription",
+          "metaTitle": "metaTitle",
+          "repositoryId": 35596,
+          "title": "title",
+          "trashed": false,
+          "url": "url"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.metaDescription": {
+            "match": "type"
+          },
+          "$.body.metaTitle": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.url": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":3} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 3
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "TaxonomyTerm",
+          "alias": "/root/3/root",
+          "childrenIds": [
+            5
+          ],
+          "description": null,
+          "id": 3,
+          "instance": "de",
+          "name": "name",
+          "parentId": null,
+          "taxonomyId": 1,
+          "trashed": false,
+          "type": "root",
+          "weight": 1
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.childrenIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.taxonomyId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.weight": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":5} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 5
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "TaxonomyTerm",
+          "alias": "/mathe/5/mathe",
+          "childrenIds": [
+            16048
+          ],
+          "description": null,
+          "id": 5,
+          "instance": "de",
+          "name": "name",
+          "parentId": 3,
+          "taxonomyId": 3,
+          "trashed": false,
+          "type": "subject",
+          "weight": 2
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.childrenIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.name": {
+            "match": "type"
+          },
+          "$.body.parentId": {
+            "match": "type"
+          },
+          "$.body.taxonomyId": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.type": {
+            "match": "type"
+          },
+          "$.body.weight": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidSetStateMutation with payload {\"ids\":[1855],\"userId\":1,\"trashed\":true} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "ids": [
+              1855
+            ],
+            "trashed": true,
+            "userId": 1
+          },
+          "type": "UuidSetStateMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "12.1.2"
+    },
+    "pactRust": {
+      "ffi": "0.4.9",
+      "models": "1.1.11"
+    },
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  },
+  "provider": {
+    "name": "serlo.org-database-layer"
+  }
+}
