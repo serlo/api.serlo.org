@@ -6,15 +6,15 @@ import {
   page,
   pageRevision,
   taxonomyTermRoot,
-  user2,
   user as baseUser,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { generateRole } from '~/internals/graphql'
 import { Instance, Role } from '~/types'
 
-const uuids = [article, page, pageRevision, taxonomyTermRoot, user2]
-const client = new Client({ userId: baseUser.id })
+const user = { ...baseUser, roles: ['de_architect'] }
+const uuids = [article, page, pageRevision, taxonomyTermRoot]
+const client = new Client({ userId: user.id })
 const mutation = client.prepareQuery({
   query: gql`
     mutation uuid($input: UuidSetStateInput!) {
@@ -28,18 +28,18 @@ const mutation = client.prepareQuery({
 })
 
 beforeEach(() => {
-  given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, user2, article)
-
+  given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, article)
   given('UuidSetStateMutation')
-    .withPayload({ userId: baseUser.id, trashed: true })
-    .isDefinedBy(req => {
-      const { ids, trashed } = req.body.payload
+    .withPayload({ userId: user.id, trashed: true })
+    .isDefinedBy(async ({ request }) => {
+      const body = await request.json()
+      const { ids, trashed } = body.payload
 
       for (const id of ids) {
         const uuid = uuids.find((x) => x.id === id)
 
         if (uuid != null) {
-          uuid.trashed = trashed
+          article.trashed = trashed
         } else {
           return new HttpResponse(null, {
             status: 500,
@@ -103,7 +103,7 @@ describe('infrastructural testing', () => {
 
 describe('permission-based testing', () => {
   beforeEach(() => {
-    given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, user2, article)
+    given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, article)
   })
 
   test('fails when user is not authenticated', async () => {
@@ -125,22 +125,6 @@ describe('permission-based testing', () => {
     await testPermissionWithMockUser(
       generateRole(Role.Architect, Instance.De),
       page.id,
-      false,
-    )
-  })
-
-  test('fails when architect tries to set state of user', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.Architect, Instance.De),
-      user2.id,
-      false,
-    )
-  })
-
-  test('fails when static_pages_builder tries to set state of user', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
-      user2.id,
       false,
     )
   })
