@@ -30,7 +30,7 @@ const runSql = async (
 export const setUserDescription = async (
   description: string,
   userId: number,
-): Promise<unknown> => {
+): Promise<{ success: boolean }> => {
   if (description.length >= 64 * 1024) {
     throw new UserInputError('description too long')
   }
