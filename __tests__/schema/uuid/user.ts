@@ -1,6 +1,6 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   article,
@@ -18,14 +18,11 @@ import {
   givenSpreadsheet,
   hasInternalServerError,
   nextUuid,
-  returnsJson,
-  returnsMalformedJson,
   given,
   Client,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
-import { castToUuid } from '~/model/decoder'
 import { Instance } from '~/types'
 
 const client = new Client()
@@ -558,133 +555,6 @@ describe('User', () => {
     })
   })
 })
-
-describe('endpoint activeAuthors', () => {
-  test('returns list of active authors', async () => {
-    given('ActiveAuthorsQuery').returns([user.id, user2.id])
-
-    await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id, user2.id] })
-  })
-
-  test('returns only users', async () => {
-    given('ActiveAuthorsQuery').returns([user.id, article.id])
-    given('UuidQuery').for(article)
-
-    await expectUserIds({ endpoint: 'activeAuthors', ids: [user.id] })
-    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
-  })
-})
-
-describe('endpoint activeReviewers', () => {
-  test('returns list of active reviewers', async () => {
-    given('ActiveReviewersQuery').returns([user.id, user2.id])
-
-    await expectUserIds({
-      endpoint: 'activeReviewers',
-      ids: [user.id, user2.id],
-    })
-  })
-
-  test('returns only users', async () => {
-    given('ActiveReviewersQuery').returns([user.id, article.id])
-    given('UuidQuery').for(article)
-
-    await expectUserIds({ endpoint: 'activeReviewers', ids: [user.id] })
-    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
-  })
-})
-
-describe('endpoint activeDonors', () => {
-  test('returns list of users', async () => {
-    givenActiveDonors([user, user2])
-    given('UuidQuery').for(user2)
-
-    await expectUserIds({ endpoint: 'activeDonors', ids: [user.id, user2.id] })
-  })
-
-  test('returned list only contains user', async () => {
-    givenActiveDonors([user, article])
-    given('UuidQuery').for(article)
-
-    await expectUserIds({ endpoint: 'activeDonors', ids: [user.id] })
-    await assertErrorEvent({ errorContext: { invalidElements: [article] } })
-  })
-
-  describe('parser', () => {
-    test('removes entries which are no valid uuids', async () => {
-      givenActiveDonorsSpreadsheet([['Header', '23', 'foo', '-1', '', '1.5']])
-
-      await expectUserIds({ endpoint: 'activeDonors', ids: [23] })
-      await assertErrorEvent({
-        message: 'invalid entry in activeDonorSpreadsheet',
-        errorContext: { invalidElements: ['foo', '-1', '', '1.5'] },
-      })
-    })
-
-    test('cell entries are trimmed of leading and trailing whitespaces', async () => {
-      givenActiveDonorsSpreadsheet([['Header', ' 10 ', '  20']])
-
-      await expectUserIds({ endpoint: 'activeDonors', ids: [10, 20] })
-    })
-
-    describe('returns empty list', () => {
-      test('when spreadsheet is empty', async () => {
-        givenActiveDonorsSpreadsheet([[]])
-
-        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
-      })
-
-      test('when spreadsheet api responds with invalid json data', async () => {
-        givenSpreadheetApi(returnsJson({ json: {} }))
-
-        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
-        await assertErrorEvent()
-      })
-
-      test('when spreadsheet api responds with malformed json', async () => {
-        givenSpreadheetApi(returnsMalformedJson())
-
-        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
-        await assertErrorEvent()
-      })
-
-      test('when spreadsheet api has an internal server error', async () => {
-        givenSpreadheetApi(hasInternalServerError())
-
-        await expectUserIds({ endpoint: 'activeDonors', ids: [] })
-        await assertErrorEvent()
-      })
-    })
-  })
-})
-
-async function expectUserIds({
-  endpoint,
-  ids,
-}: {
-  endpoint: 'activeReviewers' | 'activeAuthors' | 'activeDonors'
-  ids: number[]
-}) {
-  ids.map(castToUuid).forEach((id) => given('UuidQuery').for({ ...user, id }))
-  const nodes = ids.map((id) => {
-    return { __typename: 'User', id }
-  })
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-      query {
-        ${endpoint} {
-          nodes {
-            __typename
-            id
-          }
-        }
-      }
-    `,
-    })
-    .shouldReturnData({ [endpoint]: { nodes } })
-}
 
 function givenActiveDonors(users: Model<'AbstractUuid'>[]) {
   const values = [['Header', ...users.map((user) => user.id.toString())]]

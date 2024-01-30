@@ -1592,6 +1592,95 @@ async function exec(): Promise<void> {
         date: '2023-10-18',
         fixed: ['Actualize enmeshed relationship template schema to version 2'],
       },
+      {
+        tagName: 'v0.57.7',
+        date: '2023-11-07',
+        fixed: ['Re-enable user journey in enmeshed middleware'],
+      },
+      {
+        tagName: 'v0.57.8',
+        date: '2023-11-09',
+        fixed: [
+          'Return arbitrary JSON instead of a string from content generation service',
+        ],
+      },
+      {
+        tagName: 'v0.57.9',
+        date: '2023-11-10',
+        fixed: [
+          'Return `null` when event cannot be loaded',
+          'enmeshed: Do not set name outside of user journey',
+        ],
+      },
+      {
+        tagName: 'v0.57.10',
+        date: '2023-11-10',
+        fixed: ['enmeshed: Do not set surname and given name on init'],
+      },
+      {
+        tagName: 'v0.57.11',
+        date: '2023-11-11',
+        internal: ['Remove solutions'],
+        fixed: ['enmeshed: Store cache only for 20min'],
+      },
+      {
+        tagName: 'v0.58.0',
+        date: '2023-11-13',
+        changed: ['remove license queries, simplify `License` type'],
+        internal: ['Move content generation service logic to api'],
+      },
+      {
+        tagName: 'v0.58.1',
+        date: '2023-11-14',
+        fixed: ['Only initialize openAi instance if AI endpoint is called'],
+      },
+      {
+        tagName: 'v0.59.0',
+        date: '2023-11-30',
+        breakingChanges: [
+          'AI: Add possibility to add multiple prompts / messages',
+        ],
+        internal: [
+          'Update dependencies',
+          'Use esbuild for the docker container',
+        ],
+      },
+      {
+        tagName: 'v0.59.1',
+        date: '2023-11-30',
+        internal: ['`@serlo/authorization`: Remove dependency of `@ſerlo/api`'],
+      },
+      {
+        tagName: 'v0.59.2',
+        date: '2023-12-01',
+        internal: [
+          'Add pact tests to github repo',
+          'Remove unnecessary test redis',
+          'Improve CI speed',
+          'Make tests run parallel',
+        ],
+        fixed: [
+          'Fix enmeshed endpoints to reenable user journey',
+          'Set always a ttl for each key',
+        ],
+      },
+      {
+        tagName: 'v0.60.0',
+        date: '2023-12-07',
+        breakingChanges: [
+          'Remove mutations for setting and updating the cache.',
+        ],
+        internal: [
+          'Remove plugin invalid-current-value-error-plugin.ts',
+          'Add type and payload to sentry logging',
+          'refactor(time interface): remove duplicate properties',
+          'Refactorings of tests',
+        ],
+        fixed: [
+          'Fix import of playground in docker container',
+          'Set always a ttl for each key',
+        ],
+      },
     ],
   })
 

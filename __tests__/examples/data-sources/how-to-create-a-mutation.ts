@@ -1,5 +1,5 @@
 import * as t from 'io-ts'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 import {
   createMutation,
@@ -41,21 +41,28 @@ describe('How to create a mutation in a data source: update the content of an ar
     // with a JSON of the form `{ "success": boolean }` to determine whether the
     // response was successful or not.
     global.server.use(
-      rest.put<{ newContent: string }, { id: string }, { success: boolean }>(
+      http.put(
         'http://database-api.serlo.org/articles/:id',
-        (req, res, ctx) => {
-          const id = parseInt(req.params.id)
+        async ({ request, params }) => {
+          const typedParams = params as { id: string }
+          const id = parseInt(typedParams.id)
 
           // given id is not a number -> return with "400 Bad Request"
-          if (Number.isNaN(id)) return res(ctx.status(400))
+          if (Number.isNaN(id))
+            return new HttpResponse(null, {
+              status: 400,
+            })
 
           if (contentDatabase[id] !== undefined) {
+            const body = (await request.json()) as {
+              newContent: string
+            }
             // article with given id is in database
-            contentDatabase[id] = req.body.newContent
+            contentDatabase[id] = body.newContent
 
-            return res(ctx.json({ success: true as boolean }))
+            return HttpResponse.json({ success: true as boolean })
           } else {
-            return res(ctx.json({ success: false as boolean }))
+            return HttpResponse.json({ success: false as boolean })
           }
         },
       ),
@@ -95,6 +102,8 @@ describe('How to create a mutation in a data source: update the content of an ar
             // the right values.
             return (await res.json()) as unknown
           },
+
+          type: 'ExampleMutation',
         }),
       },
     }

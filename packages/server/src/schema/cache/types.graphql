@@ -3,34 +3,9 @@ type Mutation {
 }
 
 type _cacheMutation {
-  set(input: CacheSetInput!): CacheSetResponse!
-  remove(input: CacheRemoveInput!): CacheRemoveResponse!
-  update(input: CacheUpdateInput!): CacheUpdateResponse!
-}
-
-input CacheSetInput {
-  key: String!
-  value: JSON!
-}
-
-type CacheSetResponse {
-  success: Boolean!
-  query: Query!
+  remove(input: CacheRemoveInput!): DefaultResponse!
 }
 
 input CacheRemoveInput {
   keys: [String!]!
-}
-
-type CacheRemoveResponse {
-  success: Boolean!
-  query: Query!
-}
-
-input CacheUpdateInput {
-  keys: [String!]!
-}
-
-type CacheUpdateResponse {
-  success: Boolean!
 }

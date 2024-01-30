@@ -1,6 +1,6 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 import { createTestEnvironment } from '../../__utils__'
 import { createQuery, Query } from '~/internals/data-source-helper/query'
@@ -36,25 +36,28 @@ describe('How to create a query in a data source: Fetching the content of an art
     // REST API in front of the database which exposes a GET endpoint
     // /article/:id with which the content of an article can be fetched.
     global.server.use(
-      rest.get<never, { id: string }, { id: number; content: string }>(
-        'http://database-api.serlo.org/article/:id',
-        (req, res, ctx) => {
-          const id = parseInt(req.params.id)
+      http.get('http://database-api.serlo.org/article/:id', ({ params }) => {
+        const typedParams = params as { id: string }
+        const id = parseInt(typedParams.id)
 
-          // given id is not a number -> return with "400 Bad Request"
-          if (Number.isNaN(id)) return res(ctx.status(400))
+        // given id is not a number -> return with "400 Bad Request"
+        if (Number.isNaN(id))
+          return new HttpResponse(null, {
+            status: 400,
+          })
 
-          const content = contentDatabase[id]
+        const content = contentDatabase[id]
 
-          if (content !== undefined) {
-            // article with given id is in database
-            return res(ctx.json({ id, content }))
-          } else {
-            // No article found -> return "404 Not Found"
-            return res(ctx.status(404))
-          }
-        },
-      ),
+        if (content !== undefined) {
+          // article with given id is in database
+          return HttpResponse.json({ id, content })
+        } else {
+          // No article found -> return "404 Not Found"
+          return new HttpResponse(null, {
+            status: 404,
+          })
+        }
+      }),
     )
 
     // We assume that the cache is empty in each of the following test cases
@@ -89,10 +92,10 @@ describe('How to create a query in a data source: Fetching the content of an art
             enableSwr: true,
 
             // After one hour, a cached value shall be considered to be stale
-            staleAfter: { hour: 1 },
+            staleAfter: { hours: 1 },
 
             // After one day, no cached value shall be used
-            maxAge: { day: 1 },
+            maxAge: { days: 1 },
 
             getKey({ id }) {
               return `article/${id}`
@@ -108,6 +111,9 @@ describe('How to create a query in a data source: Fetching the content of an art
 
             // Add an example payload which is used in tests
             examplePayload: { id: 1 },
+
+            // Add a name for sentry logs
+            type: 'ExampleQuery',
           },
           // In the actual code you will pass the `environment` variable here
           createTestEnvironment(),

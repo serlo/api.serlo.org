@@ -1,34 +1,91 @@
-import { option as O, function as F } from 'fp-ts'
 import * as t from 'io-ts'
+import { APIError, OpenAI } from 'openai'
 
 import { UserInputError } from '~/errors'
 
-export const PayloadDecoder = t.strict({
-  prompt: t.string,
-})
+// singleton instance so that it doesn't have to be reinitialized on every
+// request
+let openai: OpenAI | undefined
 
-export async function makeRequest({ prompt }: t.TypeOf<typeof PayloadDecoder>) {
-  const url = new URL(
-    `http://${process.env.CONTENT_GENERATION_SERVICE_HOST}/execute`,
+function getOpenAIInstance() {
+  if (process.env.OPENAI_API_KEY !== undefined && openai === undefined) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  }
+
+  return openai
+}
+
+type OpenAIMessages = OpenAI.Chat.Completions.ChatCompletionMessageParam[]
+
+export async function executePrompt(args: {
+  // If we want to monitor abuse and receive more actionable feedback from
+  // OpenAI, we can pass the user to the model. See
+  // https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids
+  userId: number | null
+  messages: OpenAIMessages
+}): Promise<Record<string, unknown>> {
+  const { userId, messages } = args
+
+  const hasEmptyMessage = messages.some(
+    ({ content }) => typeof content === 'string' && content.trim() === '',
   )
 
-  url.searchParams.append('prompt', prompt)
+  if (hasEmptyMessage) {
+    throw new UserInputError('Missing prompt within a message')
+  }
 
-  const response = await fetch(url.href)
+  try {
+    const openai = getOpenAIInstance()
+    if (!openai) {
+      throw new Error(
+        'OpenAI instance could not be created due to missing API key.',
+      )
+    }
 
-  if (response.status === 200) {
-    return await response.text()
-  } else if (response.status === 400) {
-    const responseText = await response.text()
-    const reason = F.pipe(
-      O.tryCatch(() => JSON.parse(responseText) as unknown),
-      O.chain(O.fromPredicate(t.type({ reason: t.string }).is)),
-      O.map((json) => json.reason),
-      O.getOrElse(() => 'Bad Request'),
-    )
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4-1106-preview',
+      messages,
+      temperature: 0.4,
+      user: String(userId),
+      response_format: { type: 'json_object' },
+    })
 
-    throw new UserInputError(reason)
-  } else {
-    throw new Error(`${response.status}`)
+    const stringMessage = response.choices[0].message.content
+
+    if (!stringMessage) {
+      throw new Error('No content received from LLM!')
+    }
+
+    // As we now have the response_format defined as json_object, we shouldn't
+    // need to call JSON.parse on the stringMessage. However, right now the OpenAI
+    // types seem to be broken (thinking the API is returning a string or null).
+    // Instead of fighting the types, we can simply adjust this in the next
+    // version.
+    const message = JSON.parse(stringMessage) as unknown
+
+    if (!t.UnknownRecord.is(message)) {
+      throw new Error('Invalid JSON format of content-generation-service')
+    }
+
+    return message
+  } catch (error) {
+    if (error instanceof APIError) {
+      const detailedMessage = [
+        'OpenAI API error when executing prompt.',
+        `Status: ${error.status}`,
+        `Type: ${error.type}`,
+        `Code: ${error.code}`,
+        `Param: ${error.param}`,
+        `Message: ${error.message}`,
+      ].join('\n')
+
+      throw new Error(detailedMessage)
+    } else if (error instanceof Error) {
+      throw new Error(`Error when executing prompt: ${error.message}`)
+    } else {
+      throw new Error('Unknown error occurred in executing prompt')
+    }
   }
 }

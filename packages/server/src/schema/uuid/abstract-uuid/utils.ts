@@ -27,7 +27,7 @@ export function isSupportedUuid(
   )
 }
 
-export function isSupportedUuidType(name: string) {
+function isSupportedUuidType(name: string) {
   return R.includes(name, validTypes)
 }
 

@@ -1,5 +1,5 @@
-import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import {
   article as baseArticle,
@@ -9,6 +9,7 @@ import {
 } from '../../../__fixtures__'
 import { getTypenameAndId, nextUuid, given, Client } from '../../__utils__'
 import { encodeSubjectId } from '~/schema/subject/utils'
+import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
 const article = {
@@ -48,7 +49,7 @@ beforeEach(() => {
       reason: 'reason',
       revisionId: unrevisedRevision.id,
     })
-    .isDefinedBy((_req, res, ctx) => {
+    .isDefinedBy(() => {
       given('UuidQuery').for({ ...unrevisedRevision, trashed: false })
       given('UuidQuery').for({
         ...article,
@@ -56,7 +57,7 @@ beforeEach(() => {
       })
       given('UnrevisedEntitiesQuery').for([])
 
-      return res(ctx.json({ success: true }))
+      return HttpResponse.json({ success: true })
     })
 })
 

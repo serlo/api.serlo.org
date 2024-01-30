@@ -29,6 +29,8 @@ test('invalid values from data sources are reported', async () => {
     errorContext: {
       invalidCurrentValue: invalidValue,
       key: 'de.serlo.org/api/uuid/42',
+      type: 'UuidQuery',
+      payload: { id: 42 },
     },
   })
 })

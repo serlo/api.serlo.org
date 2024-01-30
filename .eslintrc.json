@@ -90,25 +90,13 @@
     "import/no-cycle": "error",
     "import/no-default-export": "error",
     "import/no-deprecated": "error",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": [
-          "packages/server/scripts/**/*",
-          "scripts/**/*",
-          "jest.config.cjs",
-          "jest.config-pacts-*.js",
-          "__config__/*.ts"
-        ],
-        "optionalDependencies": false
-      }
-    ],
     "import/no-internal-modules": [
       "error",
       {
         "allow": [
           "@pact-foundation/pact/src/dsl/matchers",
           "msw/node",
+          "msw/lib/**",
           "io-ts/lib/*",
           "io-ts-types/lib/*",
           "fp-ts/lib/*",

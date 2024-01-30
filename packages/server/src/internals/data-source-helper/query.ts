@@ -1,12 +1,11 @@
 import { option as O, either as E } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './common'
 import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
-import { Time } from '../swr-queue'
+import { Time, timeToSeconds } from '../swr-queue'
 
 /**
  * Helper function to create a query in a data source. A query operation is a
@@ -16,6 +15,8 @@ export function createQuery<P, R>(
   spec: QuerySpec<P, R>,
   environment: Environment,
 ): Query<P, R> {
+  const ttlInSeconds = spec.maxAge ? timeToSeconds(spec.maxAge) : undefined
+
   async function queryWithDecoder<S extends R>(
     payload: P,
     customDecoder?: t.Type<S, unknown>,
@@ -53,6 +54,7 @@ export function createQuery<P, R>(
         key,
         value: decoded.right,
         source: 'API: From a call to a data source',
+        ttlInSeconds,
       })
 
       return value as S
@@ -63,7 +65,8 @@ export function createQuery<P, R>(
           : {}),
         invalidCurrentValue: value,
         decoder: decoder.name,
-        validationErrors: reporter.report(decoded),
+        payload,
+        type: spec.type,
         key,
       })
     }
@@ -89,6 +92,7 @@ export function createQuery<P, R>(
           environment.cache.set({
             key: spec.getKey(payload),
             ...args,
+            ttlInSeconds,
             source: 'API: Cache update function after a mutation',
           }),
         ),
@@ -160,12 +164,14 @@ export interface QuerySpec<Payload, Result> {
   getPayload: (key: string) => O.Option<Payload>
 
   examplePayload: Payload
+
+  type: string
 }
 
 /**
  * The specification object of a query extended by some helper functions.
  */
-export interface QuerySpecWithHelpers<Payload, Result>
+interface QuerySpecWithHelpers<Payload, Result>
   extends QuerySpec<Payload, Result> {
   /**
    * Function to update the cache of one or many values.

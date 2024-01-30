@@ -1,7 +1,6 @@
 import { either as E, option as O, function as F } from 'fp-ts'
 import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
-import { formatValidationErrors } from 'io-ts-reporters'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { URL } from 'url'
 
@@ -30,7 +29,7 @@ const ValueRange = t.intersection([
 ])
 type ValueRange = t.TypeOf<typeof ValueRange>
 
-export interface Arguments {
+interface Arguments {
   spreadsheetId: string
   range: string
   majorDimension?: MajorDimension
@@ -43,6 +42,7 @@ export function createGoogleSpreadsheetApiModel({
 }) {
   const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
     {
+      type: 'google-spreadsheets-api',
       enableSwr: true,
       getCurrentValue: async (args) => {
         const { spreadsheetId, range } = args
@@ -66,13 +66,8 @@ export function createGoogleSpreadsheetApiModel({
 
           return F.pipe(
             ValueRange.decode(await response.json()),
-            E.mapLeft((errors) => {
-              return {
-                error: new Error('invalid response'),
-                errorContext: {
-                  validationErrors: formatValidationErrors(errors),
-                },
-              }
+            E.mapLeft(() => {
+              return { error: new Error('invalid response') }
             }),
             E.map((v) => v.values),
             E.chain(E.fromNullable({ error: new Error('range is empty') })),
@@ -82,7 +77,7 @@ export function createGoogleSpreadsheetApiModel({
           return specifyErrorLocation(E.left({ error: E.toError(error) }))
         }
       },
-      staleAfter: { hour: 1 },
+      staleAfter: { hours: 1 },
       getKey: (args) => {
         const { spreadsheetId, range } = args
         const majorDimension = args.majorDimension ?? MajorDimension.Rows

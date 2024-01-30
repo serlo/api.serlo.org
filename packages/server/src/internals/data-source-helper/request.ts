@@ -1,13 +1,12 @@
 import { either as E } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 
 import { InvalidCurrentValueError } from './common'
 
 /**
  * Specification object for a request function.
  */
-export interface RequestSpec<Payload, Result> {
+interface RequestSpec<Payload, Result> {
   /**
    * io-ts decoder which is used during runtime to check whether the returned
    * value is of the aspected type.
@@ -18,12 +17,14 @@ export interface RequestSpec<Payload, Result> {
    * Function which does the actual query operation.
    */
   getCurrentValue: (payload: Payload) => Promise<unknown>
+
+  type: string
 }
 
 /**
  * Type of a request operation in a data source.
  */
-export type Request<Payload, Result> = (Payload extends undefined
+type Request<Payload, Result> = (Payload extends undefined
   ? () => Promise<Result>
   : (payload: Payload) => Promise<Result>) & {
   _querySpec: RequestSpec<Payload, Result>
@@ -46,7 +47,8 @@ export function createRequest<P, R>(spec: RequestSpec<P, R>): Request<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
-        validationErrors: reporter.report(decodedResult),
+        payload,
+        type: spec.type,
       })
     }
   }

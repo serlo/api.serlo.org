@@ -8,6 +8,7 @@ import { Environment } from '~/internals/environment'
 export function createChatModel({ environment }: { environment: Environment }) {
   const getUsersInfo = createQuery(
     {
+      type: 'community.serlo.org/get-users-info',
       decoder: t.strict({ success: t.boolean }),
       enableSwr: true,
       staleAfter: { minutes: 30 },
@@ -33,6 +34,7 @@ export function createChatModel({ environment }: { environment: Environment }) {
   )
 
   const deleteUser = createMutation({
+    type: 'community.serlo.org/delete-user',
     decoder: t.union([
       t.strict({ success: t.literal(true) }),
       t.strict({ success: t.literal(false), errorType: t.string }),

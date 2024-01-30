@@ -70,13 +70,7 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
 }
 
 type ArticleRevisionConnection {
-  edges: [ArticleRevisionCursor!]!
   nodes: [ArticleRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type ArticleRevisionCursor {
-  cursor: String!
-  node: ArticleRevision!
 }

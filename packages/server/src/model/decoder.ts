@@ -45,7 +45,6 @@ export enum EntityType {
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
   GroupedExercise = 'GroupedExercise',
-  Solution = 'Solution',
   Video = 'Video',
 }
 
@@ -58,7 +57,6 @@ export enum EntityRevisionType {
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
   GroupedExerciseRevision = 'GroupedExerciseRevision',
-  SolutionRevision = 'SolutionRevision',
   VideoRevision = 'VideoRevision',
 }
 
@@ -130,7 +128,6 @@ export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Exercise),
   t.literal(EntityType.ExerciseGroup),
   t.literal(EntityType.GroupedExercise),
-  t.literal(EntityType.Solution),
   t.literal(EntityType.Video),
 ])
 
@@ -156,7 +153,6 @@ export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.ExerciseRevision),
   t.literal(EntityRevisionType.ExerciseGroupRevision),
   t.literal(EntityRevisionType.GroupedExerciseRevision),
-  t.literal(EntityRevisionType.SolutionRevision),
   t.literal(EntityRevisionType.VideoRevision),
 ])
 
@@ -171,47 +167,6 @@ export const AbstractEntityRevisionDecoder = t.intersection([
     changes: t.string,
   }),
 ])
-
-export interface NavigationNode {
-  label: string
-  id?: number
-  url?: string
-  children?: NavigationNode[]
-}
-
-export const NavigationNodeDecoder: t.Type<NavigationNode> = t.recursion(
-  'NavigationNodeDecoder',
-  () =>
-    t.intersection([
-      t.type({
-        label: t.string,
-      }),
-      t.partial({
-        id: t.number,
-        url: t.string,
-        children: t.array(NavigationNodeDecoder),
-      }),
-    ]),
-)
-
-export const NavigationDecoder = t.type({
-  data: t.array(NavigationNodeDecoder),
-  instance: InstanceDecoder,
-})
-
-export const NavigationDataDecoder = t.type({
-  path: t.array(
-    t.intersection([
-      t.type({
-        label: t.string,
-      }),
-      t.partial({
-        id: t.union([t.number, t.null]),
-        url: t.union([t.string, t.null]),
-      }),
-    ]),
-  ),
-})
 
 export const PageDecoder = t.exact(
   t.intersection([
@@ -390,7 +345,6 @@ export const ExerciseDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityType.Exercise),
       taxonomyTermIds: t.array(Uuid),
-      solutionId: t.union([Uuid, t.null]),
     }),
   ]),
 )
@@ -453,7 +407,6 @@ export const GroupedExerciseDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityType.GroupedExercise),
       parentId: Uuid,
-      solutionId: t.union([Uuid, t.null]),
     }),
   ]),
 )
@@ -463,25 +416,6 @@ export const GroupedExerciseRevisionDecoder = t.exact(
     AbstractEntityRevisionDecoder,
     t.type({
       __typename: t.literal(EntityRevisionType.GroupedExerciseRevision),
-    }),
-  ]),
-)
-
-export const SolutionDecoder = t.exact(
-  t.intersection([
-    AbstractEntityDecoder,
-    t.type({
-      __typename: t.literal(EntityType.Solution),
-      parentId: Uuid,
-    }),
-  ]),
-)
-
-export const SolutionRevisionDecoder = t.exact(
-  t.intersection([
-    AbstractEntityRevisionDecoder,
-    t.type({
-      __typename: t.literal(EntityRevisionType.SolutionRevision),
     }),
   ]),
 )
@@ -537,7 +471,6 @@ export const EntityDecoder = t.union([
   CoursePageDecoder,
   EventDecoder,
   ExerciseGroupDecoder,
-  SolutionDecoder,
   VideoDecoder,
 ])
 
@@ -550,7 +483,6 @@ export const EntityRevisionDecoder = t.union([
   ExerciseRevisionDecoder,
   ExerciseGroupRevisionDecoder,
   GroupedExerciseRevisionDecoder,
-  SolutionRevisionDecoder,
   VideoRevisionDecoder,
 ])
 

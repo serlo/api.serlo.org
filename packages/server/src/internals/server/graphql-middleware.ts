@@ -1,9 +1,11 @@
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
+import { Storage } from '@google-cloud/storage'
+import { defaultImport } from 'default-import'
 import { Express, json } from 'express'
 import { GraphQLError, GraphQLFormattedError } from 'graphql'
-import createPlayground from 'graphql-playground-middleware-express'
+import createPlayground_ from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
 import * as R from 'ramda'
@@ -16,10 +18,8 @@ import {
 } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
-import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
-import { createInvalidCurrentValueErrorPlugin } from '~/internals/server/invalid-current-value-error-plugin'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
@@ -40,7 +40,8 @@ export async function applyGraphQLMiddleware({
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
-  const server = new ApolloServer<Context>(getGraphQLOptions(environment))
+  const server = new ApolloServer<Context>(getGraphQLOptions())
+  const createPlayground = defaultImport(createPlayground_)
   await server.start()
 
   app.use(json({ limit: '2mb' }))
@@ -48,6 +49,7 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
+        const googleStorage = new Storage()
         const dataSources = {
           model: new ModelDataSource(environment),
         }
@@ -57,6 +59,7 @@ export async function applyGraphQLMiddleware({
             dataSources,
             service: Service.SerloCloudflareWorker,
             userId: null,
+            googleStorage,
           })
         }
         const partialContext = await handleAuthentication(
@@ -80,7 +83,7 @@ export async function applyGraphQLMiddleware({
             }
           },
         )
-        return { ...partialContext, dataSources }
+        return { ...partialContext, dataSources, googleStorage }
       },
     }),
   )
@@ -95,7 +98,7 @@ export async function applyGraphQLMiddleware({
   return graphQLPath
 }
 
-export function getGraphQLOptions(environment: Environment) {
+export function getGraphQLOptions() {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
@@ -104,7 +107,6 @@ export function getGraphQLOptions(environment: Environment) {
     plugins: [
       // We add the playground via express middleware in src/index.ts
       ApolloServerPluginLandingPageDisabled(),
-      createInvalidCurrentValueErrorPlugin({ environment }),
       createSentryPlugin(),
     ],
     formatError(error: GraphQLFormattedError) {

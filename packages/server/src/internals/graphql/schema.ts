@@ -1,5 +1,5 @@
 import { DocumentNode } from 'graphql'
-import R from 'ramda'
+import * as R from 'ramda'
 import { A, O } from 'ts-toolbelt'
 
 import { Context } from './context'
@@ -65,12 +65,12 @@ export type ModelMapping = {
       ? P[0]
       : never
     : '__isTypeOf' extends keyof GetResolver<R>
-    ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
-        ...args: infer P
-      ) => unknown
-      ? P[0]
+      ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
+          ...args: infer P
+        ) => unknown
+        ? P[0]
+        : never
       : never
-    : never
 }
 
 /**

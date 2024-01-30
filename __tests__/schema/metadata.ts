@@ -1,7 +1,7 @@
-import { Instance } from '@serlo/api'
 import gql from 'graphql-tag'
 
 import { Client, given } from '../__utils__'
+import { Instance } from '~/types'
 
 test('endpoint `publisher` returns publisher', async () => {
   await new Client()

@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server'
+import { type Storage } from '@google-cloud/storage'
 import { DocumentNode } from 'graphql'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
@@ -19,9 +20,7 @@ export class Client {
     this.context = context
     this.apolloServer = new ApolloServer<
       Partial<Pick<Context, 'service' | 'userId'>>
-    >({
-      ...getGraphQLOptions(createTestEnvironment()),
-    })
+    >(getGraphQLOptions())
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
@@ -39,6 +38,19 @@ export class Client {
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
         userId: this.context?.userId ?? null,
+        googleStorage: {
+          bucket() {
+            return {
+              file() {
+                return {
+                  getSignedUrl() {
+                    return ['http://google.com/upload']
+                  },
+                }
+              },
+            }
+          },
+        } as unknown as Storage,
       } as Context,
     })
   }
@@ -218,10 +230,10 @@ function destringifyProperties(value: unknown) {
   return Array.isArray(value)
     ? value.map(destringify)
     : typeof value === 'object' && value !== null
-    ? R.mapObjIndexed(destringify, value)
-    : value === 'null'
-    ? null
-    : value
+      ? R.mapObjIndexed(destringify, value)
+      : value === 'null'
+        ? null
+        : value
 }
 
 function destringify(value: unknown) {

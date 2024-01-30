@@ -1,6 +1,5 @@
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractExerciseSchema } from './abstract-exercise'
-import { abstractNavigationChildSchema } from './abstract-navigation-child'
 import { abstractRepositorySchema } from './abstract-repository'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
@@ -14,7 +13,6 @@ import { exerciseSchema } from './exercise'
 import { exerciseGroupSchema } from './exercise-group'
 import { groupedExerciseSchema } from './grouped-exercise'
 import { pageSchema } from './page'
-import { solutionSchema } from './solution'
 import { taxonomyTermSchema } from './taxonomy-term'
 import { userSchema } from './user'
 import { videoSchema } from './video'
@@ -23,7 +21,6 @@ import { mergeSchemas } from '~/internals/graphql'
 export const uuidSchema = mergeSchemas(
   abstractEntitySchema,
   abstractExerciseSchema,
-  abstractNavigationChildSchema,
   abstractRepositorySchema,
   abstractTaxonomyTermChildSchema,
   abstractUuidSchema,
@@ -37,7 +34,6 @@ export const uuidSchema = mergeSchemas(
   exerciseGroupSchema,
   groupedExerciseSchema,
   pageSchema,
-  solutionSchema,
   taxonomyTermSchema,
   userSchema,
   videoSchema,

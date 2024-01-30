@@ -1,7 +1,6 @@
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { createAuthServices } from './authentication'
@@ -9,7 +8,6 @@ import { Cache, CacheEntry, Priority } from './cache'
 import { isQuery, QuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
 import { log } from './log'
-import { redisUrl } from './redis-url'
 import { Timer } from './timer'
 import { modelFactories } from '~/model'
 
@@ -26,7 +24,7 @@ export interface SwrQueue {
   _queue: never
 }
 
-export interface UpdateJob {
+interface UpdateJob {
   key: string
 }
 
@@ -67,9 +65,7 @@ export function createSwrQueue({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     isWorker: false,
     removeOnFailure: true,
     removeOnSuccess: true,
@@ -162,9 +158,7 @@ export function createSwrQueueWorker({
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
-    redis: {
-      url: redisUrl,
-    },
+    redis: { url: process.env.REDIS_URL },
     removeOnFailure: true,
     removeOnSuccess: true,
   })
@@ -188,6 +182,7 @@ export function createSwrQueueWorker({
 
       await cache.set({
         key,
+        ttlInSeconds: spec.maxAge ? timeToSeconds(spec.maxAge) : undefined,
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
@@ -206,7 +201,6 @@ export function createSwrQueueWorker({
                 key,
                 invalidValue: value,
                 decoder: decoder.name,
-                validationErrors: reporter.report(decodedValue),
               },
             })
 
@@ -303,37 +297,23 @@ async function shouldProcessJob({
 }
 
 export interface Time {
-  day?: number
   days?: number
-  hour?: number
   hours?: number
-  minute?: number
   minutes?: number
-  second?: number
   seconds?: number
 }
 
-export function timeToMilliseconds({
-  day = 0,
+export function timeToSeconds({
   days = 0,
-  hour = 0,
   hours = 0,
-  minute = 0,
   minutes = 0,
-  second = 0,
   seconds = 0,
 }: Time) {
-  const SECOND = 1000
-  const MINUTE = 60 * SECOND
-  const HOUR = 60 * MINUTE
-  const DAY = 24 * HOUR
+  return ((days * 24 + hours) * 60 + minutes) * 60 + seconds
+}
 
-  return (
-    (day + days) * DAY +
-    (hour + hours) * HOUR +
-    (minute + minutes) * MINUTE +
-    (second + seconds) * SECOND
-  )
+export function timeToMilliseconds(time: Time) {
+  return timeToSeconds(time) * 1000
 }
 
 function reportError({

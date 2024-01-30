@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/serlo/frontend/staging/public/_assets/img/serlo-logo-gh.svg" alt="Serlo Logo" title="Serlo" align="right" height="75" />
+<img src="https://raw.githubusercontent.com/serlo/frontend/staging/apps/web/public/_assets/img/serlo-logo-gh.svg" alt="Serlo Logo" title="Serlo" align="right" height="75" />
 
 # serlo.org – API
 
@@ -29,8 +29,6 @@ $ cd api.serlo.org
 ### Initial setup
 
 Run `yarn` to install the dependencies of all packages.
-
-Run `yarn build` to build the packages 'authorization' and 'types'.
 
 ### Start
 
@@ -99,7 +97,6 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 
 ### Other commands
 
-- `yarn build` builds all packages. Run it when package `authorization` changed.
 - `yarn build:server` builds the server (only needed for deployment)
 - `yarn changelog` generates the changelog (only needed for deployment)
 - `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)

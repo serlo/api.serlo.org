@@ -1,6 +1,5 @@
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
-import reporter from 'io-ts-reporters'
 
 import { InvalidCurrentValueError } from './common'
 import { AsyncOrSync } from '~/utils'
@@ -22,7 +21,8 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
-        validationErrors: reporter.report(decodedResult),
+        type: spec.type,
+        payload,
       })
     }
   }
@@ -36,7 +36,7 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
  * Argument type for the function {@link createMutation} with which a mutation
  * in a data source can be created.
  */
-export interface MutationSpec<Payload, Result> {
+interface MutationSpec<Payload, Result> {
   /**
    * io-ts decoder to control the returned value of the
    * mutation during runtime. An error is thrown when the returned value does not
@@ -54,6 +54,8 @@ export interface MutationSpec<Payload, Result> {
    * executed and the result of the mutation matches the decoder.
    */
   updateCache?: (payload: Payload, newValue: Result) => AsyncOrSync<void>
+
+  type: string
 }
 
 /**

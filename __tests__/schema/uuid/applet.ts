@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { applet, appletRevision } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'

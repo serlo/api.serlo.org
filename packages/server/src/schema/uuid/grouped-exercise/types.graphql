@@ -30,7 +30,6 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
     last: Int
     unrevised: Boolean
   ): GroupedExerciseRevisionConnection!
-  solution: Solution
   exerciseGroup: ExerciseGroup!
   subject: Subject
 }

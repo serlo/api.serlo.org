@@ -1,6 +1,6 @@
 import { Matchers } from '@pact-foundation/pact'
 import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   createCommentNotificationEvent,
@@ -39,8 +39,6 @@ import {
   page,
   pageRevision,
   pageRevision2,
-  solution,
-  solutionRevision,
   taxonomyTermCurriculumTopic,
   taxonomyTermRoot,
   taxonomyTermSubject,
@@ -98,8 +96,6 @@ const uuids = [
   groupedExerciseRevision,
   page,
   pageRevision,
-  solution,
-  solutionRevision,
   taxonomyTermRoot,
   taxonomyTermSubject,
   taxonomyTermCurriculumTopic,
@@ -318,17 +314,6 @@ const pactSpec: PactSpec = {
       [
         { first: 500, instance: Instance.De },
         { events: [abstractEvent], hasNextPage: true },
-      ],
-    ],
-  },
-  NavigationQuery: {
-    examples: [
-      [
-        { instance: Instance.De },
-        {
-          instance: Instance.De,
-          data: [{ label: 'Mathematik', children: [{ label: 'Alle Themen' }] }],
-        },
       ],
     ],
   },
