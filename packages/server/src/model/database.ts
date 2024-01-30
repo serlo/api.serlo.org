@@ -1,6 +1,7 @@
 import * as mysql from 'mysql2/promise'
 
 import { log } from '../internals/log'
+import { UserInputError } from '~/errors'
 
 const pool = mysql.createPool(process.env.MYSQL_URI)
 
@@ -29,9 +30,9 @@ const runSql = async (
 export const setUserDescription = async (
   description: string,
   userId: number,
-): Promise<{ success: boolean }> => {
+): Promise<unknown> => {
   if (description.length >= 64 * 1024) {
-    throw new Error('Error setting description: too long')
+    throw new UserInputError('description too long')
   }
   await runSql('update user set description = ? where id = ?', [
     description,
