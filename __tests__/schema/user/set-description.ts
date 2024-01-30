@@ -32,9 +32,9 @@ test('fails if user is not authenticated', async () => {
 })
 
 test('fails if description is not under 64 kB', async () => {
-  given('UserSetDescriptionMutation').returnsBadRequest()
-
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
+  await mutation
+    .withInput({ description: 'x'.repeat(64 * 1024) })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('updates the cache', async () => {
