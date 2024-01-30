@@ -53,7 +53,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
       const delay = 2000
       // return any value that is not a number to stop retrying.
-      if(times * delay > 300_000) throw new Error('Redis connection timed out')
+      if (times * delay > 300_000) throw new Error('Redis connection timed out')
       return delay
     },
   })

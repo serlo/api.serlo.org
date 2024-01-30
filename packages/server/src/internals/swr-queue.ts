@@ -72,8 +72,8 @@ export function createSwrQueue({
   })
 
   queue.on('error', (err) => {
-    log.error(`Queue error event - ${err.message}`);
-  });
+    log.error(`Queue error event - ${err.message}`)
+  })
 
   return {
     _queue: queue as unknown as never,
