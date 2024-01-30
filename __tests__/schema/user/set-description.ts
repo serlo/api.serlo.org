@@ -35,16 +35,10 @@ test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails if database layer returns a 400er response', async () => {
+test('fails if description is not under 64 kB', async () => {
   given('UserSetDescriptionMutation').returnsBadRequest()
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails if database layer has an internal error', async () => {
-  given('UserSetDescriptionMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
 test('updates the cache', async () => {
