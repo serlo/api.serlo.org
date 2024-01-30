@@ -22,10 +22,6 @@ beforeEach(() => {
 })
 
 test('returns "{ success: true }" if mutation could be successfully executed', async () => {
-  given('UserSetDescriptionMutation')
-    .withPayload({ userId: user.id, description: 'description' })
-    .returns({ success: true })
-
   await mutation.shouldReturnData({
     user: { setDescription: { success: true } },
   })
@@ -57,10 +53,6 @@ test('updates the cache', async () => {
     .withVariables({ id: user.id })
 
   await query.shouldReturnData({ uuid: { description: null } })
-
-  given('UserSetDescriptionMutation')
-    .withPayload({ userId: user.id, description: 'description' })
-    .returns({ success: true })
 
   await mutation.execute()
 
