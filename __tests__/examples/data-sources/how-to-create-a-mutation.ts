@@ -94,8 +94,8 @@ describe('How to create a mutation in a data source: update the content of an ar
 
             // The API was designed in a way that it already returns a JSON
             // of the form `{ "success": boolean }`. Therefore we return this
-            // JSON as an result of the mutation. Since we will check the type of
-            // the JSON afterwards with the decoder we return the parsed JSON
+            // JSON as a result of the mutation. Since we will check the type of
+            // the JSON afterwards with the decoder, we return the parsed JSON
             // as `unknown`. This makes the code also more robust: The unknown
             // type makes sure, that we check the returned value before further
             // processing it. So we do not trust the API "blindely" to return
