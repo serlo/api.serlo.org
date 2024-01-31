@@ -3098,6 +3098,37 @@
       }
     },
     {
+      "description": "Message UserSetDescriptionMutation with payload {\"userId\":1,\"description\":\"Hello World\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "description": "Hello World",
+            "userId": 1
+          },
+          "type": "UserSetDescriptionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
       "description": "Message UserSetEmailMutation with payload {\"userId\":1,\"email\":\"test@example.org\"} (case 200-response)",
       "request": {
         "body": {
