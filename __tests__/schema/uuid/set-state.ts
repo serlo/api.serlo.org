@@ -122,56 +122,36 @@ describe('permission-based testing', () => {
   })
 
   test('fails when architect tries to set state of page', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.Architect, Instance.De),
-      page.id,
-      false,
-    )
+    await testPermissionWithMockUser(Role.Architect, page.id, false)
   })
 
   test('fails when static_pages_builder tries to set state of article', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
-      article.id,
-      false,
-    )
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, article.id, false)
   })
 
   test('fails when static_pages_builder tries to set state of taxonomy term', async () => {
     await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
+      Role.StaticPagesBuilder,
       taxonomyTermRoot.id,
       false,
     )
   })
 
   test('returns "{ success: true }" when architect tries to set state of article', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.Architect, Instance.De),
-      article.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.Architect, article.id, true)
   })
 
   test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.Architect, Instance.De),
-      taxonomyTermRoot.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.Architect, taxonomyTermRoot.id, true)
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page', async () => {
-    await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
-      page.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, page.id, true)
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
     await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
+      Role.StaticPagesBuilder,
       pageRevision.id,
       true,
     )
@@ -179,7 +159,7 @@ describe('permission-based testing', () => {
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
     await testPermissionWithMockUser(
-      generateRole(Role.StaticPagesBuilder, Instance.De),
+      Role.StaticPagesBuilder,
       pageRevision.id,
       true,
     )
@@ -187,11 +167,14 @@ describe('permission-based testing', () => {
 })
 
 async function testPermissionWithMockUser(
-  userRole: string,
+  userRole: Role,
   uuidId: number,
   successSwitch: boolean,
 ) {
-  given('UuidQuery').for({ ...baseUser, roles: [userRole] })
+  given('UuidQuery').for({
+    ...baseUser,
+    roles: [generateRole(userRole, Instance.De)],
+  })
 
   if (successSwitch) {
     await mutation
