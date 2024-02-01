@@ -187,7 +187,7 @@ describe('permission-based testing', () => {
 })
 
 async function testPermissionWithMockUser(
-  userRole: string,
+  userRole: Role,
   uuidId: number,
   successSwitch: boolean,
 ) {
