@@ -97,6 +97,7 @@
           "@pact-foundation/pact/src/dsl/matchers",
           "msw/node",
           "msw/lib/**",
+          "mysql2/promise",
           "io-ts/lib/*",
           "io-ts-types/lib/*",
           "fp-ts/lib/*",

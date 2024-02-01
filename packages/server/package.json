@@ -19,7 +19,8 @@
     "deploy:image:production": "ts-node --experimental-specifier-resolution=node scripts/deploy-env production"
   },
   "dependencies": {
-    "bee-queue": "^1.7.1"
+    "bee-queue": "^1.7.1",
+    "mysql2": "^3.7.1"
   },
   "devDependencies": {
     "@apollo/server": "^4.9.5",
@@ -51,7 +52,6 @@
     "graphql-playground-middleware-express": "^1.7.23",
     "graphql-type-json": "^0.3.2",
     "io-ts": "^2.2.21",
-    "io-ts-reporters": "^2.0.1",
     "io-ts-types": "^0.5.19",
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
@@ -59,7 +59,7 @@
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
     "newtype-ts": "^0.3.5",
-    "openai": "^4.20.1",
+    "openai": "^4.24.7",
     "pg": "^8.11.3",
     "ramda": "^0.29.1",
     "redlock": "^5.0.0-beta2",

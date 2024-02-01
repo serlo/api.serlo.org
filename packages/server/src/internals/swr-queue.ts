@@ -1,7 +1,6 @@
 import Queue from 'bee-queue'
 import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { createAuthServices } from './authentication'
@@ -70,6 +69,10 @@ export function createSwrQueue({
     isWorker: false,
     removeOnFailure: true,
     removeOnSuccess: true,
+  })
+
+  queue.on('error', (err) => {
+    log.error(`Queue error event - ${err.message}`)
   })
 
   return {
@@ -202,7 +205,6 @@ export function createSwrQueueWorker({
                 key,
                 invalidValue: value,
                 decoder: decoder.name,
-                validationErrors: reporter.report(decodedValue),
               },
             })
 

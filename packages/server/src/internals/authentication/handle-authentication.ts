@@ -1,4 +1,4 @@
-import { decode, JsonWebTokenError, verify } from 'jsonwebtoken'
+import jsonwebtoken, { type JsonWebTokenError } from 'jsonwebtoken'
 
 import { Service } from './service'
 import { AuthenticationError } from '~/errors'
@@ -49,20 +49,20 @@ function validateServiceToken(token: string): Service {
     error?: JsonWebTokenError
   } {
     try {
-      const decoded = decode(token)
+      const decoded = jsonwebtoken.decode(token)
       if (!decoded || typeof decoded !== 'object') return unauthenticated()
 
       const service = decoded.iss as Service
       const secret = getSecret(service)
-      verify(token, secret, {
-        audience: 'api.serlo.org',
-      })
+      jsonwebtoken.verify(token, secret, { audience: 'api.serlo.org' })
 
       return {
         service,
       }
     } catch (e) {
-      return unauthenticated(e instanceof JsonWebTokenError ? e : undefined)
+      return unauthenticated(
+        e instanceof jsonwebtoken.JsonWebTokenError ? e : undefined,
+      )
     }
 
     function unauthenticated(error?: JsonWebTokenError) {
