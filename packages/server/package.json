@@ -19,7 +19,8 @@
     "deploy:image:production": "ts-node --experimental-specifier-resolution=node scripts/deploy-env production"
   },
   "dependencies": {
-    "bee-queue": "^1.7.1"
+    "bee-queue": "^1.7.1",
+    "mysql2": "^3.7.1"
   },
   "devDependencies": {
     "@apollo/server": "^4.9.5",
