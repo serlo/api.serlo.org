@@ -122,19 +122,11 @@ describe('permission-based testing', () => {
   })
 
   test('fails when architect tries to set state of page', async () => {
-    await testPermissionWithMockUser(
-      Role.Architect,
-      page.id,
-      false,
-    )
+    await testPermissionWithMockUser(Role.Architect, page.id, false)
   })
 
   test('fails when static_pages_builder tries to set state of article', async () => {
-    await testPermissionWithMockUser(
-      Role.StaticPagesBuilder,
-      article.id,
-      false,
-    )
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, article.id, false)
   })
 
   test('fails when static_pages_builder tries to set state of taxonomy term', async () => {
@@ -146,27 +138,15 @@ describe('permission-based testing', () => {
   })
 
   test('returns "{ success: true }" when architect tries to set state of article', async () => {
-    await testPermissionWithMockUser(
-      Role.Architect,
-      article.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.Architect, article.id, true)
   })
 
   test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
-    await testPermissionWithMockUser(
-      Role.Architect,
-      taxonomyTermRoot.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.Architect, taxonomyTermRoot.id, true)
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page', async () => {
-    await testPermissionWithMockUser(
-      Role.StaticPagesBuilder,
-      page.id,
-      true,
-    )
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, page.id, true)
   })
 
   test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
@@ -191,7 +171,10 @@ async function testPermissionWithMockUser(
   uuidId: number,
   successSwitch: boolean,
 ) {
-  given('UuidQuery').for({ ...baseUser, roles: [generateRole(userRole, Instance.De)] })
+  given('UuidQuery').for({
+    ...baseUser,
+    roles: [generateRole(userRole, Instance.De)],
+  })
 
   if (successSwitch) {
     await mutation
