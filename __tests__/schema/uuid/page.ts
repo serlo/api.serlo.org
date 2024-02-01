@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { page, pageRevision, license } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
