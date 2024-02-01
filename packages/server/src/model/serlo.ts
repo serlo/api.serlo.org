@@ -2,6 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { executePrompt } from './ai'
+import * as Database from './database'
 import * as DatabaseLayer from './database-layer'
 import {
   castToUuid,
@@ -198,7 +199,7 @@ export function createSerloModel({
     type: 'UserSetDescriptionMutation',
     decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
     mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
-      return DatabaseLayer.makeRequest('UserSetDescriptionMutation', payload)
+      return Database.setUserDescription(payload.description, payload.userId)
     },
     updateCache: async ({ userId, description }, { success }) => {
       if (success) {
