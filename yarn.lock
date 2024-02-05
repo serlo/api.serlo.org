@@ -4331,11 +4331,11 @@ __metadata:
   linkType: hard
 
 "@types/basic-auth@npm:^1.1.6":
-  version: 1.1.7
-  resolution: "@types/basic-auth@npm:1.1.7"
+  version: 1.1.8
+  resolution: "@types/basic-auth@npm:1.1.8"
   dependencies:
     "@types/node": "*"
-  checksum: cc5c18f20eb1024a3f8d9dc9c0ad2c0b6062f844d8575435248c08913445617c21bd8adedfb84849056732e4d2ffc38d6b4149aadc0cbf5bd52b598d8604a04e
+  checksum: b3798fe62d9c800e5a8905630be671d150edf32792a50b1543d932dea57b0f53ad9ef4a476be1d6f74dfb48de34d7892c246feee61d2c4dd7ad218b03f1d6f60
   languageName: node
   linkType: hard
 
