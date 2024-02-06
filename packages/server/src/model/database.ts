@@ -5,15 +5,15 @@ import { UserInputError } from '~/errors'
 
 const pool = mysql.createPool(process.env.MYSQL_URI)
 
-const runSql = async (
+const runSql = async <T extends mysql.RowDataPacket> (
   query: string,
   params?: unknown[] | undefined,
-): Promise<any> => {
+): Promise<T[]> => {
   let connection: mysql.PoolConnection | null = null
   try {
     connection = await pool.getConnection()
 
-    const [rows] = await connection.execute(query, params)
+    const [rows] = await connection.execute<T[]>(query, params)
 
     return rows
   } catch (error) {
@@ -41,8 +41,11 @@ export const setUserDescription = async (
   return { success: true }
 }
 
-export const activeAuthorsQuery = async (): Promise<{ id: number }[]> => {
-  const users: { id: number }[] = await runSql(`SELECT u.id
+export const activeAuthorsQuery = async (): Promise<unknown> => {
+  interface ActiveAuthors extends mysql.RowDataPacket {
+    users: number[]
+  }
+  const users = await runSql<ActiveAuthors>(`SELECT u.id
   FROM user u
   JOIN event_log e ON u.id = e.actor_id
   WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
