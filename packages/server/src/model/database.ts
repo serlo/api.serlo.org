@@ -8,7 +8,7 @@ const pool = mysql.createPool(process.env.MYSQL_URI)
 const runSql = async (
   query: string,
   params?: unknown[] | undefined,
-): Promise<unknown> => {
+): Promise<any> => {
   let connection: mysql.PoolConnection | null = null
   try {
     connection = await pool.getConnection()
@@ -39,4 +39,14 @@ export const setUserDescription = async (
     userId,
   ])
   return { success: true }
+}
+
+export const activeAuthorsQuery = async (): Promise<{ id: number }[]> => {
+  const users: { id: number }[] = await runSql(`SELECT u.id
+  FROM user u
+  JOIN event_log e ON u.id = e.actor_id
+  WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+  GROUP BY u.id
+  HAVING count(e.event_id) > 10`)
+  return users
 }
