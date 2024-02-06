@@ -45,11 +45,14 @@ export const activeAuthorsQuery = async (): Promise<unknown> => {
   interface ActiveAuthors extends mysql.RowDataPacket {
     users: number[]
   }
-  const users = await runSql<ActiveAuthors>(`SELECT u.id
+  const users = await runSql<ActiveAuthors>(
+    `SELECT u.id
   FROM user u
   JOIN event_log e ON u.id = e.actor_id
   WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
   GROUP BY u.id
-  HAVING count(e.event_id) > 10`)
+  HAVING count(e.event_id) > 10`,
+    [new Date()],
+  )
   return users
 }
