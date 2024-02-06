@@ -5,7 +5,7 @@ import { UserInputError } from '~/errors'
 
 const pool = mysql.createPool(process.env.MYSQL_URI)
 
-const runSql = async <T extends mysql.RowDataPacket> (
+const runSql = async <T extends mysql.RowDataPacket>(
   query: string,
   params?: unknown[] | undefined,
 ): Promise<T[]> => {
