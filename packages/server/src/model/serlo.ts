@@ -485,14 +485,6 @@ export function createSerloModel({
     },
   })
 
-  const getAllThreads = createRequest({
-    type: 'AllThreadsQuery',
-    decoder: DatabaseLayer.getDecoderFor('AllThreadsQuery'),
-    async getCurrentValue(payload: DatabaseLayer.Payload<'AllThreadsQuery'>) {
-      return DatabaseLayer.makeRequest('AllThreadsQuery', payload)
-    },
-  })
-
   const getThreadIds = createQuery(
     {
       type: 'ThreadsQuery',
@@ -1131,7 +1123,6 @@ export function createSerloModel({
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
-    getAllThreads,
     getDeletedEntities,
     getEntitiesMetadata,
     getEvents,
