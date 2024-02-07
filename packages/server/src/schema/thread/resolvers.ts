@@ -1,4 +1,5 @@
 import * as auth from '@serlo/authorization'
+import type { RowDataPacket } from 'mysql2/promise'
 
 import {
   decodeThreadId,
@@ -18,6 +19,7 @@ import {
   Context,
   Queries,
 } from '~/internals/graphql'
+import { runSql } from '~/model/database'
 import {
   CommentDecoder,
   DiscriminatorType,
@@ -47,17 +49,89 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
     async allThreads(_parent, input, { dataSources }) {
       const subjectId = input.subjectId
         ? decodeSubjectId(input.subjectId)
-        : undefined
+        : null
       const limit = 50
-      const { first = 10, instance } = input
+      const { first = 10, instance=null, status=null } = input
       // TODO: Better solution
       const after = input.after
         ? Buffer.from(input.after, 'base64').toString()
-        : undefined
+        : null
 
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
 
+      interface FirstComment extends RowDataPacket {
+        id: number
+      }
+      const firstComments = await runSql<FirstComment>(
+        `
+          WITH RECURSIVE descendants AS (
+                    SELECT id, parent_id
+                    FROM term_taxonomy
+                    WHERE (? is null OR id = ?)
+
+                    UNION
+
+                    SELECT tt.id, tt.parent_id
+                    FROM term_taxonomy tt
+                    JOIN descendants d ON tt.parent_id = d.id
+                ), subject_entities AS (
+                SELECT id as entity_id FROM descendants
+
+                UNION
+
+                SELECT tte.entity_id
+                FROM descendants
+                JOIN term_taxonomy_entity tte ON descendants.id = tte.term_taxonomy_id
+
+                UNION
+
+                SELECT entity_link.child_id
+                FROM descendants
+                JOIN term_taxonomy_entity tte ON descendants.id = tte.term_taxonomy_id
+                JOIN entity_link ON entity_link.parent_id = tte.entity_id
+
+                UNION
+
+                SELECT entity_link.child_id
+                FROM descendants
+                JOIN term_taxonomy_entity tte ON descendants.id = tte.term_taxonomy_id
+                JOIN entity_link parent_link ON parent_link.parent_id = tte.entity_id
+                JOIN entity_link ON entity_link.parent_id = parent_link.child_id
+                )
+                SELECT comment.id
+                FROM comment
+                JOIN uuid ON uuid.id = comment.id
+                JOIN comment answer ON comment.id = answer.parent_id OR
+                    comment.id = answer.id
+                JOIN uuid parent_uuid ON parent_uuid.id = comment.uuid_id
+                JOIN subject_entities ON subject_entities.entity_id = comment.uuid_id
+                JOIN comment_status on comment.comment_status_id = comment_status.id
+                JOIN instance on comment.instance_id = instance.id
+                WHERE
+                    comment.uuid_id IS NOT NULL
+                    AND uuid.trashed = 0
+                    AND comment.archived = 0
+                    AND (? is null OR instance.subdomain = ?)
+                    AND parent_uuid.discriminator != "user"
+                    AND (? is null OR comment_status.name = ?)
+                GROUP BY comment.id
+                HAVING MAX(GREATEST(answer.date, comment.date)) < ?
+                ORDER BY MAX(GREATEST(answer.date, comment.date)) DESC
+                LIMIT ?;
+        `,
+        [
+          String(subjectId),
+          String(subjectId),
+          instance,
+          instance,
+          status,
+          status,
+          after,
+          String(first + 1),
+        ],
+      )
+      /*
       const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
         first: first + 1,
         after,
@@ -65,8 +139,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         subjectId,
         ...(input.status ? { status: input.status } : {}),
       })
-
-      const threads = await resolveThreads({ firstCommentIds, dataSources })
+*/
+      const threads = await resolveThreads({ firstCommentIds: firstComments.map(firstComment => firstComment.id), dataSources })
 
       // TODO: The types do not match
       // TODO: Support for resolving small changes
