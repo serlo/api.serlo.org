@@ -54,5 +54,5 @@ export const activeAuthorsQuery = async (): Promise<unknown> => {
   HAVING count(e.event_id) > 10`,
     [new Date()],
   )
-  return activeAuthors.map(activeAuthor => activeAuthor.user_id)
+  return activeAuthors.map((activeAuthor) => activeAuthor.user_id)
 }
