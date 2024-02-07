@@ -42,10 +42,10 @@ export const setUserDescription = async (
 }
 
 export const activeAuthorsQuery = async (): Promise<unknown> => {
-  interface ActiveAuthors extends mysql.RowDataPacket {
-    users: number[]
+  interface ActiveAuthor extends mysql.RowDataPacket {
+    user_id: number
   }
-  const users = await runSql<ActiveAuthors>(
+  const activeAuthors = await runSql<ActiveAuthor>(
     `SELECT u.id
   FROM user u
   JOIN event_log e ON u.id = e.actor_id
@@ -54,5 +54,5 @@ export const activeAuthorsQuery = async (): Promise<unknown> => {
   HAVING count(e.event_id) > 10`,
     [new Date()],
   )
-  return users
+  return activeAuthors.map(activeAuthor => activeAuthor.user_id)
 }
