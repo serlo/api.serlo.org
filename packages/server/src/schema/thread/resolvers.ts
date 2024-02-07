@@ -51,7 +51,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         ? decodeSubjectId(input.subjectId)
         : null
       const limit = 50
-      const { first = 10, instance=null, status=null } = input
+      const { first = 10, instance = null, status = null } = input
       // TODO: Better solution
       const after = input.after
         ? Buffer.from(input.after, 'base64').toString()
@@ -132,7 +132,10 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         ],
       )
 
-      const threads = await resolveThreads({ firstCommentIds: firstComments.map(firstComment => firstComment.id), dataSources })
+      const threads = await resolveThreads({
+        firstCommentIds: firstComments.map((firstComment) => firstComment.id),
+        dataSources,
+      })
 
       // TODO: The types do not match
       // TODO: Support for resolving small changes
