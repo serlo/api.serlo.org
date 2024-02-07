@@ -131,15 +131,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           String(first + 1),
         ],
       )
-      /*
-      const { firstCommentIds } = await dataSources.model.serlo.getAllThreads({
-        first: first + 1,
-        after,
-        instance,
-        subjectId,
-        ...(input.status ? { status: input.status } : {}),
-      })
-*/
+
       const threads = await resolveThreads({ firstCommentIds: firstComments.map(firstComment => firstComment.id), dataSources })
 
       // TODO: The types do not match
