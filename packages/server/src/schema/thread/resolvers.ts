@@ -141,7 +141,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       // TODO: Support for resolving small changes
       return resolveConnection({
         nodes: threads,
-        payload: { ...input, first, after: (after ? after : undefined) },
+        payload: { ...input, first, after: after ? after : undefined },
         createCursor: (node) => {
           const comments = node.commentPayloads
           const latestComment = comments[comments.length - 1]
