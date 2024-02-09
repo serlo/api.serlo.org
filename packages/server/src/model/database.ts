@@ -1,14 +1,14 @@
 import * as mysql from 'mysql2/promise'
 
-import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
+import { captureErrorEvent } from '~/internals/error-event'
 
 const pool = mysql.createPool(process.env.MYSQL_URI)
 
 export const runSql = async <T extends mysql.RowDataPacket>(
   query: string,
   params?: unknown[] | undefined,
-): Promise<T[]> => {
+): Promise<T[] | undefined> => {
   let connection: mysql.PoolConnection | null = null
   try {
     connection = await pool.getConnection()
@@ -17,11 +17,7 @@ export const runSql = async <T extends mysql.RowDataPacket>(
 
     return rows
   } catch (error) {
-    const errorMessage = `Error executing SQL query: ${
-      (error as Error).message
-    }`
-    log.error(errorMessage)
-    throw new Error(errorMessage)
+    captureErrorEvent({ error: error as Error })
   } finally {
     if (connection) connection.release()
   }
