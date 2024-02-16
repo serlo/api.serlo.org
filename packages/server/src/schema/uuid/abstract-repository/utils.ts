@@ -22,7 +22,7 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
   revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractRepository',
-  'alias' | 'threads' | 'license' | 'events' | 'title'
+  'alias' | 'threads' | 'license' | 'licenseId' | 'events' | 'title'
 > & {
   currentRevision: ResolverFunction<
     R | null,
@@ -82,6 +82,9 @@ export function createRepositoryResolvers<R extends Model<'AbstractRevision'>>({
       return {
         id: repository.licenseId,
       }
+    },
+    licenseId(repository, _args) {
+      return repository.licenseId
     },
   }
 }

@@ -22,6 +22,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   title: String!
   date: DateTime!
   license: License!
+  licenseId: Int!
   currentRevision: ArticleRevision
   revisions(
     after: String
