@@ -17,6 +17,7 @@ interface AbstractEntity {
   alias: String!
   title: String!
   license: License!
+  licenseId: Int!
   subject: Subject
 }
 
