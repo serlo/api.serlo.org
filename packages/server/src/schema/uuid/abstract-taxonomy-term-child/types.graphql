@@ -15,6 +15,7 @@ interface AbstractTaxonomyTermChild {
   date: DateTime!
   instance: Instance!
   license: License!
+  licenseId: Int!
   taxonomyTerms(
     after: String
     before: String

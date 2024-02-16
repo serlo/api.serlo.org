@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { page, pageRevision, license } from '../../../__fixtures__'
+import { page, pageRevision, licenseId } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 
 describe('Page', () => {
@@ -39,16 +39,14 @@ describe('Page', () => {
           query page($id: Int!) {
             uuid(id: $id) {
               ... on Page {
-                license {
-                  id
-                }
+                licenseId
               }
             }
           }
         `,
       })
       .withVariables(page)
-      .shouldReturnData({ uuid: { license } })
+      .shouldReturnData({ uuid: { licenseId } })
   })
 })
 
