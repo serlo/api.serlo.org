@@ -1,5 +1,5 @@
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
@@ -19,7 +19,7 @@ export const video: Model<'Video'> = {
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(16114),
   revisionIds: [16114].map(castToUuid),
-  licenseId: license.id,
+  licenseId,
   taxonomyTermIds: [5].map(castToUuid),
   canonicalSubjectId: castToUuid(5),
 }

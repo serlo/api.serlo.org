@@ -1,5 +1,5 @@
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
@@ -18,7 +18,7 @@ export const article: Model<'Article'> = {
   alias: castToAlias('/mathe/1855/parabel'),
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(30674),
-  licenseId: license.id,
+  licenseId,
   taxonomyTermIds: [5].map(castToUuid),
   revisionIds: [30674].map(castToUuid),
   canonicalSubjectId: castToUuid(5),
@@ -32,7 +32,7 @@ export const article2: Model<'Article'> = {
   alias: castToAlias('/mathe/1495/addition'),
   date: '2014-03-01T20:36:44Z',
   currentRevisionId: castToUuid(32614),
-  licenseId: license.id,
+  licenseId,
   taxonomyTermIds: [17744].map(castToUuid),
   revisionIds: [32614].map(castToUuid),
   canonicalSubjectId: castToUuid(17744),
