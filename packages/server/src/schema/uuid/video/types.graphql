@@ -21,7 +21,6 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   alias: String!
   title: String!
   date: DateTime!
-  license: License!
   licenseId: Int!
   currentRevision: VideoRevision
   revisions(
