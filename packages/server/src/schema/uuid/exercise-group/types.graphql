@@ -22,6 +22,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
   title: String!
   date: DateTime!
   license: License!
+  licenseId: Int!
   currentRevision: ExerciseGroupRevision
   revisions(
     after: String
