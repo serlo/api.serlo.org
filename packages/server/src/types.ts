@@ -28,6 +28,7 @@ export type AbstractEntity = {
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   subject?: Maybe<Subject>;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -86,6 +87,7 @@ export type AbstractExercise = {
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -150,6 +152,7 @@ export type AbstractRepository = {
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -214,6 +217,7 @@ export type AbstractTaxonomyTermChild = {
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   taxonomyTerms: TaxonomyTermConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -301,6 +305,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: AppletRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -400,6 +405,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: ArticleRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -567,6 +573,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   pages: Array<CoursePage>;
   revisions: CourseRevisionConnection;
   subject?: Maybe<Subject>;
@@ -629,6 +636,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: CoursePageRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
@@ -998,6 +1006,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: EventRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -1109,6 +1118,7 @@ export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & 
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: ExerciseRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -1164,6 +1174,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: ExerciseGroupRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -1318,6 +1329,7 @@ export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractReposi
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: GroupedExerciseRevisionConnection;
   subject?: Maybe<Subject>;
   threads: ThreadsConnection;
@@ -1576,6 +1588,7 @@ export type Page = AbstractRepository & AbstractUuid & InstanceAware & ThreadAwa
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: PageRevisionConnection;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -2673,6 +2686,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
   id: Scalars['Int']['output'];
   instance: Instance;
   license: License;
+  licenseId: Scalars['Int']['output'];
   revisions: VideoRevisionConnection;
   subject?: Maybe<Subject>;
   taxonomyTerms: TaxonomyTermConnection;
@@ -3264,6 +3278,7 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3304,6 +3319,7 @@ export type AbstractExerciseResolvers<ContextType = Context, ParentType extends 
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
@@ -3351,6 +3367,7 @@ export type AbstractRepositoryResolvers<ContextType = Context, ParentType extend
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AbstractRepositoryThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3377,6 +3394,7 @@ export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AbstractTaxonomyTermChildTaxonomyTermsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3426,6 +3444,7 @@ export type AppletResolvers<ContextType = Context, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['AppletRevisionConnection'], ParentType, ContextType, Partial<AppletRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AppletTaxonomyTermsArgs>>;
@@ -3468,6 +3487,7 @@ export type ArticleResolvers<ContextType = Context, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ArticleRevisionConnection'], ParentType, ContextType, Partial<ArticleRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ArticleTaxonomyTermsArgs>>;
@@ -3548,6 +3568,7 @@ export type CourseResolvers<ContextType = Context, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   pages?: Resolver<Array<ResolversTypes['CoursePage']>, ParentType, ContextType, Partial<CoursePagesArgs>>;
   revisions?: Resolver<ResolversTypes['CourseRevisionConnection'], ParentType, ContextType, Partial<CourseRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
@@ -3567,6 +3588,7 @@ export type CoursePageResolvers<ContextType = Context, ParentType extends Resolv
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['CoursePageRevisionConnection'], ParentType, ContextType, Partial<CoursePageRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CoursePageThreadsArgs>>;
@@ -3780,6 +3802,7 @@ export type EventResolvers<ContextType = Context, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['EventRevisionConnection'], ParentType, ContextType, Partial<EventRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<EventTaxonomyTermsArgs>>;
@@ -3834,6 +3857,7 @@ export type ExerciseResolvers<ContextType = Context, ParentType extends Resolver
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ExerciseRevisionConnection'], ParentType, ContextType, Partial<ExerciseRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseTaxonomyTermsArgs>>;
@@ -3852,6 +3876,7 @@ export type ExerciseGroupResolvers<ContextType = Context, ParentType extends Res
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ExerciseGroupRevisionConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseGroupTaxonomyTermsArgs>>;
@@ -3929,6 +3954,7 @@ export type GroupedExerciseResolvers<ContextType = Context, ParentType extends R
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['GroupedExerciseRevisionConnection'], ParentType, ContextType, Partial<GroupedExerciseRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<GroupedExerciseThreadsArgs>>;
@@ -4077,6 +4103,7 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['PageRevisionConnection'], ParentType, ContextType, Partial<PageRevisionsArgs>>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<PageThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4578,6 +4605,7 @@ export type VideoResolvers<ContextType = Context, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   license?: Resolver<ResolversTypes['License'], ParentType, ContextType>;
+  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['VideoRevisionConnection'], ParentType, ContextType, Partial<VideoRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<VideoTaxonomyTermsArgs>>;

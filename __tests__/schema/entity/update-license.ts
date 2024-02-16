@@ -47,16 +47,14 @@ test('returns "{ success: true }" when mutation could be successfully executed',
         query ($id: Int!) {
           uuid(id: $id) {
             ... on Article {
-              license {
-                id
-              }
+              licenseId
             }
           }
         }
       `,
     })
     .withVariables({ id: article.id })
-    .shouldReturnData({ uuid: { license: { id: newLicenseId } } })
+    .shouldReturnData({ uuid: { licenseId: newLicenseId } })
 })
 
 test('fails when user is not authenticated', async () => {
