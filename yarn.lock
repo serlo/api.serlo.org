@@ -3305,14 +3305,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nmshd/connector-sdk@npm:^2.2.4":
-  version: 2.2.5
-  resolution: "@nmshd/connector-sdk@npm:2.2.5"
+"@nmshd/connector-sdk@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@nmshd/connector-sdk@npm:4.0.0"
   dependencies:
-    axios: ^1.6.3
+    axios: ^1.6.7
     form-data: ^4.0.0
     qs: ^6.11.2
-  checksum: ef5883a35f5b7bb35382e9b9f0f24816da5cd1adf8950df224914c970280cb9fc733861b01f95ceb0fba6401c3cb3d7b19f92d4c01495c8f2902a57d7f6ea275
+  checksum: 96f94a1d8280b063017f0aec12af6c59b569b3ac3659edc6ab50dc88217b7b290af71a292a9d30952fc0d8d00811ab0fd3c27dfb5d53e166f7ba57633a7cb883
   languageName: node
   linkType: hard
 
@@ -4142,7 +4142,7 @@ __metadata:
     "@graphql-codegen/cli": ^5.0.0
     "@graphql-codegen/typescript": ^4.0.1
     "@graphql-codegen/typescript-resolvers": ^4.0.1
-    "@nmshd/connector-sdk": ^2.2.4
+    "@nmshd/connector-sdk": ^4.0.0
     "@ory/client": ^1.4.5
     "@sentry/node": ^7.86.0
     "@serlo/authorization": ^0.60.0
@@ -6064,7 +6064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0":
+"axios@npm:^1.6.0, axios@npm:^1.6.7":
   version: 1.6.7
   resolution: "axios@npm:1.6.7"
   dependencies:
@@ -6075,7 +6075,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.1, axios@npm:^1.6.3":
+"axios@npm:^1.6.1":
   version: 1.6.5
   resolution: "axios@npm:1.6.5"
   dependencies:
