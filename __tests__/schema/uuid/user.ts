@@ -1,6 +1,6 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   article,

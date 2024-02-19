@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   applet,
@@ -24,6 +24,7 @@ import {
   exerciseGroupRevision,
   groupedExerciseRevision,
   videoRevision,
+  licenseId,
 } from '../../../__fixtures__'
 import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config'
@@ -223,7 +224,7 @@ testCases.forEach((testCase) => {
       input: {
         changes,
         needsReview,
-        licenseId: 1,
+        licenseId,
         subscribeThis,
         subscribeThisByEmail,
         fields: testCase.fieldsToDBLayer,

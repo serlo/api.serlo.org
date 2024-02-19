@@ -1,4 +1,5 @@
-module.exports = {
+// eslint-disable-next-line import/no-default-export
+export default {
   modulePaths: ['<rootDir>/packages'],
   moduleNameMapper: {
     '^~/(.*)$': 'server/src/$1',

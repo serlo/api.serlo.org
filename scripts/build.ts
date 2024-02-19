@@ -6,14 +6,19 @@ import * as path from 'path'
 import { fileURLToPath } from 'url'
 
 const graphqlLoaderPlugin = defaultImport(graphqlLoaderPlugin_)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-const root = path.join(__dirname, '..')
-const dist = path.join(root, 'dist')
 
 await main()
 
 async function main() {
+  const { source, outfile } = loadSourceAndOutput()
+
+  await esbuild.build(getEsbuildOptions(source, outfile))
+}
+
+export function loadSourceAndOutput() {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const root = path.join(__dirname, '..')
+  const dist = path.join(root, 'dist')
   const [sourceArg, targetArg] = process.argv.slice(2)
 
   const source = path.resolve(sourceArg)
@@ -24,7 +29,11 @@ async function main() {
 
   const outfile = path.join(dist, targetArg)
 
-  await esbuild.build({
+  return { source, outfile }
+}
+
+export function getEsbuildOptions(source: string, outfile: string) {
+  return {
     entryPoints: [source],
     treeShaking: true,
     minifySyntax: false,
@@ -41,5 +50,5 @@ async function main() {
     external: ['bee-queue'],
     outfile,
     plugins: [graphqlLoaderPlugin()],
-  })
+  } as esbuild.BuildOptions
 }

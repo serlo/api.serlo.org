@@ -1,4 +1,5 @@
-name: Deploy
+# TODO: delete this pipeline after testing deploying directly to environments
+name: Push docker image with semver version
 on:
   push:
     branches:
@@ -29,7 +30,7 @@ jobs:
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - run: gcloud auth configure-docker
-      - uses: google-github-actions/setup-gcloud@v1
+      - uses: google-github-actions/setup-gcloud@v2
       - run: yarn deploy:images
   npm-package:
     runs-on: ubuntu-latest

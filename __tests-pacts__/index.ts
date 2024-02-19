@@ -1,6 +1,6 @@
 import { Matchers } from '@pact-foundation/pact'
 import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import {
   createCommentNotificationEvent,

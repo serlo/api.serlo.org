@@ -13,6 +13,7 @@ const mockedOpenAiResponse: ChoicesFromChatCompletion = {
   choices: [
     {
       finish_reason: 'stop',
+      logprobs: null,
       index: 0,
       message: {
         role: 'assistant',

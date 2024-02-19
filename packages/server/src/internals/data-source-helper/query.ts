@@ -1,6 +1,5 @@
 import { option as O, either as E } from 'fp-ts'
 import * as t from 'io-ts'
-import reporter from 'io-ts-reporters'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './common'
@@ -66,7 +65,6 @@ export function createQuery<P, R>(
           : {}),
         invalidCurrentValue: value,
         decoder: decoder.name,
-        validationErrors: reporter.report(decoded),
         payload,
         type: spec.type,
         key,

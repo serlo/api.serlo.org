@@ -22,6 +22,7 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
   title: String!
   date: DateTime!
   license: License!
+  licenseId: Int!
   currentRevision: VideoRevision
   revisions(
     after: String
