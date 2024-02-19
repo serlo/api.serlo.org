@@ -22,6 +22,7 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
   title: String!
   date: DateTime!
   license: License!
+  licenseId: Int!
   currentRevision: CoursePageRevision
   revisions(
     after: String

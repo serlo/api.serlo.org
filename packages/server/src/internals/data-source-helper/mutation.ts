@@ -1,6 +1,5 @@
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
-import reporter from 'io-ts-reporters'
 
 import { InvalidCurrentValueError } from './common'
 import { AsyncOrSync } from '~/utils'
@@ -22,7 +21,6 @@ export function createMutation<P, R>(spec: MutationSpec<P, R>): Mutation<P, R> {
       throw new InvalidCurrentValueError({
         invalidCurrentValue: result,
         decoder: spec.decoder.name,
-        validationErrors: reporter.report(decodedResult),
         type: spec.type,
         payload,
       })

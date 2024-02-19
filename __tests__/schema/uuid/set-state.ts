@@ -1,32 +1,34 @@
 import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
 
-import { article, page, user as baseUser } from '../../../__fixtures__'
-import { nextUuid, Client, given } from '../../__utils__'
+import {
+  article,
+  page,
+  pageRevision,
+  taxonomyTermRoot,
+  user as baseUser,
+} from '../../../__fixtures__'
+import { Client, given } from '../../__utils__'
+import { generateRole } from '~/internals/graphql'
+import { Instance, Role } from '~/types'
 
 const user = { ...baseUser, roles: ['de_architect'] }
-const articleIds = [article.id, nextUuid(article.id)]
+const uuids = [article, page, pageRevision, taxonomyTermRoot]
 const client = new Client({ userId: user.id })
-const mutation = client
-  .prepareQuery({
-    query: gql`
-      mutation uuid($input: UuidSetStateInput!) {
-        uuid {
-          setState(input: $input) {
-            success
-          }
+const mutation = client.prepareQuery({
+  query: gql`
+    mutation uuid($input: UuidSetStateInput!) {
+      uuid {
+        setState(input: $input) {
+          success
         }
       }
-    `,
-  })
-  .withInput({ id: articleIds, trashed: true })
+    }
+  `,
+})
 
 beforeEach(() => {
-  const articles = articleIds.map((id) => {
-    return { ...article, id }
-  })
-
-  given('UuidQuery').for(user, articles)
+  given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, article)
   given('UuidSetStateMutation')
     .withPayload({ userId: user.id, trashed: true })
     .isDefinedBy(async ({ request }) => {
@@ -34,9 +36,9 @@ beforeEach(() => {
       const { ids, trashed } = body.payload
 
       for (const id of ids) {
-        const article = articles.find((x) => x.id === id)
+        const uuid = uuids.find((x) => x.id === id)
 
-        if (article != null) {
+        if (uuid != null) {
           article.trashed = trashed
         } else {
           return new HttpResponse(null, {
@@ -49,50 +51,138 @@ beforeEach(() => {
     })
 })
 
-test('returns "{ success: true }" when it succeeds', async () => {
-  await mutation.shouldReturnData({ uuid: { setState: { success: true } } })
-})
+describe('infrastructural testing', () => {
+  beforeEach(() => {
+    given('UuidQuery').for(
+      { ...baseUser, roles: ['de_architect'] },
+      { ...article, trashed: false },
+    )
+  })
 
-test('updates the cache when it succeeds', async () => {
-  const uuidQuery = client
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            trashed
+  test('returns "{ success: true }" when it succeeds', async () => {
+    await mutation
+      .withInput({ id: [article.id], trashed: true })
+      .shouldReturnData({ uuid: { setState: { success: true } } })
+  })
+
+  test('updates the cache when it succeeds', async () => {
+    const uuidQuery = client
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              trashed
+            }
           }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
+        `,
+      })
+      .withVariables({ id: article.id })
 
-  await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
-  await mutation.execute()
+    await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
+    await mutation.withInput({ id: [article.id], trashed: true }).execute()
 
-  await uuidQuery.shouldReturnData({ uuid: { trashed: true } })
+    await uuidQuery.shouldReturnData({ uuid: { trashed: true } })
+  })
+
+  test('fails when database layer returns a BadRequest response', async () => {
+    given('UuidSetStateMutation').returnsBadRequest()
+
+    await mutation
+      .withInput({ id: [article.id], trashed: true })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when database layer has an internal server error', async () => {
+    given('UuidSetStateMutation').hasInternalServerError()
+
+    await mutation
+      .withInput({ id: [article.id], trashed: true })
+      .shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
 })
 
-test('fails when database layer returns a BadRequest response', async () => {
-  given('UuidSetStateMutation').returnsBadRequest()
+describe('permission-based testing', () => {
+  beforeEach(() => {
+    given('UuidQuery').for(page, pageRevision, taxonomyTermRoot, article)
+  })
 
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
+  test('fails when user is not authenticated', async () => {
+    await mutation
+      .forUnauthenticatedUser()
+      .withInput({ id: [article.id], trashed: true })
+      .shouldFailWithError('UNAUTHENTICATED')
+  })
+
+  test('fails when login user tries to set state of page', async () => {
+    await testPermissionWithMockUser(Role.Login, page.id, false)
+  })
+
+  test('fails when login user tries to set state of page revision', async () => {
+    await testPermissionWithMockUser(Role.Login, pageRevision.id, false)
+  })
+
+  test('fails when architect tries to set state of page', async () => {
+    await testPermissionWithMockUser(Role.Architect, page.id, false)
+  })
+
+  test('fails when static_pages_builder tries to set state of article', async () => {
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, article.id, false)
+  })
+
+  test('fails when static_pages_builder tries to set state of taxonomy term', async () => {
+    await testPermissionWithMockUser(
+      Role.StaticPagesBuilder,
+      taxonomyTermRoot.id,
+      false,
+    )
+  })
+
+  test('returns "{ success: true }" when architect tries to set state of article', async () => {
+    await testPermissionWithMockUser(Role.Architect, article.id, true)
+  })
+
+  test('returns "{ success: true }" when architect tries to set state of taxonomy term', async () => {
+    await testPermissionWithMockUser(Role.Architect, taxonomyTermRoot.id, true)
+  })
+
+  test('returns "{ success: true }" when static_pages_builder tries to set state of page', async () => {
+    await testPermissionWithMockUser(Role.StaticPagesBuilder, page.id, true)
+  })
+
+  test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
+    await testPermissionWithMockUser(
+      Role.StaticPagesBuilder,
+      pageRevision.id,
+      true,
+    )
+  })
+
+  test('returns "{ success: true }" when static_pages_builder tries to set state of page revision', async () => {
+    await testPermissionWithMockUser(
+      Role.StaticPagesBuilder,
+      pageRevision.id,
+      true,
+    )
+  })
 })
 
-test('fails when user is not authenticated', async () => {
-  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-})
+async function testPermissionWithMockUser(
+  userRole: Role,
+  uuidId: number,
+  successSwitch: boolean,
+) {
+  given('UuidQuery').for({
+    ...baseUser,
+    roles: [generateRole(userRole, Instance.De)],
+  })
 
-test('fails when user does not have sufficient permissions', async () => {
-  // Architects are not allowed to set the state of pages.
-  given('UuidQuery').for(page)
-
-  await mutation
-    .withInput({ id: [page.id], trashed: false })
-    .shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer has an internal server error', async () => {
-  given('UuidSetStateMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-})
+  if (successSwitch) {
+    await mutation
+      .withInput({ id: [uuidId], trashed: true })
+      .shouldReturnData({ uuid: { setState: { success: true } } })
+  } else if (!successSwitch) {
+    await mutation
+      .withInput({ id: [uuidId], trashed: true })
+      .shouldFailWithError('FORBIDDEN')
+  }
+}

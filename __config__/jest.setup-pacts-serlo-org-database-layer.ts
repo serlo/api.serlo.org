@@ -1,6 +1,8 @@
+import { jest } from '@jest/globals'
 import { Pact } from '@pact-foundation/pact'
-import { bypass, http, passthrough } from 'msw'
+import { bypass, http } from 'msw'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 import {
   createAfterAll,
@@ -12,6 +14,7 @@ import { createAuthServices } from '~/internals/authentication'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { createSerloModel } from '~/model'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pactDir = path.join(__dirname, '..', 'pacts')
 
 const port = 9009

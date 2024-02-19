@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server'
+import { type Storage } from '@google-cloud/storage'
 import { DocumentNode } from 'graphql'
-import R from 'ramda'
+import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
@@ -37,6 +38,19 @@ export class Client {
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
         userId: this.context?.userId ?? null,
+        googleStorage: {
+          bucket() {
+            return {
+              file() {
+                return {
+                  getSignedUrl() {
+                    return ['http://google.com/upload']
+                  },
+                }
+              },
+            }
+          },
+        } as unknown as Storage,
       } as Context,
     })
   }

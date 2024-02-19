@@ -22,6 +22,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   title: String!
   date: DateTime!
   license: License!
+  licenseId: Int!
   currentRevision: AppletRevision
   revisions(
     after: String
