@@ -4074,7 +4074,7 @@ __metadata:
     npm-run-all: ^4.1.5
     prettier: ^3.1.1
     prettier-plugin-packagejson: ^2.4.7
-    prettier-plugin-sh: ^0.13.1
+    prettier-plugin-sh: ^0.14.0
     ts-jest: ^29.1.1
     ts-node: ^10.9.2
     ts-unused-exports: ^10.0.1
@@ -16828,15 +16828,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-sh@npm:^0.13.1":
-  version: 0.13.1
-  resolution: "prettier-plugin-sh@npm:0.13.1"
+"prettier-plugin-sh@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "prettier-plugin-sh@npm:0.14.0"
   dependencies:
     mvdan-sh: ^0.10.1
     sh-syntax: ^0.4.1
   peerDependencies:
-    prettier: ^3.0.0
-  checksum: c0e383ff2691b1440e0751222a4ab9ae82228fd7f4a368ec35e2d44e88dd5cdba1c0ce7bf541c1ea4538c6852ef8304793113c4e9e2425084b08fbef2b27532f
+    prettier: ^3.0.3
+  checksum: 5b1bb1a17f6245983c1e4fd0f7a600e200e9248da686a551466942a8e4f30f1f65c5c09de14d43017a8c490c7215d44adade7c82d53acecbb1edcdc40dff6e42
   languageName: node
   linkType: hard
 
