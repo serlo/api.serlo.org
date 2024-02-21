@@ -122,8 +122,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
                 LIMIT ?;
         `,
         [
-          String(subjectId),
-          String(subjectId),
+          subjectId ? String(subjectId) : null,
+          subjectId ? String(subjectId) : null,
           instance,
           instance,
           status,
