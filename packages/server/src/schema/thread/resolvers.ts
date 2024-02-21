@@ -55,7 +55,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       // TODO: Better solution
       const after = input.after
         ? Buffer.from(input.after, 'base64').toString()
-        : null
+        : new Date().toISOString()
+      console.log(after)
 
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
