@@ -1,4 +1,4 @@
-/*import gql from 'graphql-tag'
+import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import {
@@ -13,7 +13,6 @@ import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
-
 
 describe('allThreads', () => {
   const comment4 = { ...comment3, id: nextUuid(comment3.id) }
@@ -63,16 +62,25 @@ describe('allThreads', () => {
   })
 
   test('returns list of threads', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11 })
-      .returns({
-        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
-      })
-
-    await query.shouldReturnData({
+    const first5Query = new Client().prepareQuery({
+      query: gql`
+        query {
+          thread {
+            allThreads(first: 5) {
+              nodes {
+                id
+              }
+            }
+          }
+        }
+      `,
+    })
+    const result = await first5Query.execute()
+    console.log(result.body.singleResult)
+    await first5Query.shouldReturnData({
       thread: {
         allThreads: {
-          nodes: [comment, comment1, comment3].map(getThreadData),
+          nodes: ([35163, 35090, 26976, 35082, 34793]).map((id) => ({ id })),
         },
       },
     })
@@ -158,4 +166,3 @@ describe('allThreads', () => {
 function getThreadData(comment: Model<'Comment'>) {
   return { __typename: 'Thread', createdAt: comment.date }
 }
-*/
