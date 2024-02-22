@@ -181,7 +181,6 @@ test('get permissions for admin', async () => {
     user: {
       usersByRole: {
         permissions: [
-          'entity:updateLicense',
           'file:delete',
           'user:getUsersByRole',
           'license:create',
