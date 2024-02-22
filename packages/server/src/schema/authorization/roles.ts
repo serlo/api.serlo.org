@@ -58,6 +58,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
     permissions: [
       Permission.Entity_RemoveChild,
       Permission.Entity_OrderChildren,
+      Permission.Entity_UpdateLicense,
       Permission.TaxonomyTerm_Change,
       Permission.TaxonomyTerm_OrderChildren,
       Permission.TaxonomyTerm_RemoveChild,
@@ -81,7 +82,6 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
   [Role.Admin]: {
     extends: [Role.Moderator, Role.Reviewer, Role.Architect],
     permissions: [
-      Permission.Entity_UpdateLicense,
       Permission.File_Delete,
       Permission.User_GetUsersByRole,
       Permission.License_Create,
