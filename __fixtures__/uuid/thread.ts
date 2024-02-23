@@ -4,7 +4,7 @@ import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 
 export const comment: Model<'Comment'> = {
-  id: castToUuid(35163),
+  id: castToUuid(27778),
   trashed: false,
   alias: castToAlias('/mathe/27778/applets-vertauscht'),
   __typename: DiscriminatorType.Comment,
@@ -20,7 +20,7 @@ export const comment: Model<'Comment'> = {
 }
 
 export const comment1: Model<'Comment'> = {
-  id: castToUuid(35090),
+  id: castToUuid(41443),
   trashed: false,
   alias: castToAlias('/mathe/41443/related-content-ist-chaotisch'),
   __typename: DiscriminatorType.Comment,
@@ -36,7 +36,7 @@ export const comment1: Model<'Comment'> = {
 }
 
 export const comment2: Model<'Comment'> = {
-  id: castToUuid(26976),
+  id: castToUuid(49237),
   trashed: false,
   alias: castToAlias('/mathe/49237/related-content'),
   __typename: DiscriminatorType.Comment,
@@ -52,7 +52,7 @@ export const comment2: Model<'Comment'> = {
 }
 
 export const comment3: Model<'Comment'> = {
-  id: castToUuid(35082),
+  id: castToUuid(27144),
   trashed: false,
   alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
   __typename: DiscriminatorType.Comment,
