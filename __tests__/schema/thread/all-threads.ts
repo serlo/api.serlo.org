@@ -8,6 +8,7 @@ import {
   comment1,
   comment2,
   comment3,
+  user,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
@@ -82,7 +83,7 @@ describe('allThreads', () => {
         trashed: false,
         alias: castToAlias('/mathe/27778/applets-vertauscht'),
         __typename: DiscriminatorType.Comment,
-        authorId: 1234,
+        authorId: user.id,
         title: 'comentario',
         date: '2014-08-25T12:51:02+02:00',
         archived: false,
