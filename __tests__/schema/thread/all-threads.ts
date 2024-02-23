@@ -88,8 +88,7 @@ describe('allThreads', () => {
         title: 'comentario',
         date: '2014-08-25T12:51:02+02:00',
         archived: false,
-        content:
-          'Soy un comentario',
+        content: 'Soy un comentario',
         parentId: article.id,
         childrenIds: [],
         status: 'open',
@@ -101,7 +100,9 @@ describe('allThreads', () => {
     await first3Query.shouldReturnData({
       thread: {
         allThreads: {
-          nodes: first4Threads.slice(0,-1).map((id) => ({ id: encodeThreadId( id ) })),
+          nodes: first4Threads
+            .slice(0, -1)
+            .map((id) => ({ id: encodeThreadId(id) })),
         },
       },
     })
