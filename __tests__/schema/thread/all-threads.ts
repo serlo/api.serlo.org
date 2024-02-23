@@ -9,14 +9,14 @@ import {
   comment2,
   comment3,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
 describe('allThreads', () => {
-  const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+  const comment4 = { ...comment3, id: castToUuid(34793) }
 
   beforeEach(() => {
     given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
@@ -76,26 +76,7 @@ describe('allThreads', () => {
         }
       `,
     })
-    function mockUuidQuery(commentId: number) {
-      const comment: Model<'Comment'> = {
-        id: castToUuid(commentId),
-        trashed: false,
-        alias: castToAlias('/mathe/27778/applets-vertauscht'),
-        __typename: DiscriminatorType.Comment,
-        authorId: 1234,
-        title: 'comentario',
-        date: '2014-08-25T12:51:02+02:00',
-        archived: false,
-        content:
-          'Soy un comentario',
-        parentId: article.id,
-        childrenIds: [],
-        status: 'open',
-      }
-      given('UuidQuery').for(comment)
-    }
     const first5threads = [35163, 35090, 26976, 35082, 34793]
-    first5threads.forEach(mockUuidQuery)
     const result = await first5Query.execute()
     console.log(result.body.singleResult)
     await first5Query.shouldReturnData({
