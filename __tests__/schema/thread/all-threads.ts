@@ -8,20 +8,34 @@ import {
   comment1,
   comment2,
   comment3,
-  user,
 } from '../../../__fixtures__'
 import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
 
+function getThreadData(comment: Model<'Comment'>) {
+  return {
+    id: encodeThreadId(comment.id),
+    __typename: 'Thread',
+    createdAt: comment.date,
+  }
+}
+
 describe('allThreads', () => {
   const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+  const firstThreads = [35163, 35090, 26976, 35082, 34793]
 
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
+    given('UuidQuery').for(
+      { ...comment, id: castToUuid(firstThreads[0]) },
+      { ...comment1, id: castToUuid(firstThreads[1]) },
+      { ...comment2, id: castToUuid(firstThreads[2]) },
+      { ...comment3, id: castToUuid(firstThreads[3]) },
+      { ...comment4, id: castToUuid(firstThreads[4]) },
+    )
     given('UuidQuery').for(article, article2)
     given('SubjectsQuery').returns({
       subjects: [
@@ -55,6 +69,7 @@ describe('allThreads', () => {
             status: $status
           ) {
             nodes {
+              id
               __typename
               createdAt
             }
@@ -64,71 +79,34 @@ describe('allThreads', () => {
     `,
   })
 
-  test('returns list of threads', async () => {
-    const first3Query = new Client().prepareQuery({
-      query: gql`
-        query {
-          thread {
-            allThreads(first: 3) {
-              nodes {
-                id
-              }
-            }
-          }
-        }
-      `,
-    })
-    function mockUuidQuery(commentId: number) {
-      const comment: Model<'Comment'> = {
-        id: castToUuid(commentId),
-        trashed: false,
-        alias: castToAlias('/mathe/27778/applets-vertauscht'),
-        __typename: DiscriminatorType.Comment,
-        authorId: user.id,
-        title: 'comentario',
-        date: '2014-08-25T12:51:02+02:00',
-        archived: false,
-        content: 'Soy un comentario',
-        parentId: article.id,
-        childrenIds: [],
-        status: 'open',
-      }
-      given('UuidQuery').for(comment)
-    }
-    const first4Threads = [35163, 35090, 26976, 35082]
-    first4Threads.forEach(mockUuidQuery)
-    await first3Query.shouldReturnData({
-      thread: {
-        allThreads: {
-          nodes: first4Threads
-            .slice(0, -1)
-            .map((id) => ({ id: encodeThreadId(id) })),
-        },
-      },
-    })
-  })
-
   test('parameter "first"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 3 })
-      .returns({ firstCommentIds: [comment, comment1].map(R.prop('id')) })
-
-    await query.withVariables({ first: 2 }).shouldReturnData({
-      thread: { allThreads: { nodes: [comment, comment1].map(getThreadData) } },
-    })
+    await query
+      .withVariables({
+        first: 3,
+      })
+      .shouldReturnData({
+        thread: {
+          allThreads: {
+            nodes: [
+              { ...comment, id: castToUuid(firstThreads[0]) },
+              { ...comment1, id: castToUuid(firstThreads[1]) },
+              { ...comment2, id: castToUuid(firstThreads[2]) },
+            ].map(getThreadData),
+          },
+        },
+      })
   })
 
   test('parameter "after"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, after: comment1.date })
-      .returns({ firstCommentIds: [comment3].map(R.prop('id')) })
-
     await query
       .withVariables({
+        first: 2,
         after: Buffer.from(comment1.date).toString('base64'),
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
+        thread: {
+          allThreads: { nodes: [comment2, comment3].map(getThreadData) },
+        },
       })
   })
 
@@ -184,7 +162,3 @@ describe('allThreads', () => {
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
-
-function getThreadData(comment: Model<'Comment'>) {
-  return { __typename: 'Thread', createdAt: comment.date }
-}
