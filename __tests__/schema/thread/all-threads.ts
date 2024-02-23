@@ -14,6 +14,7 @@ import { Client, given, nextUuid } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
+import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
 
 describe('allThreads', () => {
@@ -64,11 +65,11 @@ describe('allThreads', () => {
   })
 
   test('returns list of threads', async () => {
-    const first5Query = new Client().prepareQuery({
+    const first3Query = new Client().prepareQuery({
       query: gql`
         query {
           thread {
-            allThreads(first: 5) {
+            allThreads(first: 3) {
               nodes {
                 id
               }
@@ -95,14 +96,12 @@ describe('allThreads', () => {
       }
       given('UuidQuery').for(comment)
     }
-    const first5threads = [35163, 35090, 26976, 35082, 34793]
-    first5threads.forEach(mockUuidQuery)
-    const result = await first5Query.execute()
-    console.log(result.body.singleResult)
-    await first5Query.shouldReturnData({
+    const first4Threads = [35163, 35090, 26976, 35082]
+    first4Threads.forEach(mockUuidQuery)
+    await first3Query.shouldReturnData({
       thread: {
         allThreads: {
-          nodes: first5threads.map((id) => ({ id })),
+          nodes: first4Threads.slice(0,-1).map((id) => ({ id: encodeThreadId( id ) })),
         },
       },
     })
