@@ -88,7 +88,9 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
       enableSwr: true,
       getCurrentValue() {
-        return Database.activeAuthorsQuery()
+        return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
+        //could be used instead but test cases need adapting:
+        //return Database.activeAuthorsQuery()
       },
       staleAfter: { hours: 1 },
       getKey: () => {
