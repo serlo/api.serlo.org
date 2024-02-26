@@ -21,7 +21,6 @@ type GroupedExercise implements AbstractUuid & AbstractRepository & AbstractEnti
   alias: String!
   title: String!
   date: DateTime!
-  license: License!
   licenseId: Int!
   currentRevision: GroupedExerciseRevision
   revisions(
