@@ -87,7 +87,7 @@
     "@sentry/node": "^7.86.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^18.19.3",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.1",
     "default-import": "^1.1.5",
     "depcheck": "^1.4.7",
