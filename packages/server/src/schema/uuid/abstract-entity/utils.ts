@@ -19,7 +19,7 @@ export function createEntityResolvers<
   revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractEntity',
-  'alias' | 'threads' | 'license' | 'licenseId' | 'events' | 'subject' | 'title'
+  'alias' | 'threads' | 'licenseId' | 'events' | 'subject' | 'title'
 > &
   // TODO: Add threads to "AbstractEntity"
   PickResolvers<'AbstractRepository', 'threads'> & {
