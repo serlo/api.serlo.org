@@ -106,13 +106,13 @@ describe('uuid', () => {
     given('UuidQuery').for(exercise)
 
     await uuidQuery
-        .withVariables({
-          alias: {
-            instance: Instance.De,
-            path: `/${exercise.id}`,
-          },
-        })
-        .shouldReturnData({ uuid: { id: exercise.id } })
+      .withVariables({
+        alias: {
+          instance: Instance.De,
+          path: `/${exercise.id}`,
+        },
+      })
+      .shouldReturnData({ uuid: { id: exercise.id } })
   })
 
   test('returns uuid when alias is /entity/view/:id', async () => {
@@ -142,13 +142,13 @@ describe('uuid', () => {
     given('UuidQuery').for(article)
 
     await uuidQuery
-        .withVariables({
-          alias: {
-            instance: Instance.De,
-            path: `/${Instance.Es}/mathe/${article.id}/das-viereck`,
-          },
-        })
-        .shouldReturnData({ uuid: getTypenameAndId(article) })
+      .withVariables({
+        alias: {
+          instance: Instance.De,
+          path: `/${Instance.Es}/mathe/${article.id}/das-viereck`,
+        },
+      })
+      .shouldReturnData({ uuid: getTypenameAndId(article) })
   })
 
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
@@ -168,13 +168,13 @@ describe('uuid', () => {
     given('UuidQuery').for(user)
 
     await uuidQuery
-        .withVariables({
-          alias: {
-            instance: Instance.De,
-            path: `/user/profile/${user.id}`,
-          },
-        })
-        .shouldReturnData({ uuid: { id: user.id } })
+      .withVariables({
+        alias: {
+          instance: Instance.De,
+          path: `/user/profile/${user.id}`,
+        },
+      })
+      .shouldReturnData({ uuid: { id: user.id } })
   })
 
   test('returns null when uuid does not exist', async () => {
