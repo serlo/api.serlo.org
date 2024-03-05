@@ -29,7 +29,7 @@ export const comment: Model<'Comment'> = {
     'Der Autor selbst hat erkannt, dass man hier die Reihenfolge beachten muss dennoch benutzt er als Lösungsvorschlag die Kombination bei der die Reihenfolge natürlich missachtet bleibt.',
   parentId: article.id,
   childrenIds: [],
-  status: 'open',
+  status: 'noStatus',
 }
 
 export const comment1: Model<'Comment'> = {
@@ -43,8 +43,8 @@ export const comment1: Model<'Comment'> = {
   date: '2015-02-19 16:47:16',
   archived: false,
   content: 'Kann jemand ein paar erstellen?',
-  childrenIds: [], //[49237].map(castToUuid),
-  status: 'open',
+  childrenIds: [],
+  status: 'noStatus',
 }
 
 export const comment2: Model<'Comment'> = {
@@ -60,7 +60,7 @@ export const comment2: Model<'Comment'> = {
   content:
     'Dieser Themenbaum ist etwas unübersichtlich, könnte man da die Größen und Einheiten vielleicht zusammennehmen, damit eine bessere Übersicht entsteht?',
   childrenIds: [],
-  status: 'open',
+  status: 'noStatus',
 }
 
 export const comment3: Model<'Comment'> = {
@@ -76,7 +76,7 @@ export const comment3: Model<'Comment'> = {
     'Hier müssen die Aufgaben noch in die content-group umsortiert werden.',
   parentId: article2.id,
   childrenIds: [],
-  status: 'open',
+  status: 'noStatus',
 }
 
 export const comment4: Model<'Comment'> = {
@@ -91,7 +91,7 @@ export const comment4: Model<'Comment'> = {
   content: 'Ist das nun so, wie du es meintest?',
   parentId: article2.id,
   childrenIds: [],
-  status: 'open',
+  status: 'noStatus',
 }
 
 describe('allThreads', () => {
@@ -191,11 +191,13 @@ describe('allThreads', () => {
   })
 
   test('parameter "status"', async () => {
-    await query.withVariables({ status: 'open' }).shouldReturnData({
-      thread: {
-        allThreads: { nodes: [comment, comment3, comment4].map(getThreadData) },
-      },
-    })
+    await query
+      .withVariables({ first: 2, status: 'noStatus' })
+      .shouldReturnData({
+        thread: {
+          allThreads: { nodes: [comment, comment1].map(getThreadData) },
+        },
+      })
   })
 
   test('fails when limit is bigger than 50', async () => {
