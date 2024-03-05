@@ -52,17 +52,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         : null
       const limit = 50
       const { first = 10, instance = null, status = null } = input
-      const statusMapping: { [key: string]: number } = {
-        noStatus: 0,
-        open: 1,
-        done: 2,
-      }
 
-      let statusValue: number | null = status ? statusMapping[status] : null
-
-      if (statusValue === undefined) {
-        statusValue = null
-      }
       // TODO: Better solution
       const after = input.after
         ? Buffer.from(input.after, 'base64').toString()
@@ -136,8 +126,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
           subjectId ? String(subjectId) : null,
           instance,
           instance,
-          statusValue,
-          statusValue,
+          status,
+          // camelCase here but snake_case in database
+          status == CommentStatus.NoStatus ? 'no_status' : status,
           after,
           String(first + 1),
         ],
