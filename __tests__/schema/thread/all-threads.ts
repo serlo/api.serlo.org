@@ -1,18 +1,13 @@
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import {
-  user,
-  user2,
-  article,
-  article2,
-} from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { user, user2, article, article2 } from '../../../__fixtures__'
+import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 
 function getThreadData(comment: Model<'Comment'>) {
   return {
@@ -20,7 +15,7 @@ function getThreadData(comment: Model<'Comment'>) {
     __typename: 'Thread',
     createdAt: comment.date,
   }
-}  
+}
 
 export const comment: Model<'Comment'> = {
   id: castToUuid(35163),
@@ -48,8 +43,7 @@ export const comment1: Model<'Comment'> = {
   title: 'Hier fehlen uns noch Aufgaben',
   date: '2015-02-19 16:47:16',
   archived: false,
-  content:
-    'Kann jemand ein paar erstellen?',
+  content: 'Kann jemand ein paar erstellen?',
   childrenIds: [], //[49237].map(castToUuid),
   status: 'done',
 }
@@ -95,8 +89,7 @@ export const comment4: Model<'Comment'> = {
   title: 'Verschiebung von Ordnern',
   date: '2015-02-16 17:29:30',
   archived: false,
-  content:
-    'Ist das nun so, wie du es meintest?',
+  content: 'Ist das nun so, wie du es meintest?',
   parentId: article2.id,
   childrenIds: [],
   status: 'open',
