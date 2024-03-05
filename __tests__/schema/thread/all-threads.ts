@@ -44,7 +44,7 @@ export const comment1: Model<'Comment'> = {
   archived: false,
   content: 'Kann jemand ein paar erstellen?',
   childrenIds: [], //[49237].map(castToUuid),
-  status: 'done',
+  status: 'open',
 }
 
 export const comment2: Model<'Comment'> = {
@@ -60,7 +60,7 @@ export const comment2: Model<'Comment'> = {
   content:
     'Dieser Themenbaum ist etwas unübersichtlich, könnte man da die Größen und Einheiten vielleicht zusammennehmen, damit eine bessere Übersicht entsteht?',
   childrenIds: [],
-  status: 'noStatus',
+  status: 'open',
 }
 
 export const comment3: Model<'Comment'> = {
