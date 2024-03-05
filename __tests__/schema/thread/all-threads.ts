@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
 import { user, user2, article, article2 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
@@ -169,10 +168,6 @@ describe('allThreads', () => {
   })
 
   test('parameter "instance"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, instance: Instance.En })
-      .returns({ firstCommentIds: [comment2].map(R.prop('id')) })
-
     await query
       .withVariables({
         instance: Instance.En,
