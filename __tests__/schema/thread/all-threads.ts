@@ -168,12 +168,14 @@ describe('allThreads', () => {
   })
 
   test('parameter "instance"', async () => {
+    // todo: create comment in other language instance to test that
     await query
       .withVariables({
-        instance: Instance.En,
+        first: 1,
+        instance: Instance.De,
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment2].map(getThreadData) } },
+        thread: { allThreads: { nodes: [comment].map(getThreadData) } },
       })
   })
 
