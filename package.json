@@ -22,7 +22,6 @@
     "build:server": "yarn _build packages/server/src/server.ts server.cjs",
     "build:swr-queue-worker": "yarn _build packages/server/src/swr-queue-worker.ts swr-queue-worker.cjs",
     "build:packages": "yarn lerna run build",
-    "changelog": "ts-node-esm scripts/changelog.ts",
     "check:all": "scripts/run_all_checks.sh",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport=packages/types/ --excludePathsFromReport=packages/server/src/types.ts --ignoreFiles=/dist/",
@@ -80,7 +79,6 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
-    "@inyono/changelog": "^0.5.2",
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
     "@pact-foundation/pact": "^12.1.2",
     "@pact-foundation/pact-node": "^10.17.7",
