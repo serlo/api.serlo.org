@@ -21,7 +21,6 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   alias: String!
   title: String!
   date: DateTime!
-  license: License!
   licenseId: Int!
   currentRevision: CourseRevision
   revisions(
