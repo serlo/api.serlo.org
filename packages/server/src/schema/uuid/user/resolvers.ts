@@ -474,6 +474,7 @@ function extractIDsFromFirstColumn(
       }),
     ),
     E.map((rows) => rows.slice(1).map(R.trim)),
+    E.map((rows) => rows.filter(row => row)),
     E.map(
       assertAll({
         assertion: (entry) => /^\d+$/.test(entry),
