@@ -138,11 +138,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         { first: 1, after: undefined, instance: Instance.De },
-        {
-          deletedEntities: [
-            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
-          ],
-        },
+        // FIXME: In `serlo-mysql-database` we should add a deleted uuid
+        { deletedEntities: [] },
       ],
     ],
   },
