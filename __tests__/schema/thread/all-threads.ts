@@ -7,6 +7,7 @@ import {
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { runSql } from '~/model/database'
 import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -103,15 +104,19 @@ describe('allThreads', () => {
   })
 
   test('parameter "instance"', async () => {
-    // TODO: create comment in other language instance to test that
+    // temporary solution because all comments in dump are German
+    await runSql(`UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`)
+
     await query
       .withVariables({
         first: 1,
-        instance: Instance.De,
+        instance: Instance.En,
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment].map(getThreadData) } },
+        thread: { allThreads: { nodes: [comment1].map(getThreadData) } },
       })
+
+    await runSql(`UPDATE comment SET instance_id = 1 WHERE id = ${comment1.id}`)
   })
 
   test('parameter "subjectId"', async () => {
