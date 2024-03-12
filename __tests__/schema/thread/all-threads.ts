@@ -1,9 +1,13 @@
 import gql from 'graphql-tag'
 
-import { user, user2, article, article2 } from '../../../__fixtures__'
+import {
+  article,
+  article2,
+  comment as baseComment,
+} from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
@@ -16,87 +20,18 @@ function getThreadData(comment: Model<'Comment'>) {
   }
 }
 
-export const comment: Model<'Comment'> = {
-  id: castToUuid(35163),
-  trashed: false,
-  alias: castToAlias('/mathe/27778/applets-vertauscht'),
-  __typename: DiscriminatorType.Comment,
-  authorId: user.id,
-  title: 'Falsche Lösungen',
-  date: '2015-02-21 13:13:24',
-  archived: false,
-  content:
-    'Der Autor selbst hat erkannt, dass man hier die Reihenfolge beachten muss dennoch benutzt er als Lösungsvorschlag die Kombination bei der die Reihenfolge natürlich missachtet bleibt.',
-  parentId: article.id,
-  childrenIds: [],
-  status: 'noStatus',
-}
-
-export const comment1: Model<'Comment'> = {
-  id: castToUuid(35090),
-  trashed: false,
-  alias: castToAlias('/mathe/41443/related-content-ist-chaotisch'),
-  __typename: DiscriminatorType.Comment,
-  authorId: user.id,
-  parentId: article.id,
-  title: 'Hier fehlen uns noch Aufgaben',
-  date: '2015-02-19 16:47:16',
-  archived: false,
-  content: 'Kann jemand ein paar erstellen?',
-  childrenIds: [],
-  status: 'noStatus',
-}
-
-export const comment2: Model<'Comment'> = {
-  id: castToUuid(26976),
-  trashed: false,
-  alias: castToAlias('/mathe/49237/related-content'),
-  __typename: DiscriminatorType.Comment,
-  authorId: user2.id,
-  parentId: comment1.id,
-  title: 'related content aufräumen',
-  date: '2014-08-05 07:36:24',
-  archived: false,
-  content:
-    'Dieser Themenbaum ist etwas unübersichtlich, könnte man da die Größen und Einheiten vielleicht zusammennehmen, damit eine bessere Übersicht entsteht?',
-  childrenIds: [],
-  status: 'noStatus',
-}
-
-export const comment3: Model<'Comment'> = {
-  id: castToUuid(35082),
-  trashed: false,
-  alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
-  __typename: DiscriminatorType.Comment,
-  authorId: 10,
-  title: 'Aufgaben noch umwortieren',
-  date: '2015-02-19 16:01:46',
-  archived: false,
-  content:
-    'Hier müssen die Aufgaben noch in die content-group umsortiert werden.',
-  parentId: article2.id,
-  childrenIds: [],
-  status: 'noStatus',
-}
-
-export const comment4: Model<'Comment'> = {
-  id: castToUuid(34793),
-  trashed: false,
-  alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
-  __typename: DiscriminatorType.Comment,
-  authorId: 10,
-  title: 'Verschiebung von Ordnern',
-  date: '2015-02-16 17:29:30',
-  archived: false,
-  content: 'Ist das nun so, wie du es meintest?',
-  parentId: article2.id,
-  childrenIds: [],
-  status: 'noStatus',
-}
+const commentNoChildren = { ...baseComment, childrenIds: [] }
+const comment = { ...commentNoChildren, id: castToUuid(35163) }
+const comment1 = { ...commentNoChildren, id: castToUuid(35090) }
+const comment2 = { ...commentNoChildren, id: castToUuid(26976) }
+const comment3 = { ...commentNoChildren, id: castToUuid(35082) }
 
 describe('allThreads', () => {
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
+    given('UuidQuery').for(comment, comment1, comment2, comment3, {
+      ...commentNoChildren,
+      id: castToUuid(34793),
+    })
     given('UuidQuery').for(article, article2)
     given('SubjectsQuery').returns({
       subjects: [
@@ -158,7 +93,7 @@ describe('allThreads', () => {
     await query
       .withVariables({
         first: 2,
-        after: Buffer.from(comment1.date).toString('base64'),
+        after: Buffer.from('2015-02-19 16:47:16').toString('base64'),
       })
       .shouldReturnData({
         thread: {
@@ -168,7 +103,7 @@ describe('allThreads', () => {
   })
 
   test('parameter "instance"', async () => {
-    // todo: create comment in other language instance to test that
+    // TODO: create comment in other language instance to test that
     await query
       .withVariables({
         first: 1,
