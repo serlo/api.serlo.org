@@ -1,4 +1,3 @@
-import { user } from './user'
 import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
