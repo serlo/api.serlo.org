@@ -3,21 +3,17 @@ import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 import * as R from 'ramda'
 
 import {
-  createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
-  createThreadNotificationEvent,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
-  setThreadStateNotificationEvent,
-  setUuidStateNotificationEvent,
   applet,
   appletRevision,
   article,
@@ -60,23 +56,60 @@ import {
 import { Instance } from '~/types'
 import { isDateString } from '~/utils'
 
+// FIXME Some of the event in the serlo-mysql-database does not fit any more
+// the data which is stored inside it. For a fast fix we have added some actual
+// data from the DB here.
 const events = [
   checkoutRevisionNotificationEvent,
-  createCommentNotificationEvent,
+  {
+    __typename: 'CreateCommentNotificationEvent',
+    id: 63807,
+    instance: 'de',
+    date: '2014-06-25T10:01:30+02:00',
+    actorId: 10,
+    objectId: 25820,
+    threadId: 25357,
+    commentId: 25820,
+  },
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
-  createThreadNotificationEvent,
+  {
+    __typename: 'CreateThreadNotificationEvent',
+    id: 86196,
+    instance: 'de',
+    date: '2015-02-26T01:07:12+01:00',
+    actorId: 35434,
+    objectId: 19863,
+    threadId: 35435,
+  },
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
-  setThreadStateNotificationEvent,
-  setUuidStateNotificationEvent,
+  {
+    __typename: 'SetThreadStateNotificationEvent',
+    id: 43922,
+    instance: 'de',
+    date: '2014-03-18T08:37:41+01:00',
+    actorId: 324,
+    objectId: 18585,
+    threadId: 18585,
+    archived: true,
+  },
+  {
+    __typename: 'SetUuidStateNotificationEvent',
+    id: 38537,
+    instance: 'de',
+    date: '2014-03-06T13:37:08+01:00',
+    actorId: 15480,
+    objectId: 16128,
+    trashed: true,
+  },
 ]
 const uuids = [
   applet,
