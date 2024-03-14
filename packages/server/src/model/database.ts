@@ -3,7 +3,12 @@ import * as mysql from 'mysql2/promise'
 import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
 
-const pool = mysql.createPool(process.env.MYSQL_URI)
+let pool: mysql.Pool | null;
+
+const getPool = () => {
+   if(!pool) pool = mysql.createPool(process.env.MYSQL_URI)
+   return pool
+}
 
 const runSql = async (
   query: string,
@@ -11,7 +16,7 @@ const runSql = async (
 ): Promise<unknown> => {
   let connection: mysql.PoolConnection | null = null
   try {
-    connection = await pool.getConnection()
+    connection = await getPool().getConnection()
 
     const [rows] = await connection.execute(query, params)
 
