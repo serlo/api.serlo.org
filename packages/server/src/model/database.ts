@@ -3,11 +3,11 @@ import * as mysql from 'mysql2/promise'
 import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
 
-let pool: mysql.Pool | null;
+let pool: mysql.Pool | null
 
 const getPool = () => {
-   if(!pool) pool = mysql.createPool(process.env.MYSQL_URI)
-   return pool
+  if (!pool) pool = mysql.createPool(process.env.MYSQL_URI)
+  return pool
 }
 
 const runSql = async (
