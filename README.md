@@ -98,7 +98,6 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 ### Other commands
 
 - `yarn build:server` builds the server (only needed for deployment)
-- `yarn changelog` generates the changelog (only needed for deployment)
 - `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)
 - `yarn format` formats all source code
 - `yarn lint` lints all source code
@@ -108,3 +107,7 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 - `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
 - `yarn update-version` starts the process for adding a new version (only needed for deployment)
+
+## Changelog
+
+Via filtering PRs by [`base:production`](https://github.com/serlo/api.serlo.org/pulls?q=is%3Apr+base%3Aproduction+) you can access the changelog of production.

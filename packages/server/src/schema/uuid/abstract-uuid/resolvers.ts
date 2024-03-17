@@ -134,7 +134,7 @@ async function resolveIdFromAlias(
   for (const regex of [
     /^\/(?<id>\d+)$/,
     /^\/entity\/view\/(?<id>\d+)$/,
-    /^\/(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)$/,
+    /^\/(?<instance>[^/]+\/)(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)$/,
     /^\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
     /^\/user\/profile\/(?<id>\d+)$/,
   ]) {

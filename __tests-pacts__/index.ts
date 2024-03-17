@@ -3,21 +3,17 @@ import { AnyTemplate } from '@pact-foundation/pact/src/dsl/matchers'
 import * as R from 'ramda'
 
 import {
-  createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
-  createThreadNotificationEvent,
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
-  setThreadStateNotificationEvent,
-  setUuidStateNotificationEvent,
   applet,
   appletRevision,
   article,
@@ -56,27 +52,65 @@ import {
   DiscriminatorType,
   castToUuid,
   castToAlias,
+  NotificationEventType,
 } from '~/model/decoder'
 import { Instance } from '~/types'
 import { isDateString } from '~/utils'
 
+// FIXME Some of the event in the serlo-mysql-database does not fit any more
+// the data which is stored inside it. For a fast fix we have added some actual
+// data from the DB here.
 const events = [
   checkoutRevisionNotificationEvent,
-  createCommentNotificationEvent,
+  {
+    __typename: NotificationEventType.CreateComment as const,
+    id: castToUuid(63807),
+    instance: Instance.De,
+    date: '2014-06-25T10:01:30+02:00',
+    actorId: castToUuid(10),
+    objectId: castToUuid(25820),
+    threadId: castToUuid(25357),
+    commentId: castToUuid(25820),
+  },
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
   createEntityRevisionNotificationEvent,
   createTaxonomyLinkNotificationEvent,
   createTaxonomyTermNotificationEvent,
-  createThreadNotificationEvent,
+  {
+    __typename: NotificationEventType.CreateThread as const,
+    id: castToUuid(86196),
+    instance: Instance.De,
+    date: '2015-02-26T01:07:12+01:00',
+    actorId: castToUuid(35434),
+    objectId: castToUuid(19863),
+    threadId: castToUuid(35435),
+  },
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
   setTaxonomyTermNotificationEvent,
-  setThreadStateNotificationEvent,
-  setUuidStateNotificationEvent,
+  {
+    __typename: NotificationEventType.SetThreadState as const,
+    id: castToUuid(43922),
+    instance: Instance.De,
+    date: '2014-03-18T08:37:41+01:00',
+    actorId: castToUuid(324),
+    objectId: castToUuid(18585),
+    threadId: castToUuid(18585),
+    archived: true,
+  },
+  {
+    __typename: NotificationEventType.SetUuidState as const,
+    id: castToUuid(38537),
+    instance: Instance.De,
+    date: '2014-03-06T13:37:08+01:00',
+    actorId: castToUuid(15480),
+    objectId: castToUuid(16128),
+    trashed: true,
+  },
 ]
 const uuids = [
   applet,
@@ -130,11 +164,8 @@ const pactSpec: PactSpec = {
     examples: [
       [
         { first: 1, after: undefined, instance: Instance.De },
-        {
-          deletedEntities: [
-            { id: 2167, dateOfDeletion: '2014-03-01T20:46:58+01:00' },
-          ],
-        },
+        // FIXME: In `serlo-mysql-database` we should add a deleted uuid
+        { deletedEntities: [] },
       ],
     ],
   },
@@ -574,10 +605,7 @@ const pactSpec: PactSpec = {
   },
   ThreadEditCommentMutation: {
     examples: [
-      [
-        { content: 'new content', commentId: 17007, userId: user.id },
-        undefined,
-      ],
+      [{ content: 'new content', commentId: 35183, userId: 266 }, undefined],
     ],
   },
   ThreadSetThreadArchivedMutation: {

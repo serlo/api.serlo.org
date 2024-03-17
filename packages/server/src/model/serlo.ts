@@ -42,6 +42,7 @@ export function createSerloModel({
         return isSupportedUuid(uuid) ? uuid : null
       },
       staleAfter: { days: 1 },
+      maxAge: { days: 7 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },

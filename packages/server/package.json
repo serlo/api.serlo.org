@@ -19,8 +19,7 @@
     "deploy:image:production": "ts-node --experimental-specifier-resolution=node scripts/deploy-env production"
   },
   "dependencies": {
-    "bee-queue": "^1.7.1",
-    "mysql2": "^3.7.1"
+    "bee-queue": "^1.7.1"
   },
   "devDependencies": {
     "@apollo/server": "^4.9.5",
@@ -29,7 +28,7 @@
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-resolvers": "^4.0.1",
-    "@nmshd/connector-sdk": "^2.2.4",
+    "@nmshd/connector-sdk": "^4.1.0",
     "@ory/client": "^1.4.5",
     "@sentry/node": "^7.86.0",
     "@serlo/authorization": "^0.60.0",
@@ -58,6 +57,7 @@
     "loglevel": "^1.8.1",
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
+    "mysql2": "^3.9.1",
     "newtype-ts": "^0.3.5",
     "openai": "^4.24.7",
     "pg": "^8.11.3",

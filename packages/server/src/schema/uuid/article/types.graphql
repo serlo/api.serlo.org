@@ -21,7 +21,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   alias: String!
   title: String!
   date: DateTime!
-  license: License!
+  licenseId: Int!
   currentRevision: ArticleRevision
   revisions(
     after: String
