@@ -25,14 +25,12 @@ const commentNoChildren = { ...baseComment, childrenIds: [] }
 const comment = { ...commentNoChildren, id: castToUuid(35163) }
 const comment1 = { ...commentNoChildren, id: castToUuid(35090) }
 const comment2 = { ...commentNoChildren, id: castToUuid(26976) }
-const comment3 = { ...commentNoChildren, id: castToUuid(35082) }
+const comment3 = { ...commentNoChildren, id: castToUuid(34793) }
+const comment4 = { ...commentNoChildren, id: castToUuid(34161) }
 
 describe('allThreads', () => {
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3, {
-      ...commentNoChildren,
-      id: castToUuid(34793),
-    })
+    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
     given('UuidQuery').for(article, article2)
     given('SubjectsQuery').returns({
       subjects: [
