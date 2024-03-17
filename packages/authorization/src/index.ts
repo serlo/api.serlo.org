@@ -40,9 +40,6 @@ export enum Permission {
   Entity_OrderChildren = 'entity:orderChildren',
   File_Create = 'file:create',
   File_Delete = 'file:delete',
-  License_Create = 'license:create',
-  License_Delete = 'license:delete',
-  License_Set = 'license:set',
   Notification_SetState = 'notification:setState',
   Page_CheckoutRevision = 'page:checkoutRevision',
   Page_RejectRevision = 'page:rejectRevision',
@@ -118,12 +115,6 @@ export const Ai = {
 export const File = {
   create: createPermissionGuard(Permission.File_Create),
   delete: createPermissionGuard(Permission.File_Delete),
-}
-
-export const License = {
-  create: createPermissionGuard(Permission.License_Create),
-  delete: createPermissionGuard(Permission.License_Delete),
-  set: createPermissionGuard(Permission.License_Set),
 }
 
 export const Notification = {

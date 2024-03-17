@@ -1,6 +1,6 @@
 import { course } from './course'
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
@@ -20,7 +20,7 @@ export const coursePage: Model<'CoursePage'> = {
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(19277),
   revisionIds: [19277].map(castToUuid),
-  licenseId: license.id,
+  licenseId,
   parentId: course.id,
   canonicalSubjectId: castToUuid(5),
 }

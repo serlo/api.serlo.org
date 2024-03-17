@@ -107,7 +107,9 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       const packedValue = msgpack.encode(valueWithTimestamp)
       await client.set(key, packedValue)
 
-      await client.expire(key, ttlInSeconds ?? 60 * 60 * 24 * 3)
+      const THREE_DAYS = 60 * 60 * 24 * 3
+
+      await client.expire(key, ttlInSeconds ?? THREE_DAYS)
     } catch (e) {
       log.error(`Failed to set key "${key}":`, e)
       throw e

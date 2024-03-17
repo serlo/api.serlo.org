@@ -3,15 +3,15 @@ import * as mysql from 'mysql2/promise'
 import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
 
+let pool: mysql.Pool | null
+
 export const runSql = async <T extends mysql.RowDataPacket>(
   query: string,
   params?: unknown[] | undefined,
 ): Promise<T[]> => {
-  const pool = mysql.createPool(process.env.MYSQL_URI)
-
   let connection: mysql.PoolConnection | null = null
   try {
-    connection = await pool.getConnection()
+    connection = await getPool().getConnection()
 
     const [rows] = await connection.execute<T[]>(query, params)
 
@@ -55,4 +55,9 @@ export const activeAuthorsQuery = async (): Promise<unknown> => {
     [new Date()],
   )
   return activeAuthors.map((activeAuthor) => activeAuthor.user_id)
+}
+
+function getPool() {
+  if (!pool) pool = mysql.createPool(process.env.MYSQL_URI)
+  return pool
 }
