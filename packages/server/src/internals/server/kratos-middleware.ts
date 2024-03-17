@@ -1,4 +1,4 @@
-import { IdentityState } from '@ory/client'
+import { IdentityStateEnum } from '@ory/client'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
@@ -96,7 +96,7 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
           },
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           traits: kratosUser.traits,
-          state: IdentityState.Active,
+          state: IdentityStateEnum.Active,
         },
       })
 
@@ -207,7 +207,7 @@ function updateLastLoginHandler(kratos: Kratos): RequestHandler {
           metadata_admin: kratosUser.metadata_admin,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           traits: kratosUser.traits,
-          state: IdentityState.Active,
+          state: IdentityStateEnum.Active,
         },
       })
 
