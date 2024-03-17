@@ -349,7 +349,7 @@ describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
     async (_type, { revision }) => {
-      given('UuidQuery').for(revision, user)
+      given('UuidQuery').for({ ...revision, authorId: user.id }, user)
 
       await client
         .prepareQuery({
