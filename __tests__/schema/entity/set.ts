@@ -84,7 +84,7 @@ const entities = [
   exercise,
   exerciseGroup,
   groupedExercise,
-  video,
+  { ...video, taxonomyTermIds: [taxonomyTermSubject.id] },
 ]
 
 class EntitySetTestCase {

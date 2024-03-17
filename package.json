@@ -41,6 +41,7 @@
     "docker:stop": "run-p --continue-on-error --print-label \"docker:stop:*\"",
     "docker:stop:server": "docker stop api-server-from-local-build && docker container rm api-server-from-local-build",
     "docker:stop:swr-queue-worker": "docker stop api-swr-queue-worker-from-local-build && docker container rm api-swr-queue-worker-from-local-build",
+    "down": "docker compose down",
     "format": "npm-run-all -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
