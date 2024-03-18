@@ -8,7 +8,7 @@ let pool: mysql.Pool | null
 export const runSql = async <T extends mysql.RowDataPacket>(
   query: string,
   params?: unknown[] | undefined,
-): Promise<T[] | undefined> => {
+): Promise<T[]> => {
   let connection: mysql.PoolConnection | null = null
   try {
     connection = await getPool().getConnection()
@@ -18,6 +18,7 @@ export const runSql = async <T extends mysql.RowDataPacket>(
     return rows
   } catch (error) {
     captureErrorEvent({ error: error as Error })
+    throw new Error('Error executing SQL query')
   } finally {
     if (connection) connection.release()
   }
