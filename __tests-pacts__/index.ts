@@ -160,14 +160,6 @@ const pactSpec: PactSpec = {
     ].map((alias) => [R.pick(['instance', 'path'], alias), alias]),
     examplePayloadForNull: { instance: Instance.En, path: '/not-existing' },
   },
-  AllThreadsQuery: {
-    examples: [
-      [
-        { first: 1, after: undefined, instance: Instance.De },
-        { firstCommentIds: [35435] },
-      ],
-    ],
-  },
   DeletedEntitiesQuery: {
     examples: [
       [
