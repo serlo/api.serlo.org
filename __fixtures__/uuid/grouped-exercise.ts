@@ -1,6 +1,6 @@
 import { exerciseGroup } from './exercise-group'
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
 import {
@@ -27,7 +27,7 @@ export const groupedExercise: Model<'GroupedExercise'> = {
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(2220),
   revisionIds: [2220].map(castToUuid),
-  licenseId: license.id,
+  licenseId,
   parentId: exerciseGroup.id,
   canonicalSubjectId: castToUuid(5),
 }

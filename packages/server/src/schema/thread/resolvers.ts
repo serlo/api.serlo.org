@@ -52,10 +52,11 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         : null
       const limit = 50
       const { first = 10, instance = null, status = null } = input
+
       // TODO: Better solution
       const after = input.after
         ? Buffer.from(input.after, 'base64').toString()
-        : null
+        : new Date().toISOString()
 
       if (first && first > limit)
         throw new UserInputError(`"first" cannot be larger than ${limit}`)
@@ -121,12 +122,13 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
                 LIMIT ?;
         `,
         [
-          String(subjectId),
-          String(subjectId),
+          subjectId ? String(subjectId) : null,
+          subjectId ? String(subjectId) : null,
           instance,
           instance,
           status,
-          status,
+          // camelCase here but snake_case in database
+          status == CommentStatus.NoStatus ? 'no_status' : status,
           after,
           String(first + 1),
         ],

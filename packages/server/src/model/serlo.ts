@@ -42,6 +42,7 @@ export function createSerloModel({
         return isSupportedUuid(uuid) ? uuid : null
       },
       staleAfter: { days: 1 },
+      maxAge: { days: 7 },
       getKey: ({ id }) => {
         return `de.serlo.org/api/uuid/${id}`
       },
@@ -88,7 +89,9 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
       enableSwr: true,
       getCurrentValue() {
-        return Database.activeAuthorsQuery()
+        return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
+        //could be used instead but test cases need adapting:
+        //return Database.activeAuthorsQuery()
       },
       staleAfter: { hours: 1 },
       getKey: () => {

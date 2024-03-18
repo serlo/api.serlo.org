@@ -32,7 +32,10 @@ const taxonomyTermChildCases = R.toPairs(taxonomyTermChildFixtures)
 test.each(taxonomyTermChildCases)(
   '%s by id (w/ taxonomyTerms)',
   async (_type, entity) => {
-    given('UuidQuery').for(entity, taxonomyTermSubject)
+    given('UuidQuery').for(
+      { ...entity, taxonomyTermIds: [taxonomyTermSubject.id] },
+      taxonomyTermSubject,
+    )
 
     await new Client()
       .prepareQuery({

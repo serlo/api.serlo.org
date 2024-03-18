@@ -24,6 +24,7 @@ import {
   exerciseGroupRevision,
   groupedExerciseRevision,
   videoRevision,
+  licenseId,
 } from '../../../__fixtures__'
 import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config'
@@ -83,7 +84,7 @@ const entities = [
   exercise,
   exerciseGroup,
   groupedExercise,
-  video,
+  { ...video, taxonomyTermIds: [taxonomyTermSubject.id] },
 ]
 
 class EntitySetTestCase {
@@ -223,7 +224,7 @@ testCases.forEach((testCase) => {
       input: {
         changes,
         needsReview,
-        licenseId: 1,
+        licenseId,
         subscribeThis,
         subscribeThisByEmail,
         fields: testCase.fieldsToDBLayer,
