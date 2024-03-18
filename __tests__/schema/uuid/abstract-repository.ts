@@ -18,7 +18,7 @@ import {
   exerciseRevision,
   groupedExercise,
   groupedExerciseRevision,
-  license,
+  licenseId,
   page,
   pageRevision,
   user,
@@ -222,16 +222,14 @@ describe('Repository', () => {
             query license($id: Int!) {
               uuid(id: $id) {
                 ... on AbstractRepository {
-                  license {
-                    id
-                  }
+                  licenseId
                 }
               }
             }
           `,
         })
         .withVariables({ id: repository.id })
-        .shouldReturnData({ uuid: { license } })
+        .shouldReturnData({ uuid: { licenseId } })
     },
   )
 
@@ -351,7 +349,7 @@ describe('Revision', () => {
   test.each(repositoryCases)(
     '%s by id (w/ author)',
     async (_type, { revision }) => {
-      given('UuidQuery').for(revision, user)
+      given('UuidQuery').for({ ...revision, authorId: user.id }, user)
 
       await client
         .prepareQuery({

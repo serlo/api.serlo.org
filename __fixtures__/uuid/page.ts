@@ -1,5 +1,5 @@
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -13,7 +13,7 @@ export const page: Model<'Page'> = {
   date: '2015-02-28T02:06:40Z',
   currentRevisionId: castToUuid(35476),
   revisionIds: [35476].map(castToUuid),
-  licenseId: license.id,
+  licenseId,
 }
 
 export const pageRevision: Model<'PageRevision'> = {

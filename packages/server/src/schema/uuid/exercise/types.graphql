@@ -21,7 +21,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
   alias: String!
   title: String!
   date: DateTime!
-  license: License!
+  licenseId: Int!
   currentRevision: ExerciseRevision
   revisions(
     after: String

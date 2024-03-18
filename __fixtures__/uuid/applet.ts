@@ -1,5 +1,5 @@
 import { user } from './user'
-import { license } from '../license'
+import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
   castToAlias,
@@ -19,7 +19,7 @@ export const applet: Model<'Applet'> = {
   date: '2014-03-01T20:45:56Z',
   currentRevisionId: castToUuid(35597),
   revisionIds: [35597].map(castToUuid),
-  licenseId: license.id,
+  licenseId,
   canonicalSubjectId: castToUuid(23593),
   taxonomyTermIds: [5].map(castToUuid),
 }

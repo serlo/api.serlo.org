@@ -21,7 +21,7 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
   instance: Instance!
   alias: String!
   title: String!
-  license: License!
+  licenseId: Int!
   currentRevision: PageRevision
   revisions(
     after: String

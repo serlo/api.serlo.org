@@ -25,7 +25,7 @@ interface AbstractRepository {
 
   date: DateTime!
   instance: Instance!
-  license: License!
+  licenseId: Int!
   # Implicitly has the following field
   # currentRevision: AbstractRevision
 }

@@ -16,7 +16,7 @@ interface AbstractEntity {
   instance: Instance!
   alias: String!
   title: String!
-  license: License!
+  licenseId: Int!
   subject: Subject
 }
 
@@ -40,10 +40,6 @@ interface AbstractEntityRevision {
   title: String!
 
   changes: String!
-}
-
-type License {
-  id: Int!
 }
 
 type AbstractEntityConnection {
