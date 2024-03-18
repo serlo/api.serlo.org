@@ -3764,16 +3764,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pact-foundation/pact-core@npm:^14.0.1":
-  version: 14.0.5
-  resolution: "@pact-foundation/pact-core@npm:14.0.5"
+"@pact-foundation/pact-core@npm:^14.3.0":
+  version: 14.3.2
+  resolution: "@pact-foundation/pact-core@npm:14.3.2"
   dependencies:
     chalk: 4.1.2
     check-types: 7.3.0
     cross-spawn: 7.0.3
     mkdirp: 1.0.0
     needle: ^3.2.0
-    node-gyp: latest
     node-gyp-build: ^4.6.0
     pino: ^8.7.0
     pino-pretty: ^9.1.1
@@ -3789,7 +3788,7 @@ __metadata:
     pact-provider-verifier: bin/pact-provider-verifier.js
     pact-stub-service: bin/pact-stub-service.js
     pactflow: bin/pactflow.js
-  checksum: fc5801a951fd2867f974953d22c9e2db96cbd1e4639011d9fafdb1160e5fe3610921fa7f4f03cb7e8ba0a5137d6c506a00415e596d1d5a827c6eae33c8207d85
+  checksum: 51fcbb1979271424b7d684b9bf6a70e62f5a5a56ad964e55b78c73c1d3078d0c34bfd96eccd322f2e1b87069f67f13cf92cbc9e54946eefd2f8e596dff95f7c9
   conditions: (os=darwin | os=linux | os=win32) & (cpu=x64 | cpu=ia32 | cpu=arm64)
   languageName: node
   linkType: hard
@@ -3830,10 +3829,10 @@ __metadata:
   linkType: hard
 
 "@pact-foundation/pact@npm:^12.1.2":
-  version: 12.1.2
-  resolution: "@pact-foundation/pact@npm:12.1.2"
+  version: 12.3.0
+  resolution: "@pact-foundation/pact@npm:12.3.0"
   dependencies:
-    "@pact-foundation/pact-core": ^14.0.1
+    "@pact-foundation/pact-core": ^14.3.0
     "@types/express": ^4.17.11
     axios: ^1.6.1
     body-parser: ^1.20.0
@@ -3848,11 +3847,10 @@ __metadata:
     lodash.isnil: 4.0.0
     lodash.isundefined: 3.0.1
     lodash.omit: ^4.5.0
-    lodash.omitby: 4.6.0
     pkginfo: ^0.4.1
     ramda: ^0.28.0
     randexp: ^0.5.3
-  checksum: 40fc473ec31b0481a68912f85bd570768cc2f89a2659586b4ac4d6356964caee9a587e22c3b3b30162623fb555fa45df37ad4f1ca9033277ea64dd71dfa92f1a
+  checksum: 31ece57f9135510530ce91e55a284b8044cfd205d86748a3099eac5a6ae9872ba9b5972360d470478d1c6a2a801155de0701bde09bb89741a7448fe2b9e9bf42
   languageName: node
   linkType: hard
 
@@ -13685,13 +13683,6 @@ __metadata:
   version: 4.5.0
   resolution: "lodash.omit@npm:4.5.0"
   checksum: 434645e49fe84ab315719bd5a9a3a585a0f624aa4160bc09157dd041a414bcc287c15840365c1379476a3f3eda41fbe838976c3f7bdecbbf4c5478e86c471a30
-  languageName: node
-  linkType: hard
-
-"lodash.omitby@npm:4.6.0":
-  version: 4.6.0
-  resolution: "lodash.omitby@npm:4.6.0"
-  checksum: 46b0bb8fcadfa36d2ceb04a1052bc409257a7b960e98c7bdd8a7274a81ddabea098fec57884533bb6f808df2492ff0edc5881d4922cca98a38480a18844ea311
   languageName: node
   linkType: hard
 
