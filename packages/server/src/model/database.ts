@@ -1,7 +1,7 @@
 import * as mysql from 'mysql2/promise'
 
-import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
+import { captureErrorEvent } from '~/internals/error-event'
 
 let pool: mysql.Pool | null
 
@@ -17,11 +17,8 @@ export const runSql = async <T extends mysql.RowDataPacket>(
 
     return rows
   } catch (error) {
-    const errorMessage = `Error executing SQL query: ${
-      (error as Error).message
-    }`
-    log.error(errorMessage)
-    throw new Error(errorMessage)
+    captureErrorEvent({ error: error as Error })
+    throw new Error('Error executing SQL query')
   } finally {
     if (connection) connection.release()
   }
