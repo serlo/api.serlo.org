@@ -68,7 +68,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
   changes: String!
 }
 
-type ExerciseGroupRevisionConnection {
+type ExerciseGroupRevisionConnection implements AbstractEntityRevisionConnection {
   edges: [ExerciseGroupRevisionCursor!]!
   nodes: [ExerciseGroupRevision!]!
   totalCount: Int!
