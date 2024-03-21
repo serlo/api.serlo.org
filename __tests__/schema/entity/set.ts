@@ -10,7 +10,6 @@ import {
   event,
   exercise,
   exerciseGroup,
-  groupedExercise,
   taxonomyTermSubject,
   taxonomyTermRoot,
   user,
@@ -22,7 +21,6 @@ import {
   eventRevision,
   exerciseRevision,
   exerciseGroupRevision,
-  groupedExerciseRevision,
   videoRevision,
   licenseId,
 } from '../../../__fixtures__'
@@ -72,7 +70,6 @@ const fieldKeys: Record<
   [EntityType.Event]: ['title', 'content', 'metaTitle', 'metaDescription'],
   [EntityType.Exercise]: ['content'],
   [EntityType.ExerciseGroup]: ['cohesive', 'content'],
-  [EntityType.GroupedExercise]: ['content'],
   [EntityType.Video]: ['title', 'content', 'url'],
 }
 const entities = [
@@ -83,7 +80,6 @@ const entities = [
   event,
   exercise,
   exerciseGroup,
-  groupedExercise,
   { ...video, taxonomyTermIds: [taxonomyTermSubject.id] },
 ]
 
@@ -101,9 +97,7 @@ class EntitySetTestCase {
   }
 
   get inputName() {
-    return [EntityType.Exercise, EntityType.GroupedExercise].includes(
-      this.entityType,
-    )
+    return EntityType.Exercise === this.entityType
       ? 'SetGenericEntityInput'
       : `Set${this.entityType}Input`
   }
@@ -112,8 +106,6 @@ class EntitySetTestCase {
     switch (this.entityType) {
       case EntityType.CoursePage:
         return course
-      case EntityType.GroupedExercise:
-        return exerciseGroup
       default:
         return taxonomyTermSubject
     }
@@ -158,8 +150,6 @@ class EntitySetTestCase {
         return exerciseRevision
       case EntityType.ExerciseGroup:
         return exerciseGroupRevision
-      case EntityType.GroupedExercise:
-        return groupedExerciseRevision
       case EntityType.Video:
         return videoRevision
     }
@@ -583,13 +573,7 @@ describe('Autoreview entities', () => {
   const newRevision = { ...exerciseRevision, id: newRevisionId }
 
   beforeEach(() => {
-    given('UuidQuery').for(
-      entity,
-      groupedExercise,
-      exerciseRevision,
-      article,
-      taxonomy,
-    )
+    given('UuidQuery').for(entity, exerciseRevision, article, taxonomy)
 
     given('EntityAddRevisionMutation').isDefinedBy(async ({ request }) => {
       const body = await request.json()

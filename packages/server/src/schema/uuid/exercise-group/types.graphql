@@ -36,7 +36,6 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  exercises: [GroupedExercise!]!
   subject: Subject
 }
 
