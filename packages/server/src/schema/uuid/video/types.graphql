@@ -68,7 +68,7 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   changes: String!
 }
 
-type VideoRevisionConnection {
+type VideoRevisionConnection implements AbstractEntityRevisionConnection {
   edges: [VideoRevisionCursor!]!
   nodes: [VideoRevision!]!
   totalCount: Int!
