@@ -78,50 +78,6 @@ export type AbstractEntityRevisionEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type AbstractExercise = {
-  alias: Scalars['String']['output'];
-  currentRevision?: Maybe<ExerciseRevision>;
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  instance: Instance;
-  licenseId: Scalars['Int']['output'];
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type AbstractExerciseEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type AbstractExerciseRevision = {
-  alias: Scalars['String']['output'];
-  author: User;
-  changes: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type AbstractExerciseRevisionEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
 export type AbstractNotificationEvent = {
   actor: User;
   date: Scalars['DateTime']['output'];
@@ -1094,7 +1050,7 @@ export type ExecutePromptResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
+export type Exercise = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
   alias: Scalars['String']['output'];
   currentRevision?: Maybe<ExerciseRevision>;
@@ -1252,7 +1208,7 @@ export type ExerciseGroupRevisionCursor = {
   node: ExerciseGroupRevision;
 };
 
-export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
+export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
   alias: Scalars['String']['output'];
   author: User;
@@ -2743,8 +2699,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
   AbstractEntity: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Video> );
   AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<VideoRevision> );
-  AbstractExercise: ( ModelOf<Exercise> );
-  AbstractExerciseRevision: ( ModelOf<ExerciseRevision> );
   AbstractNotificationEvent: ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> );
   AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
@@ -2760,8 +2714,6 @@ export type ResolversTypes = {
   AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
   AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
   AbstractEntityRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevision']>;
-  AbstractExercise: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExercise']>;
-  AbstractExerciseRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExerciseRevision']>;
   AbstractNotificationEvent: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNotificationEvent']>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
   AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
@@ -2956,8 +2908,6 @@ export type ResolversParentTypes = {
   AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
   AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
   AbstractEntityRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevision'];
-  AbstractExercise: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExercise'];
-  AbstractExerciseRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExerciseRevision'];
   AbstractNotificationEvent: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNotificationEvent'];
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
   AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
@@ -3173,32 +3123,6 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionEventsArgs>>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-};
-
-export type AbstractExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExercise'] = ResolversParentTypes['AbstractExercise']> = {
-  __resolveType: TypeResolveFn<'Exercise', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  currentRevision?: Resolver<Maybe<ResolversTypes['AbstractExerciseRevision']>, ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseEventsArgs>>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-};
-
-export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExerciseRevision'] = ResolversParentTypes['AbstractExerciseRevision']> = {
-  __resolveType: TypeResolveFn<'ExerciseRevision', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -4457,8 +4381,6 @@ export type Resolvers<ContextType = Context> = {
   AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
   AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
-  AbstractExercise?: AbstractExerciseResolvers<ContextType>;
-  AbstractExerciseRevision?: AbstractExerciseRevisionResolvers<ContextType>;
   AbstractNotificationEvent?: AbstractNotificationEventResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
   AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;

@@ -1,5 +1,4 @@
 import { abstractEntitySchema } from './abstract-entity'
-import { abstractExerciseSchema } from './abstract-exercise'
 import { abstractRepositorySchema } from './abstract-repository'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
@@ -19,7 +18,6 @@ import { mergeSchemas } from '~/internals/graphql'
 
 export const uuidSchema = mergeSchemas(
   abstractEntitySchema,
-  abstractExerciseSchema,
   abstractRepositorySchema,
   abstractTaxonomyTermChildSchema,
   abstractUuidSchema,

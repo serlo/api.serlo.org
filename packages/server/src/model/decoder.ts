@@ -435,16 +435,13 @@ export const UserDecoder = t.exact(
   ]),
 )
 
-// TODO: remove
-export const AbstractExerciseDecoder = ExerciseDecoder
-
 export const EntityDecoder = t.union([
-  AbstractExerciseDecoder,
   AppletDecoder,
   ArticleDecoder,
   CourseDecoder,
   CoursePageDecoder,
   EventDecoder,
+  ExerciseDecoder,
   ExerciseGroupDecoder,
   VideoDecoder,
 ])
