@@ -95,7 +95,6 @@ type EntityMutation {
   setEvent(input: SetEventInput!): SetEntityResponse!
   setExercise(input: SetGenericEntityInput!): SetEntityResponse!
   setExerciseGroup(input: SetExerciseGroupInput!): SetEntityResponse!
-  setGroupedExercise(input: SetGenericEntityInput!): SetEntityResponse!
   setVideo(input: SetVideoInput!): SetEntityResponse!
   updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!

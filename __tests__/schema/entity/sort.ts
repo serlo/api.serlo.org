@@ -5,7 +5,6 @@ import {
   exerciseGroup as baseExerciseGroup,
   course as baseCouse,
   user,
-  groupedExercise,
   coursePage,
 } from '../../../__fixtures__'
 import { castToUuid, Client, given } from '../../__utils__'
@@ -45,51 +44,6 @@ test('returns "{ success: true }" when mutation could be successfully executed',
   await mutation
     .withInput({ childrenIds: [30713, 18521], entityId: course.id })
     .shouldReturnData({ entity: { sort: { success: true } } })
-})
-
-test('updates the cache of groupedExercise', async () => {
-  given('EntitySortMutation').isDefinedBy(async ({ request }) => {
-    const body = await request.json()
-    const { childrenIds } = body.payload
-
-    given('UuidQuery').for({
-      ...exerciseGroup,
-      exerciseIds: childrenIds.map(castToUuid),
-    })
-
-    return HttpResponse.json({ success: true })
-  })
-
-  given('UuidQuery').for(
-    { ...groupedExercise, id: castToUuid(2219) },
-    { ...groupedExercise, id: castToUuid(2220) },
-  )
-
-  const query = new Client({ userId: user.id })
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on ExerciseGroup {
-              exercises {
-                id
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: exerciseGroup.id })
-
-  await query.shouldReturnData({
-    uuid: { exercises: [{ id: 2219 }, { id: 2220 }] },
-  })
-
-  await mutation.execute()
-
-  await query.shouldReturnData({
-    uuid: { exercises: [{ id: 2220 }, { id: 2219 }] },
-  })
 })
 
 test('updates the cache of Course', async () => {

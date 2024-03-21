@@ -1,14 +1,14 @@
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { exercise, groupedExercise } from '../../../__fixtures__'
+import { exercise } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { EntityType } from '~/model/decoder'
 
+// TODO: simplify
 const exerciseFixtures: Record<string, Model<'AbstractExercise'>> = {
   [EntityType.Exercise]: exercise,
-  [EntityType.GroupedExercise]: groupedExercise,
 }
 const exerciseCases = R.toPairs(exerciseFixtures)
 

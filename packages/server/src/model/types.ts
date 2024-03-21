@@ -25,8 +25,6 @@ import {
   ExerciseGroupDecoder,
   ExerciseGroupRevisionDecoder,
   ExerciseRevisionDecoder,
-  GroupedExerciseDecoder,
-  GroupedExerciseRevisionDecoder,
   NotificationDecoder,
   PageDecoder,
   PageRevisionDecoder,
@@ -62,8 +60,6 @@ export interface Models {
   ExerciseGroupRevision: t.TypeOf<typeof ExerciseGroupRevisionDecoder>
   Exercise: t.TypeOf<typeof ExerciseDecoder>
   ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
-  GroupedExercise: t.TypeOf<typeof GroupedExerciseDecoder>
-  GroupedExerciseRevision: t.TypeOf<typeof GroupedExerciseRevisionDecoder>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
   Subject: { taxonomyTermId: number }

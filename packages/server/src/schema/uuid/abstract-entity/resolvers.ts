@@ -118,10 +118,6 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       entityType: EntityType.ExerciseGroup,
       mandatoryFieldKeys: ['changes', 'content'],
     }),
-    setGroupedExercise: createSetEntityResolver({
-      entityType: EntityType.GroupedExercise,
-      mandatoryFieldKeys: ['changes', 'content'],
-    }),
     setVideo: createSetEntityResolver({
       entityType: EntityType.Video,
       mandatoryFieldKeys: ['changes', 'title', 'url'],
