@@ -18,8 +18,6 @@ import {
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  groupedExercise,
-  groupedExerciseRevision,
   page,
   pageRevision,
   taxonomyTermRoot,
@@ -61,7 +59,6 @@ const abstractUuidFixtures: Record<
   [EntityType.Exercise]: exercise,
   [EntityType.ExerciseGroup]: exerciseGroup,
   [EntityType.Event]: event,
-  [EntityType.GroupedExercise]: groupedExercise,
   [EntityType.Video]: video,
   [EntityRevisionType.AppletRevision]: appletRevision,
   [EntityRevisionType.ArticleRevision]: articleRevision,
@@ -70,7 +67,6 @@ const abstractUuidFixtures: Record<
   [EntityRevisionType.ExerciseRevision]: exerciseRevision,
   [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
   [EntityRevisionType.EventRevision]: eventRevision,
-  [EntityRevisionType.GroupedExerciseRevision]: groupedExerciseRevision,
   [EntityRevisionType.VideoRevision]: videoRevision,
 }
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)

@@ -70,7 +70,7 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   metaDescription: String!
 }
 
-type AppletRevisionConnection {
+type AppletRevisionConnection implements AbstractEntityRevisionConnection {
   nodes: [AppletRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
