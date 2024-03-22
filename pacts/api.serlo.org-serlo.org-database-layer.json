@@ -200,40 +200,6 @@
       }
     },
     {
-      "description": "Message AllThreadsQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "first": 1,
-            "instance": "de"
-          },
-          "type": "AllThreadsQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "firstCommentIds": [
-            35435
-          ]
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.firstCommentIds": {
-            "match": "type",
-            "min": 1
-          }
-        },
-        "status": 200
-      }
-    },
-    {
       "description": "Message DeletedEntitiesQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
       "request": {
         "body": {
