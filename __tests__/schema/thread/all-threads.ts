@@ -1,22 +1,34 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
 import {
   article,
   article2,
-  comment,
-  comment1,
-  comment2,
-  comment3,
+  comment as baseComment,
 } from '../../../__fixtures__'
-import { Client, given, nextUuid } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { runSql } from '~/model/database'
+import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
+import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
 
-describe('allThreads', () => {
-  const comment4 = { ...comment3, id: nextUuid(comment3.id) }
+function getThreadData(comment: Model<'Comment'>) {
+  return {
+    id: encodeThreadId(comment.id),
+    __typename: 'Thread',
+    createdAt: comment.date,
+  }
+}
 
+const commentNoChildren = { ...baseComment, childrenIds: [] }
+const comment = { ...commentNoChildren, id: castToUuid(35163) }
+const comment1 = { ...commentNoChildren, id: castToUuid(35090) }
+const comment2 = { ...commentNoChildren, id: castToUuid(26976) }
+const comment3 = { ...commentNoChildren, id: castToUuid(34793) }
+const comment4 = { ...commentNoChildren, id: castToUuid(34161) }
+
+describe('allThreads', () => {
   beforeEach(() => {
     given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
     given('UuidQuery').for(article, article2)
@@ -52,6 +64,7 @@ describe('allThreads', () => {
             status: $status
           ) {
             nodes {
+              id
               __typename
               createdAt
             }
@@ -61,69 +74,53 @@ describe('allThreads', () => {
     `,
   })
 
-  test('returns list of threads', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11 })
-      .returns({
-        firstCommentIds: [comment, comment1, comment3].map(R.prop('id')),
-      })
-
-    await query.shouldReturnData({
-      thread: {
-        allThreads: {
-          nodes: [comment, comment1, comment3].map(getThreadData),
-        },
-      },
-    })
-  })
-
   test('parameter "first"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 3 })
-      .returns({ firstCommentIds: [comment, comment1].map(R.prop('id')) })
-
-    await query.withVariables({ first: 2 }).shouldReturnData({
-      thread: { allThreads: { nodes: [comment, comment1].map(getThreadData) } },
-    })
+    await query
+      .withVariables({
+        first: 3,
+      })
+      .shouldReturnData({
+        thread: {
+          allThreads: {
+            nodes: [comment, comment1, comment2].map(getThreadData),
+          },
+        },
+      })
   })
 
   test('parameter "after"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, after: comment1.date })
-      .returns({ firstCommentIds: [comment3].map(R.prop('id')) })
-
     await query
       .withVariables({
-        after: Buffer.from(comment1.date).toString('base64'),
+        first: 2,
+        after: Buffer.from('2015-02-19 16:47:16').toString('base64'),
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment3].map(getThreadData) } },
+        thread: {
+          allThreads: { nodes: [comment2, comment3].map(getThreadData) },
+        },
       })
   })
 
   test('parameter "instance"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, instance: Instance.En })
-      .returns({ firstCommentIds: [comment2].map(R.prop('id')) })
+    // temporary solution because all comments in dump are German
+    await runSql(`UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`)
 
     await query
       .withVariables({
+        first: 1,
         instance: Instance.En,
       })
       .shouldReturnData({
-        thread: { allThreads: { nodes: [comment2].map(getThreadData) } },
+        thread: { allThreads: { nodes: [comment1].map(getThreadData) } },
       })
+
+    await runSql(`UPDATE comment SET instance_id = 1 WHERE id = ${comment1.id}`)
   })
 
   test('parameter "subjectId"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, subjectId: article.canonicalSubjectId! })
-      .returns({
-        firstCommentIds: [comment, comment1].map(R.prop('id')),
-      })
-
     await query
       .withVariables({
+        first: 2,
         subjectId: encodeSubjectId(article.canonicalSubjectId!),
       })
       .shouldReturnData({
@@ -134,17 +131,13 @@ describe('allThreads', () => {
   })
 
   test('parameter "status"', async () => {
-    given('AllThreadsQuery')
-      .withPayload({ first: 11, status: 'open' })
-      .returns({
-        firstCommentIds: [comment, comment1].map(R.prop('id')),
+    await query
+      .withVariables({ first: 2, status: 'noStatus' })
+      .shouldReturnData({
+        thread: {
+          allThreads: { nodes: [comment, comment1].map(getThreadData) },
+        },
       })
-
-    await query.withVariables({ status: 'open' }).shouldReturnData({
-      thread: {
-        allThreads: { nodes: [comment, comment1].map(getThreadData) },
-      },
-    })
   })
 
   test('fails when limit is bigger than 50', async () => {
@@ -153,7 +146,3 @@ describe('allThreads', () => {
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
-
-function getThreadData(comment: Model<'Comment'>) {
-  return { __typename: 'Thread', createdAt: comment.date }
-}

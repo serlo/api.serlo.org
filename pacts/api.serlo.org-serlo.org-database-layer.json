@@ -200,40 +200,6 @@
       }
     },
     {
-      "description": "Message AllThreadsQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "first": 1,
-            "instance": "de"
-          },
-          "type": "AllThreadsQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "firstCommentIds": [
-            35435
-          ]
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.firstCommentIds": {
-            "match": "type",
-            "min": 1
-          }
-        },
-        "status": 200
-      }
-    },
-    {
       "description": "Message DeletedEntitiesQuery with payload {\"first\":1,\"instance\":\"de\"} (case 200-response)",
       "request": {
         "body": {
@@ -251,28 +217,10 @@
       },
       "response": {
         "body": {
-          "deletedEntities": [
-            {
-              "dateOfDeletion": "2014-03-01T20:46:58+01:00",
-              "id": 2167
-            }
-          ]
+          "deletedEntities": []
         },
         "headers": {
           "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.deletedEntities": {
-            "match": "type",
-            "min": 1
-          },
-          "$.body.deletedEntities[*].dateOfDeletion": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.deletedEntities[*].id": {
-            "match": "type"
-          }
         },
         "status": 200
       }
@@ -319,53 +267,6 @@
       }
     },
     {
-      "description": "Message EntityAddRevisionMutation with payload {\"input\":{\"changes\":\"changes\",\"entityId\":16078,\"needsReview\":false,\"subscribeThis\":true,\"subscribeThisByEmail\":true,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"description\":\"description\"}},\"userId\":1,\"revisionType\":\"VideoRevision\"} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "input": {
-              "changes": "changes",
-              "entityId": 16078,
-              "fields": {
-                "content": "content",
-                "description": "description",
-                "title": "title"
-              },
-              "needsReview": false,
-              "subscribeThis": true,
-              "subscribeThisByEmail": true
-            },
-            "revisionType": "VideoRevision",
-            "userId": 1
-          },
-          "type": "EntityAddRevisionMutation"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "revisionId": 456,
-          "success": true
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.revisionId": {
-            "match": "type"
-          },
-          "$.body.success": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
       "description": "Message EntityAddRevisionMutation with payload {\"input\":{\"changes\":\"changes\",\"entityId\":1855,\"needsReview\":true,\"subscribeThis\":false,\"subscribeThisByEmail\":false,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"metaTitle\":\"metaTitle\",\"metaDescription\":\"metaDescription\"}},\"userId\":1,\"revisionType\":\"ArticleRevision\"} (case 200-response)",
       "request": {
         "body": {
@@ -397,6 +298,53 @@
       "response": {
         "body": {
           "revisionId": 123,
+          "success": true
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.revisionId": {
+            "match": "type"
+          },
+          "$.body.success": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EntityAddRevisionMutation with payload {\"input\":{\"changes\":\"changes\",\"entityId\":32321,\"needsReview\":false,\"subscribeThis\":true,\"subscribeThisByEmail\":true,\"fields\":{\"title\":\"title\",\"content\":\"content\",\"description\":\"description\"}},\"userId\":1,\"revisionType\":\"VideoRevision\"} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "input": {
+              "changes": "changes",
+              "entityId": 32321,
+              "fields": {
+                "content": "content",
+                "description": "description",
+                "title": "title"
+              },
+              "needsReview": false,
+              "subscribeThis": true,
+              "subscribeThisByEmail": true
+            },
+            "revisionType": "VideoRevision",
+            "userId": 1
+          },
+          "type": "EntityAddRevisionMutation"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "revisionId": 456,
           "success": true
         },
         "headers": {
@@ -974,120 +922,6 @@
       }
     },
     {
-      "description": "Message EventQuery with payload {\"id\":37374} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "id": 37374
-          },
-          "type": "EventQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "__typename": "CreateThreadNotificationEvent",
-          "actorId": 1,
-          "date": "2014-03-01T20:45:56Z",
-          "id": 37374,
-          "instance": "de",
-          "objectId": 1855,
-          "threadId": 27778
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.__typename": {
-            "match": "type"
-          },
-          "$.body.actorId": {
-            "match": "type"
-          },
-          "$.body.date": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.id": {
-            "match": "type"
-          },
-          "$.body.instance": {
-            "match": "type"
-          },
-          "$.body.objectId": {
-            "match": "type"
-          },
-          "$.body.threadId": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
-      "description": "Message EventQuery with payload {\"id\":37375} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "id": 37375
-          },
-          "type": "EventQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "__typename": "CreateCommentNotificationEvent",
-          "actorId": 1,
-          "commentId": 27778,
-          "date": "2014-03-01T20:45:56Z",
-          "id": 37375,
-          "instance": "de",
-          "objectId": 27778,
-          "threadId": 27778
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.__typename": {
-            "match": "type"
-          },
-          "$.body.actorId": {
-            "match": "type"
-          },
-          "$.body.commentId": {
-            "match": "type"
-          },
-          "$.body.date": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.id": {
-            "match": "type"
-          },
-          "$.body.instance": {
-            "match": "type"
-          },
-          "$.body.objectId": {
-            "match": "type"
-          },
-          "$.body.threadId": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
       "description": "Message EventQuery with payload {\"id\":38035} (case 200-response)",
       "request": {
         "body": {
@@ -1206,11 +1040,11 @@
       }
     },
     {
-      "description": "Message EventQuery with payload {\"id\":38513} (case 200-response)",
+      "description": "Message EventQuery with payload {\"id\":38537} (case 200-response)",
       "request": {
         "body": {
           "payload": {
-            "id": 38513
+            "id": 38537
           },
           "type": "EventQuery"
         },
@@ -1223,11 +1057,11 @@
       "response": {
         "body": {
           "__typename": "SetUuidStateNotificationEvent",
-          "actorId": 1,
-          "date": "2014-03-01T20:45:56Z",
-          "id": 38513,
+          "actorId": 15480,
+          "date": "2014-03-06T13:37:08+01:00",
+          "id": 38537,
           "instance": "de",
-          "objectId": 1855,
+          "objectId": 16128,
           "trashed": true
         },
         "headers": {
@@ -1254,65 +1088,6 @@
             "match": "type"
           },
           "$.body.trashed": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
-      "description": "Message EventQuery with payload {\"id\":40750} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "id": 40750
-          },
-          "type": "EventQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "__typename": "SetThreadStateNotificationEvent",
-          "actorId": 1,
-          "archived": true,
-          "date": "2014-03-01T20:45:56Z",
-          "id": 40750,
-          "instance": "de",
-          "objectId": 27778,
-          "threadId": 27778
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.__typename": {
-            "match": "type"
-          },
-          "$.body.actorId": {
-            "match": "type"
-          },
-          "$.body.archived": {
-            "match": "type"
-          },
-          "$.body.date": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.id": {
-            "match": "type"
-          },
-          "$.body.instance": {
-            "match": "type"
-          },
-          "$.body.objectId": {
-            "match": "type"
-          },
-          "$.body.threadId": {
             "match": "type"
           }
         },
@@ -1372,6 +1147,65 @@
             "match": "type"
           },
           "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":43922} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 43922
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "SetThreadStateNotificationEvent",
+          "actorId": 324,
+          "archived": true,
+          "date": "2014-03-18T08:37:41+01:00",
+          "id": 43922,
+          "instance": "de",
+          "objectId": 18585,
+          "threadId": 18585
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.archived": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
             "match": "type"
           }
         },
@@ -1560,6 +1394,65 @@
       }
     },
     {
+      "description": "Message EventQuery with payload {\"id\":63807} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 63807
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateCommentNotificationEvent",
+          "actorId": 10,
+          "commentId": 25820,
+          "date": "2014-06-25T10:01:30+02:00",
+          "id": 63807,
+          "instance": "de",
+          "objectId": 25820,
+          "threadId": 25357
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.commentId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
       "description": "Message EventQuery with payload {\"id\":674} (case 200-response)",
       "request": {
         "body": {
@@ -1612,6 +1505,61 @@
             "match": "type"
           },
           "$.body.parentId": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message EventQuery with payload {\"id\":86196} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 86196
+          },
+          "type": "EventQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "CreateThreadNotificationEvent",
+          "actorId": 35434,
+          "date": "2015-02-26T01:07:12+01:00",
+          "id": 86196,
+          "instance": "de",
+          "objectId": 19863,
+          "threadId": 35435
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.actorId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.objectId": {
+            "match": "type"
+          },
+          "$.body.threadId": {
             "match": "type"
           }
         },
@@ -2386,12 +2334,12 @@
       }
     },
     {
-      "description": "Message TaxonomyCreateEntityLinksMutation with payload {\"entityIds\":[16078,1855],\"taxonomyTermId\":1288,\"userId\":1} (case 200-response)",
+      "description": "Message TaxonomyCreateEntityLinksMutation with payload {\"entityIds\":[32321,1855],\"taxonomyTermId\":1288,\"userId\":1} (case 200-response)",
       "request": {
         "body": {
           "payload": {
             "entityIds": [
-              16078,
+              32321,
               1855
             ],
             "taxonomyTermId": 1288,
@@ -2859,13 +2807,13 @@
       }
     },
     {
-      "description": "Message ThreadEditCommentMutation with payload {\"content\":\"new content\",\"commentId\":17007,\"userId\":1} (case 200-response)",
+      "description": "Message ThreadEditCommentMutation with payload {\"content\":\"new content\",\"commentId\":35183,\"userId\":266} (case 200-response)",
       "request": {
         "body": {
           "payload": {
-            "commentId": 17007,
+            "commentId": 35183,
             "content": "new content",
-            "userId": 1
+            "userId": 266
           },
           "type": "ThreadEditCommentMutation"
         },
@@ -3288,154 +3236,6 @@
             "match": "type"
           },
           "$.body.weight": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
-      "description": "Message UuidQuery with payload {\"id\":16078} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "id": 16078
-          },
-          "type": "UuidQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "__typename": "Video",
-          "alias": "/mathe/16078/waagrechte-und-schiefe-asymptote",
-          "canonicalSubjectId": 5,
-          "currentRevisionId": 16114,
-          "date": "2014-03-01T20:45:56Z",
-          "id": 16078,
-          "instance": "de",
-          "licenseId": 1,
-          "revisionIds": [
-            16114
-          ],
-          "taxonomyTermIds": [
-            5
-          ],
-          "trashed": false
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.__typename": {
-            "match": "type"
-          },
-          "$.body.alias": {
-            "match": "type"
-          },
-          "$.body.canonicalSubjectId": {
-            "match": "type"
-          },
-          "$.body.currentRevisionId": {
-            "match": "type"
-          },
-          "$.body.date": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.id": {
-            "match": "type"
-          },
-          "$.body.instance": {
-            "match": "type"
-          },
-          "$.body.licenseId": {
-            "match": "type"
-          },
-          "$.body.revisionIds": {
-            "match": "type",
-            "min": 1
-          },
-          "$.body.taxonomyTermIds": {
-            "match": "type",
-            "min": 1
-          },
-          "$.body.trashed": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
-      "description": "Message UuidQuery with payload {\"id\":16114} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "id": 16114
-          },
-          "type": "UuidQuery"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "__typename": "VideoRevision",
-          "alias": "/mathe/16114/waagrechte-und-schiefe-asymptote",
-          "authorId": 1,
-          "changes": "changes",
-          "content": "content",
-          "date": "2014-09-15T15:28:35Z",
-          "id": 16114,
-          "repositoryId": 16078,
-          "title": "title",
-          "trashed": false,
-          "url": "url"
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.__typename": {
-            "match": "type"
-          },
-          "$.body.alias": {
-            "match": "type"
-          },
-          "$.body.authorId": {
-            "match": "type"
-          },
-          "$.body.changes": {
-            "match": "type"
-          },
-          "$.body.content": {
-            "match": "type"
-          },
-          "$.body.date": {
-            "match": "regex",
-            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
-          },
-          "$.body.id": {
-            "match": "type"
-          },
-          "$.body.repositoryId": {
-            "match": "type"
-          },
-          "$.body.title": {
-            "match": "type"
-          },
-          "$.body.trashed": {
-            "match": "type"
-          },
-          "$.body.url": {
             "match": "type"
           }
         },
@@ -4370,6 +4170,154 @@
       }
     },
     {
+      "description": "Message UuidQuery with payload {\"id\":32321} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 32321
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "Video",
+          "alias": "/mathe/32321/schriftliche-addition",
+          "canonicalSubjectId": 5,
+          "currentRevisionId": 32322,
+          "date": "2014-10-15T12:49:12+02:00",
+          "id": 32321,
+          "instance": "de",
+          "licenseId": 1,
+          "revisionIds": [
+            32322
+          ],
+          "taxonomyTermIds": [
+            1292
+          ],
+          "trashed": false
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.canonicalSubjectId": {
+            "match": "type"
+          },
+          "$.body.currentRevisionId": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.instance": {
+            "match": "type"
+          },
+          "$.body.licenseId": {
+            "match": "type"
+          },
+          "$.body.revisionIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.taxonomyTermIds": {
+            "match": "type",
+            "min": 1
+          },
+          "$.body.trashed": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "Message UuidQuery with payload {\"id\":32322} (case 200-response)",
+      "request": {
+        "body": {
+          "payload": {
+            "id": 32322
+          },
+          "type": "UuidQuery"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "method": "POST",
+        "path": "/"
+      },
+      "response": {
+        "body": {
+          "__typename": "VideoRevision",
+          "alias": "/entity/repository/compare/32321/32322",
+          "authorId": 27689,
+          "changes": "",
+          "content": "{\"plugin\":\"rows\",\"state\":[{\"plugin\":\"text\",\"state\":[{\"type\":\"p\",\"children\":[{\"text\":\"Dieses Video erklärt die Schriftliche Addition mit Hilfe einer Stellenwerttafel.\"}]}]}]}",
+          "date": "2014-10-15T12:49:53+02:00",
+          "id": 32322,
+          "repositoryId": 32321,
+          "title": "Schriftliche Addition",
+          "trashed": false,
+          "url": "https://www.youtube.com/watch?v=-6eCtIUkgmQ"
+        },
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        "matchingRules": {
+          "$.body.__typename": {
+            "match": "type"
+          },
+          "$.body.alias": {
+            "match": "type"
+          },
+          "$.body.authorId": {
+            "match": "type"
+          },
+          "$.body.changes": {
+            "match": "type"
+          },
+          "$.body.content": {
+            "match": "type"
+          },
+          "$.body.date": {
+            "match": "regex",
+            "regex": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z)$"
+          },
+          "$.body.id": {
+            "match": "type"
+          },
+          "$.body.repositoryId": {
+            "match": "type"
+          },
+          "$.body.title": {
+            "match": "type"
+          },
+          "$.body.trashed": {
+            "match": "type"
+          },
+          "$.body.url": {
+            "match": "type"
+          }
+        },
+        "status": 200
+      }
+    },
+    {
       "description": "Message UuidQuery with payload {\"id\":35476} (case 200-response)",
       "request": {
         "body": {
@@ -4911,11 +4859,11 @@
   ],
   "metadata": {
     "pact-js": {
-      "version": "12.1.2"
+      "version": "12.3.0"
     },
     "pactRust": {
-      "ffi": "0.4.9",
-      "models": "1.1.11"
+      "ffi": "0.4.16",
+      "models": "1.1.19"
     },
     "pactSpecification": {
       "version": "2.0.0"

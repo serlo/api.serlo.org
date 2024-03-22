@@ -133,16 +133,15 @@ function createEnmeshedInitMiddleware(
       const name = readQuery(req, 'name')
       const nameParts = name?.split(' ') ?? []
 
-      const createAttributeResponse = await client.attributes.createAttribute({
-        content: {
-          '@type': 'IdentityAttribute',
-          owner: (await client.account.getIdentityInfo()).result.address,
-          value: {
-            '@type': 'DisplayName',
-            value: 'LENABI Demo',
+      const createAttributeResponse =
+        await client.attributes.createRepositoryAttribute({
+          content: {
+            value: {
+              '@type': 'DisplayName',
+              value: 'LENABI Demo',
+            },
           },
-        },
-      })
+        })
 
       if (createAttributeResponse.isError) {
         return handleConnectorError({

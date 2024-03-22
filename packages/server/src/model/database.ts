@@ -1,27 +1,24 @@
 import * as mysql from 'mysql2/promise'
 
-import { log } from '../internals/log'
 import { UserInputError } from '~/errors'
+import { captureErrorEvent } from '~/internals/error-event'
 
-const pool = mysql.createPool(process.env.MYSQL_URI)
+let pool: mysql.Pool | null
 
-const runSql = async (
+export const runSql = async <T extends mysql.RowDataPacket>(
   query: string,
   params?: unknown[] | undefined,
-): Promise<unknown> => {
+): Promise<T[]> => {
   let connection: mysql.PoolConnection | null = null
   try {
-    connection = await pool.getConnection()
+    connection = await getPool().getConnection()
 
-    const [rows] = await connection.execute(query, params)
+    const [rows] = await connection.execute<T[]>(query, params)
 
     return rows
   } catch (error) {
-    const errorMessage = `Error executing SQL query: ${
-      (error as Error).message
-    }`
-    log.error(errorMessage)
-    throw new Error(errorMessage)
+    captureErrorEvent({ error: error as Error })
+    throw new Error('Error executing SQL query')
   } finally {
     if (connection) connection.release()
   }
@@ -39,4 +36,25 @@ export const setUserDescription = async (
     userId,
   ])
   return { success: true }
+}
+
+export const activeAuthorsQuery = async (): Promise<unknown> => {
+  interface ActiveAuthor extends mysql.RowDataPacket {
+    user_id: number
+  }
+  const activeAuthors = await runSql<ActiveAuthor>(
+    `SELECT u.id
+  FROM user u
+  JOIN event_log e ON u.id = e.actor_id
+  WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+  GROUP BY u.id
+  HAVING count(e.event_id) > 10`,
+    [new Date()],
+  )
+  return activeAuthors.map((activeAuthor) => activeAuthor.user_id)
+}
+
+function getPool() {
+  if (!pool) pool = mysql.createPool(process.env.MYSQL_URI)
+  return pool
 }
