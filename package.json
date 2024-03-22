@@ -51,7 +51,6 @@
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
     "pacts": "yarn _jest --config jest.config-pacts-serlo-org-database-layer.js --runInBand --forceExit",
-    "pacts:publish": "ts-node-esm scripts/publish-pacts.ts",
     "prepare-release": "yarn lerna version --no-git-tag-version --no-push",
     "redis:cli": "docker compose exec redis redis-cli",
     "redis:empty": "docker compose exec redis redis-cli FLUSHDB",
