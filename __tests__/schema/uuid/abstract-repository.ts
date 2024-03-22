@@ -16,8 +16,6 @@ import {
   exerciseGroup,
   exerciseGroupRevision,
   exerciseRevision,
-  groupedExercise,
-  groupedExerciseRevision,
   licenseId,
   page,
   pageRevision,
@@ -80,11 +78,6 @@ const repositoryFixtures: Record<
     repository: exerciseGroup,
     revision: exerciseGroupRevision,
     revisionType: EntityRevisionType.ExerciseGroupRevision,
-  },
-  [EntityType.GroupedExercise]: {
-    repository: groupedExercise,
-    revision: groupedExerciseRevision,
-    revisionType: EntityRevisionType.GroupedExerciseRevision,
   },
   [EntityType.Video]: {
     repository: video,

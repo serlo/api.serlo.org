@@ -1,12 +1,8 @@
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import {
-  exerciseGroup,
-  exerciseGroupRevision,
-  groupedExercise,
-} from '../../../__fixtures__'
-import { getTypenameAndId, Client, given } from '../../__utils__'
+import { exerciseGroup, exerciseGroupRevision } from '../../../__fixtures__'
+import { Client, given } from '../../__utils__'
 
 describe('ExerciseGroup', () => {
   beforeEach(() => {
@@ -36,30 +32,6 @@ describe('ExerciseGroup', () => {
           ['__typename', 'id', 'trashed', 'instance', 'date'],
           exerciseGroup,
         ),
-      })
-  })
-
-  test('by id (w/ exercises)', async () => {
-    given('UuidQuery').for(groupedExercise)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query exerciseGroup($id: Int!) {
-            uuid(id: $id) {
-              ... on ExerciseGroup {
-                exercises {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: exerciseGroup.id })
-      .shouldReturnData({
-        uuid: { exercises: [getTypenameAndId(groupedExercise)] },
       })
   })
 

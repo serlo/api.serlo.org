@@ -36,7 +36,6 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  exercises: [GroupedExercise!]!
   subject: Subject
 }
 
@@ -69,7 +68,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
   changes: String!
 }
 
-type ExerciseGroupRevisionConnection {
+type ExerciseGroupRevisionConnection implements AbstractEntityRevisionConnection {
   edges: [ExerciseGroupRevisionCursor!]!
   nodes: [ExerciseGroupRevision!]!
   totalCount: Int!
