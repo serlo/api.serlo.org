@@ -23,11 +23,13 @@ export type Scalars = {
 
 export type AbstractEntity = {
   alias: Scalars['String']['output'];
+  currentRevision?: Maybe<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
   instance: Instance;
   licenseId: Scalars['Int']['output'];
+  revisions: AppletRevisionConnection | ArticleRevisionConnection | CoursePageRevisionConnection | CourseRevisionConnection | EventRevisionConnection | ExerciseGroupRevisionConnection | ExerciseRevisionConnection | VideoRevisionConnection;
   subject?: Maybe<Subject>;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -41,6 +43,15 @@ export type AbstractEntityEventsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type AbstractEntityRevisionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type AbstractEntityConnection = {
@@ -76,6 +87,12 @@ export type AbstractEntityRevisionEventsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type AbstractEntityRevisionConnection = {
+  nodes: Array<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type AbstractNotificationEvent = {
@@ -340,7 +357,7 @@ export type AppletRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type AppletRevisionConnection = {
+export type AppletRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'AppletRevisionConnection';
   nodes: Array<AppletRevision>;
   pageInfo: PageInfo;
@@ -438,7 +455,7 @@ export type ArticleRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ArticleRevisionConnection = {
+export type ArticleRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ArticleRevisionConnection';
   nodes: Array<ArticleRevision>;
   pageInfo: PageInfo;
@@ -656,7 +673,7 @@ export type CoursePageRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type CoursePageRevisionConnection = {
+export type CoursePageRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'CoursePageRevisionConnection';
   nodes: Array<CoursePageRevision>;
   pageInfo: PageInfo;
@@ -699,7 +716,7 @@ export type CourseRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type CourseRevisionConnection = {
+export type CourseRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'CourseRevisionConnection';
   nodes: Array<CourseRevision>;
   pageInfo: PageInfo;
@@ -1030,7 +1047,7 @@ export type EventRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type EventRevisionConnection = {
+export type EventRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'EventRevisionConnection';
   edges: Array<EventRevisionCursor>;
   nodes: Array<EventRevision>;
@@ -1194,7 +1211,7 @@ export type ExerciseGroupRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ExerciseGroupRevisionConnection = {
+export type ExerciseGroupRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseGroupRevisionConnection';
   edges: Array<ExerciseGroupRevisionCursor>;
   nodes: Array<ExerciseGroupRevision>;
@@ -1243,7 +1260,7 @@ export type ExerciseRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ExerciseRevisionConnection = {
+export type ExerciseRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseRevisionConnection';
   edges: Array<ExerciseRevisionCursor>;
   nodes: Array<ExerciseRevision>;
@@ -2603,7 +2620,7 @@ export type VideoRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type VideoRevisionConnection = {
+export type VideoRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'VideoRevisionConnection';
   edges: Array<VideoRevisionCursor>;
   nodes: Array<VideoRevision>;
@@ -2699,6 +2716,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
   AbstractEntity: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Video> );
   AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<VideoRevision> );
+  AbstractEntityRevisionConnection: ( ModelOf<AppletRevisionConnection> ) | ( ModelOf<ArticleRevisionConnection> ) | ( ModelOf<CoursePageRevisionConnection> ) | ( ModelOf<CourseRevisionConnection> ) | ( ModelOf<EventRevisionConnection> ) | ( ModelOf<ExerciseGroupRevisionConnection> ) | ( ModelOf<ExerciseRevisionConnection> ) | ( ModelOf<VideoRevisionConnection> );
   AbstractNotificationEvent: ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> );
   AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
@@ -2714,6 +2732,7 @@ export type ResolversTypes = {
   AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
   AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
   AbstractEntityRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevision']>;
+  AbstractEntityRevisionConnection: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevisionConnection']>;
   AbstractNotificationEvent: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNotificationEvent']>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
   AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
@@ -2908,6 +2927,7 @@ export type ResolversParentTypes = {
   AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
   AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
   AbstractEntityRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevision'];
+  AbstractEntityRevisionConnection: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevisionConnection'];
   AbstractNotificationEvent: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNotificationEvent'];
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
   AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
@@ -3092,11 +3112,13 @@ export type ResolversParentTypes = {
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Video', ParentType, ContextType>;
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  currentRevision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  revisions?: Resolver<ResolversTypes['AbstractEntityRevisionConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3126,6 +3148,13 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+};
+
+export type AbstractEntityRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevisionConnection'] = ResolversParentTypes['AbstractEntityRevisionConnection']> = {
+  __resolveType: TypeResolveFn<'AppletRevisionConnection' | 'ArticleRevisionConnection' | 'CoursePageRevisionConnection' | 'CourseRevisionConnection' | 'EventRevisionConnection' | 'ExerciseGroupRevisionConnection' | 'ExerciseRevisionConnection' | 'VideoRevisionConnection', ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -4381,6 +4410,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
   AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
+  AbstractEntityRevisionConnection?: AbstractEntityRevisionConnectionResolvers<ContextType>;
   AbstractNotificationEvent?: AbstractNotificationEventResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
   AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
