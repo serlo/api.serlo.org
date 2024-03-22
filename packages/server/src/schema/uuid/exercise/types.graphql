@@ -67,7 +67,7 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   changes: String!
 }
 
-type ExerciseRevisionConnection {
+type ExerciseRevisionConnection implements AbstractEntityRevisionConnection {
   edges: [ExerciseRevisionCursor!]!
   nodes: [ExerciseRevision!]!
   totalCount: Int!
