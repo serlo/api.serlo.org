@@ -48,19 +48,6 @@ export const spec = {
     }),
     canBeNull: true,
   },
-  AllThreadsQuery: {
-    payload: t.intersection([
-      t.type({ first: t.number }),
-      t.partial({
-        after: t.string,
-        instance: InstanceDecoder,
-        subjectId: t.number,
-        status: CommentStatusDecoder,
-      }),
-    ]),
-    response: t.type({ firstCommentIds: t.array(t.number) }),
-    canBeNull: false,
-  },
   DeletedEntitiesQuery: {
     payload: t.type({
       first: t.number,
