@@ -69,7 +69,7 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   metaDescription: String!
 }
 
-type CourseRevisionConnection {
+type CourseRevisionConnection implements AbstractEntityRevisionConnection {
   nodes: [CourseRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
