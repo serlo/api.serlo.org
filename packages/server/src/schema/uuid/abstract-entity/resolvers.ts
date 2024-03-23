@@ -138,7 +138,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
 
       const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: entityId,
-        decoder: t.union([ExerciseGroupDecoder, CourseDecoder]),
+        decoder: CourseDecoder,
       })
 
       await assertUserIsAuthorized({
@@ -152,9 +152,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
-      const allChildrenIds = ExerciseGroupDecoder.is(entity)
-        ? [...new Set(childrenIds.concat(entity.exerciseIds))]
-        : [...new Set(childrenIds.concat(entity.pageIds))]
+      const allChildrenIds = [...new Set(childrenIds.concat(entity.pageIds))]
 
       const { success } = await dataSources.model.serlo.sortEntity({
         entityId,
