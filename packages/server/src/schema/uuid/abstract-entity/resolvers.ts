@@ -17,7 +17,6 @@ import {
   CourseDecoder,
   EntityDecoder,
   EntityType,
-  ExerciseGroupDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
