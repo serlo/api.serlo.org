@@ -44,7 +44,6 @@ export enum EntityType {
   Event = 'Event',
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
-  GroupedExercise = 'GroupedExercise',
   Video = 'Video',
 }
 
@@ -56,7 +55,6 @@ export enum EntityRevisionType {
   EventRevision = 'EventRevision',
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
-  GroupedExerciseRevision = 'GroupedExerciseRevision',
   VideoRevision = 'VideoRevision',
 }
 
@@ -127,7 +125,6 @@ export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Event),
   t.literal(EntityType.Exercise),
   t.literal(EntityType.ExerciseGroup),
-  t.literal(EntityType.GroupedExercise),
   t.literal(EntityType.Video),
 ])
 
@@ -152,7 +149,6 @@ export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.EventRevision),
   t.literal(EntityRevisionType.ExerciseRevision),
   t.literal(EntityRevisionType.ExerciseGroupRevision),
-  t.literal(EntityRevisionType.GroupedExerciseRevision),
   t.literal(EntityRevisionType.VideoRevision),
 ])
 
@@ -401,25 +397,6 @@ export const EventRevisionDecoder = t.exact(
   ]),
 )
 
-export const GroupedExerciseDecoder = t.exact(
-  t.intersection([
-    AbstractEntityDecoder,
-    t.type({
-      __typename: t.literal(EntityType.GroupedExercise),
-      parentId: Uuid,
-    }),
-  ]),
-)
-
-export const GroupedExerciseRevisionDecoder = t.exact(
-  t.intersection([
-    AbstractEntityRevisionDecoder,
-    t.type({
-      __typename: t.literal(EntityRevisionType.GroupedExerciseRevision),
-    }),
-  ]),
-)
-
 export const VideoDecoder = t.exact(
   t.intersection([
     AbstractEntityDecoder,
@@ -458,18 +435,13 @@ export const UserDecoder = t.exact(
   ]),
 )
 
-export const AbstractExerciseDecoder = t.union([
-  ExerciseDecoder,
-  GroupedExerciseDecoder,
-])
-
 export const EntityDecoder = t.union([
-  AbstractExerciseDecoder,
   AppletDecoder,
   ArticleDecoder,
   CourseDecoder,
   CoursePageDecoder,
   EventDecoder,
+  ExerciseDecoder,
   ExerciseGroupDecoder,
   VideoDecoder,
 ])
@@ -482,7 +454,6 @@ export const EntityRevisionDecoder = t.union([
   EventRevisionDecoder,
   ExerciseRevisionDecoder,
   ExerciseGroupRevisionDecoder,
-  GroupedExerciseRevisionDecoder,
   VideoRevisionDecoder,
 ])
 

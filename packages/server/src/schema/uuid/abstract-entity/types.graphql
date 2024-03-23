@@ -18,6 +18,21 @@ interface AbstractEntity {
   title: String!
   licenseId: Int!
   subject: Subject
+
+  currentRevision: AbstractEntityRevision
+  revisions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    unrevised: Boolean
+  ): AbstractEntityRevisionConnection!
+}
+
+interface AbstractEntityRevisionConnection {
+  nodes: [AbstractEntityRevision!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
 }
 
 interface AbstractEntityRevision {
@@ -95,7 +110,6 @@ type EntityMutation {
   setEvent(input: SetEventInput!): SetEntityResponse!
   setExercise(input: SetGenericEntityInput!): SetEntityResponse!
   setExerciseGroup(input: SetExerciseGroupInput!): SetEntityResponse!
-  setGroupedExercise(input: SetGenericEntityInput!): SetEntityResponse!
   setVideo(input: SetVideoInput!): SetEntityResponse!
   updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!

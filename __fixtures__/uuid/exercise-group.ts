@@ -10,9 +10,24 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
+const exerciseGroupId = castToUuid(2217)
+
+export const exerciseGroupRevision: Model<'ExerciseGroupRevision'> = {
+  __typename: EntityRevisionType.ExerciseGroupRevision,
+  id: castToUuid(2218),
+  trashed: false,
+  alias: castToAlias('/mathe/2218/2218'),
+  date: '2014-09-15T15:28:35Z',
+  authorId: user.id,
+  repositoryId: exerciseGroupId,
+  cohesive: false,
+  content: castToNonEmptyString('content'),
+  changes: 'changes',
+}
+
 export const exerciseGroup: Model<'ExerciseGroup'> = {
   __typename: EntityType.ExerciseGroup,
-  id: castToUuid(2217),
+  id: exerciseGroupId,
   trashed: false,
   instance: Instance.De,
   alias: castToAlias('/mathe/2217/2217'),
@@ -23,17 +38,4 @@ export const exerciseGroup: Model<'ExerciseGroup'> = {
   taxonomyTermIds: [5].map(castToUuid),
   exerciseIds: [2219].map(castToUuid),
   canonicalSubjectId: castToUuid(5),
-}
-
-export const exerciseGroupRevision: Model<'ExerciseGroupRevision'> = {
-  __typename: EntityRevisionType.ExerciseGroupRevision,
-  id: castToUuid(2218),
-  trashed: false,
-  alias: castToAlias('/mathe/2218/2218'),
-  date: '2014-09-15T15:28:35Z',
-  authorId: user.id,
-  repositoryId: exerciseGroup.id,
-  cohesive: false,
-  content: castToNonEmptyString('content'),
-  changes: 'changes',
 }

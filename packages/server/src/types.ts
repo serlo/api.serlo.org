@@ -23,11 +23,13 @@ export type Scalars = {
 
 export type AbstractEntity = {
   alias: Scalars['String']['output'];
+  currentRevision?: Maybe<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
   instance: Instance;
   licenseId: Scalars['Int']['output'];
+  revisions: AppletRevisionConnection | ArticleRevisionConnection | CoursePageRevisionConnection | CourseRevisionConnection | EventRevisionConnection | ExerciseGroupRevisionConnection | ExerciseRevisionConnection | VideoRevisionConnection;
   subject?: Maybe<Subject>;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -43,10 +45,19 @@ export type AbstractEntityEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
+
+export type AbstractEntityRevisionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  unrevised?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
   edges: Array<AbstractEntityCursor>;
-  nodes: Array<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video>;
+  nodes: Array<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
   pageInfo: HasNextPageInfo;
   totalCount: Scalars['Int']['output'];
 };
@@ -54,7 +65,7 @@ export type AbstractEntityConnection = {
 export type AbstractEntityCursor = {
   __typename?: 'AbstractEntityCursor';
   cursor: Scalars['String']['output'];
-  node: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  node: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
 };
 
 export type AbstractEntityRevision = {
@@ -78,48 +89,10 @@ export type AbstractEntityRevisionEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type AbstractExercise = {
-  alias: Scalars['String']['output'];
-  currentRevision?: Maybe<ExerciseRevision | GroupedExerciseRevision>;
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  instance: Instance;
-  licenseId: Scalars['Int']['output'];
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type AbstractExerciseEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type AbstractExerciseRevision = {
-  alias: Scalars['String']['output'];
-  author: User;
-  changes: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type AbstractExerciseRevisionEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
+export type AbstractEntityRevisionConnection = {
+  nodes: Array<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type AbstractNotificationEvent = {
@@ -257,7 +230,7 @@ export type AbstractUuidEventsArgs = {
 
 export type AbstractUuidConnection = {
   __typename?: 'AbstractUuidConnection';
-  nodes: Array<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
+  nodes: Array<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
 };
@@ -384,7 +357,7 @@ export type AppletRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type AppletRevisionConnection = {
+export type AppletRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'AppletRevisionConnection';
   nodes: Array<AppletRevision>;
   pageInfo: PageInfo;
@@ -482,7 +455,7 @@ export type ArticleRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ArticleRevisionConnection = {
+export type ArticleRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ArticleRevisionConnection';
   nodes: Array<ArticleRevision>;
   pageInfo: PageInfo;
@@ -511,8 +484,8 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   instance: Instance;
   objectId: Scalars['Int']['output'];
   reason: Scalars['String']['output'];
-  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Video;
-  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | VideoRevision;
+  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
+  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
 };
 
 export type CheckoutRevisionResponse = {
@@ -530,7 +503,7 @@ export type Comment = AbstractUuid & {
   createdAt: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
-  legacyObject: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  legacyObject: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -700,7 +673,7 @@ export type CoursePageRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type CoursePageRevisionConnection = {
+export type CoursePageRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'CoursePageRevisionConnection';
   nodes: Array<CoursePageRevision>;
   pageInfo: PageInfo;
@@ -743,7 +716,7 @@ export type CourseRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type CourseRevisionConnection = {
+export type CourseRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'CourseRevisionConnection';
   nodes: Array<CourseRevision>;
   pageInfo: PageInfo;
@@ -764,19 +737,19 @@ export type CreateCommentNotificationEvent = AbstractNotificationEvent & Instanc
 export type CreateEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityLinkNotificationEvent';
   actor: User;
-  child: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  child: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
   objectId: Scalars['Int']['output'];
-  parent: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  parent: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
 };
 
 export type CreateEntityNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateEntityNotificationEvent';
   actor: User;
   date: Scalars['DateTime']['output'];
-  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
   id: Scalars['Int']['output'];
   instance: Instance;
   objectId: Scalars['Int']['output'];
@@ -786,8 +759,8 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   __typename?: 'CreateEntityRevisionNotificationEvent';
   actor: User;
   date: Scalars['DateTime']['output'];
-  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Video;
-  entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | VideoRevision;
+  entity: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
+  entityRevision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
   id: Scalars['Int']['output'];
   instance: Instance;
   objectId: Scalars['Int']['output'];
@@ -805,7 +778,7 @@ export type CreatePageInput = {
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyLinkNotificationEvent';
   actor: User;
-  child: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  child: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
@@ -829,7 +802,7 @@ export type CreateThreadNotificationEvent = AbstractNotificationEvent & Instance
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
-  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   objectId: Scalars['Int']['output'];
   thread: Thread;
 };
@@ -851,7 +824,7 @@ export type DeletedEntitiesConnection = {
 export type DeletedEntity = {
   __typename?: 'DeletedEntity';
   dateOfDeletion?: Maybe<Scalars['String']['output']>;
-  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video>;
+  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
 };
 
 export type DeletedEntityCursor = {
@@ -884,7 +857,6 @@ export type EntityMutation = {
   setEvent: SetEntityResponse;
   setExercise: SetEntityResponse;
   setExerciseGroup: SetEntityResponse;
-  setGroupedExercise: SetEntityResponse;
   setVideo: SetEntityResponse;
   sort: EntitySortResponse;
   updateLicense: EntityUpdateLicenseResponse;
@@ -933,11 +905,6 @@ export type EntityMutationSetExerciseArgs = {
 
 export type EntityMutationSetExerciseGroupArgs = {
   input: SetExerciseGroupInput;
-};
-
-
-export type EntityMutationSetGroupedExerciseArgs = {
-  input: SetGenericEntityInput;
 };
 
 
@@ -1080,7 +1047,7 @@ export type EventRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type EventRevisionConnection = {
+export type EventRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'EventRevisionConnection';
   edges: Array<EventRevisionCursor>;
   nodes: Array<EventRevision>;
@@ -1100,7 +1067,7 @@ export type ExecutePromptResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type Exercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
+export type Exercise = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Exercise';
   alias: Scalars['String']['output'];
   currentRevision?: Maybe<ExerciseRevision>;
@@ -1160,7 +1127,6 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
   currentRevision?: Maybe<ExerciseGroupRevision>;
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
-  exercises: Array<GroupedExercise>;
   id: Scalars['Int']['output'];
   instance: Instance;
   licenseId: Scalars['Int']['output'];
@@ -1245,7 +1211,7 @@ export type ExerciseGroupRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ExerciseGroupRevisionConnection = {
+export type ExerciseGroupRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseGroupRevisionConnection';
   edges: Array<ExerciseGroupRevisionCursor>;
   nodes: Array<ExerciseGroupRevision>;
@@ -1259,7 +1225,7 @@ export type ExerciseGroupRevisionCursor = {
   node: ExerciseGroupRevision;
 };
 
-export type ExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
+export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & AbstractUuid & ThreadAware & {
   __typename?: 'ExerciseRevision';
   alias: Scalars['String']['output'];
   author: User;
@@ -1294,7 +1260,7 @@ export type ExerciseRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type ExerciseRevisionConnection = {
+export type ExerciseRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseRevisionConnection';
   edges: Array<ExerciseRevisionCursor>;
   nodes: Array<ExerciseRevision>;
@@ -1306,101 +1272,6 @@ export type ExerciseRevisionCursor = {
   __typename?: 'ExerciseRevisionCursor';
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
-};
-
-export type GroupedExercise = AbstractEntity & AbstractExercise & AbstractRepository & AbstractUuid & InstanceAware & ThreadAware & {
-  __typename?: 'GroupedExercise';
-  alias: Scalars['String']['output'];
-  currentRevision?: Maybe<GroupedExerciseRevision>;
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  exerciseGroup: ExerciseGroup;
-  id: Scalars['Int']['output'];
-  instance: Instance;
-  licenseId: Scalars['Int']['output'];
-  revisions: GroupedExerciseRevisionConnection;
-  subject?: Maybe<Subject>;
-  threads: ThreadsConnection;
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type GroupedExerciseEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type GroupedExerciseRevisionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  unrevised?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type GroupedExerciseThreadsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  trashed?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type GroupedExerciseRevision = AbstractEntityRevision & AbstractExerciseRevision & AbstractRevision & AbstractUuid & ThreadAware & {
-  __typename?: 'GroupedExerciseRevision';
-  alias: Scalars['String']['output'];
-  author: User;
-  changes: Scalars['String']['output'];
-  content: Scalars['String']['output'];
-  date: Scalars['DateTime']['output'];
-  events: AbstractNotificationEventConnection;
-  id: Scalars['Int']['output'];
-  repository: GroupedExercise;
-  threads: ThreadsConnection;
-  title: Scalars['String']['output'];
-  trashed: Scalars['Boolean']['output'];
-};
-
-
-export type GroupedExerciseRevisionEventsArgs = {
-  actorId?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type GroupedExerciseRevisionThreadsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  trashed?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type GroupedExerciseRevisionConnection = {
-  __typename?: 'GroupedExerciseRevisionConnection';
-  edges: Array<GroupedExerciseRevisionCursor>;
-  nodes: Array<GroupedExerciseRevision>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type GroupedExerciseRevisionCursor = {
-  __typename?: 'GroupedExerciseRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: GroupedExerciseRevision;
 };
 
 export type HasNextPageInfo = {
@@ -1728,7 +1599,7 @@ export type Query = {
   subscription: SubscriptionQuery;
   thread: ThreadQuery;
   user: UserQuery;
-  uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
+  uuid?: Maybe<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
   version: Scalars['String']['output'];
 };
 
@@ -1779,8 +1650,8 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   instance: Instance;
   objectId: Scalars['Int']['output'];
   reason: Scalars['String']['output'];
-  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Video;
-  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | GroupedExerciseRevision | PageRevision | VideoRevision;
+  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
+  revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
 };
 
 export type RejectRevisionResponse = {
@@ -1792,18 +1663,18 @@ export type RejectRevisionResponse = {
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RemoveEntityLinkNotificationEvent';
   actor: User;
-  child: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  child: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
   objectId: Scalars['Int']['output'];
-  parent: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video;
+  parent: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
 };
 
 export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RemoveTaxonomyLinkNotificationEvent';
   actor: User;
-  child: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  child: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
@@ -1905,7 +1776,7 @@ export type SetCoursePageInput = {
 export type SetEntityResponse = {
   __typename?: 'SetEntityResponse';
   query: Query;
-  record?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Video>;
+  record?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1950,7 +1821,7 @@ export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAw
   id: Scalars['Int']['output'];
   instance: Instance;
   objectId: Scalars['Int']['output'];
-  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | GroupedExercise | Page | Video;
+  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
 };
 
 export type SetTaxonomyParentNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1992,7 +1863,7 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
   date: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   instance: Instance;
-  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   objectId: Scalars['Int']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -2056,7 +1927,7 @@ export type SubscriptionCursor = {
 
 export type SubscriptionInfo = {
   __typename?: 'SubscriptionInfo';
-  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   sendEmail: Scalars['Boolean']['output'];
 };
 
@@ -2261,7 +2132,7 @@ export type Thread = {
   comments: CommentConnection;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
-  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | GroupedExercise | GroupedExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
+  object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   status: CommentStatus;
   title?: Maybe<Scalars['String']['output']>;
   trashed: Scalars['Boolean']['output'];
@@ -2749,7 +2620,7 @@ export type VideoRevisionThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type VideoRevisionConnection = {
+export type VideoRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'VideoRevisionConnection';
   edges: Array<VideoRevisionCursor>;
   nodes: Array<VideoRevision>;
@@ -2843,17 +2714,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
-  AbstractEntity: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<Video> );
-  AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<VideoRevision> );
-  AbstractExercise: ( ModelOf<Exercise> ) | ( ModelOf<GroupedExercise> );
-  AbstractExerciseRevision: ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> );
+  AbstractEntity: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Video> );
+  AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<VideoRevision> );
+  AbstractEntityRevisionConnection: ( ModelOf<AppletRevisionConnection> ) | ( ModelOf<ArticleRevisionConnection> ) | ( ModelOf<CoursePageRevisionConnection> ) | ( ModelOf<CourseRevisionConnection> ) | ( ModelOf<EventRevisionConnection> ) | ( ModelOf<ExerciseGroupRevisionConnection> ) | ( ModelOf<ExerciseRevisionConnection> ) | ( ModelOf<VideoRevisionConnection> );
   AbstractNotificationEvent: ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> );
-  AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
-  AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
+  AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
+  AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
   AbstractTaxonomyTermChild: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Video> );
-  AbstractUuid: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Comment> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
-  InstanceAware: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<Page> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<Video> );
-  ThreadAware: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<GroupedExercise> ) | ( ModelOf<GroupedExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
+  AbstractUuid: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Comment> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
+  InstanceAware: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<CheckoutRevisionNotificationEvent> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<CreateEntityLinkNotificationEvent> ) | ( ModelOf<CreateEntityNotificationEvent> ) | ( ModelOf<CreateEntityRevisionNotificationEvent> ) | ( ModelOf<CreateTaxonomyLinkNotificationEvent> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<CreateThreadNotificationEvent> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<RejectRevisionNotificationEvent> ) | ( ModelOf<RemoveEntityLinkNotificationEvent> ) | ( ModelOf<RemoveTaxonomyLinkNotificationEvent> ) | ( ModelOf<SetLicenseNotificationEvent> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<SetUuidStateNotificationEvent> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<Video> );
+  ThreadAware: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -2862,8 +2732,7 @@ export type ResolversTypes = {
   AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
   AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
   AbstractEntityRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevision']>;
-  AbstractExercise: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExercise']>;
-  AbstractExerciseRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractExerciseRevision']>;
+  AbstractEntityRevisionConnection: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevisionConnection']>;
   AbstractNotificationEvent: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNotificationEvent']>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
   AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
@@ -2931,10 +2800,6 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
-  GroupedExercise: ResolverTypeWrapper<ModelOf<GroupedExercise>>;
-  GroupedExerciseRevision: ResolverTypeWrapper<ModelOf<GroupedExerciseRevision>>;
-  GroupedExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionConnection>>;
-  GroupedExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<GroupedExerciseRevisionCursor>>;
   HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['InstanceAware']>;
@@ -3062,8 +2927,7 @@ export type ResolversParentTypes = {
   AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
   AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
   AbstractEntityRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevision'];
-  AbstractExercise: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExercise'];
-  AbstractExerciseRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractExerciseRevision'];
+  AbstractEntityRevisionConnection: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevisionConnection'];
   AbstractNotificationEvent: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNotificationEvent'];
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
   AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
@@ -3130,10 +2994,6 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
-  GroupedExercise: ModelOf<GroupedExercise>;
-  GroupedExerciseRevision: ModelOf<GroupedExerciseRevision>;
-  GroupedExerciseRevisionConnection: ModelOf<GroupedExerciseRevisionConnection>;
-  GroupedExerciseRevisionCursor: ModelOf<GroupedExerciseRevisionCursor>;
   HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversInterfaceTypes<ResolversParentTypes>['InstanceAware'];
   Int: ModelOf<Scalars['Int']['output']>;
@@ -3250,13 +3110,15 @@ export type ResolversParentTypes = {
 };
 
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'GroupedExercise' | 'Video', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Video', ParentType, ContextType>;
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  currentRevision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  revisions?: Resolver<ResolversTypes['AbstractEntityRevisionConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3277,7 +3139,7 @@ export type AbstractEntityCursorResolvers<ContextType = Context, ParentType exte
 };
 
 export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevision'] = ResolversParentTypes['AbstractEntityRevision']> = {
-  __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExerciseRevision' | 'VideoRevision', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'VideoRevision', ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3288,30 +3150,11 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
-export type AbstractExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExercise'] = ResolversParentTypes['AbstractExercise']> = {
-  __resolveType: TypeResolveFn<'Exercise' | 'GroupedExercise', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  currentRevision?: Resolver<Maybe<ResolversTypes['AbstractExerciseRevision']>, ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseEventsArgs>>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-};
-
-export type AbstractExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractExerciseRevision'] = ResolversParentTypes['AbstractExerciseRevision']> = {
-  __resolveType: TypeResolveFn<'ExerciseRevision' | 'GroupedExerciseRevision', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractExerciseRevisionEventsArgs>>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+export type AbstractEntityRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevisionConnection'] = ResolversParentTypes['AbstractEntityRevisionConnection']> = {
+  __resolveType: TypeResolveFn<'AppletRevisionConnection' | 'ArticleRevisionConnection' | 'CoursePageRevisionConnection' | 'CourseRevisionConnection' | 'EventRevisionConnection' | 'ExerciseGroupRevisionConnection' | 'ExerciseRevisionConnection' | 'VideoRevisionConnection', ParentType, ContextType>;
+  nodes?: Resolver<Array<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
@@ -3337,7 +3180,7 @@ export type AbstractNotificationEventEdgeResolvers<ContextType = Context, Parent
 };
 
 export type AbstractRepositoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRepository'] = ResolversParentTypes['AbstractRepository']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'GroupedExercise' | 'Page' | 'Video', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'Video', ParentType, ContextType>;
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractRepositoryEventsArgs>>;
@@ -3350,7 +3193,7 @@ export type AbstractRepositoryResolvers<ContextType = Context, ParentType extend
 };
 
 export type AbstractRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRevision'] = ResolversParentTypes['AbstractRevision']> = {
-  __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExerciseRevision' | 'PageRevision' | 'VideoRevision', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'PageRevision' | 'VideoRevision', ParentType, ContextType>;
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3376,7 +3219,7 @@ export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType
 };
 
 export type AbstractUuidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuid'] = ResolversParentTypes['AbstractUuid']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Comment' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExercise' | 'GroupedExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Comment' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractUuidEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3741,7 +3584,6 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   setEvent?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetEventArgs, 'input'>>;
   setExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseArgs, 'input'>>;
   setExerciseGroup?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseGroupArgs, 'input'>>;
-  setGroupedExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetGroupedExerciseArgs, 'input'>>;
   setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
   sort?: Resolver<ResolversTypes['EntitySortResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
   updateLicense?: Resolver<ResolversTypes['EntityUpdateLicenseResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
@@ -3841,7 +3683,6 @@ export type ExerciseGroupResolvers<ContextType = Context, ParentType extends Res
   currentRevision?: Resolver<Maybe<ResolversTypes['ExerciseGroupRevision']>, ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseGroupEventsArgs>>;
-  exercises?: Resolver<Array<ResolversTypes['GroupedExercise']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -3913,52 +3754,6 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GroupedExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExercise'] = ResolversParentTypes['GroupedExercise']> = {
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  currentRevision?: Resolver<Maybe<ResolversTypes['GroupedExerciseRevision']>, ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<GroupedExerciseEventsArgs>>;
-  exerciseGroup?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  revisions?: Resolver<ResolversTypes['GroupedExerciseRevisionConnection'], ParentType, ContextType, Partial<GroupedExerciseRevisionsArgs>>;
-  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<GroupedExerciseThreadsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GroupedExerciseRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevision'] = ResolversParentTypes['GroupedExerciseRevision']> = {
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<GroupedExerciseRevisionEventsArgs>>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  repository?: Resolver<ResolversTypes['GroupedExercise'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<GroupedExerciseRevisionThreadsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GroupedExerciseRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevisionConnection'] = ResolversParentTypes['GroupedExerciseRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['GroupedExerciseRevisionCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['GroupedExerciseRevision']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GroupedExerciseRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GroupedExerciseRevisionCursor'] = ResolversParentTypes['GroupedExerciseRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['GroupedExerciseRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['HasNextPageInfo'] = ResolversParentTypes['HasNextPageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3966,7 +3761,7 @@ export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends R
 };
 
 export type InstanceAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['InstanceAware'] = ResolversParentTypes['InstanceAware']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CheckoutRevisionNotificationEvent' | 'Course' | 'CoursePage' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'GroupedExercise' | 'Page' | 'RejectRevisionNotificationEvent' | 'RemoveEntityLinkNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent' | 'TaxonomyTerm' | 'Video', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CheckoutRevisionNotificationEvent' | 'Course' | 'CoursePage' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'RejectRevisionNotificationEvent' | 'RemoveEntityLinkNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent' | 'TaxonomyTerm' | 'Video', ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
 };
 
@@ -4396,7 +4191,7 @@ export type ThreadResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type ThreadAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadAware'] = ResolversParentTypes['ThreadAware']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'GroupedExercise' | 'GroupedExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ThreadAwareThreadsArgs>>;
 };
 
@@ -4615,8 +4410,7 @@ export type Resolvers<ContextType = Context> = {
   AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
   AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
-  AbstractExercise?: AbstractExerciseResolvers<ContextType>;
-  AbstractExerciseRevision?: AbstractExerciseRevisionResolvers<ContextType>;
+  AbstractEntityRevisionConnection?: AbstractEntityRevisionConnectionResolvers<ContextType>;
   AbstractNotificationEvent?: AbstractNotificationEventResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
   AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
@@ -4675,10 +4469,6 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
-  GroupedExercise?: GroupedExerciseResolvers<ContextType>;
-  GroupedExerciseRevision?: GroupedExerciseRevisionResolvers<ContextType>;
-  GroupedExerciseRevisionConnection?: GroupedExerciseRevisionConnectionResolvers<ContextType>;
-  GroupedExerciseRevisionCursor?: GroupedExerciseRevisionCursorResolvers<ContextType>;
   HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
