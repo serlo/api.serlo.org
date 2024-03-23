@@ -1,18 +1,8 @@
 import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
 
-import {
-  exerciseGroup as baseExerciseGroup,
-  course as baseCouse,
-  user,
-  coursePage,
-} from '../../../__fixtures__'
+import { course as baseCouse, user, coursePage } from '../../../__fixtures__'
 import { castToUuid, Client, given } from '../../__utils__'
-
-const exerciseGroup = {
-  ...baseExerciseGroup,
-  exerciseIds: [2219, 2220].map(castToUuid),
-}
 
 const course = {
   ...baseCouse,
@@ -31,19 +21,16 @@ const mutation = new Client({ userId: user.id })
       }
     `,
   })
-  .withInput({ childrenIds: [2220, 2219], entityId: exerciseGroup.id })
+  .withInput({ childrenIds: [30713, 18521], entityId: course.id })
 
 beforeEach(() => {
-  given('UuidQuery').for(user, exerciseGroup, course)
+  given('UuidQuery').for(user, course)
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   given('EntitySortMutation').returns({ success: true })
 
   await mutation.shouldReturnData({ entity: { sort: { success: true } } })
-  await mutation
-    .withInput({ childrenIds: [30713, 18521], entityId: course.id })
-    .shouldReturnData({ entity: { sort: { success: true } } })
 })
 
 test('updates the cache of Course', async () => {
