@@ -1,21 +1,24 @@
 #!/bin/bash
 
-tmp_dir="/tmp"
+# PlanetScale SQL dump file name
+# Instructions on how to dump from PlanetScale: 
+# https://github.com/planetscale/discussion/discussions/168
 
-var_PS_USERNAME="serlo"
-var_PS_HOST_URL="serlo"
-var_PS_HOST_PORT=""
-var_PS_PASSWORD=""
-OUTPUT_FILE_NAME="planetscale_data_dump.sql"
+# If using pscale cli, then the dump will be a folder with lots of sql files
+# In that case, you can use the following commands to merge them into a single file:
 
-# mysql -u "$PS_USERNAME" -h "$PS_HOST_URL" -P "$PS_HOST_PORT" -p"$PS_PASSWORD" -e "SHOW DATABASES;"
-# mysqldump -u "$PS_USERNAME" -h "$PS_HOST_URL" -P "$PS_HOST_PORT"> "$OUTPUT_FILE_NAME"
+# rm $(ls -1 | grep 'schema.sql' )
+# cat *.sql  > all_files.sql_all
+# mv all_files.sql_all planetscale_data_dump.sql
+
+PLANETSCALE_SQL_DUMP_FILE_NAME="planetscale_data_dump.sql"
 
 replacements=(
     ("entityId" "entity_id")
     ("sessionId" "session_id")
     ("revisionId" "revision_id")
     ("topicId" "topic_id")
+    ("threadId" "thread_id")
     ("isProduction" "is_production")
     ("isSubject" "is_subject")
     ("key" "link_key")
@@ -28,5 +31,5 @@ for replace in "${replacements[@]}"; do
     new_str=$(echo "$replace" | cut -d' ' -f2)
 
     # Run sed command
-    sed -i "s/$old_str/$new_str/g" "$OUTPUT_FILE_NAME"
+    sed -i "s/$old_str/$new_str/g" "$PLANETSCALE_SQL_DUMP_FILE_NAME"
 done
