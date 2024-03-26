@@ -93,6 +93,12 @@ test('comment is edited, cache mutated as expected', async () => {
   })
 })
 
+test('fails when new comment is empty', async () => {
+  await mutation
+    .changeInput({ content: '' })
+    .shouldFailWithError('BAD_USER_INPUT')
+})
+
 test('fails when database layer returns a 400er response', async () => {
   given('ThreadEditCommentMutation').returnsBadRequest()
 
