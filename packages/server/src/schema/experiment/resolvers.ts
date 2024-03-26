@@ -73,8 +73,8 @@ export const resolvers: Queries<'experiment'> & Mutations<'experiment'> = {
       await runSql(
         `
         INSERT INTO ab_testing_data 
-          (experiment_group, experiment, entity_id, type, result, session_id, is_production, topic_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+          (experiment_group, experiment, entity_id, type, result, session_id, is_production, topic_id, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, current_timestamp(3));`,
         [
           group,
           experiment,

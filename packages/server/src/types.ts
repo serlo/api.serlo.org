@@ -23,7 +23,6 @@ export type Scalars = {
 
 export type AbSubmission = {
   __typename?: 'AbSubmission';
-  createdAt: Scalars['DateTime']['output'];
   entityId: Scalars['Int']['output'];
   experiment: Scalars['String']['output'];
   group: Scalars['String']['output'];
@@ -31,6 +30,7 @@ export type AbSubmission = {
   isProduction: Scalars['Boolean']['output'];
   result: Scalars['String']['output'];
   sessionId: Scalars['Int']['output'];
+  timestamp: Scalars['DateTime']['output'];
   topicId: Scalars['Int']['output'];
   type: Scalars['String']['output'];
 };
@@ -3211,7 +3211,6 @@ export type ResolversParentTypes = {
 };
 
 export type AbSubmissionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbSubmission'] = ResolversParentTypes['AbSubmission']> = {
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   entityId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   experiment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   group?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3219,6 +3218,7 @@ export type AbSubmissionResolvers<ContextType = Context, ParentType extends Reso
   isProduction?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   result?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sessionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   topicId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
