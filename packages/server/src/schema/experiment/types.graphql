@@ -2,6 +2,26 @@ type Mutation {
   experiment: ExperimentMutation!
 }
 
+extend type Query {
+  experiment: ExperimentQuery!
+}
+
+type ExperimentQuery {
+  abSubmissions(experiment: String!): [AbSubmission!]!
+}
+
+type AbSubmission {
+  id: Int!
+  sessionId: Int!
+  entityId: Int!
+  topicId: Int!
+  group: String!
+  experiment: String!
+  type: String!
+  result: String!
+  isProduction: Boolean!
+}
+
 type ExperimentMutation {
   createAbSubmission(input: AbSubmissionInput!): DefaultResponse!
   createExerciseSubmission(input: ExerciseSubmissionInput!): DefaultResponse!

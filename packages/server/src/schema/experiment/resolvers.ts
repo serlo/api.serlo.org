@@ -1,9 +1,36 @@
-import { createNamespace, Mutations } from '~/internals/graphql'
-import { runSql } from '~/model/database'
+import { RowDataPacket } from 'mysql2'
 
-export const resolvers: Mutations<'experiment'> = {
+import { createNamespace, Mutations, Queries } from '~/internals/graphql'
+import { runSql } from '~/model/database'
+import { AbSubmission } from '~/types'
+
+interface AbSubmissionData extends RowDataPacket, AbSubmission {
+  experiment: string
+}
+
+export const resolvers: Queries<'experiment'> & Mutations<'experiment'> = {
+  Query: {
+    experiment: createNamespace(),
+  },
   Mutation: {
     experiment: createNamespace(),
+  },
+  ExperimentQuery: {
+    abSubmissions: async (_parent, payload) => {
+      const subs = await runSql<AbSubmissionData>(
+        `
+         SELECT * FROM  
+          ab_testing_data 
+          WHERE experiment = ? AND is_production = 1;
+        `,
+        [payload.experiment],
+      )
+
+      return subs.map((sub) => ({
+        ...sub,
+        __typename: 'AbSubmission' as const,
+      }))
+    },
   },
   ExperimentMutation: {
     async createExerciseSubmission(_parent, { input }) {
