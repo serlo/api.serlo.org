@@ -258,7 +258,10 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
       }
     },
     async editComment(_parent, { input }, { dataSources, userId }) {
-      const commentId = input.commentId
+      const { commentId, content } = input
+
+      if (content.trim() === '') throw new UserInputError('content is empty')
+
       const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
 
       assertUserIsAuthenticated(userId)
