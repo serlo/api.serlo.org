@@ -16,19 +16,21 @@ export const resolvers: Queries<'experiment'> & Mutations<'experiment'> = {
     experiment: createNamespace(),
   },
   ExperimentQuery: {
-    abSubmissions: async (_parent, payload) => {
+    abSubmissions: async (_parent, { experiment, limit = '10', cursor }) => {
       const subs = await runSql<AbSubmissionData>(
         `
-         SELECT * FROM  
-          ab_testing_data 
-          WHERE experiment = ? AND is_production = 1;
+         SELECT * FROM ab_testing_data
+         WHERE experiment = ? AND is_production = 1
+         AND id > ?
+         ORDER BY id ASC
+         LIMIT ?;
         `,
-        [payload.experiment],
+        [experiment, cursor || '0', limit.toString()],
       )
 
       return subs.map((sub) => ({
         ...sub,
-        __typename: 'AbSubmission' as const,
+        __typename: 'AbSubmission',
       }))
     },
   },

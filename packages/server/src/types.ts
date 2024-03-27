@@ -1349,7 +1349,9 @@ export type ExperimentQuery = {
 
 
 export type ExperimentQueryAbSubmissionsArgs = {
+  cursor: Scalars['String']['input'];
   experiment: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type HasNextPageInfo = {
@@ -3878,7 +3880,7 @@ export type ExperimentMutationResolvers<ContextType = Context, ParentType extend
 };
 
 export type ExperimentQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentQuery'] = ResolversParentTypes['ExperimentQuery']> = {
-  abSubmissions?: Resolver<Array<ResolversTypes['AbSubmission']>, ParentType, ContextType, RequireFields<ExperimentQueryAbSubmissionsArgs, 'experiment'>>;
+  abSubmissions?: Resolver<Array<ResolversTypes['AbSubmission']>, ParentType, ContextType, RequireFields<ExperimentQueryAbSubmissionsArgs, 'cursor' | 'experiment'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
