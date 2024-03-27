@@ -1,0 +1,68 @@
+type Mutation {
+  experiment: ExperimentMutation!
+}
+
+extend type Query {
+  experiment: ExperimentQuery!
+}
+
+type ExperimentQuery {
+  abSubmissions(
+    experiment: String!
+    cursor: String!
+    limit: Int
+  ): [AbSubmission!]!
+}
+
+type AbSubmission {
+  id: Int!
+  sessionId: Int!
+  entityId: Int!
+  topicId: Int!
+  group: String!
+  experiment: String!
+  type: String!
+  result: String!
+  isProduction: Boolean!
+  timestamp: DateTime!
+}
+
+type ExperimentMutation {
+  createAbSubmission(input: AbSubmissionInput!): DefaultResponse!
+  createExerciseSubmission(input: ExerciseSubmissionInput!): DefaultResponse!
+  createQuickbarStats(input: QuickbarStatsInput!): DefaultResponse!
+  createEquationsAppStats(input: EquationsAppStatsInput!): DefaultResponse!
+}
+
+input AbSubmissionInput {
+  sessionId: Int!
+  entityId: Int!
+  topicId: Int!
+  group: String!
+  experiment: String!
+  type: String!
+  result: String!
+  isProduction: Boolean!
+}
+
+input ExerciseSubmissionInput {
+  path: String!
+  entityId: Int!
+  revisionId: Int!
+  type: String!
+  result: String!
+  sessionId: String!
+}
+
+input QuickbarStatsInput {
+  path: String!
+  query: String!
+  target: String!
+  isSubject: Boolean!
+}
+
+input EquationsAppStatsInput {
+  event: String!
+  latex: String!
+  sessionId: String!
+}
