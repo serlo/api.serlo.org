@@ -24,9 +24,32 @@ describe('experiment', () => {
     `,
   })
 
+  const abTestingQuery = new Client().prepareQuery({
+    query: gql`
+      query {
+        experiment {
+          abSubmissions(experiment: "test") {
+            id
+            experiment
+            sessionId
+            result
+            type
+            timestamp
+          }
+        }
+      }
+    `,
+  })
+
   test('create an exercise submission input', async () => {
     await mutation.shouldReturnData({
       experiment: { createExerciseSubmission: { success: true } },
+    })
+  })
+
+  test('fetches ab testing data', async () => {
+    await abTestingQuery.shouldReturnData({
+      experiment: { abSubmissions: [] },
     })
   })
 })
