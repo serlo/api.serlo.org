@@ -28,7 +28,7 @@ describe('experiment', () => {
     query: gql`
       query {
         experiment {
-          abSubmissions(experiment: "test") {
+          abSubmissions(experiment: "test", limit: 10, cursor: "0") {
             id
             experiment
             sessionId
