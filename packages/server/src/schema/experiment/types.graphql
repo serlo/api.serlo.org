@@ -7,7 +7,11 @@ extend type Query {
 }
 
 type ExperimentQuery {
-  abSubmissions(experiment: String!): [AbSubmission!]!
+  abSubmissions(
+    experiment: String!
+    cursor: String!
+    limit: Int
+  ): [AbSubmission!]!
 }
 
 type AbSubmission {
