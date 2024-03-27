@@ -16,7 +16,7 @@ export const resolvers: Queries<'experiment'> & Mutations<'experiment'> = {
     experiment: createNamespace(),
   },
   ExperimentQuery: {
-    abSubmissions: async (_parent, { experiment, limit = '10', cursor }) => {
+    abSubmissions: async (_parent, { experiment, limit = '100', cursor }) => {
       const subs = await runSql<AbSubmissionData>(
         `
          SELECT * FROM ab_testing_data
