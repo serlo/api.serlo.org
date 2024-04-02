@@ -360,7 +360,6 @@ export const ExerciseGroupDecoder = t.exact(
     t.type({
       __typename: t.literal(EntityType.ExerciseGroup),
       taxonomyTermIds: t.array(Uuid),
-      exerciseIds: t.array(Uuid),
     }),
   ]),
 )

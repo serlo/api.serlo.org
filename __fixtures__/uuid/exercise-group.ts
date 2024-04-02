@@ -36,6 +36,5 @@ export const exerciseGroup: Model<'ExerciseGroup'> = {
   revisionIds: [2218].map(castToUuid),
   licenseId,
   taxonomyTermIds: [5].map(castToUuid),
-  exerciseIds: [2219].map(castToUuid),
   canonicalSubjectId: castToUuid(5),
 }
