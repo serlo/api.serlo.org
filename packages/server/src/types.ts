@@ -21,31 +21,6 @@ export type Scalars = {
   JSONObject: { input: Record<string, unknown>; output: Record<string, unknown>; }
 };
 
-export type AbSubmission = {
-  __typename?: 'AbSubmission';
-  entityId: Scalars['Int']['output'];
-  experiment: Scalars['String']['output'];
-  group: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
-  isProduction: Scalars['Boolean']['output'];
-  result: Scalars['String']['output'];
-  sessionId: Scalars['Int']['output'];
-  timestamp: Scalars['DateTime']['output'];
-  topicId: Scalars['Int']['output'];
-  type: Scalars['String']['output'];
-};
-
-export type AbSubmissionInput = {
-  entityId: Scalars['Int']['input'];
-  experiment: Scalars['String']['input'];
-  group: Scalars['String']['input'];
-  isProduction: Scalars['Boolean']['input'];
-  result: Scalars['String']['input'];
-  sessionId: Scalars['Int']['input'];
-  topicId: Scalars['Int']['input'];
-  type: Scalars['String']['input'];
-};
-
 export type AbstractEntity = {
   alias: Scalars['String']['output'];
   currentRevision?: Maybe<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
@@ -981,12 +956,6 @@ export type EntityUpdateLicenseResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type EquationsAppStatsInput = {
-  event: Scalars['String']['input'];
-  latex: Scalars['String']['input'];
-  sessionId: Scalars['String']['input'];
-};
-
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Event';
   alias: Scalars['String']['output'];
@@ -1316,42 +1285,12 @@ export type ExerciseSubmissionInput = {
 
 export type ExperimentMutation = {
   __typename?: 'ExperimentMutation';
-  createAbSubmission: DefaultResponse;
-  createEquationsAppStats: DefaultResponse;
   createExerciseSubmission: DefaultResponse;
-  createQuickbarStats: DefaultResponse;
-};
-
-
-export type ExperimentMutationCreateAbSubmissionArgs = {
-  input: AbSubmissionInput;
-};
-
-
-export type ExperimentMutationCreateEquationsAppStatsArgs = {
-  input: EquationsAppStatsInput;
 };
 
 
 export type ExperimentMutationCreateExerciseSubmissionArgs = {
   input: ExerciseSubmissionInput;
-};
-
-
-export type ExperimentMutationCreateQuickbarStatsArgs = {
-  input: QuickbarStatsInput;
-};
-
-export type ExperimentQuery = {
-  __typename?: 'ExperimentQuery';
-  abSubmissions: Array<AbSubmission>;
-};
-
-
-export type ExperimentQueryAbSubmissionsArgs = {
-  cursor: Scalars['String']['input'];
-  experiment: Scalars['String']['input'];
-  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type HasNextPageInfo = {
@@ -1671,7 +1610,6 @@ export type Query = {
   authorization: Scalars['JSON']['output'];
   entity?: Maybe<EntityQuery>;
   events: AbstractNotificationEventConnection;
-  experiment: ExperimentQuery;
   media: MediaQuery;
   metadata: MetadataQuery;
   notificationEvent?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
@@ -1717,13 +1655,6 @@ export type QueryNotificationsArgs = {
 export type QueryUuidArgs = {
   alias?: InputMaybe<AliasInput>;
   id?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type QuickbarStatsInput = {
-  isSubject: Scalars['Boolean']['input'];
-  path: Scalars['String']['input'];
-  query: Scalars['String']['input'];
-  target: Scalars['String']['input'];
 };
 
 export type RejectRevisionInput = {
@@ -2817,8 +2748,6 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AbSubmission: ResolverTypeWrapper<ModelOf<AbSubmission>>;
-  AbSubmissionInput: ResolverTypeWrapper<ModelOf<AbSubmissionInput>>;
   AbstractEntity: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntity']>;
   AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
   AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
@@ -2878,7 +2807,6 @@ export type ResolversTypes = {
   EntitySortResponse: ResolverTypeWrapper<ModelOf<EntitySortResponse>>;
   EntityUpdateLicenseInput: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseInput>>;
   EntityUpdateLicenseResponse: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseResponse>>;
-  EquationsAppStatsInput: ResolverTypeWrapper<ModelOf<EquationsAppStatsInput>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -2894,7 +2822,6 @@ export type ResolversTypes = {
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
   ExerciseSubmissionInput: ResolverTypeWrapper<ModelOf<ExerciseSubmissionInput>>;
   ExperimentMutation: ResolverTypeWrapper<ModelOf<ExperimentMutation>>;
-  ExperimentQuery: ResolverTypeWrapper<ModelOf<ExperimentQuery>>;
   HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['InstanceAware']>;
@@ -2925,7 +2852,6 @@ export type ResolversTypes = {
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
   PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
   Query: ResolverTypeWrapper<{}>;
-  QuickbarStatsInput: ResolverTypeWrapper<ModelOf<QuickbarStatsInput>>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
   RejectRevisionResponse: ResolverTypeWrapper<ModelOf<RejectRevisionResponse>>;
@@ -3019,8 +2945,6 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AbSubmission: ModelOf<AbSubmission>;
-  AbSubmissionInput: ModelOf<AbSubmissionInput>;
   AbstractEntity: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntity'];
   AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
   AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
@@ -3079,7 +3003,6 @@ export type ResolversParentTypes = {
   EntitySortResponse: ModelOf<EntitySortResponse>;
   EntityUpdateLicenseInput: ModelOf<EntityUpdateLicenseInput>;
   EntityUpdateLicenseResponse: ModelOf<EntityUpdateLicenseResponse>;
-  EquationsAppStatsInput: ModelOf<EquationsAppStatsInput>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -3095,7 +3018,6 @@ export type ResolversParentTypes = {
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
   ExerciseSubmissionInput: ModelOf<ExerciseSubmissionInput>;
   ExperimentMutation: ModelOf<ExperimentMutation>;
-  ExperimentQuery: ModelOf<ExperimentQuery>;
   HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversInterfaceTypes<ResolversParentTypes>['InstanceAware'];
   Int: ModelOf<Scalars['Int']['output']>;
@@ -3124,7 +3046,6 @@ export type ResolversParentTypes = {
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
   PageRevisionCursor: ModelOf<PageRevisionCursor>;
   Query: {};
-  QuickbarStatsInput: ModelOf<QuickbarStatsInput>;
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
   RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
@@ -3210,20 +3131,6 @@ export type ResolversParentTypes = {
   VideoRevisionConnection: ModelOf<VideoRevisionConnection>;
   VideoRevisionCursor: ModelOf<VideoRevisionCursor>;
   _cacheMutation: ModelOf<_CacheMutation>;
-};
-
-export type AbSubmissionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbSubmission'] = ResolversParentTypes['AbSubmission']> = {
-  entityId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  experiment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  group?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  isProduction?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  result?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  sessionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timestamp?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  topicId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
@@ -3872,15 +3779,7 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
 };
 
 export type ExperimentMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentMutation'] = ResolversParentTypes['ExperimentMutation']> = {
-  createAbSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateAbSubmissionArgs, 'input'>>;
-  createEquationsAppStats?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateEquationsAppStatsArgs, 'input'>>;
   createExerciseSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateExerciseSubmissionArgs, 'input'>>;
-  createQuickbarStats?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateQuickbarStatsArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ExperimentQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentQuery'] = ResolversParentTypes['ExperimentQuery']> = {
-  abSubmissions?: Resolver<Array<ResolversTypes['AbSubmission']>, ParentType, ContextType, RequireFields<ExperimentQueryAbSubmissionsArgs, 'cursor' | 'experiment'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4059,7 +3958,6 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   authorization?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['EntityQuery']>, ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<QueryEventsArgs>>;
-  experiment?: Resolver<ResolversTypes['ExperimentQuery'], ParentType, ContextType>;
   media?: Resolver<ResolversTypes['MediaQuery'], ParentType, ContextType>;
   metadata?: Resolver<ResolversTypes['MetadataQuery'], ParentType, ContextType>;
   notificationEvent?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType, RequireFields<QueryNotificationEventArgs, 'id'>>;
@@ -4538,7 +4436,6 @@ export type _CacheMutationResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type Resolvers<ContextType = Context> = {
-  AbSubmission?: AbSubmissionResolvers<ContextType>;
   AbstractEntity?: AbstractEntityResolvers<ContextType>;
   AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
   AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
@@ -4603,7 +4500,6 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
   ExperimentMutation?: ExperimentMutationResolvers<ContextType>;
-  ExperimentQuery?: ExperimentQueryResolvers<ContextType>;
   HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
