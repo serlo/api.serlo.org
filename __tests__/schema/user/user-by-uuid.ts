@@ -58,6 +58,6 @@ describe('userByUuid', () => {
         `,
       })
       .withVariables({ id: user.id })
-      .shouldReturnData({ user: { userById: null } })
+      .shouldReturnData({ user: { userByUuid: null } })
   })
 })
