@@ -128,11 +128,20 @@ export const resolvers: TypeResolvers<User> &
         inheritance: getRolesWithInheritance([role]),
       }
     },
-    async userByUuid(_parent, payload, { dataSources }) {
-      if (Number.isNaN(payload.id))
-        throw new UserInputError('`id` is an illegal id')
+    async userByUsername(_parent, payload, { dataSources }) {
+      if (!payload.username)
+        throw new UserInputError('`username` is not provided')
+
+      const alias = {
+        path: `/user/profile/${payload.username}`,
+        instance: Instance.De, // should not matter
+      }
+      const uuid = (await dataSources.model.serlo.getAlias(alias))?.id
+
+      if (!uuid) return null
+
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: payload.id,
+        id: uuid,
         decoder: t.union([UserDecoder, t.null]),
       })
     },
