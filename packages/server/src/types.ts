@@ -1274,6 +1274,25 @@ export type ExerciseRevisionCursor = {
   node: ExerciseRevision;
 };
 
+export type ExerciseSubmissionInput = {
+  entityId: Scalars['Int']['input'];
+  path: Scalars['String']['input'];
+  result: Scalars['String']['input'];
+  revisionId: Scalars['Int']['input'];
+  sessionId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+export type ExperimentMutation = {
+  __typename?: 'ExperimentMutation';
+  createExerciseSubmission: DefaultResponse;
+};
+
+
+export type ExperimentMutationCreateExerciseSubmissionArgs = {
+  input: ExerciseSubmissionInput;
+};
+
 export type HasNextPageInfo = {
   __typename?: 'HasNextPageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
@@ -1346,6 +1365,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
   entity: EntityMutation;
+  experiment: ExperimentMutation;
   notification: NotificationMutation;
   oauth: OauthMutation;
   page: PageMutation;
@@ -2800,6 +2820,8 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
+  ExerciseSubmissionInput: ResolverTypeWrapper<ModelOf<ExerciseSubmissionInput>>;
+  ExperimentMutation: ResolverTypeWrapper<ModelOf<ExperimentMutation>>;
   HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['InstanceAware']>;
@@ -2994,6 +3016,8 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
+  ExerciseSubmissionInput: ModelOf<ExerciseSubmissionInput>;
+  ExperimentMutation: ModelOf<ExperimentMutation>;
   HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversInterfaceTypes<ResolversParentTypes>['InstanceAware'];
   Int: ModelOf<Scalars['Int']['output']>;
@@ -3754,6 +3778,11 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExperimentMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentMutation'] = ResolversParentTypes['ExperimentMutation']> = {
+  createExerciseSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateExerciseSubmissionArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['HasNextPageInfo'] = ResolversParentTypes['HasNextPageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3795,6 +3824,7 @@ export type MetadataQueryResolvers<ContextType = Context, ParentType extends Res
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
+  experiment?: Resolver<ResolversTypes['ExperimentMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   oauth?: Resolver<ResolversTypes['OauthMutation'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
@@ -4469,6 +4499,7 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
+  ExperimentMutation?: ExperimentMutationResolvers<ContextType>;
   HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
