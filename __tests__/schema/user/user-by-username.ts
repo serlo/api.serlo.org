@@ -3,15 +3,23 @@ import * as R from 'ramda'
 
 import { user } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
+import { Instance } from '~/types'
 
 const client = new Client()
 
-beforeEach(() => {
-  given('UuidQuery').for(user)
-})
-
 describe('userByUsername', () => {
   test('with valid username', async () => {
+    given('UuidQuery').for(user)
+    given('AliasQuery')
+      .withPayload({
+        instance: Instance.De,
+        path: `user/profile/${user.username}`,
+      })
+      .returns({
+        id: user.id,
+        instance: Instance.De,
+        path: `/user/${user.id}/${user.username}`,
+      })
     await client
       .prepareQuery({
         query: gql`
@@ -41,7 +49,12 @@ describe('userByUsername', () => {
   })
 
   test('with nonexisting username: returns null when user does not exist', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
+    given('AliasQuery')
+      .withPayload({
+        instance: Instance.De,
+        path: `user/profile/${user.username}`,
+      })
+      .returnsNotFound()
 
     await client
       .prepareQuery({
