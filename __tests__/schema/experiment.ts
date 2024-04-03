@@ -29,5 +29,4 @@ describe('experiment', () => {
       experiment: { createExerciseSubmission: { success: true } },
     })
   })
-
 })
