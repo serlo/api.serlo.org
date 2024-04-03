@@ -133,7 +133,7 @@ export const resolvers: TypeResolvers<User> &
         throw new UserInputError('`id` is an illegal id')
       return await dataSources.model.serlo.getUuidWithCustomDecoder({
         id: payload.id,
-        decoder: UserDecoder,
+        decoder: t.union([UserDecoder, t.null]),
       })
     },
   },

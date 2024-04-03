@@ -33,7 +33,7 @@ describe('userByUuid', () => {
       })
       .withVariables({ id: user.id })
       .shouldReturnData({
-        uuid: R.pick(
+        user: R.pick(
           ['__typename', 'id', 'trashed', 'username', 'date', 'description'],
           user,
         ),
