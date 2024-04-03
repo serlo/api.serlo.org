@@ -66,6 +66,7 @@ type UserQuery {
     first: Int
     after: String
   ): UserWithPermissionsConnection!
+  userByUuid(id: Int!): User!
 }
 
 type UserWithPermissionsConnection {

@@ -128,6 +128,14 @@ export const resolvers: TypeResolvers<User> &
         inheritance: getRolesWithInheritance([role]),
       }
     },
+    async userByUuid(_parent, payload, { dataSources }) {
+      if (Number.isNaN(payload.id))
+        throw new UserInputError('`id` is an illegal id')
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: payload.id,
+        decoder: UserDecoder,
+      })
+    },
   },
   User: {
     ...createUuidResolvers(),
