@@ -38,6 +38,7 @@ export type AbstractEntity = {
 
 export type AbstractEntityEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -82,6 +83,7 @@ export type AbstractEntityRevision = {
 
 export type AbstractEntityRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -131,6 +133,7 @@ export type AbstractRepository = {
 
 export type AbstractRepositoryEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -163,6 +166,7 @@ export type AbstractRevision = {
 
 export type AbstractRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -195,6 +199,7 @@ export type AbstractTaxonomyTermChild = {
 
 export type AbstractTaxonomyTermChildEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -221,6 +226,7 @@ export type AbstractUuid = {
 
 export type AbstractUuidEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -285,6 +291,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
 
 export type AppletEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -340,6 +347,7 @@ export type AppletRevision = AbstractEntityRevision & AbstractRevision & Abstrac
 
 export type AppletRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -384,6 +392,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
 
 export type ArticleEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -438,6 +447,7 @@ export type ArticleRevision = AbstractEntityRevision & AbstractRevision & Abstra
 
 export type ArticleRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -511,6 +521,7 @@ export type Comment = AbstractUuid & {
 
 export type CommentEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -552,6 +563,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
 
 export type CourseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -612,6 +624,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
 
 export type CoursePageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -656,6 +669,7 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & Abs
 
 export type CoursePageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -699,6 +713,7 @@ export type CourseRevision = AbstractEntityRevision & AbstractRevision & Abstrac
 
 export type CourseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -976,6 +991,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
 
 export type EventEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1030,6 +1046,7 @@ export type EventRevision = AbstractEntityRevision & AbstractRevision & Abstract
 
 export type EventRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1087,6 +1104,7 @@ export type Exercise = AbstractEntity & AbstractRepository & AbstractTaxonomyTer
 
 export type ExerciseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1141,6 +1159,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
 
 export type ExerciseGroupEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1194,6 +1213,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
 
 export type ExerciseGroupRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1243,6 +1263,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & Abstr
 
 export type ExerciseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1471,6 +1492,7 @@ export type Page = AbstractRepository & AbstractUuid & InstanceAware & ThreadAwa
 
 export type PageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1573,6 +1595,7 @@ export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
 
 export type PageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1626,6 +1649,7 @@ export type Query = {
 
 export type QueryEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2032,6 +2056,7 @@ export type TaxonomyTermChildrenArgs = {
 
 export type TaxonomyTermEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2337,6 +2362,7 @@ export type User = AbstractUuid & ThreadAware & {
 
 export type UserEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2576,6 +2602,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
 
 export type VideoEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2629,6 +2656,7 @@ export type VideoRevision = AbstractEntityRevision & AbstractRevision & Abstract
 
 export type VideoRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;

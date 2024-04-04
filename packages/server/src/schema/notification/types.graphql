@@ -21,6 +21,7 @@ extend type Query {
     first: Int
     last: Int
     actorId: Int
+    actorUsername: String
     objectId: Int
     instance: Instance
   ): AbstractNotificationEventConnection!
