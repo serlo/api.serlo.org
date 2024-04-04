@@ -2470,6 +2470,7 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  userByUsername?: Maybe<User>;
   usersByRole: UserWithPermissionsConnection;
 };
 
@@ -2477,6 +2478,11 @@ export type UserQuery = {
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type UserQueryUserByUsernameArgs = {
+  username: Scalars['String']['input'];
 };
 
 
@@ -4341,6 +4347,7 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
+  userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserQueryUserByUsernameArgs, 'username'>>;
   usersByRole?: Resolver<ResolversTypes['UserWithPermissionsConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
