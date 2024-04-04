@@ -13,7 +13,7 @@ describe('userByUsername', () => {
     given('AliasQuery')
       .withPayload({
         instance: Instance.De,
-        path: `user/profile/${user.username}`,
+        path: `/user/profile/${user.username}`,
       })
       .returns({
         id: user.id,
@@ -52,7 +52,7 @@ describe('userByUsername', () => {
     given('AliasQuery')
       .withPayload({
         instance: Instance.De,
-        path: `user/profile/${user.username}`,
+        path: `/user/profile/${user.username}`,
       })
       .returnsNotFound()
 
