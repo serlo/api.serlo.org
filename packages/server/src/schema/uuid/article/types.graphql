@@ -16,6 +16,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
@@ -59,6 +60,7 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Article!

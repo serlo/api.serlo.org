@@ -16,6 +16,7 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
@@ -60,6 +61,7 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Course!
