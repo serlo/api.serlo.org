@@ -9,6 +9,7 @@ interface AbstractEntity {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
 
   # extends AbstractRepository
@@ -46,6 +47,7 @@ interface AbstractEntityRevision {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
 
   # extends AbstractRevision

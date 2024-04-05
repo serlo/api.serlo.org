@@ -10,6 +10,7 @@ interface AbstractUuid {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
 }
 
