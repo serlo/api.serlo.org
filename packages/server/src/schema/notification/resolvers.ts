@@ -141,14 +141,14 @@ export async function resolveEvents({
     first: 2 * limit + 50,
     objectId: objectId ?? undefined,
     actorId:
-      actorId ?? actorUsername
+      actorId ?? (actorUsername
         ? (
             await dataSources.model.serlo.getAlias({
               path: `/user/profile/${actorUsername}`,
               instance: Instance.De,
             })
           )?.id
-        : undefined,
+        : undefined),
     instance: instance ?? undefined,
   })
 
