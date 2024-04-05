@@ -137,19 +137,18 @@ export async function resolveEvents({
 
   if (first > limit) throw new UserInputError('first cannot be higher than 500')
 
-  const actorIdOrByUsername = actorUsername
-    ? (
-        await dataSources.model.serlo.getAlias({
-          path: `/user/profile/${actorUsername}`,
-          instance: Instance.De, // should not matter
-        })
-      )?.id
-    : undefined
-
   const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
     first: 2 * limit + 50,
     objectId: objectId ?? undefined,
-    actorId: actorId ?? actorIdOrByUsername,
+    actorId:
+      actorId ?? actorUsername
+        ? (
+            await dataSources.model.serlo.getAlias({
+              path: `/user/profile/${actorUsername}`,
+              instance: Instance.De,
+            })
+          )?.id
+        : undefined,
     instance: instance ?? undefined,
   })
 
