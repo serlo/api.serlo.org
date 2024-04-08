@@ -706,7 +706,7 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
       return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
     },
-    async updateCache({ input }, newEntity) {
+    async updateCache({ userId, input }, newEntity) {
       if (newEntity) {
         const { parentId, taxonomyTermId } = input
         if (parentId) {
@@ -740,6 +740,22 @@ export function createSerloModel({
             return current
           },
         })
+
+        if (input.subscribeThis) {
+          await getSubscriptions._querySpec.setCache({
+            payload: { userId },
+            getValue(current) {
+              if (!current) return
+
+              const newEntry = {
+                objectId: castToUuid(newEntity.id),
+                sendEmail: input.subscribeThisByEmail,
+              }
+
+              return { subscriptions: [...current.subscriptions, newEntry] }
+            },
+          })
+        }
       }
     },
   })
