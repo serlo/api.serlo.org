@@ -391,8 +391,8 @@ export function createSerloModel({
         return DatabaseLayer.makeRequest('NotificationsQuery', payload)
       },
       enableSwr: true,
-      staleAfter: { minutes: 5 },
-      maxAge: { minutes: 30 },
+      staleAfter: { minutes: 1 },
+      maxAge: { minutes: 10 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/notifications/${userId}`
       },
