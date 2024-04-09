@@ -16,6 +16,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
@@ -60,6 +61,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   cohesive: Boolean!
   date: DateTime!

@@ -128,6 +128,23 @@ export const resolvers: TypeResolvers<User> &
         inheritance: getRolesWithInheritance([role]),
       }
     },
+    async userByUsername(_parent, payload, { dataSources }) {
+      if (!payload.username)
+        throw new UserInputError('`username` is not provided')
+
+      const alias = {
+        path: `/user/profile/${payload.username}`,
+        instance: Instance.De, // should not matter
+      }
+      const uuid = (await dataSources.model.serlo.getAlias(alias))?.id
+
+      if (!uuid) return null
+
+      return await dataSources.model.serlo.getUuidWithCustomDecoder({
+        id: uuid,
+        decoder: t.union([UserDecoder, t.null]),
+      })
+    },
   },
   User: {
     ...createUuidResolvers(),
