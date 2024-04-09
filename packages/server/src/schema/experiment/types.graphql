@@ -1,0 +1,16 @@
+type Mutation {
+  experiment: ExperimentMutation!
+}
+
+type ExperimentMutation {
+  createExerciseSubmission(input: ExerciseSubmissionInput!): DefaultResponse!
+}
+
+input ExerciseSubmissionInput {
+  path: String!
+  entityId: Int!
+  revisionId: Int!
+  type: String!
+  result: String!
+  sessionId: String!
+}

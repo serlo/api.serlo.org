@@ -116,6 +116,52 @@ describe('query endpoint "events"', () => {
       })
   })
 
+  test('with filter "actorUsername"', async () => {
+    given('AliasQuery')
+      .withPayload({
+        instance: Instance.De,
+        path: `/user/profile/${user.username}`,
+      })
+      .returns({
+        id: castToUuid(42),
+        instance: Instance.De,
+        path: `/user/42/${user.username}`,
+      })
+    const events = assignSequentialIds(
+      R.concat(
+        allEvents.map((event) => {
+          return { ...event, actorId: castToUuid(42) }
+        }),
+        allEvents.map((event) => {
+          return { ...event, actorId: castToUuid(23) }
+        }),
+      ),
+    )
+    setupEvents(events)
+
+    await new Client()
+      .prepareQuery({
+        query: gql`
+          query events($username: String!) {
+            events(actorUsername: $username) {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ username: user.username })
+      .shouldReturnData({
+        events: {
+          nodes: R.reverse(
+            events.slice(0, allEvents.length).map(getTypenameAndId),
+          ),
+        },
+      })
+  })
+
   test('with filter "instance"', async () => {
     const events = assignSequentialIds(
       R.concat(

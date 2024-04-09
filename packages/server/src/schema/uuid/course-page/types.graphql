@@ -16,6 +16,7 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
@@ -54,6 +55,7 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: CoursePage!

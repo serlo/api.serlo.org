@@ -16,6 +16,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
@@ -60,6 +61,7 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Exercise!

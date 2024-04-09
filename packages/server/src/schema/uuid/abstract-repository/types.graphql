@@ -11,6 +11,7 @@ interface AbstractRepository {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
 
   # extends ThreadAware
@@ -43,6 +44,7 @@ interface AbstractRevision {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
 
   # extends ThreadAware

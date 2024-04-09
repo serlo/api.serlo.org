@@ -11,6 +11,7 @@ interface AbstractTaxonomyTermChild {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!

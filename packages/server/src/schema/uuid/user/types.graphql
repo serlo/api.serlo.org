@@ -16,6 +16,7 @@ type User implements AbstractUuid & ThreadAware {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   eventsByUser(
     after: String
@@ -66,6 +67,7 @@ type UserQuery {
     first: Int
     after: String
   ): UserWithPermissionsConnection!
+  userByUsername(username: String!): User
 }
 
 type UserWithPermissionsConnection {
