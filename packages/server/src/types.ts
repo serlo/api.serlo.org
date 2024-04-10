@@ -2037,6 +2037,7 @@ export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   instance: Instance;
   name: Scalars['String']['output'];
   parent?: Maybe<TaxonomyTerm>;
+  path: Array<Maybe<TaxonomyTerm>>;
   taxonomyId: Scalars['Int']['output'];
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -4191,6 +4192,7 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
+  path?: Resolver<Array<Maybe<ResolversTypes['TaxonomyTerm']>>, ParentType, ContextType>;
   taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
