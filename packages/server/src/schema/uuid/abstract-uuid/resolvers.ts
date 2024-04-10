@@ -1,4 +1,6 @@
 import * as auth from '@serlo/authorization'
+import * as t from 'io-ts'
+import { RowDataPacket } from 'mysql2'
 
 import { resolveCustomId } from '~/config'
 import { UserInputError } from '~/errors'
@@ -17,6 +19,8 @@ import {
   DiscriminatorType,
   EntityTypeDecoder,
   EntityRevisionTypeDecoder,
+  castToAlias,
+  CommentStatusDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
@@ -32,14 +36,20 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
     },
   },
   Query: {
-    async uuid(_parent, payload, { dataSources }) {
+    async uuid(_parent, payload, { dataSources, database }) {
       const id = await resolveIdFromPayload(dataSources, payload)
 
       if (id === null || !Uuid.is(id)) return null
 
-      const uuid = await dataSources.model.serlo.getUuid({ id })
+      const uuid = await resolveUuid({ id, database })
 
-      return checkUuid(payload, uuid)
+      if (uuid != null) return uuid
+
+      const uuidFromDatabaseLayer = await dataSources.model.serlo.getUuid({
+        id,
+      })
+
+      return checkUuid(payload, uuidFromDatabaseLayer)
     },
   },
   Mutation: {
@@ -99,6 +109,70 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
       return { success: true, query: {} }
     },
   },
+}
+
+const BaseComment = t.type({
+  id: Uuid,
+  discriminator: t.literal(DiscriminatorType.Comment),
+  trashed: t.boolean,
+  authorId: t.number,
+  title: t.string,
+  date: t.string,
+  archived: t.boolean,
+  content: t.string,
+  parentUuid: t.union([Uuid, t.null]),
+  parentComment: t.union([Uuid, t.null]),
+  status: CommentStatusDecoder,
+  childrenIds: t.array(Uuid),
+})
+
+async function resolveUuid({
+  id,
+  database,
+}: {
+  id: number
+  database: Context['database']
+}): Promise<Model<'AbstractUuid'> | null> {
+  const [result] = await database.execute<RowDataPacket[]>(
+    ` select
+        uuid.id as id,
+        uuid.trashed,
+        uuid.discriminator,
+        comment.author_id as authorId,
+        comment.title as title,
+        comment.date as date,
+        comment.archived as archived,
+        comment.content as content,
+        comment.parent_id as parentComment,
+        comment.uuid_id as parentUuid,
+        JSON_ARRAYAGG(comment_children.id) as childrenIds,
+        comment_status.name as status
+      from uuid
+      left join comment on comment.id = uuid.id
+      left join comment comment_children on comment_children.parent_id = comment.id
+      left join comment_status on comment_status.id = comment.id
+      where uuid.id = ?
+      group by uuid.id
+    `,
+    [id],
+  )
+
+  const baseUuid = result.at(0)
+
+  if (BaseComment.is(baseUuid)) {
+    const parentId = baseUuid.parentUuid ?? baseUuid.parentComment ?? null
+
+    if (parentId == null) return null
+
+    return {
+      ...baseUuid,
+      __typename: DiscriminatorType.Comment,
+      parentId,
+      alias: castToAlias(`/${parentId}#comment-${baseUuid.id}`),
+    }
+  }
+
+  return null
 }
 
 async function resolveIdFromPayload(
