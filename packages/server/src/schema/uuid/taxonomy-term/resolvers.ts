@@ -37,6 +37,8 @@ const typesMap = {
   locale: TaxonomyTermType.Topic,
 }
 
+const ROOT_TAXONOMY_ID = 3
+
 export const resolvers: TypeResolvers<TaxonomyTerm> &
   Mutations<'taxonomyTerm'> = {
   Mutation: {
@@ -241,7 +243,7 @@ async function getParentTerms(
   parentTerms: Model<'TaxonomyTerm'>[],
   serloModel: ModelDataSource['serlo'],
 ) {
-  if (taxonomyTerm.parentId && taxonomyTerm.parentId !== 3) {
+  if (taxonomyTerm.parentId && taxonomyTerm.parentId !== ROOT_TAXONOMY_ID) {
     const parent = await serloModel.getUuidWithCustomDecoder({
       id: taxonomyTerm.parentId,
       decoder: TaxonomyTermDecoder,
