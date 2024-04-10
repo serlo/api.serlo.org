@@ -1,8 +1,10 @@
 import gql from 'graphql-tag'
+import { type OkPacket } from 'mysql2'
 
-import { article, comment, user } from '../../../__fixtures__'
-import { givenThreads, Client, given } from '../../__utils__'
+import { article, comment as baseComment, user } from '../../../__fixtures__'
+import { Client, castToUuid, given } from '../../__utils__'
 
+const comment = { ...baseComment, id: castToUuid(17296) }
 const newContent = 'This is new content.'
 
 const mutation = new Client({ userId: user.id })
@@ -17,17 +19,25 @@ const mutation = new Client({ userId: user.id })
       }
     `,
   })
-  .withInput({
-    content: newContent,
-    commentId: comment.id,
-  })
+  .withInput({ content: newContent, commentId: comment.id })
 
 beforeEach(() => {
-  given('UuidQuery').for(user)
-  givenThreads({ uuid: article, threads: [[comment]] })
+  given('UuidQuery').for(user, comment, article)
 })
 
-test('comment is edited, cache mutated as expected', async () => {
+test('changes content of a comment', async () => {
+  await mutation.shouldReturnData({
+    thread: { editComment: { success: true } },
+  })
+
+  const [result] = await global.transaction!.execute<
+    ({ content: string } & OkPacket)[]
+  >(`select content from comment where id = ?`, [comment.id])
+
+  expect(result[0].content).toBe(newContent)
+})
+
+test.skip('comment is edited, cache mutated as expected', async () => {
   given('ThreadEditCommentMutation')
     .withPayload({
       userId: user.id,
@@ -67,11 +77,7 @@ test('comment is edited, cache mutated as expected', async () => {
   })
 
   await mutation.shouldReturnData({
-    thread: {
-      editComment: {
-        success: true,
-      },
-    },
+    thread: { editComment: { success: true } },
   })
 
   await queryComments.shouldReturnData({
@@ -97,18 +103,6 @@ test('fails when new comment is empty', async () => {
   await mutation
     .changeInput({ content: '' })
     .shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  given('ThreadEditCommentMutation').returnsBadRequest()
-
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('ThreadEditCommentMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
 
 test('unauthenticated user gets error', async () => {

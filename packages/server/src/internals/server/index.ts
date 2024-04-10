@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import createApp from 'express'
+import { Pool, createPool } from 'mysql2/promise'
 
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
@@ -24,17 +25,20 @@ export async function start() {
       : createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
   const authServices = createAuthServices()
-  await initializeServer({ cache, swrQueue, authServices })
+  const database = createPool(process.env.MYSQL_URI)
+  await initializeServer({ cache, swrQueue, authServices, database })
 }
 
 async function initializeServer({
   cache,
   swrQueue,
   authServices,
+  database,
 }: {
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
+  database: Pool
 }) {
   const app = createApp()
   const healthPath = '/health'
@@ -44,6 +48,7 @@ async function initializeServer({
     cache,
     swrQueue,
     authServices,
+    database,
   })
   const kratosPath = applyKratosMiddleware({
     app,

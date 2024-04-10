@@ -257,14 +257,14 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
-    async editComment(_parent, { input }, { dataSources, userId }) {
+    async editComment(_parent, { input }, { dataSources, userId, database }) {
+      assertUserIsAuthenticated(userId)
+
       const { commentId, content } = input
 
       if (content.trim() === '') throw new UserInputError('content is empty')
 
       const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
-
-      assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
         guard: auth.Thread.createThread(scope),
@@ -272,16 +272,12 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      await dataSources.model.serlo.editComment({
-        ...input,
+      await database.execute(`UPDATE comment set content = ? where id = ?`, [
+        content,
         commentId,
-        userId,
-      })
+      ])
 
-      return {
-        success: true,
-        query: {},
-      }
+      return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
       const { dataSources, userId } = context
