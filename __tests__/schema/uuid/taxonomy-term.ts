@@ -267,7 +267,6 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id (w/ path)', async () => {
-    given('UuidQuery').for(taxonomyTermRoot)
     given('UuidQuery').for(taxonomyTermSubject)
 
     await client
@@ -288,10 +287,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
       .withVariables({ id: taxonomyTermCurriculumTopic.id })
       .shouldReturnData({
         uuid: {
-          path: [
-            getTypenameAndId(taxonomyTermRoot),
-            getTypenameAndId(taxonomyTermSubject),
-          ],
+          path: [getTypenameAndId(taxonomyTermSubject)],
         },
       })
   })
