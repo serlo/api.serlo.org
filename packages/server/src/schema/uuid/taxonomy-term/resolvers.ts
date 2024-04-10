@@ -52,6 +52,23 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       if (!parent.parentId) return TaxonomyTermType.Subject
       return typesMap[taxonomyTerm.type]
     },
+    async path(taxonomyTerm, _args, { dataSources }) {
+      const parentTerms = []
+      let currentTerm = taxonomyTerm
+
+      while (true) {
+        if (!currentTerm.parentId) break
+
+        const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
+          id: currentTerm.parentId,
+          decoder: TaxonomyTermDecoder,
+        })
+        parentTerms.unshift(parent)
+        currentTerm = parent
+      }
+
+      return parentTerms
+    },
     parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
       return dataSources.model.serlo.getUuidWithCustomDecoder({
