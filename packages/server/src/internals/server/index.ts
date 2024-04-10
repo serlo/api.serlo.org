@@ -25,20 +25,20 @@ export async function start() {
       : createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
   const authServices = createAuthServices()
-  const database = createPool(process.env.MYSQL_URI)
-  await initializeServer({ cache, swrQueue, authServices, database })
+  const pool = createPool(process.env.MYSQL_URI)
+  await initializeServer({ cache, swrQueue, authServices, pool })
 }
 
 async function initializeServer({
   cache,
   swrQueue,
   authServices,
-  database,
+  pool,
 }: {
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
-  database: Pool
+  pool: Pool
 }) {
   const app = createApp()
   const healthPath = '/health'
@@ -48,7 +48,7 @@ async function initializeServer({
     cache,
     swrQueue,
     authServices,
-    database,
+    pool,
   })
   const kratosPath = applyKratosMiddleware({
     app,

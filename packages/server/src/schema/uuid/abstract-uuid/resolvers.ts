@@ -112,6 +112,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   },
 }
 
+// TODO: Move to util file databse.ts
 const Tinyint = t.union([t.literal(0), t.literal(1)])
 
 const BaseComment = t.type({
@@ -136,7 +137,7 @@ async function resolveUuid({
   id: number
   database: Context['database']
 }): Promise<Model<'AbstractUuid'> | null> {
-  const [result] = await database.execute<RowDataPacket[]>(
+  const baseUuid = await database.fetchOne(
     ` select
         uuid.id as id,
         uuid.trashed,
@@ -159,8 +160,6 @@ async function resolveUuid({
     `,
     [id],
   )
-
-  const baseUuid = result.at(0)
 
   if (BaseComment.is(baseUuid)) {
     const parentId = baseUuid.parentUuid ?? baseUuid.parentCommentId ?? null

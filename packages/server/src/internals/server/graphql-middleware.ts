@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken'
 import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
+import { Database } from '~/database'
 import {
   AuthServices,
   handleAuthentication,
@@ -33,13 +34,13 @@ export async function applyGraphQLMiddleware({
   cache,
   swrQueue,
   authServices,
-  database,
+  pool,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
-  database: Pool
+  pool: Pool
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
@@ -53,6 +54,7 @@ export async function applyGraphQLMiddleware({
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
         const googleStorage = new Storage()
+        const database = new Database(pool)
         const dataSources = {
           model: new ModelDataSource(environment),
         }

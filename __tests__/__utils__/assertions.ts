@@ -11,6 +11,7 @@ import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 import { getGraphQLOptions } from '~/internals/server'
+import { Database } from '~/database'
 
 export class Client {
   private apolloServer: ApolloServer<ClientContext>
@@ -52,7 +53,7 @@ export class Client {
             }
           },
         } as unknown as Storage,
-        database: await this.getTransaction(),
+        database: new Database(await this.getTransaction()),
       } as Context,
     })
   }
