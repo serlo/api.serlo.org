@@ -1,5 +1,4 @@
 import * as auth from '@serlo/authorization'
-import { either as E } from 'fp-ts'
 
 import { resolveCustomId } from '~/config'
 import { UserInputError } from '~/errors'
@@ -36,14 +35,10 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
     async uuid(_parent, payload, { dataSources }) {
       const id = await resolveIdFromPayload(dataSources, payload)
 
-      if (id === null) return null
+      if (id === null || !Uuid.is(id)) return null
 
-      const decodedUuid = Uuid.decode(id)
-      if (E.isLeft(decodedUuid)) return null
+      const uuid = await dataSources.model.serlo.getUuid({ id })
 
-      const uuid = await dataSources.model.serlo.getUuid({
-        id: decodedUuid.right,
-      })
       return checkUuid(payload, uuid)
     },
   },
