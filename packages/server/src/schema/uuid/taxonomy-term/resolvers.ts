@@ -241,7 +241,7 @@ async function getParentTerms(
   parentTerms: Model<'TaxonomyTerm'>[],
   serloModel: ModelDataSource['serlo'],
 ) {
-  if (taxonomyTerm.parentId) {
+  if (taxonomyTerm.parentId && taxonomyTerm.parentId !== 3) {
     const parent = await serloModel.getUuidWithCustomDecoder({
       id: taxonomyTerm.parentId,
       decoder: TaxonomyTermDecoder,
@@ -251,5 +251,6 @@ async function getParentTerms(
 
     await getParentTerms(parent, parentTerms, serloModel)
   }
+
   return parentTerms
 }
