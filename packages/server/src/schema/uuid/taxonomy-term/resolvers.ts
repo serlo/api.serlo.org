@@ -56,6 +56,7 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       const parentTerms = []
       let currentTerm = taxonomyTerm
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         if (!currentTerm.parentId) break
 
