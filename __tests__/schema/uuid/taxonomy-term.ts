@@ -267,6 +267,7 @@ describe('TaxonomyTerm curriculumTopic', () => {
   })
 
   test('by id (w/ path)', async () => {
+    given('UuidQuery').for(taxonomyTermRoot)
     given('UuidQuery').for(taxonomyTermSubject)
 
     await client
