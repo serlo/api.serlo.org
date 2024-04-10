@@ -46,7 +46,10 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 ### Caching
 
 By default, while developing, the caching won't work. If you want to have caching, change the value `CACHE_TYPE` in `.env` to any other
-value besides 'empty'. To check the cache locally, install redis-tools and run redis-cli. With GET <key> you get the cache value of the key that is defined in [serlo.ts](https://github.com/serlo/api.serlo.org/blob/staging/packages/server/src/model/serlo.ts).
+value besides 'empty'.  
+To check the cache locally, run `yarn cache:cli`.  
+With `GET <key>` you get the cache value of the key that is defined in [serlo.ts](https://github.com/serlo/api.serlo.org/blob/staging/packages/server/src/model/serlo.ts).  
+See in `package.json` for other scripts regarding cache.
 
 ### Run tests
 
