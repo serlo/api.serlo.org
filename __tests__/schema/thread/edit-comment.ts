@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import { type OkPacket } from 'mysql2'
 
 import { article, comment as baseComment, user } from '../../../__fixtures__'
 import { Client, castToUuid, given } from '../../__utils__'
@@ -45,68 +44,6 @@ test('changes content of a comment', async () => {
   })
 
   await queryComment.shouldReturnData({ uuid: { content: newContent } })
-})
-
-test.skip('comment is edited, cache mutated as expected', async () => {
-  given('ThreadEditCommentMutation')
-    .withPayload({
-      userId: user.id,
-      content: newContent,
-      commentId: comment.id,
-    })
-    .returns(undefined)
-
-  const queryComments = new Client()
-    .prepareQuery({
-      query: gql`
-        query ($id: Int) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                nodes {
-                  comments {
-                    nodes {
-                      content
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-
-  await queryComments.shouldReturnData({
-    uuid: {
-      threads: {
-        nodes: [{ comments: { nodes: [{ content: comment.content }] } }],
-      },
-    },
-  })
-
-  await mutation.shouldReturnData({
-    thread: { editComment: { success: true } },
-  })
-
-  await queryComments.shouldReturnData({
-    uuid: {
-      threads: {
-        nodes: [
-          {
-            comments: {
-              nodes: [
-                {
-                  content: newContent,
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  })
 })
 
 test('fails when new comment is empty', async () => {
