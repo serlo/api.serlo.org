@@ -1,5 +1,6 @@
 import * as auth from '@serlo/authorization'
 import * as t from 'io-ts'
+import { date } from 'io-ts-types/lib/date'
 import { RowDataPacket } from 'mysql2'
 
 import { resolveCustomId } from '~/config'
@@ -111,19 +112,21 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   },
 }
 
+const Tinyint = t.union([t.literal(0), t.literal(1)])
+
 const BaseComment = t.type({
   id: Uuid,
-  discriminator: t.literal(DiscriminatorType.Comment),
-  trashed: t.boolean,
+  discriminator: t.literal('comment'),
+  trashed: Tinyint,
   authorId: t.number,
   title: t.string,
-  date: t.string,
-  archived: t.boolean,
+  date: date,
+  archived: Tinyint,
   content: t.string,
   parentUuid: t.union([Uuid, t.null]),
-  parentComment: t.union([Uuid, t.null]),
-  status: CommentStatusDecoder,
-  childrenIds: t.array(Uuid),
+  parentCommentId: t.union([Uuid, t.null]),
+  status: t.union([CommentStatusDecoder, t.null]),
+  childrenIds: t.array(t.union([Uuid, t.null])),
 })
 
 async function resolveUuid({
@@ -143,7 +146,7 @@ async function resolveUuid({
         comment.date as date,
         comment.archived as archived,
         comment.content as content,
-        comment.parent_id as parentComment,
+        comment.parent_id as parentCommentId,
         comment.uuid_id as parentUuid,
         JSON_ARRAYAGG(comment_children.id) as childrenIds,
         comment_status.name as status
@@ -160,15 +163,20 @@ async function resolveUuid({
   const baseUuid = result.at(0)
 
   if (BaseComment.is(baseUuid)) {
-    const parentId = baseUuid.parentUuid ?? baseUuid.parentComment ?? null
+    const parentId = baseUuid.parentUuid ?? baseUuid.parentCommentId ?? null
 
     if (parentId == null) return null
 
     return {
       ...baseUuid,
       __typename: DiscriminatorType.Comment,
+      trashed: Boolean(baseUuid.trashed),
+      archived: Boolean(baseUuid.archived),
       parentId,
       alias: castToAlias(`/${parentId}#comment-${baseUuid.id}`),
+      status: baseUuid.status ?? 'noStatus',
+      childrenIds: baseUuid.childrenIds.filter(isDefined),
+      date: baseUuid.date.toISOString(),
     }
   }
 

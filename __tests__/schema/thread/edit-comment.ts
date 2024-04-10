@@ -21,6 +21,20 @@ const mutation = new Client({ userId: user.id })
   })
   .withInput({ content: newContent, commentId: comment.id })
 
+const queryComment = new Client()
+  .prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        uuid(id: $id) {
+          ... on Comment {
+            content
+          }
+        }
+      }
+    `,
+  })
+  .withVariables({ id: comment.id })
+
 beforeEach(() => {
   given('UuidQuery').for(user, comment, article)
 })
@@ -30,11 +44,7 @@ test('changes content of a comment', async () => {
     thread: { editComment: { success: true } },
   })
 
-  const [result] = await global.transaction!.execute<
-    ({ content: string } & OkPacket)[]
-  >(`select content from comment where id = ?`, [comment.id])
-
-  expect(result[0].content).toBe(newContent)
+  await queryComment.shouldReturnData({ uuid: { content: newContent } })
 })
 
 test.skip('comment is edited, cache mutated as expected', async () => {
