@@ -272,7 +272,7 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         dataSources,
       })
 
-      await database.execute(`UPDATE comment set content = ? where id = ?`, [
+      await database.mutate(`UPDATE comment set content = ? where id = ?`, [
         content,
         commentId,
       ])

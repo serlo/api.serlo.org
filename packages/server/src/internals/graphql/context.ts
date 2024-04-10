@@ -1,8 +1,8 @@
 import { type Storage } from '@google-cloud/storage'
-import { type Connection } from 'mysql2/promise'
 
 import { Service } from '../authentication'
 import { ModelDataSource } from '../data-source'
+import { type Database } from '~/database'
 
 export interface Context {
   dataSources: {
@@ -11,5 +11,5 @@ export interface Context {
   service: Service
   userId: number | null
   googleStorage: Storage
-  database: Connection
+  database: Database
 }
