@@ -2,6 +2,7 @@ import { flush as flushSentry } from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
+import { createPool } from 'mysql2/promise'
 
 import {
   defaultSpreadsheetApi,
@@ -46,6 +47,7 @@ export function createBeforeAll() {
   const server = setupServer()
   const kratos = new MockKratos()
 
+  global.database = createPool(process.env.MYSQL_URI)
   global.server = server
   global.timer = timer
   global.kratos = kratos
@@ -90,6 +92,11 @@ export async function createBeforeEach() {
 }
 
 export async function createAfterEach() {
+  if (global.transaction != null) {
+    await global.transaction.rollback()
+    global.transaction.release()
+  }
+
   await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()

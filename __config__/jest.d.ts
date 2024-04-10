@@ -1,4 +1,5 @@
 import { Event } from '@sentry/node'
+import type { Pool, PoolConnection } from 'mysql2/promise'
 
 import type { MockTimer } from './setup'
 import type { MockKratos } from '../__tests__/__utils__/services'
@@ -13,4 +14,6 @@ declare global {
   var timer: MockTimer
   var sentryEvents: Event[]
   var kratos: MockKratos
+  var database: Pool
+  var transaction: PoolConnection | undefined
 }
