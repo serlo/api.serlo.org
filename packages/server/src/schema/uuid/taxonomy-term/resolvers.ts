@@ -1,5 +1,6 @@
 import * as serloAuth from '@serlo/authorization'
 
+import { ModelDataSource } from '~/internals/data-source'
 import {
   TypeResolvers,
   Mutations,
@@ -7,6 +8,7 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   assertStringIsNotEmpty,
+  Model,
 } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
@@ -51,6 +53,9 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       })
       if (!parent.parentId) return TaxonomyTermType.Subject
       return typesMap[taxonomyTerm.type]
+    },
+    async path(taxonomyTerm, _args, { dataSources }) {
+      return await getParentTerms(taxonomyTerm, [], dataSources.model.serlo)
     },
     parent(taxonomyTerm, _args, { dataSources }) {
       if (!taxonomyTerm.parentId) return null
@@ -229,4 +234,22 @@ export const resolvers: TypeResolvers<TaxonomyTerm> &
       return { success, query: {} }
     },
   },
+}
+
+async function getParentTerms(
+  taxonomyTerm: Model<'TaxonomyTerm'>,
+  parentTerms: Model<'TaxonomyTerm'>[],
+  serloModel: ModelDataSource['serlo'],
+) {
+  if (taxonomyTerm.parentId) {
+    const parent = await serloModel.getUuidWithCustomDecoder({
+      id: taxonomyTerm.parentId,
+      decoder: TaxonomyTermDecoder,
+    })
+
+    parentTerms.unshift(parent)
+
+    await getParentTerms(parent, parentTerms, serloModel)
+  }
+  return parentTerms
 }
