@@ -4,7 +4,13 @@ import { A, O } from 'ts-toolbelt'
 
 import { Context } from './context'
 import { Typename } from '~/internals/model'
-import { MutationResolvers, QueryResolvers, Resolver, Resolvers } from '~/types'
+import {
+  MutationResolvers,
+  QueryResolvers,
+  Resolver,
+  Resolvers,
+  ResolversParentTypes,
+} from '~/types'
 
 export interface Schema {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -36,42 +42,8 @@ export function mergeSchemas(...schemas: Schema[]): Schema {
  * type UuidPayload = Model<"AbstractUuid">
  * ```
  */
-// TODO: For some reason `ModelMapping[M]` is a union with undefined and thus
-// we need `NonNullable<...>`. There should be a way to remove this.
-export type Model<M extends keyof ModelMapping> = NonNullable<ModelMapping[M]>
-
-/**
- * Mapping between graphql type names and their model types:
- * ```ts
- *   ModelMapping = {
- *     User: { id: number, username: string, ... }
- *     ArticleRevision: { id: number, authorId: number, ... }
- *     ...
- *     AbstractRevision: | ModelMapping["ArticleRevision"]
- *                       | ModelMapping["CourseRevision"]
- *                       | ...
- *     ...
- *   }
- * ```
- * Here we use, that for each concrete graphql type there is a `__isTypeOf`
- * function in the generated resolver type whose first parameter is the parent
- * and thus has the model type of the concrete graphql type. This first
- * parameter is used for the mapping. For union and interface graphql types
- * the `__resolveType` function of the resolver type is used in the same way.
- */
-export type ModelMapping = {
-  [R in keyof Resolvers]: '__resolveType' extends keyof GetResolver<R>
-    ? GetResolver<R>['__resolveType'] extends (...args: infer P) => unknown
-      ? P[0]
-      : never
-    : '__isTypeOf' extends keyof GetResolver<R>
-      ? NonNullable<GetResolver<R>['__isTypeOf']> extends (
-          ...args: infer P
-        ) => unknown
-        ? P[0]
-        : never
-      : never
-}
+export type Model<M extends keyof ResolversParentTypes> =
+  ResolversParentTypes[M]
 
 /**
  * Returns the corresponding type of the revision model for the given repository
