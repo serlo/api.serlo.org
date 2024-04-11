@@ -69,10 +69,10 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 
           function getType(object: Model<'AbstractUuid'>): auth.UuidType {
             switch (object.__typename) {
-              case DiscriminatorType.Page:
-                return 'Page'
-              case DiscriminatorType.PageRevision:
-                return 'PageRevision'
+              // case DiscriminatorType.Page:
+              //   return 'Page'
+              // case DiscriminatorType.PageRevision:
+              //   return 'PageRevision'
               case DiscriminatorType.TaxonomyTerm:
                 return 'TaxonomyTerm'
               case DiscriminatorType.User:

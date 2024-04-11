@@ -1,4 +1,4 @@
-type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
+type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   events(
@@ -40,7 +40,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   subject: Subject
 }
 
-type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
+type AppletRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

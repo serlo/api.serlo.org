@@ -4,8 +4,10 @@ import {
   CoursePageDecoder,
   CoursePageRevisionDecoder,
 } from '~/model/decoder'
-import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
-import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
+import {
+  createEntityResolvers,
+  createEntityRevisionResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { CoursePage, CoursePageRevision } from '~/types'
 
 export const resolvers: TypeResolvers<CoursePage> &
@@ -21,7 +23,7 @@ export const resolvers: TypeResolvers<CoursePage> &
       })
     },
   },
-  CoursePageRevision: createRevisionResolvers({
+  CoursePageRevision: createEntityRevisionResolvers({
     repositoryDecoder: CoursePageDecoder,
   }),
 }

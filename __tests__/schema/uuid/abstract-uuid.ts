@@ -48,8 +48,6 @@ const abstractUuidFixtures: Record<
   AccessibleUuidTypes,
   Model<'AbstractUuid'>
 > = {
-  [DiscriminatorType.Page]: page,
-  [DiscriminatorType.PageRevision]: pageRevision,
   [DiscriminatorType.TaxonomyTerm]: taxonomyTermRoot,
   [DiscriminatorType.User]: user,
   [EntityType.Applet]: applet,
@@ -59,6 +57,7 @@ const abstractUuidFixtures: Record<
   [EntityType.Exercise]: exercise,
   [EntityType.ExerciseGroup]: exerciseGroup,
   [EntityType.Event]: event,
+  [EntityType.Page]: page,
   [EntityType.Video]: video,
   [EntityRevisionType.AppletRevision]: appletRevision,
   [EntityRevisionType.ArticleRevision]: articleRevision,
@@ -68,6 +67,7 @@ const abstractUuidFixtures: Record<
   [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
   [EntityRevisionType.EventRevision]: eventRevision,
   [EntityRevisionType.VideoRevision]: videoRevision,
+  [EntityRevisionType.PageRevision]: pageRevision,
 }
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 

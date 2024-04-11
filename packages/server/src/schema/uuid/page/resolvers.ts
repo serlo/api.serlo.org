@@ -13,9 +13,9 @@ import {
 import { castToUuid, PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+  createEntityResolvers,
+  createEntityRevisionResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { Page, PageRevision } from '~/types'
 
 export const resolvers: TypeResolvers<Page> &
@@ -28,8 +28,10 @@ export const resolvers: TypeResolvers<Page> &
   Mutation: {
     page: createNamespace(),
   },
-  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
-  PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
+  Page: createEntityResolvers({ revisionDecoder: PageRevisionDecoder }),
+  PageRevision: createEntityRevisionResolvers({
+    repositoryDecoder: PageDecoder,
+  }),
   PageMutation: {
     async addRevision(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)

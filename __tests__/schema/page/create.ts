@@ -4,7 +4,12 @@ import { HttpResponse } from 'msw'
 import { user as baseUser } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityType,
+  EntityRevisionType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
@@ -49,7 +54,7 @@ describe('PageCreateMutation', () => {
       const newPageRevisionId = castToUuid(19769)
 
       const newPage: Model<'Page'> = {
-        __typename: DiscriminatorType.Page,
+        __typename: EntityType.Page,
         id: castToUuid(19768),
         trashed: false,
         instance,
@@ -61,7 +66,7 @@ describe('PageCreateMutation', () => {
       }
 
       const newPageRevision: Model<'PageRevision'> = {
-        __typename: DiscriminatorType.PageRevision,
+        __typename: EntityRevisionType.PageRevision,
         id: newPageRevisionId,
         trashed: false,
         alias: castToAlias(`/${newPageRevisionId}/${title}`),

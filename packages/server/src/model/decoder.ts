@@ -25,16 +25,14 @@ export const RoleDecoder: t.Type<Role> = t.union([
 
 export enum DiscriminatorType {
   Comment = 'Comment',
-  Page = 'Page',
-  PageRevision = 'PageRevision',
   TaxonomyTerm = 'TaxonomyTerm',
   User = 'User',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export type RepositoryType = EntityType | DiscriminatorType.Page
-export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
+export type RepositoryType = EntityType
+export type RevisionType = EntityRevisionType
 
 export enum EntityType {
   Applet = 'Applet',
@@ -45,6 +43,7 @@ export enum EntityType {
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
   Video = 'Video',
+  Page = 'Page',
 }
 
 export enum EntityRevisionType {
@@ -56,6 +55,7 @@ export enum EntityRevisionType {
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
   VideoRevision = 'VideoRevision',
+  PageRevision = 'PageRevision',
 }
 
 // As of 26.03.2021 the maximum uuid is 201517. Thus there are ~200.000 uuids
@@ -149,6 +149,7 @@ export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.EventRevision),
   t.literal(EntityRevisionType.ExerciseRevision),
   t.literal(EntityRevisionType.ExerciseGroupRevision),
+  t.literal(EntityRevisionType.PageRevision),
   t.literal(EntityRevisionType.VideoRevision),
 ])
 
@@ -168,7 +169,7 @@ export const PageDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
     t.type({
-      __typename: t.literal(DiscriminatorType.Page),
+      __typename: t.literal(EntityType.Page),
       instance: InstanceDecoder,
       currentRevisionId: t.union([Uuid, t.null]),
       revisionIds: t.array(Uuid),
@@ -182,7 +183,7 @@ export const PageRevisionDecoder = t.exact(
   t.intersection([
     AbstractUuidDecoder,
     t.type({
-      __typename: t.literal(DiscriminatorType.PageRevision),
+      __typename: t.literal(EntityRevisionType.PageRevision),
       title: t.string,
       content: t.string,
       date: t.string,

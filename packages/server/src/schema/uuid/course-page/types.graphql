@@ -1,4 +1,4 @@
-type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & InstanceAware & ThreadAware {
+type CoursePage implements AbstractUuid & AbstractEntity & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -35,7 +35,7 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
   subject: Subject
 }
 
-type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
+type CoursePageRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

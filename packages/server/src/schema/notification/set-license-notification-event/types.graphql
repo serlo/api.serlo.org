@@ -4,5 +4,5 @@ type SetLicenseNotificationEvent implements AbstractNotificationEvent & Instance
   date: DateTime!
   actor: User!
   objectId: Int!
-  repository: AbstractRepository!
+  repository: AbstractEntity!
 }

@@ -1,4 +1,4 @@
-type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
+type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -40,7 +40,7 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
   subject: Subject
 }
 
-type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
+type ExerciseRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!

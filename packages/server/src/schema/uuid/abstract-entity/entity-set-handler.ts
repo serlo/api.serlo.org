@@ -143,6 +143,11 @@ export function createSetEntityResolver({
           `No entity or taxonomy term found for the provided id ${input.parentId}`,
         )
 
+      if (entityType === EntityType.Page)
+        throw new UserInputError(
+          `Saving Pages with this endpoint not yet possible`, // TODO:
+        )
+
       const entity = await dataSources.model.serlo.createEntity({
         entityType,
         userId,

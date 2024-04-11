@@ -77,15 +77,16 @@ export type ModelMapping = {
  * Returns the corresponding type of the revision model for the given repository
  * type.
  */
-export type Revision<T extends Model<'AbstractRepository'>['__typename']> =
+export type Revision<T extends Model<'AbstractEntity'>['__typename']> =
   Model<`${T}Revision`>
 
 /**
  * Returns the corresponding type of the repository model for the given revision
  * type.
  */
-export type Repository<R extends Model<'AbstractRevision'>['__typename']> =
-  Model<R extends `${infer U}Revision` ? U : never>
+export type Repository<
+  R extends Model<'AbstractEntityRevision'>['__typename'],
+> = Model<R extends `${infer U}Revision` ? U : never>
 
 /**
  * Resolvers type where all queries of the namespace `Namespaces` are

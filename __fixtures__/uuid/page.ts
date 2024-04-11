@@ -1,11 +1,16 @@
 import { user } from './user'
 import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import {
+  castToAlias,
+  castToUuid,
+  EntityType,
+  EntityRevisionType,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 export const page: Model<'Page'> = {
-  __typename: DiscriminatorType.Page,
+  __typename: EntityType.Page,
   id: castToUuid(19767),
   trashed: false,
   instance: Instance.De,
@@ -17,7 +22,7 @@ export const page: Model<'Page'> = {
 }
 
 export const pageRevision: Model<'PageRevision'> = {
-  __typename: DiscriminatorType.PageRevision,
+  __typename: EntityRevisionType.PageRevision,
   id: castToUuid(35476),
   trashed: false,
   alias: castToAlias('/entity/repository/compare/0/35476'),
@@ -29,7 +34,7 @@ export const pageRevision: Model<'PageRevision'> = {
 }
 
 export const pageRevision2: Model<'PageRevision'> = {
-  __typename: DiscriminatorType.PageRevision,
+  __typename: EntityRevisionType.PageRevision,
   id: castToUuid(33220),
   trashed: false,
   alias: castToAlias('/entity/repository/compare/0/33220'),

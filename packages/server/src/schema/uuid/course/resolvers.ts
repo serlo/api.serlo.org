@@ -6,8 +6,10 @@ import {
   CoursePageDecoder,
   CourseRevisionDecoder,
 } from '~/model/decoder'
-import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
-import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
+import {
+  createEntityResolvers,
+  createEntityRevisionResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Course, CourseRevision } from '~/types'
 
@@ -38,7 +40,7 @@ export const resolvers: TypeResolvers<Course> & TypeResolvers<CourseRevision> =
         })
       },
     },
-    CourseRevision: createRevisionResolvers({
+    CourseRevision: createEntityRevisionResolvers({
       repositoryDecoder: CourseDecoder,
     }),
   }

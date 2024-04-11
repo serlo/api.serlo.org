@@ -1,7 +1,10 @@
 interface AbstractEntity {
   # extends AbstractUuid
   id: Int!
+  alias: String!
   trashed: Boolean!
+  title: String!
+
   events(
     after: String
     before: String
@@ -12,7 +15,16 @@ interface AbstractEntity {
     actorUsername: String
   ): AbstractNotificationEventConnection!
 
-  # extends AbstractRepository
+  # extends ThreadAware
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    archived: Boolean
+    trashed: Boolean
+  ): ThreadsConnection!
+
   date: DateTime!
   instance: Instance!
   alias: String!
@@ -40,6 +52,9 @@ interface AbstractEntityRevision {
   # extends AbstractUuid
   id: Int!
   trashed: Boolean!
+  alias: String!
+  title: String!
+
   events(
     after: String
     before: String
@@ -50,11 +65,21 @@ interface AbstractEntityRevision {
     actorUsername: String
   ): AbstractNotificationEventConnection!
 
-  # extends AbstractRevision
+  # extends ThreadAware
+  threads(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    archived: Boolean
+    trashed: Boolean
+  ): ThreadsConnection!
+
+  # Implicitly has the following field
+  # repository: AbstractRepository!
   author: User!
   date: DateTime!
   content: String!
-  title: String!
 
   changes: String!
 }

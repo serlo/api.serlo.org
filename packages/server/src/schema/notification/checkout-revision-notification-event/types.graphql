@@ -4,7 +4,7 @@ type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent & In
   date: DateTime!
   actor: User!
   objectId: Int!
-  repository: AbstractRepository!
-  revision: AbstractRevision!
+  repository: AbstractEntity!
+  revision: AbstractEntityRevision!
   reason: String!
 }
