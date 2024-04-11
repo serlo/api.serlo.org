@@ -32,6 +32,7 @@ type Comment implements AbstractUuid {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   trashed: Boolean!
   archived: Boolean!

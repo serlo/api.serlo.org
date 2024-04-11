@@ -16,6 +16,7 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
@@ -52,6 +53,7 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
   title: String!

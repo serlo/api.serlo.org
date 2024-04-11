@@ -38,6 +38,7 @@ export type AbstractEntity = {
 
 export type AbstractEntityEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -82,6 +83,7 @@ export type AbstractEntityRevision = {
 
 export type AbstractEntityRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -131,6 +133,7 @@ export type AbstractRepository = {
 
 export type AbstractRepositoryEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -163,6 +166,7 @@ export type AbstractRevision = {
 
 export type AbstractRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -195,6 +199,7 @@ export type AbstractTaxonomyTermChild = {
 
 export type AbstractTaxonomyTermChildEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -221,6 +226,7 @@ export type AbstractUuid = {
 
 export type AbstractUuidEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -285,6 +291,7 @@ export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
 
 export type AppletEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -340,6 +347,7 @@ export type AppletRevision = AbstractEntityRevision & AbstractRevision & Abstrac
 
 export type AppletRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -384,6 +392,7 @@ export type Article = AbstractEntity & AbstractRepository & AbstractTaxonomyTerm
 
 export type ArticleEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -438,6 +447,7 @@ export type ArticleRevision = AbstractEntityRevision & AbstractRevision & Abstra
 
 export type ArticleRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -511,6 +521,7 @@ export type Comment = AbstractUuid & {
 
 export type CommentEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -552,6 +563,7 @@ export type Course = AbstractEntity & AbstractRepository & AbstractTaxonomyTermC
 
 export type CourseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -612,6 +624,7 @@ export type CoursePage = AbstractEntity & AbstractRepository & AbstractUuid & In
 
 export type CoursePageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -656,6 +669,7 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & Abs
 
 export type CoursePageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -699,6 +713,7 @@ export type CourseRevision = AbstractEntityRevision & AbstractRevision & Abstrac
 
 export type CourseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -976,6 +991,7 @@ export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
 
 export type EventEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1030,6 +1046,7 @@ export type EventRevision = AbstractEntityRevision & AbstractRevision & Abstract
 
 export type EventRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1087,6 +1104,7 @@ export type Exercise = AbstractEntity & AbstractRepository & AbstractTaxonomyTer
 
 export type ExerciseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1141,6 +1159,7 @@ export type ExerciseGroup = AbstractEntity & AbstractRepository & AbstractTaxono
 
 export type ExerciseGroupEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1194,6 +1213,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
 
 export type ExerciseGroupRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1243,6 +1263,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & Abstr
 
 export type ExerciseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1272,6 +1293,25 @@ export type ExerciseRevisionCursor = {
   __typename?: 'ExerciseRevisionCursor';
   cursor: Scalars['String']['output'];
   node: ExerciseRevision;
+};
+
+export type ExerciseSubmissionInput = {
+  entityId: Scalars['Int']['input'];
+  path: Scalars['String']['input'];
+  result: Scalars['String']['input'];
+  revisionId: Scalars['Int']['input'];
+  sessionId: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+export type ExperimentMutation = {
+  __typename?: 'ExperimentMutation';
+  createExerciseSubmission: DefaultResponse;
+};
+
+
+export type ExperimentMutationCreateExerciseSubmissionArgs = {
+  input: ExerciseSubmissionInput;
 };
 
 export type HasNextPageInfo = {
@@ -1346,6 +1386,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   _cache: _CacheMutation;
   entity: EntityMutation;
+  experiment: ExperimentMutation;
   notification: NotificationMutation;
   oauth: OauthMutation;
   page: PageMutation;
@@ -1451,6 +1492,7 @@ export type Page = AbstractRepository & AbstractUuid & InstanceAware & ThreadAwa
 
 export type PageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1553,6 +1595,7 @@ export type PageRevision = AbstractRevision & AbstractUuid & ThreadAware & {
 
 export type PageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1606,6 +1649,7 @@ export type Query = {
 
 export type QueryEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -1993,6 +2037,7 @@ export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   instance: Instance;
   name: Scalars['String']['output'];
   parent?: Maybe<TaxonomyTerm>;
+  path: Array<Maybe<TaxonomyTerm>>;
   taxonomyId: Scalars['Int']['output'];
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -2012,6 +2057,7 @@ export type TaxonomyTermChildrenArgs = {
 
 export type TaxonomyTermEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2317,6 +2363,7 @@ export type User = AbstractUuid & ThreadAware & {
 
 export type UserEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2450,6 +2497,7 @@ export type UserMutationSetEmailArgs = {
 export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
+  userByUsername?: Maybe<User>;
   usersByRole: UserWithPermissionsConnection;
 };
 
@@ -2457,6 +2505,11 @@ export type UserQuery = {
 export type UserQueryPotentialSpamUsersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type UserQueryUserByUsernameArgs = {
+  username: Scalars['String']['input'];
 };
 
 
@@ -2550,6 +2603,7 @@ export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermCh
 
 export type VideoEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2603,6 +2657,7 @@ export type VideoRevision = AbstractEntityRevision & AbstractRevision & Abstract
 
 export type VideoRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
+  actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2800,6 +2855,8 @@ export type ResolversTypes = {
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
   ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
+  ExerciseSubmissionInput: ResolverTypeWrapper<ModelOf<ExerciseSubmissionInput>>;
+  ExperimentMutation: ResolverTypeWrapper<ModelOf<ExperimentMutation>>;
   HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['InstanceAware']>;
@@ -2994,6 +3051,8 @@ export type ResolversParentTypes = {
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
   ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
+  ExerciseSubmissionInput: ModelOf<ExerciseSubmissionInput>;
+  ExperimentMutation: ModelOf<ExperimentMutation>;
   HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversInterfaceTypes<ResolversParentTypes>['InstanceAware'];
   Int: ModelOf<Scalars['Int']['output']>;
@@ -3754,6 +3813,11 @@ export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExperimentMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentMutation'] = ResolversParentTypes['ExperimentMutation']> = {
+  createExerciseSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateExerciseSubmissionArgs, 'input'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['HasNextPageInfo'] = ResolversParentTypes['HasNextPageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3795,6 +3859,7 @@ export type MetadataQueryResolvers<ContextType = Context, ParentType extends Res
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _cache?: Resolver<ResolversTypes['_cacheMutation'], ParentType, ContextType>;
   entity?: Resolver<ResolversTypes['EntityMutation'], ParentType, ContextType>;
+  experiment?: Resolver<ResolversTypes['ExperimentMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   oauth?: Resolver<ResolversTypes['OauthMutation'], ParentType, ContextType>;
   page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
@@ -4127,6 +4192,7 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
+  path?: Resolver<Array<Maybe<ResolversTypes['TaxonomyTerm']>>, ParentType, ContextType>;
   taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4311,6 +4377,7 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
+  userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserQueryUserByUsernameArgs, 'username'>>;
   usersByRole?: Resolver<ResolversTypes['UserWithPermissionsConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -4469,6 +4536,7 @@ export type Resolvers<ContextType = Context> = {
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
   ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
+  ExperimentMutation?: ExperimentMutationResolvers<ContextType>;
   HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
