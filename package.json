@@ -64,7 +64,7 @@
     "start:swr-queue-worker": "yarn _start packages/server/src/swr-queue-worker.ts swr-queue-worker.cjs",
     "stop": "docker compose stop",
     "stop:enmeshed": "docker-compose -f enmeshed/docker-compose.yml down",
-    "stop:redis": "docker-compose stop",
+    "stop:containers": "docker compose stop",
     "test": "yarn _jest --config jest.config.js --forceExit",
     "test:docker:server": "run-s \"test:docker:server:*\"",
     "test:docker:server:playground": "curl --verbose http://localhost:3001/___graphql | grep '<title>GraphQL Playground</title>'",
