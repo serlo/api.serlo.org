@@ -27,8 +27,6 @@ interface AbstractEntity {
 
   date: DateTime!
   instance: Instance!
-  alias: String!
-  title: String!
   licenseId: Int!
   subject: Subject
 

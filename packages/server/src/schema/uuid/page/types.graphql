@@ -18,10 +18,10 @@ type Page implements AbstractUuid & AbstractEntity & InstanceAware & ThreadAware
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
-  date: DateTime!
   instance: Instance!
   alias: String!
   title: String!
+  date: DateTime!
   licenseId: Int!
   currentRevision: PageRevision
   revisions(
@@ -31,6 +31,7 @@ type Page implements AbstractUuid & AbstractEntity & InstanceAware & ThreadAware
     last: Int
     unrevised: Boolean
   ): PageRevisionConnection!
+  subject: Subject
 }
 
 type PageRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
@@ -56,12 +57,13 @@ type PageRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware
     actorUsername: String
   ): AbstractNotificationEventConnection!
   date: DateTime!
+  repository: Page!
   title: String!
   content: String!
-  repository: Page!
+  changes: String!
 }
 
-type PageRevisionConnection {
+type PageRevisionConnection implements AbstractEntityRevisionConnection {
   edges: [PageRevisionCursor!]!
   nodes: [PageRevision!]!
   totalCount: Int!
