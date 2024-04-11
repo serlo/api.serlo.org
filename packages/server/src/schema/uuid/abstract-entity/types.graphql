@@ -57,6 +57,8 @@ interface AbstractEntityRevision {
   title: String!
 
   changes: String!
+
+  repository: AbstractEntity!
 }
 
 type AbstractEntityConnection {

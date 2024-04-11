@@ -62,4 +62,6 @@ interface AbstractRevision {
   author: User!
   date: DateTime!
   content: String!
+
+  repository: AbstractRepository!
 }
