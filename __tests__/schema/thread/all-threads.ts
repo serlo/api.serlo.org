@@ -21,28 +21,27 @@ function getThreadData(comment: Model<'Comment'>) {
   }
 }
 
-const commentNoChildren = { ...baseComment, childrenIds: [] }
 const comment = {
-  ...commentNoChildren,
+  ...baseComment,
   id: castToUuid(35163),
   date: '2015-02-21T13:13:24+01:00',
 }
 const comment1 = {
-  ...commentNoChildren,
+  ...baseComment,
   id: castToUuid(35090),
   date: '2015-02-19T16:47:16+01:00',
 }
 const comment2 = {
-  ...commentNoChildren,
+  ...baseComment,
   id: castToUuid(26976),
   date: '2014-08-05T07:36:24+02:00',
 }
 const comment3 = {
-  ...commentNoChildren,
+  ...baseComment,
   id: castToUuid(34793),
   date: '2015-02-16T17:29:30+01:00',
 }
-const comment4 = { ...commentNoChildren, id: castToUuid(34161) }
+const comment4 = { ...baseComment, id: castToUuid(34161) }
 
 describe('allThreads', () => {
   beforeEach(() => {
