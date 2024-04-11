@@ -390,8 +390,8 @@ export function createSerloModel({
         return DatabaseLayer.makeRequest('NotificationsQuery', payload)
       },
       enableSwr: true,
-      staleAfter: { minutes: 5 },
-      maxAge: { minutes: 30 },
+      staleAfter: { minutes: 1 },
+      maxAge: { minutes: 10 },
       getKey: ({ userId }) => {
         return `de.serlo.org/api/notifications/${userId}`
       },
@@ -617,7 +617,7 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
       return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
     },
-    async updateCache({ input }, newEntity) {
+    async updateCache({ userId, input }, newEntity) {
       if (newEntity) {
         const { parentId, taxonomyTermId } = input
         if (parentId) {
@@ -651,6 +651,22 @@ export function createSerloModel({
             return current
           },
         })
+
+        if (input.subscribeThis) {
+          await getSubscriptions._querySpec.setCache({
+            payload: { userId },
+            getValue(current) {
+              if (!current) return
+
+              const newEntry = {
+                objectId: castToUuid(newEntity.id),
+                sendEmail: input.subscribeThisByEmail,
+              }
+
+              return { subscriptions: [...current.subscriptions, newEntry] }
+            },
+          })
+        }
       }
     },
   })

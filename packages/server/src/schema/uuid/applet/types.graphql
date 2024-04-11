@@ -8,6 +8,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String
@@ -51,6 +52,7 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
     last: Int
     instance: Instance
     actorId: Int
+    actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String

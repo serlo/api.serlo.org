@@ -14,7 +14,7 @@ import {
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Notification, QueryEventsArgs } from '~/types'
+import { Instance, Notification, QueryEventsArgs } from '~/types'
 
 export const resolvers: TypeResolvers<Notification> &
   InterfaceResolvers<'AbstractNotificationEvent'> &
@@ -133,14 +133,23 @@ export async function resolveEvents({
 }) {
   const limit = 500
   const first = payload.first ?? limit
-  const { after, objectId, actorId, instance } = payload
+  const { after, objectId, actorId, actorUsername, instance } = payload
 
   if (first > limit) throw new UserInputError('first cannot be higher than 500')
 
   const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
     first: 2 * limit + 50,
     objectId: objectId ?? undefined,
-    actorId: actorId ?? undefined,
+    actorId:
+      actorId ??
+      (actorUsername
+        ? (
+            await dataSources.model.serlo.getAlias({
+              path: `/user/profile/${actorUsername}`,
+              instance: Instance.De,
+            })
+          )?.id
+        : undefined),
     instance: instance ?? undefined,
   })
 
