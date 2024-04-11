@@ -58,6 +58,13 @@ interface AbstractEntityRevision {
 
   repository: AbstractEntity!
   changes: String!
+
+  # optional fields that we should get rid of or generalize in the long term :)
+  metaTitle: String
+  metaDescription: String
+
+  url: String
+  cohesive: Boolean
 }
 
 type AbstractEntityConnection {

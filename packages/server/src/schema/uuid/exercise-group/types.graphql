@@ -63,11 +63,12 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
-  cohesive: Boolean!
   date: DateTime!
   repository: ExerciseGroup!
   content: String!
   changes: String!
+
+  cohesive: Boolean!
 }
 
 type ExerciseGroupRevisionConnection implements AbstractEntityRevisionConnection {
