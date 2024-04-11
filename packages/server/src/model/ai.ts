@@ -45,7 +45,7 @@ export async function executePrompt(args: {
     }
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-1106-preview',
+      model: 'gpt-4-turbo',
       messages,
       temperature: 0.4,
       user: String(userId),
