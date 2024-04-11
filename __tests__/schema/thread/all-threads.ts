@@ -41,7 +41,6 @@ const comment3 = {
   id: castToUuid(34793),
   date: '2015-02-16T17:29:30+01:00',
 }
-const comment4 = { ...baseComment, id: castToUuid(34161) }
 
 describe('allThreads', () => {
   beforeEach(() => {
