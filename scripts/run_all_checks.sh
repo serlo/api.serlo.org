@@ -10,8 +10,8 @@ function init() {
   print_header "Make sure packages are up to date"
   yarn install --immutable
 
-  print_header "Make sure redis is running"
-  yarn start:redis
+  print_header "Make sure the containers are running"
+  yarn start:containers
 
   print_header "Make sure generated types are up to date"
   yarn codegen

@@ -53,8 +53,8 @@ See in `package.json` for other scripts regarding cache.
 
 ### Run tests
 
-- `yarn test` runs the unit tests (requires `yarn start:redis` beforehand)
-- `yarn pacts` runs the contract tests (requires `yarn start:redis` beforehand)
+- `yarn test` runs the unit tests (requires `yarn start:containers` beforehand)
+- `yarn pacts` runs the contract tests (requires `yarn start:containers` beforehand)
 - `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into main
 
 ### Run specific test

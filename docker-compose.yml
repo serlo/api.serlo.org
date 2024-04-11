@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   redis:
     image: redis:6.0
@@ -11,3 +9,12 @@ services:
     pull_policy: always
     ports:
       - '3306:3306'
+  database-layer:
+    image: eu.gcr.io/serlo-shared/serlo-org-database-layer:latest
+    pull_policy: always
+    ports:
+      - '8080:8080'
+    environment:
+      - DATABASE_MAX_CONNECTIONS=5
+      - DATABASE_URL=mysql://root:secret@mysql:3306/serlo
+      - ENV=development
