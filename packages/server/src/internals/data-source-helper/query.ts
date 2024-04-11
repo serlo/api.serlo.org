@@ -1,4 +1,4 @@
-import { option as O, either as E } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
@@ -31,9 +31,8 @@ export function createQuery<P, R>(
 
     if (O.isSome(cacheValue)) {
       const cacheEntry = cacheValue.value
-      const decodedCacheValue = decoder.decode(cacheEntry.value)
 
-      if (E.isRight(decodedCacheValue)) {
+      if (decoder.is(cacheEntry.value)) {
         if (
           spec.swrFrequency === undefined ||
           Math.random() < spec.swrFrequency
@@ -41,18 +40,17 @@ export function createQuery<P, R>(
           await environment.swrQueue.queue({ key, cacheEntry: cacheValue })
         }
 
-        return decodedCacheValue.right as S
+        return cacheEntry.value as S
       }
     }
 
     // Cache empty or invalid value
     const value = await spec.getCurrentValue(payload, null)
-    const decoded = decoder.decode(value)
 
-    if (E.isRight(decoded)) {
+    if (decoder.is(value)) {
       await environment.cache.set({
         key,
-        value: decoded.right,
+        value,
         source: 'API: From a call to a data source',
         ttlInSeconds,
       })
