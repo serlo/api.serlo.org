@@ -336,6 +336,7 @@ export type AppletRevision = AbstractEntityRevision & AbstractRevision & Abstrac
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -437,6 +438,7 @@ export type ArticleRevision = AbstractEntityRevision & AbstractRevision & Abstra
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -447,6 +449,7 @@ export type ArticleRevision = AbstractEntityRevision & AbstractRevision & Abstra
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -661,14 +664,18 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & Abs
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaTitle?: Maybe<Scalars['String']['output']>;
   repository: CoursePage;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -704,15 +711,18 @@ export type CourseRevision = AbstractEntityRevision & AbstractRevision & Abstrac
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
   metaDescription: Scalars['String']['output'];
+  metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Course;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -1036,6 +1046,7 @@ export type EventRevision = AbstractEntityRevision & AbstractRevision & Abstract
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1046,6 +1057,7 @@ export type EventRevision = AbstractEntityRevision & AbstractRevision & Abstract
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -1209,10 +1221,13 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaTitle?: Maybe<Scalars['String']['output']>;
   repository: ExerciseGroup;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -1255,14 +1270,18 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & Abstr
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Exercise;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -2648,10 +2667,13 @@ export type VideoRevision = AbstractEntityRevision & AbstractRevision & Abstract
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
+  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Video;
   threads: ThreadsConnection;
   title: Scalars['String']['output'];
@@ -3344,6 +3366,7 @@ export type AppletRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AppletRevisionEventsArgs>>;
@@ -3386,6 +3409,7 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ArticleRevisionEventsArgs>>;
@@ -3396,6 +3420,7 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ArticleRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3484,14 +3509,18 @@ export type CoursePageRevisionResolvers<ContextType = Context, ParentType extend
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CoursePageRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['CoursePage'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CoursePageRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3506,15 +3535,18 @@ export type CourseRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CourseRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   metaDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CourseRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3697,6 +3729,7 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<EventRevisionEventsArgs>>;
@@ -3707,6 +3740,7 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<EventRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3773,10 +3807,13 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3798,14 +3835,18 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Exercise'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4451,10 +4492,13 @@ export type VideoRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<VideoRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Video'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<VideoRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

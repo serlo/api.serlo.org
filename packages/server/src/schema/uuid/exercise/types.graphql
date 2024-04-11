@@ -67,6 +67,12 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   repository: Exercise!
   content: String!
   changes: String!
+
+  metaTitle: String
+  metaDescription: String
+
+  url: String
+  cohesive: Boolean
 }
 
 type ExerciseRevisionConnection implements AbstractEntityRevisionConnection {

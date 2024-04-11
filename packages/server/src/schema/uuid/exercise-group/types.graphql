@@ -68,6 +68,10 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
   content: String!
   changes: String!
 
+  metaTitle: String
+  metaDescription: String
+
+  url: String
   cohesive: Boolean!
 }
 

@@ -69,7 +69,11 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   content: String!
   changes: String!
 
+  metaTitle: String
   metaDescription: String!
+
+  url: String
+  cohesive: Boolean
 }
 
 type CourseRevisionConnection implements AbstractEntityRevisionConnection {

@@ -67,8 +67,12 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   title: String!
   content: String!
   changes: String!
+
   metaTitle: String!
   metaDescription: String!
+
+  url: String
+  cohesive: Boolean
 }
 
 type ArticleRevisionConnection implements AbstractEntityRevisionConnection {
