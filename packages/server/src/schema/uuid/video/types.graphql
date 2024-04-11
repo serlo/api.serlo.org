@@ -68,7 +68,11 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   content: String!
   changes: String!
 
+  metaTitle: String
+  metaDescription: String
+
   url: String!
+  cohesive: Boolean
 }
 
 type VideoRevisionConnection implements AbstractEntityRevisionConnection {
