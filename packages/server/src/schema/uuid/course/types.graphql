@@ -68,6 +68,7 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   title: String!
   content: String!
   changes: String!
+
   metaDescription: String!
 }
 
