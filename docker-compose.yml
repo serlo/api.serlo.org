@@ -11,3 +11,8 @@ services:
     pull_policy: always
     ports:
       - '3306:3306'
+  database-layer:
+    image: eu.gcr.io/serlo-shared/serlo-org-database-layer:latest
+    pull_policy: always
+    ports:
+      - '8080:8080'
