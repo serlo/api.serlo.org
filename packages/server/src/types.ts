@@ -76,7 +76,6 @@ export type AbstractEntityRevision = {
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
-  repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -3207,7 +3206,6 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  repository?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
