@@ -12,12 +12,7 @@ import {
   Mutations,
   Queries,
 } from '~/internals/graphql'
-import {
-  castToUuid,
-  CourseDecoder,
-  EntityDecoder,
-  EntityType,
-} from '~/model/decoder'
+import { castToUuid, CourseDecoder, EntityDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDateString } from '~/utils'
@@ -82,53 +77,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
     },
   },
   EntityMutation: {
-    setApplet: createSetEntityResolver({
-      entityType: EntityType.Applet,
-      mandatoryFieldKeys: ['changes', 'content', 'title', 'url'],
-    }),
-    setArticle: createSetEntityResolver({
-      entityType: EntityType.Article,
-      mandatoryFieldKeys: ['changes', 'content', 'title'],
-    }),
-    setCourse: createSetEntityResolver({
-      entityType: EntityType.Course,
-      mandatoryFieldKeys: ['changes', 'title'],
-      transformedInput: (input) => {
-        return {
-          ...input,
-          description: input.content,
-          content: undefined,
-        }
-      },
-    }),
-    setCoursePage: createSetEntityResolver({
-      entityType: EntityType.CoursePage,
-      mandatoryFieldKeys: ['changes', 'content', 'title'],
-    }),
-    setEvent: createSetEntityResolver({
-      entityType: EntityType.Event,
-      mandatoryFieldKeys: ['changes', 'content', 'title'],
-    }),
-    setExercise: createSetEntityResolver({
-      entityType: EntityType.Exercise,
-      mandatoryFieldKeys: ['changes', 'content'],
-    }),
-    setExerciseGroup: createSetEntityResolver({
-      entityType: EntityType.ExerciseGroup,
-      mandatoryFieldKeys: ['changes', 'content'],
-    }),
-    setVideo: createSetEntityResolver({
-      entityType: EntityType.Video,
-      mandatoryFieldKeys: ['changes', 'title', 'url'],
-      transformedInput: (input) => {
-        return {
-          ...input,
-          description: input.content,
-          content: input.url,
-          url: undefined,
-        }
-      },
-    }),
+    setAbstractEntity: createSetEntityResolver(),
 
     async sort(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
