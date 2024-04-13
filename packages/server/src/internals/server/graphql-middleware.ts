@@ -66,6 +66,8 @@ export async function applyGraphQLMiddleware({
             userId: null,
             googleStorage,
             database,
+            cache,
+            swrQueue,
           })
         }
         const partialContext = await handleAuthentication(
@@ -89,7 +91,14 @@ export async function applyGraphQLMiddleware({
             }
           },
         )
-        return { ...partialContext, dataSources, googleStorage, database }
+        return {
+          ...partialContext,
+          dataSources,
+          googleStorage,
+          database,
+          cache,
+          swrQueue,
+        }
       },
     }),
   )
