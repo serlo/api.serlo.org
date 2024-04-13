@@ -5,7 +5,7 @@ import * as R from 'ramda'
 
 import { createAuthServices } from './authentication'
 import { Cache, CacheEntry, Priority } from './cache'
-import { isQuery, QuerySpec } from './data-source-helper'
+import { isLegacyQuery, LegacyQuerySpec } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
 import { log } from './log'
 import { Timer } from './timer'
@@ -257,12 +257,15 @@ async function shouldProcessJob({
   timer: Timer
   cacheEntry?: O.Option<CacheEntry<unknown>>
 }): Promise<
-  E.Either<string, { spec: QuerySpec<unknown, unknown>; payload: unknown }>
+  E.Either<
+    string,
+    { spec: LegacyQuerySpec<unknown, unknown>; payload: unknown }
+  >
 > {
-  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
+  function getSpec(key: string): LegacyQuerySpec<unknown, unknown> | null {
     for (const model of models) {
       for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
+        if (isLegacyQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
           return prop._querySpec
         }
       }

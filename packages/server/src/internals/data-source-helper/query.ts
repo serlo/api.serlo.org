@@ -11,10 +11,10 @@ import { Time, timeToSeconds } from '../swr-queue'
  * Helper function to create a query in a data source. A query operation is a
  * "read" operation whose result shall be cached by the API.
  */
-export function createQuery<P, R>(
-  spec: QuerySpec<P, R>,
+export function createLegacyQuery<P, R>(
+  spec: LegacyQuerySpec<P, R>,
   environment: Environment,
-): Query<P, R> {
+): LegacyQuery<P, R> {
   const ttlInSeconds = spec.maxAge ? timeToSeconds(spec.maxAge) : undefined
 
   async function queryWithDecoder<S extends R>(
@@ -74,7 +74,7 @@ export function createQuery<P, R>(
     return queryWithDecoder(payload, spec.decoder)
   }
 
-  const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
+  const querySpecWithHelpers: LegacyQuerySpecWithHelpers<P, R> = {
     ...spec,
     queryWithDecoder,
     async removeCache(args) {
@@ -101,13 +101,13 @@ export function createQuery<P, R>(
   query._querySpec = querySpecWithHelpers
   query.__typename = 'Query'
 
-  return query as unknown as Query<P, R>
+  return query as unknown as LegacyQuery<P, R>
 }
 
 /**
  * Specification object to create a query function.
  */
-export interface QuerySpec<Payload, Result> {
+export interface LegacyQuerySpec<Payload, Result> {
   /**
    * io-ts decoder to check whether the result of the operation or the cached
    * value has the right type.
@@ -166,8 +166,8 @@ export interface QuerySpec<Payload, Result> {
 /**
  * The specification object of a query extended by some helper functions.
  */
-interface QuerySpecWithHelpers<Payload, Result>
-  extends QuerySpec<Payload, Result> {
+interface LegacyQuerySpecWithHelpers<Payload, Result>
+  extends LegacyQuerySpec<Payload, Result> {
   /**
    * Function to update the cache of one or many values.
    */
@@ -193,18 +193,20 @@ interface QuerySpecWithHelpers<Payload, Result>
  * Type of a query operation in a data source. Note that the specification
  * object is extended by some helper functions.
  */
-export type Query<Payload, Result> = (Payload extends undefined
+export type LegacyQuery<Payload, Result> = (Payload extends undefined
   ? () => Promise<Result>
   : (payload: Payload) => Promise<Result>) & {
-  _querySpec: QuerySpecWithHelpers<Payload, Result>
+  _querySpec: LegacyQuerySpecWithHelpers<Payload, Result>
   __typename: 'Query'
 }
 
 /**
  * Type guard that a certain object is a query function created by
- * {@link createQuery}.
+ * {@link createLegacyQuery}.
  */
-export function isQuery(query: unknown): query is Query<unknown, unknown> {
+export function isLegacyQuery(
+  query: unknown,
+): query is LegacyQuery<unknown, unknown> {
   return R.has('__typename', query) && query.__typename === 'Query'
 }
 
