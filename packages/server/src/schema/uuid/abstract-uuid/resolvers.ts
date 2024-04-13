@@ -155,7 +155,7 @@ const BaseComment = t.type({
 
 async function resolveUuidFromDatabase(
   { id }: { id: number },
-  context: Context,
+  context: Pick<Context, 'database'>,
 ): Promise<Model<'AbstractUuid'> | null> {
   const baseUuid = await context.database.fetchOne(
     ` select

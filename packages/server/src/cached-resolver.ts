@@ -71,7 +71,10 @@ interface ResolverSpec<Payload, Result> {
   decoder: t.Type<Result, unknown>
   getKey: (payload: Payload) => string
   getPayload: (key: string) => O.Option<Payload>
-  getCurrentValue: (args: Payload, context: Context) => Promise<unknown>
+  getCurrentValue: (
+    args: Payload,
+    context: Pick<Context, 'database'>,
+  ) => Promise<unknown>
   enableSwr: boolean
   swrFrequency?: number
   staleAfter?: Time

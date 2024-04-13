@@ -14,7 +14,7 @@ import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
-import { uuidSchema } from './uuid'
+import { uuidCachedResolvers, uuidSchema } from './uuid'
 import { versionSchema } from './version'
 import { mergeSchemas } from '~/internals/graphql'
 
@@ -38,3 +38,5 @@ export const schema = mergeSchemas(
   uuidSchema,
   versionSchema,
 )
+
+export const cachedResolvers = [...uuidCachedResolvers]
