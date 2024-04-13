@@ -61,12 +61,8 @@ export function createCachedResolver<P, R>(
     async resolve(payload, context) {
       return this.resolveWithDecoder(spec.decoder, payload, context)
     },
-    async removeCache(args, { cache }) {
-      await Promise.all(
-        toPayloadArray(args).map((payload) =>
-          cache.remove({ key: spec.getKey(payload) }),
-        ),
-      )
+    async removeCache(payload, { cache }) {
+      await cache.remove({ key: spec.getKey(payload) })
     },
     spec,
   }
@@ -87,24 +83,15 @@ interface ResolverSpec<Payload, Result> {
 export interface CachedResolver<Payload, Result> {
   __typename: 'CachedResolver'
 
-  resolve(args: Payload, context: Context): Promise<Result>
+  resolve(payload: Payload, context: Context): Promise<Result>
 
   resolveWithDecoder<S extends Result>(
     customDecoder: t.Type<S, unknown>,
-    args: Payload,
+    payload: Payload,
     context: Context,
   ): Promise<S>
 
-  removeCache(
-    args: PayloadArrayOrPayload<Payload>,
-    context: Context,
-  ): Promise<void>
+  removeCache(payload: Payload, context: Context): Promise<void>
 
   spec: ResolverSpec<Payload, Result>
-}
-
-type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
-
-function toPayloadArray<P>(arg: PayloadArrayOrPayload<P>): P[] {
-  return R.has('payloads', arg) ? arg.payloads : [arg.payload]
 }
