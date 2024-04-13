@@ -65,7 +65,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 
       if (id === null || !Uuid.is(id)) return null
 
-      const uuid = await UuidResolver.resolve({ payload: { id }, context })
+      const uuid = await UuidResolver.resolve({ id }, context)
 
       if (uuid != null) return uuid
 
@@ -153,13 +153,10 @@ const BaseComment = t.type({
   childrenIds: t.array(t.union([Uuid, t.null])),
 })
 
-async function resolveUuidFromDatabase({
-  id,
-  context,
-}: {
-  id: number
-  context: Context
-}): Promise<Model<'AbstractUuid'> | null> {
+async function resolveUuidFromDatabase(
+  { id }: { id: number },
+  context: Context,
+): Promise<Model<'AbstractUuid'> | null> {
   const baseUuid = await context.database.fetchOne(
     ` select
         uuid.id as id,

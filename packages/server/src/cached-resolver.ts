@@ -14,7 +14,7 @@ export function createCachedResolver<P, R>(
 
   return {
     __typename: 'CachedResolver',
-    async resolveWithDecoder({ payload, customDecoder, context }) {
+    async resolveWithDecoder(customDecoder, payload, context) {
       const key = spec.getKey(payload)
       const cacheValue = await context.cache.get<R>({ key, maxAge })
 
@@ -34,7 +34,7 @@ export function createCachedResolver<P, R>(
       }
 
       // Cache empty or invalid value
-      const value = await spec.getCurrentValue({ ...payload, context })
+      const value = await spec.getCurrentValue(payload, context)
 
       if (customDecoder.is(value)) {
         await context.cache.set({
@@ -58,13 +58,13 @@ export function createCachedResolver<P, R>(
         })
       }
     },
-    async resolve(args) {
-      return this.resolveWithDecoder({ ...args, customDecoder: spec.decoder })
+    async resolve(payload, context) {
+      return this.resolveWithDecoder(spec.decoder, payload, context)
     },
-    async removeCache(args) {
+    async removeCache(args, { cache }) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          args.context.cache.remove({ key: spec.getKey(payload) }),
+          cache.remove({ key: spec.getKey(payload) }),
         ),
       )
     },
@@ -76,7 +76,7 @@ interface ResolverSpec<Payload, Result> {
   decoder: t.Type<Result, unknown>
   getKey: (payload: Payload) => string
   getPayload: (key: string) => O.Option<Payload>
-  getCurrentValue: (args: Payload & ContextArgument) => Promise<unknown>
+  getCurrentValue: (args: Payload, context: Context) => Promise<unknown>
   enableSwr: boolean
   swrFrequency?: number
   staleAfter?: Time
@@ -87,26 +87,23 @@ interface ResolverSpec<Payload, Result> {
 export interface CachedResolver<Payload, Result> {
   __typename: 'CachedResolver'
 
-  resolve(args: { payload: Payload } & ContextArgument): Promise<Result>
+  resolve(args: Payload, context: Context): Promise<Result>
 
   resolveWithDecoder<S extends Result>(
-    args: {
-      payload: Payload
-      customDecoder: t.Type<S, unknown>
-    } & ContextArgument,
+    customDecoder: t.Type<S, unknown>,
+    args: Payload,
+    context: Context,
   ): Promise<S>
 
   removeCache(
-    args: PayloadArrayOrPayload<Payload> & ContextArgument,
+    args: PayloadArrayOrPayload<Payload>,
+    context: Context,
   ): Promise<void>
 
   spec: ResolverSpec<Payload, Result>
 }
 
 type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }
-interface ContextArgument {
-  context: Context
-}
 
 function toPayloadArray<P>(arg: PayloadArrayOrPayload<P>): P[] {
   return R.has('payloads', arg) ? arg.payloads : [arg.payload]
