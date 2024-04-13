@@ -2807,27 +2807,6 @@
       }
     },
     {
-      "description": "Message ThreadEditCommentMutation with payload {\"content\":\"new content\",\"commentId\":35183,\"userId\":266} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "commentId": 35183,
-            "content": "new content",
-            "userId": 266
-          },
-          "type": "ThreadEditCommentMutation"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "status": 200
-      }
-    },
-    {
       "description": "Message ThreadSetThreadArchivedMutation with payload {\"ids\":[27144],\"userId\":1,\"archived\":true} (case 200-response)",
       "request": {
         "body": {
