@@ -2,9 +2,9 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { InvalidCurrentValueError } from './common'
-import { Context } from '../graphql'
-import { Time, timeToSeconds } from '../swr-queue'
+import { InvalidCurrentValueError } from './internals/data-source-helper/common'
+import { Context } from './internals/graphql'
+import { Time, timeToSeconds } from './internals/swr-queue'
 
 export function createCachedResolver<P, R>(
   spec: ResolverSpec<P, R>,
