@@ -6,4 +6,4 @@ export {
   isLegacyQuery,
   type LegacyQuery,
   LegacyQuerySpec,
-} from './query'
+} from './legacy-query'
