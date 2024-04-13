@@ -1,6 +1,5 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './internals/data-source-helper/common'
 import { Context } from './internals/graphql'
