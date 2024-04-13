@@ -190,7 +190,7 @@ export function createSwrQueueWorker({
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async (current) => {
-          const value = await spec.getCurrentValue(payload, current ?? null)
+          const value = await spec.getCurrentValue(payload)
           const decoder = spec.decoder || t.unknown
           const decodedValue = decoder.decode(value)
 

@@ -45,7 +45,7 @@ export function createQuery<P, R>(
     }
 
     // Cache empty or invalid value
-    const value = await spec.getCurrentValue(payload, null)
+    const value = await spec.getCurrentValue(payload)
 
     if (decoder.is(value)) {
       await environment.cache.set({
@@ -120,10 +120,7 @@ export interface QuerySpec<Payload, Result> {
    * is the cached value and can be used to update the cached value to the
    * current one.
    */
-  getCurrentValue: (
-    payload: Payload,
-    previousValue: Result | null,
-  ) => Promise<unknown>
+  getCurrentValue: (payload: Payload) => Promise<unknown>
 
   /**
    * Flag whether the SWR algorithm shall be used to update the cache in the
