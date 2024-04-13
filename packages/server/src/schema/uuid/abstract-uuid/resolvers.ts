@@ -1,7 +1,9 @@
 import * as auth from '@serlo/authorization'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import { date } from 'io-ts-types/lib/date'
 
+import { createCachedResolver } from '~/cached-resolver'
 import { resolveCustomId } from '~/config'
 import { UserInputError } from '~/errors'
 import {
@@ -16,6 +18,7 @@ import {
 } from '~/internals/graphql'
 import {
   Uuid,
+  UuidDecoder,
   DiscriminatorType,
   EntityTypeDecoder,
   EntityRevisionTypeDecoder,
@@ -27,6 +30,26 @@ import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { QueryUuidArgs } from '~/types'
 import { isDefined } from '~/utils'
 
+export const UuidResolver = createCachedResolver<
+  { id: number },
+  Model<'AbstractUuid'> | null
+>({
+  resolverNameForErrorMessage: 'UuidResolver',
+  decoder: t.union([t.null, UuidDecoder]),
+  enableSwr: true,
+  staleAfter: { days: 1 },
+  maxAge: { days: 7 },
+  getKey: ({ id }) => {
+    return `uuid/${id}`
+  },
+  getPayload: (key) => {
+    if (!key.startsWith('uuid/')) return O.none
+    const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
+    return O.some({ id })
+  },
+  getCurrentValue: resolveUuidFromDatabase,
+})
+
 export const resolvers: InterfaceResolvers<'AbstractUuid'> &
   Mutations<'uuid'> &
   LegacyQueries<'uuid'> = {
@@ -36,12 +59,13 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
     },
   },
   Query: {
-    async uuid(_parent, payload, { dataSources, database }) {
+    async uuid(_parent, payload, context) {
+      const { dataSources } = context
       const id = await resolveIdFromPayload(dataSources, payload)
 
       if (id === null || !Uuid.is(id)) return null
 
-      const uuid = await resolveUuid({ id, database })
+      const uuid = await UuidResolver.resolve({ payload: { id }, context })
 
       if (uuid != null) return uuid
 
@@ -129,14 +153,14 @@ const BaseComment = t.type({
   childrenIds: t.array(t.union([Uuid, t.null])),
 })
 
-async function resolveUuid({
+async function resolveUuidFromDatabase({
   id,
-  database,
+  context,
 }: {
   id: number
-  database: Context['database']
+  context: Context
 }): Promise<Model<'AbstractUuid'> | null> {
-  const baseUuid = await database.fetchOne(
+  const baseUuid = await context.database.fetchOne(
     ` select
         uuid.id as id,
         uuid.trashed,

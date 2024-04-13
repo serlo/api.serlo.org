@@ -5,13 +5,13 @@ import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
+import { Database } from '~/database'
 import { Service } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
 import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 import { getGraphQLOptions } from '~/internals/server'
-import { Database } from '~/database'
 
 export class Client {
   private apolloServer: ApolloServer<ClientContext>
@@ -54,6 +54,8 @@ export class Client {
           },
         } as unknown as Storage,
         database: new Database(await this.getTransaction()),
+        cache: environment.cache,
+        swrQueue: environment.swrQueue,
       } as Context,
     })
   }
