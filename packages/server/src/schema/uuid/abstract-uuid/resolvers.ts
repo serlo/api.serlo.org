@@ -1,7 +1,6 @@
 import * as auth from '@serlo/authorization'
 import * as t from 'io-ts'
 import { date } from 'io-ts-types/lib/date'
-import { RowDataPacket } from 'mysql2'
 
 import { resolveCustomId } from '~/config'
 import { UserInputError } from '~/errors'
