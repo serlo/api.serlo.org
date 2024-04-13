@@ -189,7 +189,7 @@ export function createSwrQueueWorker({
         ttlInSeconds: spec.maxAge ? timeToSeconds(spec.maxAge) : undefined,
         source: 'SWR worker',
         priority: Priority.Low,
-        getValue: async (current) => {
+        getValue: async () => {
           const value = await spec.getCurrentValue(payload)
           const decoder = spec.decoder || t.unknown
           const decodedValue = decoder.decode(value)
