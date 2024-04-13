@@ -2,11 +2,14 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import { URL } from 'url'
 
-import { createMutation, createQuery } from '~/internals/data-source-helper'
+import {
+  createMutation,
+  createLegacyQuery,
+} from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 
 export function createChatModel({ environment }: { environment: Environment }) {
-  const getUsersInfo = createQuery(
+  const getUsersInfo = createLegacyQuery(
     {
       type: 'community.serlo.org/get-users-info',
       decoder: t.strict({ success: t.boolean }),

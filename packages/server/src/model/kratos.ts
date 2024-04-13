@@ -4,7 +4,7 @@ import { DateFromISOString } from 'io-ts-types'
 
 import { InstanceDecoder } from './decoder'
 import { IdentityDecoder } from '~/internals/authentication'
-import { createQuery } from '~/internals/data-source-helper'
+import { createLegacyQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 
 export function createKratosModel({
@@ -12,7 +12,7 @@ export function createKratosModel({
 }: {
   environment: Environment
 }) {
-  const getUserLanguage = createQuery(
+  const getUserLanguage = createLegacyQuery(
     {
       type: 'kratos.serlo.org/get-user-language',
       decoder: t.union([InstanceDecoder, t.null]),
@@ -48,7 +48,7 @@ export function createKratosModel({
     environment,
   )
 
-  const getLastLogin = createQuery(
+  const getLastLogin = createLegacyQuery(
     {
       type: 'kratos.serlo.org/get-last-login',
       decoder: t.union([t.string, t.null]),
