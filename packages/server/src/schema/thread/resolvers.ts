@@ -29,6 +29,7 @@ import {
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
+import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Comment, CommentStatus, Thread } from '~/types'
 
@@ -257,7 +258,9 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         query: {},
       }
     },
-    async editComment(_parent, { input }, { dataSources, userId, database }) {
+    async editComment(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
+
       assertUserIsAuthenticated(userId)
 
       const { commentId, content } = input
@@ -276,6 +279,8 @@ export const resolvers: InterfaceResolvers<'ThreadAware'> &
         content,
         commentId,
       ])
+
+      await UuidResolver.removeCache({ id: commentId }, context)
 
       return { success: true, query: {} }
     },

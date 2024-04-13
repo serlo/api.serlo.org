@@ -38,7 +38,17 @@ beforeEach(() => {
   given('UuidQuery').for(user, comment, article)
 })
 
-test('changes content of a comment', async () => {
+test('changes content of a comment (when comment is not cached)', async () => {
+  await mutation.shouldReturnData({
+    thread: { editComment: { success: true } },
+  })
+
+  await queryComment.shouldReturnData({ uuid: { content: newContent } })
+})
+
+test('changes content of a comment (when comment is cached)', async () => {
+  await queryComment.execute()
+
   await mutation.shouldReturnData({
     thread: { editComment: { success: true } },
   })
