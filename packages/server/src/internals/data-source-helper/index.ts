@@ -5,5 +5,5 @@ export {
   createLegacyQuery,
   isLegacyQuery,
   type LegacyQuery,
-  LegacyQuerySpec,
+  type LegacyQuerySpec,
 } from './legacy-query'
