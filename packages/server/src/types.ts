@@ -1546,7 +1546,6 @@ export type PageMutation = {
   addRevision: AddRevisionResponse;
   checkoutRevision: CheckoutRevisionResponse;
   create: PageCreateResponse;
-  rejectRevision: RejectRevisionResponse;
 };
 
 
@@ -1562,11 +1561,6 @@ export type PageMutationCheckoutRevisionArgs = {
 
 export type PageMutationCreateArgs = {
   input: CreatePageInput;
-};
-
-
-export type PageMutationRejectRevisionArgs = {
-  input: RejectRevisionInput;
 };
 
 export type PageQuery = {
@@ -3953,7 +3947,6 @@ export type PageMutationResolvers<ContextType = Context, ParentType extends Reso
   addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
   create?: Resolver<ResolversTypes['PageCreateResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
-  rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationRejectRevisionArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
