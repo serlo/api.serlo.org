@@ -3,7 +3,6 @@ import * as R from 'ramda'
 
 import { course, coursePage, courseRevision } from '../../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../../__utils__'
-import { castToUuid } from '~/model/decoder'
 
 describe('Course', () => {
   beforeEach(() => {
@@ -60,10 +59,10 @@ describe('Course', () => {
 
   describe('filter "trashed"', () => {
     const pages = [
-      { ...coursePage, id: castToUuid(1), trashed: true },
-      { ...coursePage, id: castToUuid(2), trashed: false },
+      { ...coursePage, id: 1, trashed: true },
+      { ...coursePage, id: 2, trashed: false },
     ]
-    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
+    const courseWithTwoPages = { ...course, pageIds: [1, 2] }
 
     beforeEach(() => {
       given('UuidQuery').for(pages, courseWithTwoPages)
@@ -129,10 +128,10 @@ describe('Course', () => {
 
   describe('filter "hasCurrentRevision"', () => {
     const pages = [
-      { ...coursePage, id: castToUuid(1) },
-      { ...coursePage, id: castToUuid(2), currentRevisionId: null },
+      { ...coursePage, id: 1 },
+      { ...coursePage, id: 2, currentRevisionId: null },
     ]
-    const courseWithTwoPages = { ...course, pageIds: [1, 2].map(castToUuid) }
+    const courseWithTwoPages = { ...course, pageIds: [1, 2] }
 
     beforeEach(() => {
       given('UuidQuery').for(pages, courseWithTwoPages)

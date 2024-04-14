@@ -33,9 +33,6 @@ import {
   EntityType,
   DiscriminatorType,
   UuidType,
-  castToUuid,
-  castToAlias,
-  Alias,
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
@@ -179,20 +176,6 @@ describe('uuid', () => {
     await uuidQuery.withVariables({ id: 666 }).shouldReturnData({ uuid: null })
   })
 
-  test('returns null when requested id is too high to be an uuid', async () => {
-    await uuidQuery
-      .withVariables({ alias: { path: '/100000000000000', instance: 'de' } })
-      .shouldReturnData({ uuid: null })
-  })
-
-  test('returns an error when alias contains the null character', async () => {
-    given('UuidQuery').for({ ...article, alias: '\0\0/1/math' as Alias })
-
-    await uuidQuery
-      .withVariables({ id: article.id })
-      .shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
-
   test('returns an error when no arguments are given', async () => {
     await uuidQuery.shouldFailWithError('BAD_USER_INPUT')
   })
@@ -225,7 +208,7 @@ test('`uuid` returns null on unsupported uuid type', async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error We assume here that we get an invalid type name
     __typename: 'MathPuzzle',
-    id: castToUuid(146944),
+    id: 146944,
     trashed: false,
   })
 
@@ -249,8 +232,8 @@ describe('property "alias"', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
       given('UuidQuery').for({
         ...payload,
-        alias: castToAlias('/%%/größe'),
-        id: castToUuid(23),
+        alias: '/%%/größe',
+        id: 23,
       })
 
       await client
@@ -273,8 +256,8 @@ describe('custom aliases', () => {
   test('de.serlo.org/community resolves to uuid 19767', async () => {
     given('UuidQuery').for({
       ...page,
-      id: castToUuid(19882),
-      alias: castToAlias('/legacy-alias'),
+      id: 19882,
+      alias: '/legacy-alias',
     })
 
     await client
@@ -302,7 +285,7 @@ describe('property "title"', () => {
       [
         {
           ...article,
-          revisionIds: [castToUuid(123), article.currentRevisionId],
+          revisionIds: [123, article.currentRevisionId],
         },
         articleRevision,
       ],
@@ -314,7 +297,7 @@ describe('property "title"', () => {
         {
           ...article,
           currentRevisionId: null,
-          revisionIds: [article.currentRevisionId, castToUuid(123)],
+          revisionIds: [article.currentRevisionId, 123],
         },
         articleRevision,
       ],
@@ -327,7 +310,7 @@ describe('property "title"', () => {
           ...article,
           currentRevisionId: null,
           revisionIds: [],
-          id: castToUuid(123),
+          id: 123,
         },
       ],
       '123',

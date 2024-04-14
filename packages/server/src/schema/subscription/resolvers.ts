@@ -8,7 +8,7 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
-import { castToUuid, UuidDecoder } from '~/model/decoder'
+import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { SubscriptionInfo } from '~/types'
@@ -56,8 +56,8 @@ export const resolvers: TypeResolvers<SubscriptionInfo> &
   },
   SubscriptionMutation: {
     async set(_parent, payload, { dataSources, userId }) {
-      const { id, subscribe, sendEmail } = payload.input
-      const ids = id.map(castToUuid)
+      const { subscribe, sendEmail } = payload.input
+      const ids = payload.input.id
 
       const scopes = await Promise.all(
         ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
