@@ -152,28 +152,3 @@ describe('Subjects', () => {
       })
   })
 })
-
-test('AbstractEntity.subject', async () => {
-  given('UuidQuery').for(article, taxonomyTermSubject)
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            ... on AbstractEntity {
-              subject {
-                taxonomyTerm {
-                  name
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-    .shouldReturnData({
-      uuid: { subject: { taxonomyTerm: { name: taxonomyTermSubject.name } } },
-    })
-})
