@@ -5,36 +5,34 @@ import { Client, given, getTypenameAndId, nextUuid } from '../__utils__'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
-describe('SubjectsQuery', () => {
-  test('endpoint "subjects" returns list of all subjects for an instance', async () => {
-    given('UuidQuery').for(taxonomyTermSubject)
-    given('SubjectsQuery').for(taxonomyTermSubject, {
-      ...taxonomyTermSubject,
-      instance: Instance.En,
-      id: nextUuid(taxonomyTermSubject.id),
-    })
+test('endpoint "subjects" returns list of all subjects for an instance', async () => {
+  given('UuidQuery').for(taxonomyTermSubject)
+  given('SubjectsQuery').for(taxonomyTermSubject, {
+    ...taxonomyTermSubject,
+    instance: Instance.En,
+    id: nextUuid(taxonomyTermSubject.id),
+  })
 
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query ($instance: Instance!) {
-            subject {
-              subjects(instance: $instance) {
-                taxonomyTerm {
-                  name
-                }
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($instance: Instance!) {
+          subject {
+            subjects(instance: $instance) {
+              taxonomyTerm {
+                name
               }
             }
           }
-        `,
-      })
-      .withVariables({ instance: taxonomyTermSubject.instance })
-      .shouldReturnData({
-        subject: {
-          subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
-        },
-      })
-  })
+        }
+      `,
+    })
+    .withVariables({ instance: taxonomyTermSubject.instance })
+    .shouldReturnData({
+      subject: {
+        subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
+      },
+    })
 })
 
 describe('Subjects', () => {
