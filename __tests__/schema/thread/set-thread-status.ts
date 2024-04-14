@@ -7,11 +7,11 @@ import {
   user,
   user2 as commentator,
 } from '../../../__fixtures__'
-import { given, Client, castToUuid } from '../../__utils__'
+import { given, Client } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-const moderator = { ...user, id: castToUuid(1234), roles: ['de_moderator'] }
-const threadInitiator = { ...user, id: castToUuid(4321), roles: ['login'] }
+const moderator = { ...user, id: 1234, roles: ['de_moderator'] }
+const threadInitiator = { ...user, id: 4321, roles: ['login'] }
 const thread = { ...comment1, authorId: threadInitiator.id }
 const subComment = { ...comment2, authorId: commentator.id }
 

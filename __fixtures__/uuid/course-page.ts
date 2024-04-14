@@ -3,9 +3,7 @@ import { user } from './user'
 import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
-  castToAlias,
   castToNonEmptyString,
-  castToUuid,
   EntityRevisionType,
   EntityType,
 } from '~/model/decoder'
@@ -13,23 +11,23 @@ import { Instance } from '~/types'
 
 export const coursePage: Model<'CoursePage'> = {
   __typename: EntityType.CoursePage,
-  id: castToUuid(18521),
+  id: 18521,
   trashed: false,
   instance: Instance.De,
-  alias: castToAlias('/mathe/18521/startseite'),
+  alias: '/mathe/18521/startseite',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: castToUuid(19277),
-  revisionIds: [19277].map(castToUuid),
+  currentRevisionId: 19277,
+  revisionIds: [19277],
   licenseId,
   parentId: course.id,
-  canonicalSubjectId: castToUuid(5),
+  canonicalSubjectId: 5,
 }
 
 export const coursePageRevision: Model<'CoursePageRevision'> = {
   __typename: EntityRevisionType.CoursePageRevision,
-  id: castToUuid(19277),
+  id: 19277,
   trashed: false,
-  alias: castToAlias('/mathe/19277/startseite'),
+  alias: '/mathe/19277/startseite',
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: coursePage.id,

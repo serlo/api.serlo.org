@@ -1,13 +1,7 @@
 import gql from 'graphql-tag'
 
 import { article, user } from '../../__fixtures__'
-import {
-  castToUuid,
-  Client,
-  getTypenameAndId,
-  given,
-  nextUuid,
-} from '../__utils__'
+import { Client, getTypenameAndId, given, nextUuid } from '../__utils__'
 
 describe('subscriptions', () => {
   beforeEach(() => {
@@ -112,15 +106,15 @@ describe('subscription mutation set', () => {
     given('UuidQuery').for(
       user,
       article,
-      { ...article, id: castToUuid(1555) },
-      { ...article, id: castToUuid(1565) },
+      { ...article, id: 1555 },
+      { ...article, id: 1565 },
     )
     given('SubscriptionsQuery')
       .withPayload({ userId: user.id })
       .returns({
         subscriptions: [
           { objectId: article.id, sendEmail: false },
-          { objectId: castToUuid(1555), sendEmail: false },
+          { objectId: 1555, sendEmail: false },
         ],
       })
 
@@ -139,7 +133,7 @@ describe('subscription mutation set', () => {
   test('when subscribe=true', async () => {
     given('SubscriptionSetMutation')
       .withPayload({
-        ids: [castToUuid(1565), castToUuid(1555)],
+        ids: [1565, 1555],
         userId: user.id,
         subscribe: true,
         sendEmail: true,
