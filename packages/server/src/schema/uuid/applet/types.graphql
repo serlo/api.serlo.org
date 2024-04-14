@@ -37,7 +37,6 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
