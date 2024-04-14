@@ -35,68 +35,60 @@ test('endpoint "subjects" returns list of all subjects for an instance', async (
     })
 })
 
-describe('Subjects', () => {
-  test('property "id" returns encoded id of subject', async () => {
-    given('UuidQuery').for(taxonomyTermSubject)
-    given('SubjectsQuery').for(taxonomyTermSubject)
+test('`Subject.id` returns encoded id of subject', async () => {
+  given('UuidQuery').for(taxonomyTermSubject)
+  given('SubjectsQuery').for(taxonomyTermSubject)
 
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query ($id: String!) {
-            subject {
-              subject(id: $id) {
-                id
-              }
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($instance: Instance!) {
+          subject {
+            subjects(instance: $instance) {
+              id
             }
           }
-        `,
-      })
-      .withVariables({
-        id: encodeSubjectId(taxonomyTermSubject.id),
-      })
-      .shouldReturnData({
-        subject: {
-          subject: {
-            id: encodeSubjectId(taxonomyTermSubject.id),
-          },
-        },
-      })
-  })
+        }
+      `,
+    })
+    .withVariables({ instance: taxonomyTermSubject.instance })
+    .shouldReturnData({
+      subject: {
+        subjects: [{ id: encodeSubjectId(taxonomyTermSubject.id) }],
+      },
+    })
+})
 
-  test('property "unrevisedEntities" returns list of unrevisedEntities', async () => {
-    given('UuidQuery').for(article)
-    given('SubjectsQuery').for(taxonomyTermSubject)
-    given('UnrevisedEntitiesQuery').for(article)
+test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () => {
+  given('UuidQuery').for(taxonomyTermSubject, article)
+  given('SubjectsQuery').for(taxonomyTermSubject)
+  given('UnrevisedEntitiesQuery').for(article)
 
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query ($id: String!) {
-            subject {
-              subject(id: $id) {
-                unrevisedEntities {
-                  nodes {
-                    __typename
-                    id
-                  }
+  await new Client()
+    .prepareQuery({
+      query: gql`
+        query ($instance: Instance!) {
+          subject {
+            subjects(instance: $instance) {
+              unrevisedEntities {
+                nodes {
+                  __typename
+                  id
                 }
               }
             }
           }
-        `,
-      })
-      .withVariables({
-        id: encodeSubjectId(taxonomyTermSubject.id),
-      })
-      .shouldReturnData({
-        subject: {
-          subject: {
-            unrevisedEntities: { nodes: [getTypenameAndId(article)] },
-          },
-        },
-      })
-  })
+        }
+      `,
+    })
+    .withVariables({ instance: taxonomyTermSubject.instance })
+    .shouldReturnData({
+      subject: {
+        subjects: [
+          { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
+        ],
+      },
+    })
 })
 
 test('AbstractEntity.subject', async () => {
