@@ -36,57 +36,6 @@ describe('SubjectsQuery', () => {
         },
       })
   })
-
-  describe('endpoint "subject"', () => {
-    const query = new Client().prepareQuery({
-      query: gql`
-        query ($id: String!) {
-          subject {
-            subject(id: $id) {
-              taxonomyTerm {
-                name
-              }
-            }
-          }
-        }
-      `,
-    })
-
-    test('returns one subject', async () => {
-      given('UuidQuery').for(taxonomyTermSubject)
-      given('SubjectsQuery').for(taxonomyTermSubject)
-
-      await query
-        .withVariables({
-          id: encodeSubjectId(taxonomyTermSubject.id),
-        })
-        .shouldReturnData({
-          subject: {
-            subject: { taxonomyTerm: { name: taxonomyTermSubject.name } },
-          },
-        })
-    })
-
-    test('returns null when id does not resolve to an subject', async () => {
-      given('SubjectsQuery').for(taxonomyTermSubject)
-
-      await query
-        .withVariables({
-          id: encodeSubjectId(nextUuid(taxonomyTermSubject.id)),
-        })
-        .shouldReturnData({ subject: { subject: null } })
-    })
-
-    describe('fails when id is invalid', () => {
-      test.each([
-        '1',
-        encodeToBase64('sXYZ'),
-        encodeId({ prefix: 'd', id: taxonomyTermSubject.id }),
-      ])('id: %s', async (id) => {
-        await query.withVariables({ id }).shouldFailWithError('BAD_USER_INPUT')
-      })
-    })
-  })
 })
 
 describe('Subjects', () => {
