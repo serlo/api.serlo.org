@@ -385,20 +385,6 @@ const pactSpec: PactSpec = {
       ],
     ],
   },
-  PageRejectRevisionMutation: {
-    examples: [
-      [
-        {
-          revisionId: pageRevision2.id,
-          userId: user.id,
-          reason: '',
-        },
-        {
-          success: true,
-        },
-      ],
-    ],
-  },
   PageCreateMutation: {
     examples: [
       [

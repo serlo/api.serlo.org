@@ -105,24 +105,6 @@ export const resolvers: TypeResolvers<Page> &
         query: {},
       }
     },
-    async rejectRevision(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const scope = await fetchScopeOfUuid({
-        id: input.revisionId,
-        dataSources,
-      })
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message: 'You are not allowed to reject the provided revision.',
-        guard: serloAuth.Page.rejectRevision(scope),
-      })
-
-      await dataSources.model.serlo.rejectPageRevision({ ...input, userId })
-
-      return { success: true, query: {} }
-    },
   },
   PageQuery: {
     async pages(_parent, payload, { dataSources }) {

@@ -875,24 +875,6 @@ export function createSerloModel({
     },
   })
 
-  const rejectPageRevision = createMutation({
-    type: 'PageRejectRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('PageRejectRevisionMutation'),
-    mutate(payload: DatabaseLayer.Payload<'PageRejectRevisionMutation'>) {
-      return DatabaseLayer.makeRequest('PageRejectRevisionMutation', payload)
-    },
-    async updateCache({ revisionId }) {
-      await getUuid._querySpec.setCache({
-        payload: { id: revisionId },
-        getValue(current) {
-          if (!PageRevisionDecoder.is(current)) return
-
-          return { ...current, trashed: true }
-        },
-      })
-    },
-  })
-
   const getDeletedEntities = createRequest({
     type: 'DeletedEntitiesQuery',
     decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
@@ -1160,7 +1142,6 @@ export function createSerloModel({
     linkEntitiesToTaxonomy,
     getPages,
     rejectEntityRevision,
-    rejectPageRevision,
     removeRole,
     setDescription,
     setEmail,
