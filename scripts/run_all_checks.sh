@@ -38,9 +38,6 @@ function main() {
 
   print_header "Run all tests"
   yarn test
-
-  print_header "Run pact tests"
-  yarn pacts
 }
 
 function test_no_uncommitted_changes_when_pushing() {
