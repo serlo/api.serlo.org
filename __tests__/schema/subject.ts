@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 
 import { article, taxonomyTermSubject } from '../../__fixtures__'
 import { Client, given, getTypenameAndId, nextUuid } from '../__utils__'
-import { encodeId, encodeToBase64 } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
