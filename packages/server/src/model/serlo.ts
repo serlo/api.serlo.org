@@ -5,7 +5,6 @@ import { executePrompt } from './ai'
 import * as Database from './database'
 import * as DatabaseLayer from './database-layer'
 import {
-  castToUuid,
   CommentDecoder,
   DiscriminatorType,
   EntityDecoder,
@@ -685,7 +684,7 @@ export function createSerloModel({
               if (!current) return
 
               const newEntry = {
-                objectId: castToUuid(newEntity.id),
+                objectId: newEntity.id,
                 sendEmail: input.subscribeThisByEmail,
               }
 
@@ -743,7 +742,7 @@ export function createSerloModel({
               )
 
               const newEntry = {
-                objectId: castToUuid(input.entityId),
+                objectId: input.entityId,
                 sendEmail: input.subscribeThisByEmail,
               }
 
@@ -1000,7 +999,7 @@ export function createSerloModel({
           getValue(current) {
             if (!current) return
 
-            return { ...current, childrenIds: childrenIds.map(castToUuid) }
+            return { ...current, childrenIds }
           },
         })
       }

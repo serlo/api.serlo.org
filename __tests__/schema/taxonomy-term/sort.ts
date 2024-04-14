@@ -6,17 +6,17 @@ import {
   taxonomyTermSubject,
   user as baseUser,
 } from '../../../__fixtures__'
-import { castToUuid, Client, given } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { UserInputError } from '~/errors'
 
 const user = { ...baseUser, roles: ['de_architect'] }
 
 const taxonomyTerm = {
   ...taxonomyTermSubject,
-  childrenIds: [23453, 1454, 1394].map(castToUuid),
+  childrenIds: [23453, 1454, 1394],
 }
 const input = {
-  childrenIds: [1394, 23453, 1454].map(castToUuid),
+  childrenIds: [1394, 23453, 1454],
   taxonomyTermId: taxonomyTerm.id,
 }
 
@@ -49,10 +49,7 @@ beforeEach(() => {
       )
     }
 
-    given('UuidQuery').for({
-      ...taxonomyTerm,
-      childrenIds: childrenIds.map(castToUuid),
-    })
+    given('UuidQuery').for({ ...taxonomyTerm, childrenIds })
 
     return HttpResponse.json({ success: true })
   })
@@ -66,7 +63,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
 
 test('is successful even though user have not sent all children ids', async () => {
   await mutation
-    .withInput({ ...input, childrenIds: [1394, 23453].map(castToUuid) })
+    .withInput({ ...input, childrenIds: [1394, 23453] })
     .shouldReturnData({
       taxonomyTerm: { sort: { success: true } },
     })
@@ -94,9 +91,9 @@ test('fails when database layer has an internal error', async () => {
 
 test('updates the cache', async () => {
   given('UuidQuery').for(
-    { ...article, id: castToUuid(1394) },
-    { ...taxonomyTermSubject, id: castToUuid(23453) },
-    { ...article, id: castToUuid(1454) },
+    { ...article, id: 1394 },
+    { ...taxonomyTermSubject, id: 23453 },
+    { ...article, id: 1454 },
   )
 
   const query = new Client({ userId: user.id })
