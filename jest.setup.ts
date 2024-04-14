@@ -1,4 +1,4 @@
-import { flush as flushSentry } from '@sentry/node'
+import { flush as flushSentry, type Event } from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
@@ -7,35 +7,17 @@ import {
   defaultSpreadsheetApi,
   givenSpreadheetApi,
   MockKratos,
-} from '../__tests__/__utils__'
-import { createCache, createNamespacedCache } from '~/internals/cache'
+} from './__tests__/__utils__'
+import {
+  type Cache,
+  createCache,
+  createNamespacedCache,
+} from '~/internals/cache'
 import { initializeSentry, Sentry } from '~/internals/sentry'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'
 
-export class MockTimer implements Timer {
-  private currentTime = 0
-
-  public now() {
-    return this.currentTime
-  }
-
-  public flush() {
-    this.currentTime = Date.now()
-  }
-
-  // We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async waitFor(time: Time) {
-    this.currentTime += timeToMilliseconds(time)
-  }
-
-  public setCurrentTime(time: number) {
-    this.currentTime = time
-  }
-}
-
-export function createBeforeAll() {
+beforeAll(() => {
   initializeSentry({
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
@@ -62,9 +44,11 @@ export function createBeforeAll() {
       return 'error'
     },
   })
-}
 
-export async function createBeforeEach() {
+  process.env.OPENAI_API_KEY = 'fake-test-key-we-are-mocking-responses'
+})
+
+beforeEach(async () => {
   const baseCache = createCache({ timer: global.timer })
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
 
@@ -87,19 +71,41 @@ export async function createBeforeEach() {
   global.kratos.identities = []
 
   process.env.ENVIRONMENT = 'local'
-}
+})
 
-export async function createAfterEach() {
+afterEach(async () => {
   await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()
   // redis.quit() creates a thread to close the connection.
   // We wait until all threads have been run once to ensure the connection closes.
   await new Promise((resolve) => setImmediate(resolve))
-}
+})
 
-export function createAfterAll() {
+afterAll(() => {
   global.server.close()
+})
+
+class MockTimer implements Timer {
+  private currentTime = 0
+
+  public now() {
+    return this.currentTime
+  }
+
+  public flush() {
+    this.currentTime = Date.now()
+  }
+
+  // We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async waitFor(time: Time) {
+    this.currentTime += timeToMilliseconds(time)
+  }
+
+  public setCurrentTime(time: number) {
+    this.currentTime = time
+  }
 }
 
 function generateRandomString(length: number) {
@@ -107,4 +113,13 @@ function generateRandomString(length: number) {
     .randomBytes(Math.ceil(length / 2))
     .toString('hex')
     .slice(0, length)
+}
+
+declare global {
+  /* eslint-disable no-var */
+  var cache: Cache
+  var server: ReturnType<typeof import('msw/node').setupServer>
+  var timer: MockTimer
+  var sentryEvents: Event[]
+  var kratos: MockKratos
 }
