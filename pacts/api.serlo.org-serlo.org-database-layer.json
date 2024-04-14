@@ -2163,38 +2163,6 @@
       }
     },
     {
-      "description": "Message PageRejectRevisionMutation with payload {\"revisionId\":33220,\"userId\":1,\"reason\":\"\"} (case 200-response)",
-      "request": {
-        "body": {
-          "payload": {
-            "reason": "",
-            "revisionId": 33220,
-            "userId": 1
-          },
-          "type": "PageRejectRevisionMutation"
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "path": "/"
-      },
-      "response": {
-        "body": {
-          "success": true
-        },
-        "headers": {
-          "Content-Type": "application/json; charset=utf-8"
-        },
-        "matchingRules": {
-          "$.body.success": {
-            "match": "type"
-          }
-        },
-        "status": 200
-      }
-    },
-    {
       "description": "Message PagesQuery with payload {\"instance\":\"en\"} (case 200-response)",
       "request": {
         "body": {
