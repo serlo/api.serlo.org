@@ -15450,14 +15450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-protocol@npm:*":
-  version: 1.6.0
-  resolution: "pg-protocol@npm:1.6.0"
-  checksum: e12662d2de2011e0c3a03f6a09f435beb1025acdc860f181f18a600a5495dc38a69d753bbde1ace279c8c442536af9c1a7c11e1d0fe3fad3aa1348b28d9d2683
-  languageName: node
-  linkType: hard
-
-"pg-protocol@npm:^1.6.1":
+"pg-protocol@npm:*, pg-protocol@npm:^1.6.1":
   version: 1.6.1
   resolution: "pg-protocol@npm:1.6.1"
   checksum: cce3f72cc4bdc04db9ce3fa38b2c45b745f0a95a925847b349087f52c02c4d51b7c74d8867e40639699d0c7609accfaffb6b1d221b3268d2bdc4bb8d6a2995a3
