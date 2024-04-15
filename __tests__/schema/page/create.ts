@@ -4,7 +4,11 @@ import { HttpResponse } from 'msw'
 import { user as baseUser } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { EntityType, EntityRevisionType } from '~/model/decoder'
+import {
+  EntityType,
+  EntityRevisionType,
+  castToNonEmptyString,
+} from '~/model/decoder'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
@@ -57,6 +61,7 @@ describe('PageCreateMutation', () => {
         date: new Date().toISOString(),
         currentRevisionId: newPageRevisionId,
         revisionIds: [newPageRevisionId],
+        canonicalSubjectId: 123, // TODO:
         licenseId,
       }
 
@@ -66,7 +71,7 @@ describe('PageCreateMutation', () => {
         trashed: false,
         alias: `/${newPageRevisionId}/${title}`,
         title,
-        content,
+        content: castToNonEmptyString(content),
         date: new Date().toISOString(),
         authorId: userId,
         repositoryId: newPage.id,

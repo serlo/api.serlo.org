@@ -40,6 +40,7 @@ describe('PageAddRevisionMutation', () => {
         ...pageRevision,
         ...R.pick(['title', 'content'], body.payload),
         id: newRevisionId,
+        content: pageRevision.content ?? '',
       }
       given('UuidQuery').for(newRevision)
       given('UuidQuery').for({

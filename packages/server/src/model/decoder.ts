@@ -95,6 +95,7 @@ export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Event),
   t.literal(EntityType.Exercise),
   t.literal(EntityType.ExerciseGroup),
+  t.literal(EntityType.Page),
   t.literal(EntityType.Video),
 ])
 
@@ -134,34 +135,6 @@ export const AbstractEntityRevisionDecoder = t.intersection([
     changes: t.string,
   }),
 ])
-
-export const PageDecoder = t.exact(
-  t.intersection([
-    AbstractUuidDecoder,
-    t.type({
-      __typename: t.literal(EntityType.Page),
-      instance: InstanceDecoder,
-      currentRevisionId: t.union([t.number, t.null]),
-      revisionIds: t.array(t.number),
-      date: t.string,
-      licenseId: t.number,
-    }),
-  ]),
-)
-
-export const PageRevisionDecoder = t.exact(
-  t.intersection([
-    AbstractUuidDecoder,
-    t.type({
-      __typename: t.literal(EntityRevisionType.PageRevision),
-      title: t.string,
-      content: t.string,
-      date: t.string,
-      authorId: t.number,
-      repositoryId: t.number,
-    }),
-  ]),
-)
 
 export const TaxonomyTermTypeDecoder = t.union([
   t.literal('blog'),
@@ -367,6 +340,25 @@ export const EventRevisionDecoder = t.exact(
   ]),
 )
 
+export const PageDecoder = t.exact(
+  t.intersection([
+    AbstractEntityDecoder,
+    t.type({
+      __typename: t.literal(EntityType.Page),
+    }),
+  ]),
+)
+
+export const PageRevisionDecoder = t.exact(
+  t.intersection([
+    AbstractEntityRevisionDecoder,
+    t.type({
+      __typename: t.literal(EntityRevisionType.PageRevision),
+      title: t.string,
+    }),
+  ]),
+)
+
 export const VideoDecoder = t.exact(
   t.intersection([
     AbstractEntityDecoder,
@@ -413,6 +405,7 @@ export const EntityDecoder = t.union([
   EventDecoder,
   ExerciseDecoder,
   ExerciseGroupDecoder,
+  PageDecoder,
   VideoDecoder,
 ])
 
@@ -424,20 +417,18 @@ export const EntityRevisionDecoder = t.union([
   EventRevisionDecoder,
   ExerciseRevisionDecoder,
   ExerciseGroupRevisionDecoder,
+  PageRevisionDecoder,
   VideoRevisionDecoder,
 ])
 
-export const RepositoryDecoder = t.union([EntityDecoder, PageDecoder])
+export const RepositoryDecoder = EntityDecoder
 
-export const RevisionDecoder = t.union([
-  EntityRevisionDecoder,
-  PageRevisionDecoder,
-])
+export const RevisionDecoder = EntityRevisionDecoder
 
 export const UuidDecoder = t.union([
   CommentDecoder,
-  RepositoryDecoder,
-  RevisionDecoder,
+  EntityDecoder,
+  EntityRevisionDecoder,
   TaxonomyTermDecoder,
   UserDecoder,
 ])
