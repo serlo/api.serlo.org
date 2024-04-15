@@ -12,12 +12,8 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  TypeResolvers,
   Model,
   Context,
-  Queries,
 } from '~/internals/graphql'
 import { runSql } from '~/model/database'
 import {
@@ -30,13 +26,9 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Comment, CommentStatus, Thread } from '~/types'
+import { CommentStatus, Resolvers } from '~/types'
 
-export const resolvers: InterfaceResolvers<'ThreadAware'> &
-  Mutations<'thread'> &
-  TypeResolvers<Thread> &
-  TypeResolvers<Comment> &
-  Queries<'thread'> = {
+export const resolvers: Resolvers = {
   ThreadAware: {
     __resolveType(parent) {
       return parent.__typename

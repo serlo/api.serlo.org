@@ -6,9 +6,6 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  LegacyQueries,
   Context,
   Model,
 } from '~/internals/graphql'
@@ -19,12 +16,10 @@ import {
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { QueryUuidArgs } from '~/types'
+import { Resolvers, QueryUuidArgs } from '~/types'
 import { isDefined } from '~/utils'
 
-export const resolvers: InterfaceResolvers<'AbstractUuid'> &
-  Mutations<'uuid'> &
-  LegacyQueries<'uuid'> = {
+export const resolvers: Resolvers = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename

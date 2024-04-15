@@ -7,19 +7,12 @@ import {
   assertUserIsAuthorized,
   Context,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  LegacyQueries,
-  TypeResolvers,
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Instance, Notification, QueryEventsArgs } from '~/types'
+import { Instance, Resolvers, QueryEventsArgs } from '~/types'
 
-export const resolvers: TypeResolvers<Notification> &
-  InterfaceResolvers<'AbstractNotificationEvent'> &
-  LegacyQueries<'events' | 'notifications' | 'notificationEvent'> &
-  Mutations<'notification'> = {
+export const resolvers: Resolvers = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
       return notificationEvent.__typename

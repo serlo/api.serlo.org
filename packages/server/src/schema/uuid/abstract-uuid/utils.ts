@@ -1,7 +1,7 @@
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { Context, Model, PickResolvers } from '~/internals/graphql'
+import { Context, Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionType,
@@ -10,6 +10,7 @@ import {
 } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
+import { AbstractUuidResolvers } from '~/types'
 
 const validTypes = [
   ...Object.values(DiscriminatorType),
@@ -31,8 +32,8 @@ function isSupportedUuidType(name: string) {
   return R.includes(name, validTypes)
 }
 
-export function createUuidResolvers(): PickResolvers<
-  'AbstractUuid',
+export function createUuidResolvers(): Pick<
+  AbstractUuidResolvers,
   'alias' | 'events' | 'title'
 > {
   return {

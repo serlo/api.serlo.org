@@ -1,7 +1,8 @@
-import { createNamespace, Mutations } from '~/internals/graphql'
+import { createNamespace } from '~/internals/graphql'
 import { runSql } from '~/model/database'
+import { Resolvers } from '~/types'
 
-export const resolvers: Mutations<'experiment'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     experiment: createNamespace(),
   },
