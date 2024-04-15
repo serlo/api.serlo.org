@@ -1,12 +1,12 @@
 import { article, article2 } from './article'
 import { user, user2 } from './user'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 
 export const comment: Model<'Comment'> = {
-  id: castToUuid(27778),
+  id: 27778,
   trashed: false,
-  alias: castToAlias('/mathe/27778/applets-vertauscht'),
+  alias: '/mathe/27778/applets-vertauscht',
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   title: 'Applets vertauscht?',
@@ -20,9 +20,9 @@ export const comment: Model<'Comment'> = {
 }
 
 export const comment1: Model<'Comment'> = {
-  id: castToUuid(41443),
+  id: 41443,
   trashed: false,
-  alias: castToAlias('/mathe/41443/related-content-ist-chaotisch'),
+  alias: '/mathe/41443/related-content-ist-chaotisch',
   __typename: DiscriminatorType.Comment,
   authorId: user.id,
   parentId: article.id,
@@ -31,14 +31,14 @@ export const comment1: Model<'Comment'> = {
   archived: false,
   content:
     'Die Überschriften sind verschoben, der letzte Link führt zu den Aufgaben. Ich würde auch alle verlinkten Artikel aus dem related content schmeißen. Der related content sollte laut Richtlinien nur genutzt werden, wenn ein Artikel in mehrere aufgeteilt wurde bzw. wenn der Nutzer wahrscheinlich ständig zwischen den Artikel springen muss.\r\n\r\nWas denkt ihr?\r\n\r\nLiebe Grüße,\r\nSimon',
-  childrenIds: [49237].map(castToUuid),
+  childrenIds: [49237],
   status: 'done',
 }
 
 export const comment2: Model<'Comment'> = {
-  id: castToUuid(49237),
+  id: 49237,
   trashed: false,
-  alias: castToAlias('/mathe/49237/related-content'),
+  alias: '/mathe/49237/related-content',
   __typename: DiscriminatorType.Comment,
   authorId: user2.id,
   parentId: comment1.id,
@@ -52,9 +52,9 @@ export const comment2: Model<'Comment'> = {
 }
 
 export const comment3: Model<'Comment'> = {
-  id: castToUuid(27144),
+  id: 27144,
   trashed: false,
-  alias: castToAlias('/mathe/27144/feedback-zu-dem-artikel-über-das-formular'),
+  alias: '/mathe/27144/feedback-zu-dem-artikel-über-das-formular',
   __typename: DiscriminatorType.Comment,
   authorId: 10,
   title: 'Feedback zu dem Artikel über das Formular',

@@ -65,15 +65,8 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 
       if (id === null || !Uuid.is(id)) return null
 
-      const uuid = await UuidResolver.resolve({ id }, context)
-
-      if (uuid != null) return uuid
-
-      const uuidFromDatabaseLayer = await dataSources.model.serlo.getUuid({
-        id,
-      })
-
-      return checkUuid(payload, uuidFromDatabaseLayer)
+      const uuid = await dataSources.model.serlo.getUuid({ id })
+      return checkUuid(payload, uuid)
     },
   },
   Mutation: {

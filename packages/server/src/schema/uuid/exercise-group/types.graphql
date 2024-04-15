@@ -37,7 +37,6 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -63,11 +62,16 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
-  cohesive: Boolean!
   date: DateTime!
   repository: ExerciseGroup!
   content: String!
   changes: String!
+
+  metaTitle: String
+  metaDescription: String
+
+  url: String
+  cohesive: Boolean!
 }
 
 type ExerciseGroupRevisionConnection implements AbstractEntityRevisionConnection {

@@ -2,9 +2,7 @@ import { user } from './user'
 import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
-  castToAlias,
   castToNonEmptyString,
-  castToUuid,
   EntityRevisionType,
   EntityType,
 } from '~/model/decoder'
@@ -12,37 +10,37 @@ import { Instance } from '~/types'
 
 export const article: Model<'Article'> = {
   __typename: EntityType.Article,
-  id: castToUuid(1855),
+  id: 1855,
   trashed: false,
   instance: Instance.De,
-  alias: castToAlias('/mathe/1855/parabel'),
+  alias: '/mathe/1855/parabel',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: castToUuid(30674),
+  currentRevisionId: 30674,
   licenseId,
-  taxonomyTermIds: [5].map(castToUuid),
-  revisionIds: [30674].map(castToUuid),
-  canonicalSubjectId: castToUuid(5),
+  taxonomyTermIds: [5],
+  revisionIds: [30674],
+  canonicalSubjectId: 5,
 }
 
 export const article2: Model<'Article'> = {
   __typename: EntityType.Article,
-  id: castToUuid(1495),
+  id: 1495,
   trashed: false,
   instance: Instance.De,
-  alias: castToAlias('/mathe/1495/addition'),
+  alias: '/mathe/1495/addition',
   date: '2014-03-01T20:36:44Z',
-  currentRevisionId: castToUuid(32614),
+  currentRevisionId: 32614,
   licenseId,
-  taxonomyTermIds: [17744].map(castToUuid),
-  revisionIds: [32614].map(castToUuid),
-  canonicalSubjectId: castToUuid(17744),
+  taxonomyTermIds: [17744],
+  revisionIds: [32614],
+  canonicalSubjectId: 17744,
 }
 
 export const articleRevision: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
-  id: castToUuid(30674),
+  id: 30674,
   trashed: false,
-  alias: castToAlias('/mathe/30674/parabel'),
+  alias: '/mathe/30674/parabel',
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: article.id,
@@ -55,9 +53,9 @@ export const articleRevision: Model<'ArticleRevision'> = {
 
 export const articleRevision2: Model<'ArticleRevision'> = {
   __typename: EntityRevisionType.ArticleRevision,
-  id: castToUuid(30672),
+  id: 30672,
   trashed: false,
-  alias: castToAlias('/mathe/30672/parabel'),
+  alias: '/mathe/30672/parabel',
   date: '2014-03-01 20:45:56Z',
   authorId: user.id,
   repositoryId: article.id,
