@@ -33,6 +33,7 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
   description: String
   weight: Int!
   parent: TaxonomyTerm
+  path: [TaxonomyTerm]!
   taxonomyId: Int!
   children(
     after: String

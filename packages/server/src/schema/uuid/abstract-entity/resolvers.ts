@@ -12,12 +12,7 @@ import {
   Mutations,
   Queries,
 } from '~/internals/graphql'
-import {
-  castToUuid,
-  CourseDecoder,
-  EntityDecoder,
-  EntityType,
-} from '~/model/decoder'
+import { CourseDecoder, EntityDecoder, EntityType } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { isDateString } from '~/utils'
@@ -202,7 +197,7 @@ export const resolvers: InterfaceResolvers<'AbstractEntity'> &
       })
 
       await dataSources.model.serlo.checkoutEntityRevision({
-        revisionId: castToUuid(input.revisionId),
+        revisionId: input.revisionId,
         reason: input.reason,
         userId,
       })

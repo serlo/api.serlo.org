@@ -82,6 +82,26 @@ describe('TaxonomyTerm root', () => {
       .shouldReturnData({ uuid: { parent: null } })
   })
 
+  test('by id (w/ path)', async () => {
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                path {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermRoot.id })
+      .shouldReturnData({ uuid: { path: [] } })
+  })
+
   test('by id (w/ children)', async () => {
     given('UuidQuery').for(taxonomyTermSubject)
 
@@ -243,6 +263,32 @@ describe('TaxonomyTerm curriculumTopic', () => {
       .withVariables({ id: taxonomyTermCurriculumTopic.id })
       .shouldReturnData({
         uuid: { parent: getTypenameAndId(taxonomyTermSubject) },
+      })
+  })
+
+  test('by id (w/ path)', async () => {
+    given('UuidQuery').for(taxonomyTermSubject)
+
+    await client
+      .prepareQuery({
+        query: gql`
+          query taxonomyTerm($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                path {
+                  __typename
+                  id
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+      .shouldReturnData({
+        uuid: {
+          path: [getTypenameAndId(taxonomyTermSubject)],
+        },
       })
   })
 
