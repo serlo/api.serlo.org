@@ -32,7 +32,6 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
     unrevised: Boolean
   ): CoursePageRevisionConnection!
   course: Course!
-  subject: Subject
 }
 
 type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
