@@ -48,8 +48,6 @@ import {
   EntityType,
   EntityRevisionType,
   DiscriminatorType,
-  castToUuid,
-  castToAlias,
   NotificationEventType,
 } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -62,13 +60,13 @@ const events = [
   checkoutRevisionNotificationEvent,
   {
     __typename: NotificationEventType.CreateComment as const,
-    id: castToUuid(63807),
+    id: 63807,
     instance: Instance.De,
     date: '2014-06-25T10:01:30+02:00',
-    actorId: castToUuid(10),
-    objectId: castToUuid(25820),
-    threadId: castToUuid(25357),
-    commentId: castToUuid(25820),
+    actorId: 10,
+    objectId: 25820,
+    threadId: 25357,
+    commentId: 25820,
   },
   createEntityLinkNotificationEvent,
   createEntityNotificationEvent,
@@ -77,12 +75,12 @@ const events = [
   createTaxonomyTermNotificationEvent,
   {
     __typename: NotificationEventType.CreateThread as const,
-    id: castToUuid(86196),
+    id: 86196,
     instance: Instance.De,
     date: '2015-02-26T01:07:12+01:00',
-    actorId: castToUuid(35434),
-    objectId: castToUuid(19863),
-    threadId: castToUuid(35435),
+    actorId: 35434,
+    objectId: 19863,
+    threadId: 35435,
   },
   rejectRevisionNotificationEvent,
   removeEntityLinkNotificationEvent,
@@ -92,21 +90,21 @@ const events = [
   setTaxonomyTermNotificationEvent,
   {
     __typename: NotificationEventType.SetThreadState as const,
-    id: castToUuid(43922),
+    id: 43922,
     instance: Instance.De,
     date: '2014-03-18T08:37:41+01:00',
-    actorId: castToUuid(324),
-    objectId: castToUuid(18585),
-    threadId: castToUuid(18585),
+    actorId: 324,
+    objectId: 18585,
+    threadId: 18585,
     archived: true,
   },
   {
     __typename: NotificationEventType.SetUuidState as const,
-    id: castToUuid(38537),
+    id: 38537,
     instance: Instance.De,
     date: '2014-03-06T13:37:08+01:00',
-    actorId: castToUuid(15480),
-    objectId: castToUuid(16128),
+    actorId: 15480,
+    objectId: 16128,
     trashed: true,
   },
 ]
@@ -346,7 +344,7 @@ const pactSpec: PactSpec = {
             {
               id: 1,
               unread: true,
-              eventId: castToUuid(301),
+              eventId: 301,
               email: false,
               emailSent: false,
             },
@@ -372,20 +370,6 @@ const pactSpec: PactSpec = {
     ],
   },
   PageCheckoutRevisionMutation: {
-    examples: [
-      [
-        {
-          revisionId: pageRevision2.id,
-          userId: user.id,
-          reason: '',
-        },
-        {
-          success: true,
-        },
-      ],
-    ],
-  },
-  PageRejectRevisionMutation: {
     examples: [
       [
         {
@@ -561,7 +545,7 @@ const pactSpec: PactSpec = {
           authorId: user.id,
           parentId: comment.id,
           trashed: false,
-          alias: castToAlias('/mathe/101/mathe'),
+          alias: '/mathe/101/mathe',
           date: comment.date,
           title: null,
           archived: false,
@@ -584,10 +568,10 @@ const pactSpec: PactSpec = {
         },
         {
           __typename: DiscriminatorType.Comment,
-          id: castToUuid(1000),
+          id: 1000,
           title: 'My new thread',
           trashed: false,
-          alias: castToAlias('/mathe/1000/first'),
+          alias: '/mathe/1000/first',
           authorId: user.id,
           date: article.date,
           archived: false,

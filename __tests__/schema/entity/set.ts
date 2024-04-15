@@ -28,7 +28,7 @@ import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
-import { castToUuid, DiscriminatorType, EntityType } from '~/model/decoder'
+import { DiscriminatorType, EntityType } from '~/model/decoder'
 import { SetAbstractEntityInput } from '~/schema/uuid/abstract-entity/entity-set-handler'
 import { fromEntityTypeToEntityRevisionType } from '~/schema/uuid/abstract-entity/utils'
 import { Instance } from '~/types'
@@ -334,8 +334,8 @@ testCases.forEach((testCase) => {
     })
 
     describe(`Cache after setAbstractEntity call`, () => {
-      const newRevision = { ...testCase.revision, id: castToUuid(123) }
-      const anotherEntity = { ...testCase.entity, id: castToUuid(456) }
+      const newRevision = { ...testCase.revision, id: 123 }
+      const anotherEntity = { ...testCase.entity, id: 456 }
 
       beforeEach(() => {
         given('UuidQuery').for(
@@ -556,9 +556,9 @@ describe('Autoreview entities', () => {
   })
 
   const oldRevisionId = exercise.currentRevisionId
-  const newRevisionId = castToUuid(789)
+  const newRevisionId = 789
 
-  const taxonomy = { ...taxonomyTermSubject, id: castToUuid(106082) }
+  const taxonomy = { ...taxonomyTermSubject, id: 106082 }
   const entity: typeof exercise = {
     ...exercise,
     currentRevisionId: oldRevisionId,
@@ -622,12 +622,11 @@ describe('Autoreview entities', () => {
   })
 
   test('autoreview is ignored when entity is also in non-autoreview taxonomy term', async () => {
-    const taxonomyTermIds = [autoreviewTaxonomyIds[0], taxonomyTermRoot.id].map(
-      castToUuid,
-    )
+    const taxonomyTermIds = [autoreviewTaxonomyIds[0], taxonomyTermRoot.id]
+
     given('UuidQuery').for(
       { ...exercise, taxonomyTermIds },
-      { ...taxonomyTermSubject, id: castToUuid(autoreviewTaxonomyIds[0]) },
+      { ...taxonomyTermSubject, id: autoreviewTaxonomyIds[0] },
       taxonomyTermRoot,
     )
 

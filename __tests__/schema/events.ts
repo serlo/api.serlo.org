@@ -23,7 +23,7 @@ import {
 } from '../../__fixtures__'
 import { getTypenameAndId, given, Client } from '../__utils__'
 import { Model } from '~/internals/graphql'
-import { castToUuid, NotificationEventType } from '~/model/decoder'
+import { NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 const eventRepository: Record<
@@ -85,10 +85,10 @@ describe('query endpoint "events"', () => {
     const events = assignSequentialIds(
       R.concat(
         allEvents.map((event) => {
-          return { ...event, actorId: castToUuid(42) }
+          return { ...event, actorId: 42 }
         }),
         allEvents.map((event) => {
-          return { ...event, actorId: castToUuid(23) }
+          return { ...event, actorId: 23 }
         }),
       ),
     )
@@ -123,17 +123,17 @@ describe('query endpoint "events"', () => {
         path: `/user/profile/${user.username}`,
       })
       .returns({
-        id: castToUuid(42),
+        id: 42,
         instance: Instance.De,
         path: `/user/42/${user.username}`,
       })
     const events = assignSequentialIds(
       R.concat(
         allEvents.map((event) => {
-          return { ...event, actorId: castToUuid(42) }
+          return { ...event, actorId: 42 }
         }),
         allEvents.map((event) => {
-          return { ...event, actorId: castToUuid(23) }
+          return { ...event, actorId: 23 }
         }),
       ),
     )
@@ -201,10 +201,10 @@ describe('query endpoint "events"', () => {
     const events = assignSequentialIds(
       R.concat(
         allEvents.map((event) => {
-          return { ...event, objectId: castToUuid(42) }
+          return { ...event, objectId: 42 }
         }),
         allEvents.map((event) => {
-          return { ...event, objectId: castToUuid(23) }
+          return { ...event, objectId: 23 }
         }),
       ),
     )
@@ -348,7 +348,7 @@ test('User.eventsByUser returns events of this user', async () => {
         return { ...event, actorId: user.id }
       }),
       allEvents.map((event) => {
-        return { ...event, actorId: castToUuid(23) }
+        return { ...event, actorId: 23 }
       }),
     ),
   )
@@ -391,7 +391,7 @@ test('AbstractEntity.events returns events for this entity', async () => {
         return { ...event, objectId: article.id }
       }),
       allEvents.map((event) => {
-        return { ...event, objectId: castToUuid(23) }
+        return { ...event, objectId: 23 }
       }),
     ),
   )
@@ -452,6 +452,6 @@ function assignSequentialIds(
   events: Model<'AbstractNotificationEvent'>[],
 ): Model<'AbstractNotificationEvent'>[] {
   return events.map((event, id) => {
-    return { ...event, id: castToUuid(id + 1) }
+    return { ...event, id: id + 1 }
   })
 }

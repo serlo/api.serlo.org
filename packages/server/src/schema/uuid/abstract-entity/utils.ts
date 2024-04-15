@@ -19,7 +19,7 @@ export function createEntityResolvers<
   revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractEntity',
-  'alias' | 'threads' | 'licenseId' | 'events' | 'subject' | 'title'
+  'alias' | 'threads' | 'licenseId' | 'events' | 'title'
 > &
   // TODO: Add threads to "AbstractEntity"
   PickResolvers<'AbstractRepository', 'threads'> & {
@@ -33,14 +33,7 @@ export function createEntityResolvers<
       VideoRevisionsArgs
     >
   } {
-  return {
-    ...createRepositoryResolvers({ revisionDecoder }),
-    subject(entity) {
-      return entity.canonicalSubjectId
-        ? { taxonomyTermId: entity.canonicalSubjectId }
-        : null
-    },
-  }
+  return createRepositoryResolvers({ revisionDecoder })
 }
 
 export function fromEntityTypeToEntityRevisionType(

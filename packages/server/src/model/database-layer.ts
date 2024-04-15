@@ -13,7 +13,6 @@ import {
   PageDecoder,
   SubscriptionsDecoder,
   TaxonomyTermDecoder,
-  Uuid,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -106,7 +105,7 @@ export const spec = {
   },
   EntityCheckoutRevisionMutation: {
     payload: t.type({
-      revisionId: Uuid,
+      revisionId: t.number,
       userId: t.number,
       reason: t.string,
     }),
@@ -184,7 +183,7 @@ export const spec = {
     payload: t.type({ userId: t.number }),
     response: t.strict({
       notifications: t.array(NotificationDecoder),
-      userId: Uuid,
+      userId: t.number,
     }),
     canBeNull: false,
   },
@@ -202,15 +201,6 @@ export const spec = {
     canBeNull: false,
   },
   PageCheckoutRevisionMutation: {
-    payload: t.type({
-      revisionId: Uuid,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  PageRejectRevisionMutation: {
     payload: t.type({
       revisionId: t.number,
       userId: t.number,
@@ -270,7 +260,7 @@ export const spec = {
   },
   SubscriptionSetMutation: {
     payload: t.type({
-      ids: t.array(Uuid),
+      ids: t.array(t.number),
       userId: t.number,
       subscribe: t.boolean,
       sendEmail: t.boolean,
