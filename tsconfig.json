@@ -2,7 +2,6 @@
   "include": [
     "*.js",
     "*.ts",
-    "*.cjs",
     "__tests__",
     "__fixtures__",
     "scripts/*.ts",
