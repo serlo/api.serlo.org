@@ -1,8 +1,5 @@
 {
   "extends": "./tsconfig.prod.json",
-  "ts-node": {
-    "esm": true
-  },
   "compilerOptions": {
     "importHelpers": false,
     "baseUrl": "./packages",
@@ -12,5 +9,8 @@
       "@serlo/authorization": ["authorization/src"],
       "~/*": ["server/src/*"]
     }
+  },
+  "ts-node": {
+    "esm": true
   }
 }
