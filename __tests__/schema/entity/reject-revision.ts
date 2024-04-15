@@ -8,7 +8,6 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
-import { encodeSubjectId } from '~/schema/subject/utils'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
@@ -87,9 +86,9 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
   const unrevisedEntitiesQuery = new Client()
     .prepareQuery({
       query: gql`
-        query ($id: String!) {
+        query ($instance: Instance!) {
           subject {
-            subject(id: $id) {
+            subjects(instance: $instance) {
               unrevisedEntities {
                 nodes {
                   __typename
@@ -101,13 +100,11 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
         }
       `,
     })
-    .withVariables({
-      id: encodeSubjectId(taxonomyTermSubject.id),
-    })
+    .withVariables({ instance: taxonomyTermSubject.instance })
 
   await unrevisedEntitiesQuery.shouldReturnData({
     subject: {
-      subject: { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
+      subjects: [{ unrevisedEntities: { nodes: [getTypenameAndId(article)] } }],
     },
   })
 
@@ -116,7 +113,7 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
   })
 
   await unrevisedEntitiesQuery.shouldReturnData({
-    subject: { subject: { unrevisedEntities: { nodes: [] } } },
+    subject: { subjects: [{ unrevisedEntities: { nodes: [] } }] },
   })
 })
 
