@@ -1,6 +1,25 @@
 {
-  "extends": "./tsconfig.prod.json",
+  "include": [
+    "*.js",
+    "*.ts",
+    "*.cjs",
+    "__tests__",
+    "__fixtures__",
+    "scripts/*.ts",
+    "packages/**/*.ts"
+  ],
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
+    "sourceMap": true,
     "importHelpers": false,
     "baseUrl": "./packages",
     "target": "es2019",
