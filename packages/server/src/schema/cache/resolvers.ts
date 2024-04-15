@@ -1,5 +1,6 @@
 import { ForbiddenError } from '~/errors'
-import { createNamespace, Mutations } from '~/internals/graphql'
+import { createNamespace } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
 const allowedUserIds = [
   26217, // kulla
@@ -9,7 +10,7 @@ const allowedUserIds = [
   245844, // MoeHome
 ]
 
-export const resolvers: Mutations<'_cache'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     _cache: createNamespace(),
   },

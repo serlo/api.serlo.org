@@ -1,13 +1,9 @@
 import { v1 as uuidv1 } from 'uuid'
 
-import {
-  assertUserIsAuthenticated,
-  createNamespace,
-  Queries,
-} from '~/internals/graphql'
-import { MediaType } from '~/types'
+import { assertUserIsAuthenticated, createNamespace } from '~/internals/graphql'
+import { MediaType, Resolvers } from '~/types'
 
-export const resolvers: Queries<'media'> = {
+export const resolvers: Resolvers = {
   Query: {
     media: createNamespace(),
   },
