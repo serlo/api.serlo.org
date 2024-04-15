@@ -1,16 +1,28 @@
 {
-  "extends": "./tsconfig.prod.json",
-  "ts-node": {
-    "esm": true
-  },
+  "include": [
+    "*.js",
+    "*.ts",
+    "__tests__/**/*.ts",
+    "__fixtures__/**/*.ts",
+    "scripts/*.ts",
+    "packages/**/*.ts"
+  ],
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    "importHelpers": false,
+    "allowJs": true,
+    "checkJs": true,
+    "incremental": true,
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "module": "esnext",
+    "moduleResolution": "node",
     "baseUrl": "./packages",
-    "target": "es2019",
     "paths": {
-      "@serlo/api": ["types/src"],
       "@serlo/authorization": ["authorization/src"],
       "~/*": ["server/src/*"]
     }
+  },
+  "ts-node": {
+    "esm": true
   }
 }
