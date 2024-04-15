@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
 import { article, comment as baseComment, user } from '../../../__fixtures__'
-import { Client, castToUuid, given } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
-const comment = { ...baseComment, id: castToUuid(17296) }
+const comment = { ...baseComment, id: 17296 }
 const newContent = 'This is new content.'
 
 const mutation = new Client({ userId: user.id })

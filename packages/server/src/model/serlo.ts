@@ -5,7 +5,6 @@ import { executePrompt } from './ai'
 import * as Database from './database'
 import * as DatabaseLayer from './database-layer'
 import {
-  castToUuid,
   CommentDecoder,
   DiscriminatorType,
   EntityDecoder,
