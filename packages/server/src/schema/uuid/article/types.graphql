@@ -71,7 +71,6 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   metaDescription: String!
 
   url: String
-  cohesive: Boolean
 }
 
 type ArticleRevisionConnection implements AbstractEntityRevisionConnection {

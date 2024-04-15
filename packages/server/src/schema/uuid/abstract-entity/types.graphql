@@ -63,7 +63,6 @@ interface AbstractEntityRevision {
   metaDescription: String
 
   url: String
-  cohesive: Boolean
 }
 
 type AbstractEntityConnection {
@@ -202,7 +201,6 @@ input SetExerciseGroupInput {
   entityId: Int
   parentId: Int
 
-  cohesive: Boolean!
   content: String!
 }
 
