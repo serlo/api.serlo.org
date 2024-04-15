@@ -1928,13 +1928,7 @@ export type SubjectUnrevisedEntitiesArgs = {
 
 export type SubjectQuery = {
   __typename?: 'SubjectQuery';
-  subject?: Maybe<Subject>;
   subjects: Array<Subject>;
-};
-
-
-export type SubjectQuerySubjectArgs = {
-  id: Scalars['String']['input'];
 };
 
 
@@ -4113,7 +4107,6 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type SubjectQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectQuery'] = ResolversParentTypes['SubjectQuery']> = {
-  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectQuerySubjectArgs, 'id'>>;
   subjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectQuerySubjectsArgs, 'instance'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
