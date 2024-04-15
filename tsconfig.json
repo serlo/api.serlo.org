@@ -11,6 +11,8 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
+    "incremental": true,
+    "outDir": "dist",
     "module": "esnext",
     "moduleResolution": "node",
     "baseUrl": "./packages",
