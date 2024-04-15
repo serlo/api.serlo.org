@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
 import { Client, given, givenThreads } from '../../__utils__'
-import { castToAlias, DiscriminatorType } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
@@ -89,7 +89,7 @@ test('thread gets created, cache mutated as expected', async () => {
       __typename: DiscriminatorType.Comment,
       id: comment1.id,
       trashed: false,
-      alias: castToAlias(`/mathe/${comment1.id}/`),
+      alias: `/mathe/${comment1.id}/`,
       authorId: user.id,
       title: 'My new thread',
       date: '2014-08-25T12:51:02+02:00',

@@ -4,7 +4,7 @@ import { HttpResponse } from 'msw'
 import { user as baseUser } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_static_pages_builder'] }
@@ -46,14 +46,14 @@ describe('PageCreateMutation', () => {
       const body = await request.json()
       const { content, instance, licenseId, title, userId } = body.payload
 
-      const newPageRevisionId = castToUuid(19769)
+      const newPageRevisionId = 19769
 
       const newPage: Model<'Page'> = {
         __typename: DiscriminatorType.Page,
-        id: castToUuid(19768),
+        id: 19768,
         trashed: false,
         instance,
-        alias: castToAlias(`/19768/${title}`),
+        alias: `/19768/${title}`,
         date: new Date().toISOString(),
         currentRevisionId: newPageRevisionId,
         revisionIds: [newPageRevisionId],
@@ -64,11 +64,11 @@ describe('PageCreateMutation', () => {
         __typename: DiscriminatorType.PageRevision,
         id: newPageRevisionId,
         trashed: false,
-        alias: castToAlias(`/${newPageRevisionId}/${title}`),
+        alias: `/${newPageRevisionId}/${title}`,
         title,
         content,
         date: new Date().toISOString(),
-        authorId: castToUuid(userId),
+        authorId: userId,
         repositoryId: newPage.id,
       }
 
