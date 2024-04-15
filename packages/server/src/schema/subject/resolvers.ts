@@ -1,10 +1,10 @@
 import { resolveConnection } from '../connection/utils'
-import { createNamespace, Queries, TypeResolvers } from '~/internals/graphql'
+import { createNamespace } from '~/internals/graphql'
 import { EntityDecoder, TaxonomyTermDecoder } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
-import { Subject } from '~/types'
+import { type Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
+export const resolvers: Resolvers = {
   Query: {
     subject: createNamespace(),
   },

@@ -1,6 +1,6 @@
-import { InterfaceResolvers } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
-export const resolvers: InterfaceResolvers<'AbstractTaxonomyTermChild'> = {
+export const resolvers: Resolvers = {
   AbstractTaxonomyTermChild: {
     __resolveType(entity) {
       return entity.__typename
