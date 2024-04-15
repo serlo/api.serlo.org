@@ -1,5 +1,4 @@
 import * as auth from '@serlo/authorization'
-import { either as E } from 'fp-ts'
 
 import { resolveCustomId } from '~/config'
 import { UserInputError } from '~/errors'
@@ -14,7 +13,6 @@ import {
   Model,
 } from '~/internals/graphql'
 import {
-  Uuid,
   DiscriminatorType,
   EntityTypeDecoder,
   EntityRevisionTypeDecoder,
@@ -38,12 +36,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 
       if (id === null) return null
 
-      const decodedUuid = Uuid.decode(id)
-      if (E.isLeft(decodedUuid)) return null
-
-      const uuid = await dataSources.model.serlo.getUuid({
-        id: decodedUuid.right,
-      })
+      const uuid = await dataSources.model.serlo.getUuid({ id })
       return checkUuid(payload, uuid)
     },
   },
