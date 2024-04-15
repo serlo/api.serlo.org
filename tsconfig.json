@@ -7,21 +7,13 @@
     "scripts/*.ts",
     "packages/**/*.ts"
   ],
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "skipLibCheck": true,
-    "strict": true,
-    "sourceMap": true,
-    "importHelpers": false,
     "baseUrl": "./packages",
-    "target": "es2019",
     "paths": {
       "@serlo/api": ["types/src"],
       "@serlo/authorization": ["authorization/src"],
