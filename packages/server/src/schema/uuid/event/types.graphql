@@ -68,6 +68,9 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   changes: String!
   metaTitle: String!
   metaDescription: String!
+
+  url: String
+  cohesive: Boolean
 }
 
 type EventRevisionConnection implements AbstractEntityRevisionConnection {

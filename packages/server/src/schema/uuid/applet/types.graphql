@@ -63,12 +63,15 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   ): ThreadsConnection!
   date: DateTime!
   repository: Applet!
-  url: String!
   title: String!
   content: String!
   changes: String!
+
   metaTitle: String!
   metaDescription: String!
+
+  url: String!
+  cohesive: Boolean
 }
 
 type AppletRevisionConnection implements AbstractEntityRevisionConnection {
