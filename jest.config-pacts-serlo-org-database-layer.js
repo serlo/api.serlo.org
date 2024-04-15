@@ -1,4 +1,5 @@
-import defaultConfig from './jest.config'
+// eslint-disable-next-line import/extensions
+import defaultConfig from './jest.config.js'
 
 // eslint-disable-next-line import/no-default-export
 export default {

@@ -10,7 +10,7 @@ Unified GraphQL API for [Serlo](https://serlo.org).
 
 You need:
 
-- [Node.js](https://nodejs.org) and [yarn cli](https://yarnpkg.com/cli/) from [.tool-versions](.tool-versions) installed on your system.
+- [Node.js](https://nodejs.org) from [.tool-versions](.tool-versions) installed on your system. Enable `yarn` via running `corepack enable`.
   - You may use [asdf](https://asdf-vm.com/) for the installation.
 - [Docker](https://docs.docker.com/engine/installation/)
 
@@ -46,12 +46,15 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 ### Caching
 
 By default, while developing, the caching won't work. If you want to have caching, change the value `CACHE_TYPE` in `.env` to any other
-value besides 'empty'. To check the cache locally, install redis-tools and run redis-cli. With GET <key> you get the cache value of the key that is defined in [serlo.ts](https://github.com/serlo/api.serlo.org/blob/staging/packages/server/src/model/serlo.ts).
+value besides 'empty'.  
+To check the cache locally, run `yarn cache:cli`.  
+With `GET <key>` you get the cache value of the key that is defined in [serlo.ts](https://github.com/serlo/api.serlo.org/blob/staging/packages/server/src/model/serlo.ts).  
+See in `package.json` for other scripts regarding cache.
 
 ### Run tests
 
-- `yarn test` runs the unit tests (requires `yarn start:redis` beforehand)
-- `yarn pacts` runs the contract tests (requires `yarn start:redis` beforehand)
+- `yarn test` runs the unit tests (requires `yarn start:containers` beforehand)
+- `yarn pacts` runs the contract tests (requires `yarn start:containers` beforehand)
 - `yarn check:all` runs all checks (like the linter and tests) to check whether your codebase is ready to be merged into main
 
 ### Run specific test

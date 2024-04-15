@@ -37,7 +37,6 @@ type Exercise implements AbstractUuid & AbstractRepository & AbstractEntity & Ab
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {

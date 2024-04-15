@@ -8,7 +8,6 @@ import {
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { runSql } from '~/model/database'
-import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
@@ -21,16 +20,29 @@ function getThreadData(comment: Model<'Comment'>) {
   }
 }
 
-const commentNoChildren = { ...baseComment, childrenIds: [] }
-const comment = { ...commentNoChildren, id: castToUuid(35163) }
-const comment1 = { ...commentNoChildren, id: castToUuid(35090) }
-const comment2 = { ...commentNoChildren, id: castToUuid(26976) }
-const comment3 = { ...commentNoChildren, id: castToUuid(34793) }
-const comment4 = { ...commentNoChildren, id: castToUuid(34161) }
+const comment = {
+  ...baseComment,
+  id: 35163,
+  date: '2015-02-21T13:13:24+01:00',
+}
+const comment1 = {
+  ...baseComment,
+  id: 35090,
+  date: '2015-02-19T16:47:16+01:00',
+}
+const comment2 = {
+  ...baseComment,
+  id: 26976,
+  date: '2014-08-05T07:36:24+02:00',
+}
+const comment3 = {
+  ...baseComment,
+  id: 34793,
+  date: '2015-02-16T17:29:30+01:00',
+}
 
 describe('allThreads', () => {
   beforeEach(() => {
-    given('UuidQuery').for(comment, comment1, comment2, comment3, comment4)
     given('UuidQuery').for(article, article2)
     given('SubjectsQuery').returns({
       subjects: [

@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - uses: serlo/configure-repositories/actions/setup-node@main
-      - run: yarn start:redis
+      - run: yarn start:containers
       - run: yarn test
 
   test_pacts:
@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
-      - run: yarn start:redis
+      - run: yarn start:containers
       - run: yarn pacts
       - name: Check for uncommitted changes
         run: |
