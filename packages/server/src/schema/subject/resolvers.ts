@@ -1,7 +1,7 @@
 import { resolveConnection } from '../connection/utils'
 import { createNamespace, Queries, TypeResolvers } from '~/internals/graphql'
 import { EntityDecoder, TaxonomyTermDecoder } from '~/model/decoder'
-import { decodeSubjectId, encodeSubjectId } from '~/schema/subject/utils'
+import { encodeSubjectId } from '~/schema/subject/utils'
 import { Subject } from '~/types'
 
 export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
@@ -13,14 +13,6 @@ export const resolvers: TypeResolvers<Subject> & Queries<'subject'> = {
       const { subjects } = await dataSources.model.serlo.getSubjects()
 
       return subjects.filter((subject) => subject.instance === instance)
-    },
-    async subject(_parent, { id }, { dataSources }) {
-      const taxonomyTermId = decodeSubjectId(id)
-      const { subjects } = await dataSources.model.serlo.getSubjects()
-
-      return subjects.some((s) => s.taxonomyTermId === taxonomyTermId)
-        ? { taxonomyTermId }
-        : null
     },
   },
   Subject: {

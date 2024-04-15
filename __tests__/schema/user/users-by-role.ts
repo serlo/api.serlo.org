@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
-import { castToUuid, Client, given, Query } from '../../__utils__'
+import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
 let client: Client
@@ -44,10 +44,10 @@ describe('get users by role tests', () => {
         after: 'MQ==',
       })
 
-    const sysadmin2 = { ...sysadmin, id: castToUuid(2) }
-    const sysadmin3 = { ...sysadmin, id: castToUuid(6) }
-    const sysadmin4 = { ...sysadmin, id: castToUuid(10) }
-    const sysadmin5 = { ...sysadmin, id: castToUuid(396) }
+    const sysadmin2 = { ...sysadmin, id: 2 }
+    const sysadmin3 = { ...sysadmin, id: 6 }
+    const sysadmin4 = { ...sysadmin, id: 10 }
+    const sysadmin5 = { ...sysadmin, id: 396 }
 
     given('UsersByRoleQuery')
       .withPayload({ roleName: globalRole, first: 4, after: 1 })
@@ -83,8 +83,8 @@ describe('get users by role tests', () => {
 
   describe('get users by localRole', () => {
     beforeEach(() => {
-      const reviewer2 = { ...reviewer, id: castToUuid(11) }
-      const reviewer3 = { ...reviewer, id: castToUuid(30) }
+      const reviewer2 = { ...reviewer, id: 11 }
+      const reviewer3 = { ...reviewer, id: 30 }
       given('UsersByRoleQuery')
         .withPayload({ roleName: 'de_reviewer', first: 3 })
         .returns({ usersByRole: [11, 23, 30] })

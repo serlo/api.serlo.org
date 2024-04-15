@@ -24,7 +24,7 @@ export function createEntityResolvers<
   revisionDecoder: t.Type<R, unknown>
 }): PickResolvers<
   'AbstractEntity',
-  'alias' | 'threads' | 'licenseId' | 'events' | 'subject' | 'title'
+  'alias' | 'threads' | 'licenseId' | 'events' | 'title'
 > &
   PickResolvers<'AbstractEntity', 'threads'> & {
     currentRevision: ResolverFunction<
@@ -83,12 +83,6 @@ export function createEntityResolvers<
     },
     licenseId(repository, _args) {
       return repository.licenseId
-    },
-    subject(entity) {
-      if (entity.__typename === EntityType.Page) return null
-      return entity.canonicalSubjectId
-        ? { taxonomyTermId: entity.canonicalSubjectId }
-        : null
     },
   }
 }

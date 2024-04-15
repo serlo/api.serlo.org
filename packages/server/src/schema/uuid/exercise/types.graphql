@@ -37,7 +37,6 @@ type Exercise implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChi
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type ExerciseRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
@@ -67,6 +66,12 @@ type ExerciseRevision implements AbstractUuid & AbstractEntityRevision & ThreadA
   repository: Exercise!
   content: String!
   changes: String!
+
+  metaTitle: String
+  metaDescription: String
+
+  url: String
+  cohesive: Boolean
 }
 
 type ExerciseRevisionConnection implements AbstractEntityRevisionConnection {

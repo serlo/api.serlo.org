@@ -28,7 +28,6 @@ interface AbstractEntity {
   date: DateTime!
   instance: Instance!
   licenseId: Int!
-  subject: Subject
 
   currentRevision: AbstractEntityRevision
   revisions(
@@ -79,7 +78,15 @@ interface AbstractEntityRevision {
   date: DateTime!
   content: String!
 
+  repository: AbstractEntity!
   changes: String!
+
+  # optional fields that we should get rid of or generalize in the long term :)
+  metaTitle: String
+  metaDescription: String
+
+  url: String
+  cohesive: Boolean
 }
 
 type AbstractEntityConnection {

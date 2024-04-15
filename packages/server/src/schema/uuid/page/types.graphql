@@ -83,7 +83,6 @@ type PageMutation {
   addRevision(input: PageAddRevisionInput!): AddRevisionResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   create(input: CreatePageInput!): PageCreateResponse!
-  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
 }
 
 extend type Query {

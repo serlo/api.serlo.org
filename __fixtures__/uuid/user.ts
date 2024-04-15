@@ -1,12 +1,12 @@
 import { Model } from '~/internals/graphql'
 import { Payload } from '~/internals/model'
-import { castToAlias, castToUuid, DiscriminatorType } from '~/model/decoder'
+import { DiscriminatorType } from '~/model/decoder'
 
 export const user: Model<'User'> = {
   __typename: DiscriminatorType.User,
-  id: castToUuid(1),
+  id: 1,
   trashed: false,
-  alias: castToAlias('/user/1/admin'),
+  alias: '/user/1/admin',
   username: 'alpha',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
@@ -16,9 +16,9 @@ export const user: Model<'User'> = {
 
 export const user2: Model<'User'> = {
   __typename: DiscriminatorType.User,
-  id: castToUuid(23),
+  id: 23,
   trashed: false,
-  alias: castToAlias('/user/23/sandra'),
+  alias: '/user/23/sandra',
   username: 'sandra',
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',

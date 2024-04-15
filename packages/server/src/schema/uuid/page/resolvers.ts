@@ -10,7 +10,7 @@ import {
   Queries,
   TypeResolvers,
 } from '~/internals/graphql'
-import { castToUuid, PageDecoder, PageRevisionDecoder } from '~/model/decoder'
+import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
   createEntityResolvers,
@@ -75,7 +75,7 @@ export const resolvers: TypeResolvers<Page> &
       })
 
       await dataSources.model.serlo.checkoutPageRevision({
-        revisionId: castToUuid(input.revisionId),
+        revisionId: input.revisionId,
         reason: input.reason,
         userId,
       })
@@ -106,24 +106,6 @@ export const resolvers: TypeResolvers<Page> &
         success: pagePayload !== null,
         query: {},
       }
-    },
-    async rejectRevision(_parent, { input }, { dataSources, userId }) {
-      assertUserIsAuthenticated(userId)
-
-      const scope = await fetchScopeOfUuid({
-        id: input.revisionId,
-        dataSources,
-      })
-      await assertUserIsAuthorized({
-        userId,
-        dataSources,
-        message: 'You are not allowed to reject the provided revision.',
-        guard: serloAuth.Page.rejectRevision(scope),
-      })
-
-      await dataSources.model.serlo.rejectPageRevision({ ...input, userId })
-
-      return { success: true, query: {} }
     },
   },
   PageQuery: {

@@ -30,7 +30,6 @@ import {
   EntityType,
   RepositoryType,
   RevisionType,
-  castToUuid,
 } from '~/model/decoder'
 
 const client = new Client()
@@ -228,7 +227,7 @@ describe('Repository', () => {
   describe.each(repositoryCases)(
     '%s by id (w/ revisions)',
     (type, { repository, revision }) => {
-      const revisedRevision = { ...revision, id: castToUuid(revision.id - 10) }
+      const revisedRevision = { ...revision, id: revision.id - 10 }
       const unrevisedRevision = { ...revision, id: nextUuid(revision.id) }
       const revisionsQuery = client.prepareQuery({
         query: gql`
