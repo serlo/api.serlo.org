@@ -21,7 +21,6 @@ export interface SetAbstractEntityInput {
   needsReview: boolean
   entityId?: number
   parentId?: number
-  cohesive?: boolean
   content?: string
   description?: string
   metaDescription?: string
@@ -58,7 +57,6 @@ export function createSetEntityResolver({
       input,
     )
     const fieldKeys = [
-      'cohesive',
       'content',
       'description',
       'metaDescription',

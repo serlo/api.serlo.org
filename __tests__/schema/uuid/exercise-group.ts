@@ -48,7 +48,6 @@ describe('ExerciseGroup', () => {
                 id
                 trashed
                 date
-                cohesive
                 content
                 changes
               }
@@ -59,15 +58,7 @@ describe('ExerciseGroup', () => {
       .withVariables({ id: exerciseGroupRevision.id })
       .shouldReturnData({
         uuid: R.pick(
-          [
-            '__typename',
-            'id',
-            'trashed',
-            'date',
-            'cohesive',
-            'content',
-            'changes',
-          ],
+          ['__typename', 'id', 'trashed', 'date', 'content', 'changes'],
           exerciseGroupRevision,
         ),
       })
