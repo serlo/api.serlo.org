@@ -8,7 +8,6 @@ import {
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { runSql } from '~/model/database'
-import { castToUuid } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
@@ -23,22 +22,22 @@ function getThreadData(comment: Model<'Comment'>) {
 
 const comment = {
   ...baseComment,
-  id: castToUuid(35163),
+  id: 35163,
   date: '2015-02-21T13:13:24+01:00',
 }
 const comment1 = {
   ...baseComment,
-  id: castToUuid(35090),
+  id: 35090,
   date: '2015-02-19T16:47:16+01:00',
 }
 const comment2 = {
   ...baseComment,
-  id: castToUuid(26976),
+  id: 26976,
   date: '2014-08-05T07:36:24+02:00',
 }
 const comment3 = {
   ...baseComment,
-  id: castToUuid(34793),
+  id: 34793,
   date: '2015-02-16T17:29:30+01:00',
 }
 
