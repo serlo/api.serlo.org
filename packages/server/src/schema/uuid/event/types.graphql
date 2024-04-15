@@ -37,7 +37,6 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -69,6 +68,9 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   changes: String!
   metaTitle: String!
   metaDescription: String!
+
+  url: String
+  cohesive: Boolean
 }
 
 type EventRevisionConnection implements AbstractEntityRevisionConnection {

@@ -37,7 +37,6 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -64,12 +63,15 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   ): ThreadsConnection!
   date: DateTime!
   repository: Applet!
-  url: String!
   title: String!
   content: String!
   changes: String!
+
   metaTitle: String!
   metaDescription: String!
+
+  url: String!
+  cohesive: Boolean
 }
 
 type AppletRevisionConnection implements AbstractEntityRevisionConnection {

@@ -37,7 +37,6 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -67,8 +66,12 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   title: String!
   content: String!
   changes: String!
+
   metaTitle: String!
   metaDescription: String!
+
+  url: String
+  cohesive: Boolean
 }
 
 type ArticleRevisionConnection implements AbstractEntityRevisionConnection {

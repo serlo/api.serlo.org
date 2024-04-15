@@ -29,13 +29,7 @@ import {
   user,
   user2,
 } from '../../__fixtures__'
-import {
-  castToUuid,
-  getTypenameAndId,
-  givenThreads,
-  Client,
-  given,
-} from '../__utils__'
+import { getTypenameAndId, givenThreads, Client, given } from '../__utils__'
 import { Service } from '~/internals/authentication'
 import { Instance } from '~/types'
 
@@ -1916,7 +1910,7 @@ describe('notificationEvent', () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error We assume here that we get an invalid type name
         __typename: 'SomeFancyNotificationEvent',
-        id: castToUuid(1337),
+        id: 1337,
         instance: Instance.De,
         date: '2014-03-01T20:45:56Z',
       })
@@ -2015,17 +2009,17 @@ describe('mutation notification setState', () => {
     given('EventQuery').for([
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(1),
+        id: 1,
         objectId: article.id,
       },
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(2),
+        id: 2,
         objectId: article.id,
       },
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(3),
+        id: 3,
         objectId: article.id,
       },
     ])
@@ -2075,7 +2069,7 @@ describe('mutation notification setState', () => {
     given('EventQuery').for([
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(1),
+        id: 1,
         objectId: article.id,
       },
     ])
@@ -2117,17 +2111,17 @@ describe('mutation notification setState', () => {
     given('EventQuery').for([
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(1),
+        id: 1,
         objectId: article.id,
       },
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(2),
+        id: 2,
         objectId: article.id,
       },
       {
         ...createEntityNotificationEvent,
-        id: castToUuid(3),
+        id: 3,
         objectId: article.id,
       },
     ])

@@ -1,13 +1,7 @@
 import gql from 'graphql-tag'
 
 import { article, comment1, user } from '../../../__fixtures__'
-import {
-  nextUuid,
-  givenThreads,
-  Client,
-  given,
-  castToAlias,
-} from '../../__utils__'
+import { nextUuid, givenThreads, Client, given } from '../../__utils__'
 import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
 
@@ -53,7 +47,7 @@ test('comment gets created, cache mutated as expected', async () => {
       __typename: DiscriminatorType.Comment,
       id: nextUuid(comment1.id),
       trashed: false,
-      alias: castToAlias(`/mathe/${nextUuid(comment1.id)}/`),
+      alias: `/mathe/${nextUuid(comment1.id)}/`,
       authorId: user.id,
       title: null,
       date: '2014-03-01T20:45:56Z',

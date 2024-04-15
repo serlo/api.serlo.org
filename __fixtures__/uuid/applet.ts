@@ -2,9 +2,7 @@ import { user } from './user'
 import { licenseId } from '../license-id'
 import { Model } from '~/internals/graphql'
 import {
-  castToAlias,
   castToNonEmptyString,
-  castToUuid,
   EntityRevisionType,
   EntityType,
 } from '~/model/decoder'
@@ -12,23 +10,23 @@ import { Instance } from '~/types'
 
 export const applet: Model<'Applet'> = {
   __typename: EntityType.Applet,
-  id: castToUuid(35596),
+  id: 35596,
   trashed: false,
   instance: Instance.En,
-  alias: castToAlias('/math/35596/example-applet'),
+  alias: '/math/35596/example-applet',
   date: '2014-03-01T20:45:56Z',
-  currentRevisionId: castToUuid(35597),
-  revisionIds: [35597].map(castToUuid),
+  currentRevisionId: 35597,
+  revisionIds: [35597],
   licenseId,
-  canonicalSubjectId: castToUuid(23593),
-  taxonomyTermIds: [5].map(castToUuid),
+  canonicalSubjectId: 23593,
+  taxonomyTermIds: [5],
 }
 
 export const appletRevision: Model<'AppletRevision'> = {
   __typename: EntityRevisionType.AppletRevision,
-  id: castToUuid(35597),
+  id: 35597,
   trashed: false,
-  alias: castToAlias('/math/35597/example-applet'),
+  alias: '/math/35597/example-applet',
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: applet.id,

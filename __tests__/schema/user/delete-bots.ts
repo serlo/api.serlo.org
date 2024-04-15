@@ -6,7 +6,6 @@ import {
   given,
   Client,
   Query,
-  castToUuid,
   returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
@@ -201,7 +200,7 @@ describe('mailchimp', () => {
 
 test('fails when one of the given bot ids is not a user', async () => {
   await mutation
-    .withInput({ botIds: [castToUuid(article.id)] })
+    .withInput({ botIds: [article.id] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 

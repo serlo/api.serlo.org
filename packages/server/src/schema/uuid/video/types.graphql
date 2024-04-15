@@ -37,7 +37,6 @@ type Video implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     first: Int
     last: Int
   ): TaxonomyTermConnection!
-  subject: Subject
 }
 
 type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -64,10 +63,15 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Video!
-  url: String!
   title: String!
   content: String!
   changes: String!
+
+  metaTitle: String
+  metaDescription: String
+
+  url: String!
+  cohesive: Boolean
 }
 
 type VideoRevisionConnection implements AbstractEntityRevisionConnection {
