@@ -1,9 +1,8 @@
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/internals/graphql'
 import { EntityDecoder } from '~/model/decoder'
-import { CreateEntityNotificationEvent } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<CreateEntityNotificationEvent> = {
+export const resolvers: Resolvers = {
   CreateEntityNotificationEvent: {
     ...createNotificationEventResolvers(),
     async entity(notificationEvent, _args, { dataSources }) {
