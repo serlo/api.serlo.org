@@ -57,8 +57,6 @@ interface AbstractRevision {
     trashed: Boolean
   ): ThreadsConnection!
 
-  # Implicitly has the following field
-  # repository: AbstractRepository!
   author: User!
   date: DateTime!
   content: String!
