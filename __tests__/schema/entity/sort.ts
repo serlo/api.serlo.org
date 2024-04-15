@@ -2,12 +2,9 @@ import gql from 'graphql-tag'
 import { HttpResponse } from 'msw'
 
 import { course as baseCouse, user, coursePage } from '../../../__fixtures__'
-import { castToUuid, Client, given } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 
-const course = {
-  ...baseCouse,
-  pageIds: [18521, 30713].map(castToUuid),
-}
+const course = { ...baseCouse, pageIds: [18521, 30713] }
 
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
@@ -38,17 +35,14 @@ test('updates the cache of Course', async () => {
     const body = await request.json()
     const { childrenIds } = body.payload
 
-    given('UuidQuery').for({
-      ...course,
-      pageIds: childrenIds.map(castToUuid),
-    })
+    given('UuidQuery').for({ ...course, pageIds: childrenIds })
 
     return HttpResponse.json({ success: true })
   })
 
   given('UuidQuery').for(
-    { ...coursePage, id: castToUuid(18521) },
-    { ...coursePage, id: castToUuid(30713) },
+    { ...coursePage, id: 18521 },
+    { ...coursePage, id: 30713 },
   )
 
   const query = new Client({ userId: user.id })

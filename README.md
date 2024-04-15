@@ -10,7 +10,7 @@ Unified GraphQL API for [Serlo](https://serlo.org).
 
 You need:
 
-- [Node.js](https://nodejs.org) and [yarn cli](https://yarnpkg.com/cli/) from [.tool-versions](.tool-versions) installed on your system.
+- [Node.js](https://nodejs.org) from [.tool-versions](.tool-versions) installed on your system. Enable `yarn` via running `corepack enable`.
   - You may use [asdf](https://asdf-vm.com/) for the installation.
 - [Docker](https://docs.docker.com/engine/installation/)
 
