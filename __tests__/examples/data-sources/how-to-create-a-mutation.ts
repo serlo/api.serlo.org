@@ -100,7 +100,7 @@ describe('How to create a mutation in a data source: update the content of an ar
             // type makes sure, that we check the returned value before further
             // processing it. So we do not trust the API "blindely" to return
             // the right values.
-            return (await res.json()) as unknown
+            return await res.json()
           },
 
           type: 'ExampleMutation',

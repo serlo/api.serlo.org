@@ -85,7 +85,7 @@ describe('How to create a query in a data source: Fetching the content of an art
               const url = `http://database-api.serlo.org/article/${id}`
               const res = await fetch(url)
 
-              return res.status === 404 ? null : ((await res.json()) as unknown)
+              return res.status === 404 ? null : await res.json()
             },
 
             // We want to enable SWR for this endpoint
