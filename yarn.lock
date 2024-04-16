@@ -4040,7 +4040,6 @@ __metadata:
     "@luckycatfactory/esbuild-graphql-loader": ^3.8.1
     "@sentry/node": ^7.108.0
     "@tsconfig/node20": ^20.1.4
-    "@types/globalthis": ^1.0.4
     "@types/jest": ^29.5.12
     "@types/node": ^18.19.26
     "@typescript-eslint/eslint-plugin": ^7.3.1
@@ -4444,13 +4443,6 @@ __metadata:
     "@types/qs": "*"
     "@types/serve-static": "*"
   checksum: 0196dacc275ac3ce89d7364885cb08e7fb61f53ca101f65886dbf1daf9b7eb05c0943e2e4bbd01b0cc5e50f37e0eea7e4cbe97d0304094411ac73e1b7998f4da
-  languageName: node
-  linkType: hard
-
-"@types/globalthis@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@types/globalthis@npm:1.0.4"
-  checksum: 53c4a653179712f7f83ffcc6f985f3a3f148f8261ee747e76dadf677cba4885802b7b978aad44f1183e48e97d9e4d0ef00c75eccf17fb574710c092dcd50ce15
   languageName: node
   linkType: hard
 
