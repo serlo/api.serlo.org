@@ -11,10 +11,16 @@ import {
   assertUserIsAuthorized,
   Context,
 } from '~/internals/graphql'
-import { EntityDecoder, EntityType, TaxonomyTermDecoder } from '~/model/decoder'
+import {
+  EntityDecoder,
+  EntityType,
+  EntityTypeDecoder,
+  TaxonomyTermDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 
 export interface SetAbstractEntityInput {
+  entityType: string
   changes: string
   subscribeThis: boolean
   subscribeThisByEmail: boolean
@@ -29,33 +35,66 @@ export interface SetAbstractEntityInput {
   url?: string
 }
 
-export function createSetEntityResolver({
-  entityType,
-  mandatoryFieldKeys,
-  transformedInput,
-}: {
-  entityType: EntityType
-  mandatoryFieldKeys: [
-    keyof SetAbstractEntityInput,
-    ...(keyof SetAbstractEntityInput)[],
-  ]
-  // TODO: the logic of this and others transformedInput's should go to DB Layer
-  transformedInput?: (x: SetAbstractEntityInput) => SetAbstractEntityInput
-}) {
+type InputFields = keyof SetAbstractEntityInput
+
+const mandatoryFieldsLookup: Record<EntityType, InputFields[]> = {
+  [EntityType.Applet]: ['content', 'title', 'url'],
+  [EntityType.Article]: ['content', 'title'],
+  [EntityType.Course]: ['title'],
+  [EntityType.CoursePage]: ['content', 'title'],
+  [EntityType.Event]: ['content', 'title'],
+  [EntityType.Exercise]: ['content'],
+  [EntityType.ExerciseGroup]: ['content'],
+  [EntityType.Video]: ['title', 'url'],
+}
+
+export function createSetEntityResolver() {
   return async (
     _parent: unknown,
     { input }: { input: SetAbstractEntityInput },
     { dataSources, userId }: Context,
   ) => {
-    assertStringIsNotEmpty(R.pick(mandatoryFieldKeys, input))
+    const {
+      entityType,
+      changes,
+      needsReview,
+      subscribeThis,
+      subscribeThisByEmail,
+    } = input
+    assertStringIsNotEmpty({
+      changes,
+      entityType,
+    })
 
-    if (transformedInput != null) input = transformedInput(input)
+    if (!EntityTypeDecoder.is(entityType)) {
+      throw new UserInputError(
+        `The provided entityType (${entityType}) is not supported`,
+      )
+    }
 
-    const { needsReview } = input
-    const forwardArgs = R.pick(
-      ['changes', 'subscribeThis', 'subscribeThisByEmail'],
-      input,
-    )
+    assertStringIsNotEmpty({
+      ...mandatoryFieldsLookup[entityType],
+    })
+
+    // TODO: the logic of this and others special cases should go to DB Layer
+    if (entityType === EntityType.Course) {
+      input = {
+        ...input,
+        description: input.content,
+        content: undefined,
+      }
+    }
+    if (entityType === EntityType.Video) {
+      input = {
+        ...input,
+        description: input.content,
+        content: input.url,
+        url: undefined,
+      }
+    }
+
+    const forwardArgs = { changes, subscribeThis, subscribeThisByEmail }
+
     const fieldKeys = [
       'content',
       'description',
