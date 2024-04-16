@@ -10,24 +10,19 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  LegacyQueries,
   Context,
   Model,
 } from '~/internals/graphql'
 import {
-  Uuid,
   UuidDecoder,
   DiscriminatorType,
   EntityTypeDecoder,
   EntityRevisionTypeDecoder,
-  castToAlias,
   CommentStatusDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { QueryUuidArgs } from '~/types'
+import { Resolvers, QueryUuidArgs } from '~/types'
 import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
@@ -50,9 +45,7 @@ export const UuidResolver = createCachedResolver<
   getCurrentValue: resolveUuidFromDatabase,
 })
 
-export const resolvers: InterfaceResolvers<'AbstractUuid'> &
-  Mutations<'uuid'> &
-  LegacyQueries<'uuid'> = {
+export const resolvers: Resolvers = {
   AbstractUuid: {
     __resolveType(uuid) {
       return uuid.__typename
@@ -63,7 +56,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
       const { dataSources } = context
       const id = await resolveIdFromPayload(dataSources, payload)
 
-      if (id === null || !Uuid.is(id)) return null
+      if (id === null || !t.number.is(id)) return null
 
       const uuid = await dataSources.model.serlo.getUuid({ id })
       return checkUuid(payload, uuid)
@@ -132,7 +125,7 @@ export const resolvers: InterfaceResolvers<'AbstractUuid'> &
 const Tinyint = t.union([t.literal(0), t.literal(1)])
 
 const BaseComment = t.type({
-  id: Uuid,
+  id: t.number,
   discriminator: t.literal('comment'),
   trashed: Tinyint,
   authorId: t.number,
@@ -140,10 +133,10 @@ const BaseComment = t.type({
   date: date,
   archived: Tinyint,
   content: t.string,
-  parentUuid: t.union([Uuid, t.null]),
-  parentCommentId: t.union([Uuid, t.null]),
+  parentUuid: t.union([t.number, t.null]),
+  parentCommentId: t.union([t.number, t.null]),
   status: t.union([CommentStatusDecoder, t.null]),
-  childrenIds: t.array(t.union([Uuid, t.null])),
+  childrenIds: t.array(t.union([t.number, t.null])),
 })
 
 async function resolveUuidFromDatabase(
@@ -185,7 +178,7 @@ async function resolveUuidFromDatabase(
       trashed: Boolean(baseUuid.trashed),
       archived: Boolean(baseUuid.archived),
       parentId,
-      alias: castToAlias(`/${parentId}#comment-${baseUuid.id}`),
+      alias: `/${parentId}#comment-${baseUuid.id}`,
       status: baseUuid.status ?? 'noStatus',
       childrenIds: baseUuid.childrenIds.filter(isDefined),
       date: baseUuid.date.toISOString(),

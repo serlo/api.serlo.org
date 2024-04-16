@@ -71,7 +71,6 @@ type VideoRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
   metaDescription: String
 
   url: String!
-  cohesive: Boolean
 }
 
 type VideoRevisionConnection implements AbstractEntityRevisionConnection {

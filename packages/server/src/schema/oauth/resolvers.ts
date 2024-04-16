@@ -3,15 +3,12 @@ import * as t from 'io-ts'
 
 import { ForbiddenError } from '~/errors'
 import { captureErrorEvent } from '~/internals/error-event'
-import {
-  Mutations,
-  createNamespace,
-  assertUserIsAuthenticated,
-} from '~/internals/graphql'
+import { createNamespace, assertUserIsAuthenticated } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
 const TraitsDecoder = t.type({ username: t.string, email: t.string })
 
-export const resolvers: Mutations<'oauth'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     oauth: createNamespace(),
   },
