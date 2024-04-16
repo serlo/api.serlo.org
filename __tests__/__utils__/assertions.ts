@@ -5,6 +5,7 @@ import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
+import { Database } from '~/database'
 import { Service } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
@@ -29,8 +30,9 @@ export class Client {
     return new Query(this, query)
   }
 
-  execute(query: QuerySpec<Variables<Input>>) {
+  async execute(query: QuerySpec<Variables<Input>>) {
     const environment: Environment = createTestEnvironment()
+
     return this.apolloServer.executeOperation(query, {
       contextValue: {
         dataSources: {
@@ -51,8 +53,21 @@ export class Client {
             }
           },
         } as unknown as Storage,
+        database: new Database(await this.getTransaction()),
+        cache: environment.cache,
+        swrQueue: environment.swrQueue,
       } as Context,
     })
+  }
+
+  private async getTransaction() {
+    if (global.transaction != null) return global.transaction
+
+    global.transaction = await global.database.getConnection()
+
+    await global.transaction.beginTransaction()
+
+    return global.transaction
   }
 }
 

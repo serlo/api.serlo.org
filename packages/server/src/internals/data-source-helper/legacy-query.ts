@@ -1,4 +1,4 @@
-import { option as O, either as E } from 'fp-ts'
+import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
@@ -11,10 +11,10 @@ import { Time, timeToSeconds } from '../swr-queue'
  * Helper function to create a query in a data source. A query operation is a
  * "read" operation whose result shall be cached by the API.
  */
-export function createQuery<P, R>(
-  spec: QuerySpec<P, R>,
+export function createLegacyQuery<P, R>(
+  spec: LegacyQuerySpec<P, R>,
   environment: Environment,
-): Query<P, R> {
+): LegacyQuery<P, R> {
   const ttlInSeconds = spec.maxAge ? timeToSeconds(spec.maxAge) : undefined
 
   async function queryWithDecoder<S extends R>(
@@ -31,9 +31,8 @@ export function createQuery<P, R>(
 
     if (O.isSome(cacheValue)) {
       const cacheEntry = cacheValue.value
-      const decodedCacheValue = decoder.decode(cacheEntry.value)
 
-      if (E.isRight(decodedCacheValue)) {
+      if (decoder.is(cacheEntry.value)) {
         if (
           spec.swrFrequency === undefined ||
           Math.random() < spec.swrFrequency
@@ -41,18 +40,17 @@ export function createQuery<P, R>(
           await environment.swrQueue.queue({ key, cacheEntry: cacheValue })
         }
 
-        return decodedCacheValue.right as S
+        return cacheEntry.value as S
       }
     }
 
     // Cache empty or invalid value
-    const value = await spec.getCurrentValue(payload, null)
-    const decoded = decoder.decode(value)
+    const value = await spec.getCurrentValue(payload)
 
-    if (E.isRight(decoded)) {
+    if (decoder.is(value)) {
       await environment.cache.set({
         key,
-        value: decoded.right,
+        value,
         source: 'API: From a call to a data source',
         ttlInSeconds,
       })
@@ -76,7 +74,7 @@ export function createQuery<P, R>(
     return queryWithDecoder(payload, spec.decoder)
   }
 
-  const querySpecWithHelpers: QuerySpecWithHelpers<P, R> = {
+  const querySpecWithHelpers: LegacyQuerySpecWithHelpers<P, R> = {
     ...spec,
     queryWithDecoder,
     async removeCache(args) {
@@ -101,15 +99,15 @@ export function createQuery<P, R>(
   }
 
   query._querySpec = querySpecWithHelpers
-  query.__typename = 'Query'
+  query.__typename = 'LegacyQuery'
 
-  return query as unknown as Query<P, R>
+  return query as unknown as LegacyQuery<P, R>
 }
 
 /**
  * Specification object to create a query function.
  */
-export interface QuerySpec<Payload, Result> {
+export interface LegacyQuerySpec<Payload, Result> {
   /**
    * io-ts decoder to check whether the result of the operation or the cached
    * value has the right type.
@@ -122,10 +120,7 @@ export interface QuerySpec<Payload, Result> {
    * is the cached value and can be used to update the cached value to the
    * current one.
    */
-  getCurrentValue: (
-    payload: Payload,
-    previousValue: Result | null,
-  ) => Promise<unknown>
+  getCurrentValue: (payload: Payload) => Promise<unknown>
 
   /**
    * Flag whether the SWR algorithm shall be used to update the cache in the
@@ -171,8 +166,8 @@ export interface QuerySpec<Payload, Result> {
 /**
  * The specification object of a query extended by some helper functions.
  */
-interface QuerySpecWithHelpers<Payload, Result>
-  extends QuerySpec<Payload, Result> {
+interface LegacyQuerySpecWithHelpers<Payload, Result>
+  extends LegacyQuerySpec<Payload, Result> {
   /**
    * Function to update the cache of one or many values.
    */
@@ -198,19 +193,21 @@ interface QuerySpecWithHelpers<Payload, Result>
  * Type of a query operation in a data source. Note that the specification
  * object is extended by some helper functions.
  */
-export type Query<Payload, Result> = (Payload extends undefined
+export type LegacyQuery<Payload, Result> = (Payload extends undefined
   ? () => Promise<Result>
   : (payload: Payload) => Promise<Result>) & {
-  _querySpec: QuerySpecWithHelpers<Payload, Result>
-  __typename: 'Query'
+  _querySpec: LegacyQuerySpecWithHelpers<Payload, Result>
+  __typename: 'LegacyQuery'
 }
 
 /**
  * Type guard that a certain object is a query function created by
- * {@link createQuery}.
+ * {@link createLegacyQuery}.
  */
-export function isQuery(query: unknown): query is Query<unknown, unknown> {
-  return R.has('__typename', query) && query.__typename === 'Query'
+export function isLegacyQuery(
+  query: unknown,
+): query is LegacyQuery<unknown, unknown> {
+  return R.has('__typename', query) && query.__typename === 'LegacyQuery'
 }
 
 type PayloadArrayOrPayload<P> = { payload: P } | { payloads: P[] }

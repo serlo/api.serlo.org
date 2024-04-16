@@ -25,6 +25,7 @@ import {
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
+import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { CommentStatus, Resolvers } from '~/types'
 
@@ -249,11 +250,16 @@ export const resolvers: Resolvers = {
         query: {},
       }
     },
-    async editComment(_parent, { input }, { dataSources, userId }) {
-      const commentId = input.commentId
-      const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
+    async editComment(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
 
       assertUserIsAuthenticated(userId)
+
+      const { commentId, content } = input
+
+      if (content.trim() === '') throw new UserInputError('content is empty')
+
+      const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
       await assertUserIsAuthorized({
         userId,
         guard: auth.Thread.createThread(scope),
@@ -261,16 +267,14 @@ export const resolvers: Resolvers = {
         dataSources,
       })
 
-      await dataSources.model.serlo.editComment({
-        ...input,
+      await database.mutate(`UPDATE comment set content = ? where id = ?`, [
+        content,
         commentId,
-        userId,
-      })
+      ])
 
-      return {
-        success: true,
-        query: {},
-      }
+      await UuidResolver.removeCache({ id: commentId }, context)
+
+      return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
       const { dataSources, userId } = context
