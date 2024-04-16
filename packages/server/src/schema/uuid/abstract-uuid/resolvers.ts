@@ -56,10 +56,17 @@ export const resolvers: Resolvers = {
       const { dataSources } = context
       const id = await resolveIdFromPayload(dataSources, payload)
 
-      if (id === null || !t.number.is(id)) return null
+      if (id === null) return null
 
-      const uuid = await dataSources.model.serlo.getUuid({ id })
-      return checkUuid(payload, uuid)
+      const uuid = await UuidResolver.resolve({ id }, context)
+
+      if (uuid != null) return uuid
+
+      const uuidFromDatabaseLayer = await dataSources.model.serlo.getUuid({
+        id,
+      })
+
+      return checkUuid(payload, uuidFromDatabaseLayer)
     },
   },
   Mutation: {
