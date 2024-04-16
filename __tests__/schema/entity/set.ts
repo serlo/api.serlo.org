@@ -244,7 +244,7 @@ testCases.forEach((testCase) => {
 
       await mutationWithParentId.shouldReturnData({
         entity: {
-          ['setAbstractEntity']: {
+          setAbstractEntity: {
             success: true,
             record: { id: testCase.entity.id },
           },
@@ -261,7 +261,7 @@ testCases.forEach((testCase) => {
 
       await mutationWithEntityId.shouldReturnData({
         entity: {
-          ['setAbstractEntity']: {
+          setAbstractEntity: {
             success: true,
             record: { id: testCase.entity.id },
           },
