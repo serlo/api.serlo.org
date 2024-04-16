@@ -1,7 +1,7 @@
 import { option as O } from 'fp-ts'
 
 import { createTestEnvironment } from '../__utils__'
-import { isQuery, Query } from '~/internals/data-source-helper'
+import { isLegacyQuery, LegacyQuery } from '~/internals/data-source-helper'
 import { modelFactories } from '~/model'
 
 describe('getPayload() is always inverse to getKey()', () => {
@@ -28,6 +28,6 @@ describe('getPayload() is always inverse to getKey()', () => {
 
 function isQueryEntry(
   arg: [string, object],
-): arg is [string, Query<unknown, unknown>] {
-  return isQuery(arg[1])
+): arg is [string, LegacyQuery<unknown, unknown>] {
+  return isLegacyQuery(arg[1])
 }

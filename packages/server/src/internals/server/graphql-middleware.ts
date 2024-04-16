@@ -8,8 +8,10 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql'
 import createPlayground_ from 'graphql-playground-middleware-express'
 import * as t from 'io-ts'
 import jwt from 'jsonwebtoken'
+import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
+import { Database } from '~/database'
 import {
   AuthServices,
   handleAuthentication,
@@ -32,11 +34,13 @@ export async function applyGraphQLMiddleware({
   cache,
   swrQueue,
   authServices,
+  pool,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
+  pool: Pool
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
@@ -50,6 +54,7 @@ export async function applyGraphQLMiddleware({
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
         const googleStorage = new Storage()
+        const database = new Database(pool)
         const dataSources = {
           model: new ModelDataSource(environment),
         }
@@ -60,6 +65,9 @@ export async function applyGraphQLMiddleware({
             service: Service.SerloCloudflareWorker,
             userId: null,
             googleStorage,
+            database,
+            cache,
+            swrQueue,
           })
         }
         const partialContext = await handleAuthentication(
@@ -83,7 +91,14 @@ export async function applyGraphQLMiddleware({
             }
           },
         )
-        return { ...partialContext, dataSources, googleStorage }
+        return {
+          ...partialContext,
+          dataSources,
+          googleStorage,
+          database,
+          cache,
+          swrQueue,
+        }
       },
     }),
   )
