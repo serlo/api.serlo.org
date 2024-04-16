@@ -81,7 +81,6 @@
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
     "@sentry/node": "^7.108.0",
     "@tsconfig/node20": "^20.1.4",
-    "@types/globalthis": "^1.0.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.26",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
