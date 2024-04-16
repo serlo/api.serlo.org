@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 
-import { PickResolvers } from '~/internals/graphql'
 import { NotificationEventType, UserDecoder } from '~/model/decoder'
+import { AbstractNotificationEventResolvers } from '~/types'
 
 const validTypes = Object.values(NotificationEventType)
 
@@ -11,8 +11,8 @@ export function isSupportedNotificationEvent(payload: unknown) {
   )
 }
 
-export function createNotificationEventResolvers(): PickResolvers<
-  'AbstractNotificationEvent',
+export function createNotificationEventResolvers(): Pick<
+  AbstractNotificationEventResolvers,
   'actor'
 > {
   return {

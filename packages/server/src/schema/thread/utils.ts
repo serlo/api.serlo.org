@@ -1,12 +1,13 @@
 import * as t from 'io-ts'
 
 import { UserInputError } from '~/errors'
-import { Context, Model, PickResolvers } from '~/internals/graphql'
+import { Context, Model } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
+import { ThreadAwareResolvers } from '~/types'
 import { isDefined } from '~/utils'
 
-export function createThreadResolvers(): PickResolvers<'ThreadAware'> {
+export function createThreadResolvers(): Pick<ThreadAwareResolvers, 'threads'> {
   return {
     async threads(parent, payload, { dataSources }) {
       const { firstCommentIds } = await dataSources.model.serlo.getThreadIds({

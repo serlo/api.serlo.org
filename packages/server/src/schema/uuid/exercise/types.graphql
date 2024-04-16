@@ -71,7 +71,6 @@ type ExerciseRevision implements AbstractUuid & AbstractRevision & AbstractEntit
   metaDescription: String
 
   url: String
-  cohesive: Boolean
 }
 
 type ExerciseRevisionConnection implements AbstractEntityRevisionConnection {

@@ -63,7 +63,6 @@ interface AbstractEntityRevision {
   metaDescription: String
 
   url: String
-  cohesive: Boolean
 }
 
 type AbstractEntityConnection {
@@ -134,7 +133,6 @@ input SetAbstractEntityInput {
   metaDescription: String
   metaTitle: String
   url: String
-  cohesive: Boolean
 }
 
 type SetEntityResponse {

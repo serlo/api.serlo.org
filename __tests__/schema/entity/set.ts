@@ -35,7 +35,6 @@ import { Instance } from '~/types'
 
 interface EntityFields {
   title: string
-  cohesive: boolean
   content: string
   description: string
   metaTitle: string
@@ -45,7 +44,6 @@ interface EntityFields {
 
 const ALL_POSSIBLE_FIELDS: EntityFields = {
   title: 'title',
-  cohesive: false,
   content: 'content',
   description: 'description',
   metaTitle: 'metaTitle',
@@ -69,7 +67,7 @@ const fieldKeys: Record<
   [EntityType.CoursePage]: ['title', 'content'],
   [EntityType.Event]: ['title', 'content', 'metaTitle', 'metaDescription'],
   [EntityType.Exercise]: ['content'],
-  [EntityType.ExerciseGroup]: ['cohesive', 'content'],
+  [EntityType.ExerciseGroup]: ['content'],
   [EntityType.Video]: ['title', 'content', 'url'],
 }
 const entities = [
@@ -106,7 +104,6 @@ class EntitySetTestCase {
   get fieldsToDBLayer() {
     if (this.entityType === EntityType.ExerciseGroup) {
       return {
-        cohesive: this.fields.cohesive!.toString(),
         content: this.fields.content!,
       }
     } else if (this.entityType === EntityType.Course) {

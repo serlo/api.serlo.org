@@ -8,19 +8,14 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  Queries,
 } from '~/internals/graphql'
 import { CourseDecoder, EntityDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { Resolvers } from '~/types'
 import { isDateString } from '~/utils'
 
-export const resolvers: InterfaceResolvers<'AbstractEntity'> &
-  InterfaceResolvers<'AbstractEntityRevision'> &
-  Queries<'entity'> &
-  Mutations<'entity'> = {
+export const resolvers: Resolvers = {
   Query: {
     entity: createNamespace(),
   },

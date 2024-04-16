@@ -2,8 +2,6 @@ import * as serloAuth from '@serlo/authorization'
 
 import { ModelDataSource } from '~/internals/data-source'
 import {
-  TypeResolvers,
-  Mutations,
   createNamespace,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -15,11 +13,7 @@ import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import {
-  TaxonomyTerm,
-  TaxonomyTermType,
-  TaxonomyTypeCreateOptions,
-} from '~/types'
+import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
 import { isDefined } from '~/utils'
 
 const typesMap = {
@@ -39,8 +33,7 @@ const typesMap = {
 
 const ROOT_TAXONOMY_ID = 3
 
-export const resolvers: TypeResolvers<TaxonomyTerm> &
-  Mutations<'taxonomyTerm'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     taxonomyTerm: createNamespace(),
   },
