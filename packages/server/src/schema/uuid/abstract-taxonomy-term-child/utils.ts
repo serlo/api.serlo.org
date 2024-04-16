@@ -1,9 +1,9 @@
-import { PickResolvers } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
+import { AbstractTaxonomyTermChildResolvers } from '~/types'
 
-export function createTaxonomyTermChildResolvers(): PickResolvers<
-  'AbstractTaxonomyTermChild',
+export function createTaxonomyTermChildResolvers(): Pick<
+  AbstractTaxonomyTermChildResolvers,
   'taxonomyTerms'
 > {
   return {

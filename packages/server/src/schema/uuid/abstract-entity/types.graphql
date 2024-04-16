@@ -63,7 +63,6 @@ interface AbstractEntityRevision {
   metaDescription: String
 
   url: String
-  cohesive: Boolean
 }
 
 type AbstractEntityConnection {
@@ -112,21 +111,16 @@ extend type Mutation {
 }
 
 type EntityMutation {
-  setApplet(input: SetAppletInput!): SetEntityResponse!
-  setArticle(input: SetArticleInput!): SetEntityResponse!
-  setCourse(input: SetCourseInput!): SetEntityResponse!
-  setCoursePage(input: SetCoursePageInput!): SetEntityResponse!
-  setEvent(input: SetEventInput!): SetEntityResponse!
-  setExercise(input: SetGenericEntityInput!): SetEntityResponse!
-  setExerciseGroup(input: SetExerciseGroupInput!): SetEntityResponse!
-  setVideo(input: SetVideoInput!): SetEntityResponse!
+  setAbstractEntity(input: SetAbstractEntityInput!): SetEntityResponse!
   updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
   checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
   rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
   sort(input: EntitySortInput!): EntitySortResponse!
 }
 
-input SetAppletInput {
+input SetAbstractEntityInput {
+  entityType: String!
+
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -134,100 +128,11 @@ input SetAppletInput {
   entityId: Int
   parentId: Int
 
-  content: String!
-  title: String!
-  url: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input SetArticleInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input SetCourseInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  title: String!
   content: String
-  metaDescription: String
-}
-
-input SetCoursePageInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-}
-
-input SetEventInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
+  title: String
   metaDescription: String
   metaTitle: String
-}
-
-input SetExerciseGroupInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  cohesive: Boolean!
-  content: String!
-}
-
-input SetGenericEntityInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-}
-
-input SetVideoInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-  url: String!
+  url: String
 }
 
 type SetEntityResponse {

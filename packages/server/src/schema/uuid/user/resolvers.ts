@@ -20,9 +20,6 @@ import {
   createNamespace,
   generateRole,
   isGlobalRole,
-  Mutations,
-  Queries,
-  TypeResolvers,
 } from '~/internals/graphql'
 import { CellValues, MajorDimension } from '~/model'
 import { EntityDecoder, RevisionDecoder, UserDecoder } from '~/model/decoder'
@@ -35,11 +32,9 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { Instance, User } from '~/types'
+import { Instance, Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<User> &
-  Queries<'user'> &
-  Mutations<'user'> = {
+export const resolvers: Resolvers = {
   Query: {
     user: createNamespace(),
   },

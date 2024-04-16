@@ -1,7 +1,6 @@
-import { InterfaceResolvers } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
-export const resolvers: InterfaceResolvers<'AbstractRepository'> &
-  InterfaceResolvers<'AbstractRevision'> = {
+export const resolvers: Resolvers = {
   AbstractRepository: {
     __resolveType(repository) {
       return repository.__typename
