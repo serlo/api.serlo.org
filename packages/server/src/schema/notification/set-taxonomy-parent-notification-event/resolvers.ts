@@ -1,9 +1,8 @@
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/internals/graphql'
 import { TaxonomyTermDecoder } from '~/model/decoder'
-import { SetTaxonomyParentNotificationEvent } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<SetTaxonomyParentNotificationEvent> = {
+export const resolvers: Resolvers = {
   SetTaxonomyParentNotificationEvent: {
     ...createNotificationEventResolvers(),
     async previousParent(notificationEvent, _args, { dataSources }) {

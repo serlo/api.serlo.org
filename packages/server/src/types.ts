@@ -71,7 +71,6 @@ export type AbstractEntityCursor = {
 export type AbstractEntityRevision = {
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -334,7 +333,6 @@ export type AppletRevision = AbstractEntityRevision & AbstractRevision & Abstrac
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -435,7 +433,6 @@ export type ArticleRevision = AbstractEntityRevision & AbstractRevision & Abstra
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -659,7 +656,6 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractRevision & Abs
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -706,7 +702,6 @@ export type CourseRevision = AbstractEntityRevision & AbstractRevision & Abstrac
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -998,7 +993,6 @@ export type EventRevision = AbstractEntityRevision & AbstractRevision & Abstract
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1166,7 +1160,6 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractRevision & 
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive: Scalars['Boolean']['output'];
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1220,7 +1213,6 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractRevision & Abstr
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1737,7 +1729,6 @@ export type ScopedRoleCursor = {
 
 export type SetAbstractEntityInput = {
   changes: Scalars['String']['input'];
-  cohesive?: InputMaybe<Scalars['Boolean']['input']>;
   content?: InputMaybe<Scalars['String']['input']>;
   entityId?: InputMaybe<Scalars['Int']['input']>;
   entityType: Scalars['String']['input'];
@@ -2524,7 +2515,6 @@ export type VideoRevision = AbstractEntityRevision & AbstractRevision & Abstract
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -3070,7 +3060,6 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'VideoRevision', ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionEventsArgs>>;
@@ -3207,7 +3196,6 @@ export type AppletRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AppletRevisionEventsArgs>>;
@@ -3249,7 +3237,6 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ArticleRevisionEventsArgs>>;
@@ -3347,7 +3334,6 @@ export type CoursePageRevisionResolvers<ContextType = Context, ParentType extend
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CoursePageRevisionEventsArgs>>;
@@ -3373,7 +3359,6 @@ export type CourseRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CourseRevisionEventsArgs>>;
@@ -3559,7 +3544,6 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<EventRevisionEventsArgs>>;
@@ -3630,7 +3614,6 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionEventsArgs>>;
@@ -3663,7 +3646,6 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseRevisionEventsArgs>>;
@@ -4317,7 +4299,6 @@ export type VideoRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<VideoRevisionEventsArgs>>;

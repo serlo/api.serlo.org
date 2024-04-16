@@ -1,40 +1,4 @@
-import * as t from 'io-ts'
-
-import {
-  Model,
-  PickResolvers,
-  Repository,
-  ResolverFunction,
-} from '~/internals/graphql'
 import { EntityRevisionType, EntityType } from '~/model/decoder'
-import { Connection } from '~/schema/connection/types'
-import { createRepositoryResolvers } from '~/schema/uuid/abstract-repository/utils'
-import { VideoRevisionsArgs } from '~/types'
-
-export function createEntityResolvers<
-  R extends Model<'AbstractEntityRevision'>,
->({
-  revisionDecoder,
-}: {
-  revisionDecoder: t.Type<R, unknown>
-}): PickResolvers<
-  'AbstractEntity',
-  'alias' | 'threads' | 'licenseId' | 'events' | 'title'
-> &
-  // TODO: Add threads to "AbstractEntity"
-  PickResolvers<'AbstractRepository', 'threads'> & {
-    currentRevision: ResolverFunction<
-      R | null,
-      Repository<Model<'AbstractEntityRevision'>['__typename']>
-    >
-    revisions: ResolverFunction<
-      Connection<R>,
-      Repository<Model<'AbstractEntityRevision'>['__typename']>,
-      VideoRevisionsArgs
-    >
-  } {
-  return createRepositoryResolvers({ revisionDecoder })
-}
 
 export function fromEntityTypeToEntityRevisionType(
   entityType: EntityType,

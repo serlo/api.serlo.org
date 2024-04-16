@@ -71,7 +71,6 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   metaDescription: String!
 
   url: String!
-  cohesive: Boolean
 }
 
 type AppletRevisionConnection implements AbstractEntityRevisionConnection {
