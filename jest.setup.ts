@@ -2,7 +2,7 @@ import { flush as flushSentry, type Event } from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { createPool } from 'mysql2/promise'
+import { createPool, type Pool, type PoolConnection } from 'mysql2/promise'
 
 import {
   defaultSpreadsheetApi,
@@ -128,4 +128,6 @@ declare global {
   var timer: MockTimer
   var sentryEvents: Event[]
   var kratos: MockKratos
+  var database: Pool
+  var transaction: PoolConnection
 }
