@@ -100,8 +100,8 @@ extend type Mutation {
 }
 
 type ThreadMutation {
-  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse!
-  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse!
+  createThread(input: ThreadCreateThreadInput!): DefaultResponse!
+  createComment(input: ThreadCreateCommentInput!): DefaultResponse!
   editComment(input: ThreadEditCommentInput!): DefaultResponse!
   setThreadArchived(input: ThreadSetThreadArchivedInput!): DefaultResponse!
   setThreadState(input: ThreadSetThreadStateInput!): DefaultResponse!
@@ -117,23 +117,11 @@ input ThreadCreateThreadInput {
   sendEmail: Boolean!
 }
 
-type ThreadCreateThreadResponse {
-  record: Thread
-  success: Boolean!
-  query: Query!
-}
-
 input ThreadCreateCommentInput {
   content: String!
   threadId: String!
   subscribe: Boolean!
   sendEmail: Boolean!
-}
-
-type ThreadCreateCommentResponse {
-  record: Comment
-  success: Boolean!
-  query: Query!
 }
 
 input ThreadEditCommentInput {
