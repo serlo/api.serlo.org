@@ -4,6 +4,7 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { ModelDataSource } from '~/internals/data-source'
 import {
@@ -16,7 +17,6 @@ import {
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
   createNamespace,
   generateRole,
   isGlobalRole,

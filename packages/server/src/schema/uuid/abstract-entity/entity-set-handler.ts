@@ -2,6 +2,7 @@ import * as serloAuth from '@serlo/authorization'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
 import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds, defaultLicenseIds } from '~/config'
 import { UserInputError } from '~/errors'
@@ -9,7 +10,6 @@ import {
   assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
 } from '~/internals/graphql'
 import {
   EntityDecoder,

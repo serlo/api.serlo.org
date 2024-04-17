@@ -4,8 +4,9 @@ import {
   Scope,
 } from '@serlo/authorization'
 
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
-import { Context, Model } from '~/internals/graphql'
+import { Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionDecoder,

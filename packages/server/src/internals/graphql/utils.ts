@@ -2,7 +2,7 @@ import { AuthorizationGuard } from '@serlo/authorization'
 import * as R from 'ramda'
 
 import { AuthenticationError, ForbiddenError, UserInputError } from '~/errors'
-import { Context } from '~/internals/graphql/context'
+import { Context } from '~/context'
 import { fetchAuthorizationPayload } from '~/schema/authorization/utils'
 import { isInstance } from '~/schema/instance/utils'
 import { Instance, Role } from '~/types'

@@ -3,13 +3,13 @@ schema: src/**/*.graphql
 generates:
   src/types.ts:
     plugins:
-      - add:
-          content: "import type { ModelOf } from '~/internals/model'"
+      #- add:
+      #    content: "import type { ModelOf } from '~/internals/model'"
       - typescript
       - typescript-resolvers
     config:
-      contextType: '~/internals/graphql/context#Context'
-      defaultMapper: ModelOf<{T}>
+      contextType: '~/context#Context'
+      defaultMapper: any
       scalars:
         DateTime: string
         JSON: unknown

@@ -1,11 +1,11 @@
 import * as auth from '@serlo/authorization'
 
+import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
   createNamespace,
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'

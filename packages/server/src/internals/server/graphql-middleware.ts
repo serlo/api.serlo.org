@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken'
 import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
 import { Database } from '~/database'
 import {
   AuthServices,
@@ -20,7 +21,6 @@ import {
 } from '~/internals/authentication'
 import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
-import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'

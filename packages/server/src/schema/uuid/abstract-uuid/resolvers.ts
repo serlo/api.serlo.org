@@ -5,12 +5,12 @@ import { date } from 'io-ts-types/lib/date'
 
 import { createCachedResolver } from '~/cached-resolver'
 import { resolveCustomId } from '~/config'
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  Context,
   Model,
 } from '~/internals/graphql'
 import {
