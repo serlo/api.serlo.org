@@ -13,16 +13,16 @@ import * as R from 'ramda'
 
 import { Context } from '~/context'
 import { Cache } from '~/context/cache'
+import { Service } from '~/context/service'
 import { Database } from '~/database'
 import {
   AuthServices,
   handleAuthentication,
-  IdentityDecoder,
-  Service,
+  IdentityDecoder
 } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
-import { SwrQueue } from '~/internals/swr-queue'
+import { SwrQueue } from '~/context/swr-queue'
 import { schema } from '~/schema'
 
 const SessionDecoder = t.type({
