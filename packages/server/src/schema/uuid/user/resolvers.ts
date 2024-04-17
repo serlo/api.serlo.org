@@ -439,12 +439,18 @@ export const resolvers: Resolvers = {
       return { success: true }
     },
 
-    async setDescription(_parent, { input }, { dataSources, userId }) {
+    async setDescription(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
       assertUserIsAuthenticated(userId)
-      return await dataSources.model.serlo.setDescription({
-        ...input,
-        userId,
-      })
+      if (input.description.length >= 64 * 1024) {
+        throw new UserInputError('description too long')
+      }
+      database.mutate(
+        'update user set description = ? where id = ?',
+        [ input.description, userId, ]
+      )
+      // TODO: setCache
+      return {success: true, query: {} }
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
