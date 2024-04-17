@@ -2197,7 +2197,8 @@ export type UserDeleteBotsInput = {
 };
 
 export type UserDeleteRegularUsersInput = {
-  users: Array<UserDescriptionInput>;
+  id: Scalars['Int']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type UserDeleteRegularUsersResponse = {
@@ -2205,11 +2206,6 @@ export type UserDeleteRegularUsersResponse = {
   reason?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
   username?: Maybe<Scalars['String']['output']>;
-};
-
-export type UserDescriptionInput = {
-  id: Scalars['Int']['input'];
-  username: Scalars['String']['input'];
 };
 
 export type UserEdge = {
@@ -2222,7 +2218,7 @@ export type UserMutation = {
   __typename?: 'UserMutation';
   addRole: DefaultResponse;
   deleteBots: DefaultResponse;
-  deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
+  deleteRegularUser: DefaultResponse;
   removeRole: DefaultResponse;
   setDescription: DefaultResponse;
   setEmail: DefaultResponse;
@@ -2239,7 +2235,7 @@ export type UserMutationDeleteBotsArgs = {
 };
 
 
-export type UserMutationDeleteRegularUsersArgs = {
+export type UserMutationDeleteRegularUserArgs = {
   input: UserDeleteRegularUsersInput;
 };
 
@@ -2665,7 +2661,6 @@ export type ResolversTypes = {
   UserDeleteBotsInput: ResolverTypeWrapper<ModelOf<UserDeleteBotsInput>>;
   UserDeleteRegularUsersInput: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersInput>>;
   UserDeleteRegularUsersResponse: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersResponse>>;
-  UserDescriptionInput: ResolverTypeWrapper<ModelOf<UserDescriptionInput>>;
   UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
   UserMutation: ResolverTypeWrapper<ModelOf<UserMutation>>;
   UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
@@ -2826,7 +2821,6 @@ export type ResolversParentTypes = {
   UserDeleteBotsInput: ModelOf<UserDeleteBotsInput>;
   UserDeleteRegularUsersInput: ModelOf<UserDeleteRegularUsersInput>;
   UserDeleteRegularUsersResponse: ModelOf<UserDeleteRegularUsersResponse>;
-  UserDescriptionInput: ModelOf<UserDescriptionInput>;
   UserEdge: ModelOf<UserEdge>;
   UserMutation: ModelOf<UserMutation>;
   UserQuery: ModelOf<UserQuery>;
@@ -3932,7 +3926,7 @@ export type UserEdgeResolvers<ContextType = Context, ParentType extends Resolver
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
   addRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationAddRoleArgs, 'input'>>;
   deleteBots?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
-  deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
+  deleteRegularUser?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
   removeRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
   setDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
   setEmail?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;

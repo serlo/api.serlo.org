@@ -372,7 +372,7 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
 
-    async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
+    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -381,35 +381,21 @@ export const resolvers: Resolvers = {
         dataSources,
       })
 
-      const users = await Promise.all(
-        input.users.map(async ({ id, username }) => {
-          const user = await dataSources.model.serlo.getUuid({ id })
+      const { id, username } = input
+      const user = await dataSources.model.serlo.getUuid({ id: input.id })
 
-          if (!UserDecoder.is(user)) return null
-          if (user.username !== username) return null
-
-          return user
-        }),
-      )
-
-      if (!t.array(UserDecoder).is(users))
+      if (!UserDecoder.is(user) || user.username !== username) {
         throw new UserInputError(
-          'Either one id does not belong to a user or one username / id combination is wrong',
+          '`id` does not belong to a user or `username` does not match the `user`',
         )
+      }
 
-      return await Promise.all(
-        users.map(async ({ id, username }) => {
-          const result = {
-            ...(await dataSources.model.serlo.deleteRegularUsers({
-              userId: id,
-            })),
-            username: username,
-          }
+      const result = await dataSources.model.serlo.deleteRegularUsers({
+        userId: id,
+      })
 
-          if (result.success) await deleteKratosUser(id, dataSources)
-          return result
-        }),
-      )
+      if (result.success) await deleteKratosUser(id, dataSources)
+      return { success: result.success, query: {} }
     },
 
     async removeRole(_parent, { input }, { dataSources, userId }) {
