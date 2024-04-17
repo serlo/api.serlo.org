@@ -2,6 +2,8 @@ import { Scope } from '@serlo/authorization'
 import * as t from 'io-ts'
 
 import {
+  AbstractEntityDecoder,
+  AbstractNotificationEventDecoder,
   AppletDecoder,
   AppletRevisionDecoder,
   ArticleDecoder,
@@ -43,6 +45,7 @@ import {
   VideoRevisionDecoder,
 } from './decoder'
 import { Role } from '~/types'
+import { Connection } from '~/schema/connection/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -124,4 +127,12 @@ export interface Models {
     typeof SetThreadStateNotificationEventDecoder
   >
   ScopedRole: { role: Role; scope: Scope }
+  AbstractEntity: t.TypeOf<typeof AbstractEntityDecoder>
+  AbstractNotificationEvent: t.TypeOf<typeof AbstractNotificationEventDecoder>
+  UserActivityByType: {
+    edits: number
+    reviews: number
+    taxonomy: number
+    comments: number
+  }
 }
