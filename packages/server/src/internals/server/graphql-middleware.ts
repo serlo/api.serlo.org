@@ -19,7 +19,7 @@ import { Database } from '~/database'
 import {
   AuthServices,
   handleAuthentication,
-  IdentityDecoder
+  IdentityDecoder,
 } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
