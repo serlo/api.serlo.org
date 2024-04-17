@@ -8,7 +8,7 @@ type MetadataQuery {
     after: String
     instance: Instance
     modifiedAfter: String
-  ): EntityMetadataConnection!
+  ): ResourceMetadataConnection!
     @deprecated(
       reason: "Please use the `resources` field instead. This property will be deleted."
     )
@@ -17,12 +17,12 @@ type MetadataQuery {
     after: String
     instance: Instance
     modifiedAfter: String
-  ): EntityMetadataConnection!
+  ): ResourceMetadataConnection!
   publisher: JSONObject!
   version: String!
 }
 
-type EntityMetadataConnection {
+type ResourceMetadataConnection {
   nodes: [JSONObject!]!
   pageInfo: HasNextPageInfo!
 }
