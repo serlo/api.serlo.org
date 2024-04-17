@@ -15,7 +15,6 @@ import {
   Model,
   Context,
 } from '~/internals/graphql'
-import { Database } from '~/database'
 import {
   CommentDecoder,
   DiscriminatorType,
