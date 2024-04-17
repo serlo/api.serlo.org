@@ -2,7 +2,6 @@ import { aiSchema } from './ai'
 import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
 import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
 import { experimentSchema } from './experiment'
 import { instanceSchema } from './instance'
@@ -23,7 +22,6 @@ export const schema = mergeSchemas(
   authorizationSchema,
   cacheSchema,
   connectionSchema,
-  dateTimeSchema,
   experimentSchema,
   instanceSchema,
   defaultGraphQLDefinitionsSchema,
