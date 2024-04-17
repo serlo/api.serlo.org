@@ -244,13 +244,6 @@ export type AbstractUuidConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type AddRevisionResponse = {
-  __typename?: 'AddRevisionResponse';
-  query: Query;
-  revisionId?: Maybe<Scalars['Int']['output']>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type AiQuery = {
   __typename?: 'AiQuery';
   executePrompt: ExecutePromptResponse;
@@ -490,12 +483,6 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   reason: Scalars['String']['output'];
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
-};
-
-export type CheckoutRevisionResponse = {
-  __typename?: 'CheckoutRevisionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type Comment = AbstractUuid & {
@@ -825,18 +812,18 @@ export type DefaultResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type DeletedEntitiesConnection = {
-  __typename?: 'DeletedEntitiesConnection';
-  edges: Array<DeletedEntityCursor>;
-  nodes: Array<DeletedEntity>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type DeletedEntity = {
   __typename?: 'DeletedEntity';
   dateOfDeletion?: Maybe<Scalars['String']['output']>;
   entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
+};
+
+export type DeletedEntityConnection = {
+  __typename?: 'DeletedEntityConnection';
+  edges: Array<DeletedEntityCursor>;
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type DeletedEntityCursor = {
@@ -847,11 +834,11 @@ export type DeletedEntityCursor = {
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  checkoutRevision: CheckoutRevisionResponse;
-  rejectRevision: RejectRevisionResponse;
+  checkoutRevision: DefaultResponse;
+  rejectRevision: DefaultResponse;
   setAbstractEntity: SetEntityResponse;
-  sort: EntitySortResponse;
-  updateLicense: EntityUpdateLicenseResponse;
+  sort: DefaultResponse;
+  updateLicense: DefaultResponse;
 };
 
 
@@ -881,7 +868,7 @@ export type EntityMutationUpdateLicenseArgs = {
 
 export type EntityQuery = {
   __typename?: 'EntityQuery';
-  deletedEntities: DeletedEntitiesConnection;
+  deletedEntities: DeletedEntityConnection;
 };
 
 
@@ -896,21 +883,9 @@ export type EntitySortInput = {
   entityId: Scalars['Int']['input'];
 };
 
-export type EntitySortResponse = {
-  __typename?: 'EntitySortResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type EntityUpdateLicenseInput = {
   entityId: Scalars['Int']['input'];
   licenseId: Scalars['Int']['input'];
-};
-
-export type EntityUpdateLicenseResponse = {
-  __typename?: 'EntityUpdateLicenseResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type Event = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -1464,13 +1439,6 @@ export type PageAddRevisionInput = {
   title: Scalars['String']['input'];
 };
 
-export type PageCreateResponse = {
-  __typename?: 'PageCreateResponse';
-  query: Query;
-  record?: Maybe<Page>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
@@ -1481,9 +1449,9 @@ export type PageInfo = {
 
 export type PageMutation = {
   __typename?: 'PageMutation';
-  addRevision: AddRevisionResponse;
-  checkoutRevision: CheckoutRevisionResponse;
-  create: PageCreateResponse;
+  addRevision: DefaultResponse;
+  checkoutRevision: DefaultResponse;
+  create: DefaultResponse;
 };
 
 
@@ -1629,12 +1597,6 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   reason: Scalars['String']['output'];
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
-};
-
-export type RejectRevisionResponse = {
-  __typename?: 'RejectRevisionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -2629,7 +2591,6 @@ export type ResolversTypes = {
   AbstractTaxonomyTermChild: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractTaxonomyTermChild']>;
   AbstractUuid: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractUuid']>;
   AbstractUuidConnection: ResolverTypeWrapper<ModelOf<AbstractUuidConnection>>;
-  AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AiQuery: ResolverTypeWrapper<ModelOf<AiQuery>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
@@ -2643,7 +2604,6 @@ export type ResolversTypes = {
   ChatCompletionMessageParam: ResolverTypeWrapper<ModelOf<ChatCompletionMessageParam>>;
   CheckoutRevisionInput: ResolverTypeWrapper<ModelOf<CheckoutRevisionInput>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
-  CheckoutRevisionResponse: ResolverTypeWrapper<ModelOf<CheckoutRevisionResponse>>;
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
@@ -2663,15 +2623,13 @@ export type ResolversTypes = {
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']['output']>>;
   DefaultResponse: ResolverTypeWrapper<ModelOf<DefaultResponse>>;
-  DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
+  DeletedEntityConnection: ResolverTypeWrapper<ModelOf<DeletedEntityConnection>>;
   DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
-  EntitySortResponse: ResolverTypeWrapper<ModelOf<EntitySortResponse>>;
   EntityUpdateLicenseInput: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseInput>>;
-  EntityUpdateLicenseResponse: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseResponse>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
@@ -2708,7 +2666,6 @@ export type ResolversTypes = {
   OauthMutation: ResolverTypeWrapper<ModelOf<OauthMutation>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
-  PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageQuery: ResolverTypeWrapper<ModelOf<PageQuery>>;
@@ -2718,7 +2675,6 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
-  RejectRevisionResponse: ResolverTypeWrapper<ModelOf<RejectRevisionResponse>>;
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
   ResourceMetadataConnection: ResolverTypeWrapper<ModelOf<ResourceMetadataConnection>>;
@@ -2813,7 +2769,6 @@ export type ResolversParentTypes = {
   AbstractTaxonomyTermChild: ResolversInterfaceTypes<ResolversParentTypes>['AbstractTaxonomyTermChild'];
   AbstractUuid: ResolversInterfaceTypes<ResolversParentTypes>['AbstractUuid'];
   AbstractUuidConnection: ModelOf<AbstractUuidConnection>;
-  AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AiQuery: ModelOf<AiQuery>;
   AliasInput: ModelOf<AliasInput>;
   Applet: ModelOf<Applet>;
@@ -2827,7 +2782,6 @@ export type ResolversParentTypes = {
   ChatCompletionMessageParam: ModelOf<ChatCompletionMessageParam>;
   CheckoutRevisionInput: ModelOf<CheckoutRevisionInput>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
-  CheckoutRevisionResponse: ModelOf<CheckoutRevisionResponse>;
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
   Course: ModelOf<Course>;
@@ -2846,15 +2800,13 @@ export type ResolversParentTypes = {
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']['output']>;
   DefaultResponse: ModelOf<DefaultResponse>;
-  DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
   DeletedEntity: ModelOf<DeletedEntity>;
+  DeletedEntityConnection: ModelOf<DeletedEntityConnection>;
   DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
   EntitySortInput: ModelOf<EntitySortInput>;
-  EntitySortResponse: ModelOf<EntitySortResponse>;
   EntityUpdateLicenseInput: ModelOf<EntityUpdateLicenseInput>;
-  EntityUpdateLicenseResponse: ModelOf<EntityUpdateLicenseResponse>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
@@ -2889,7 +2841,6 @@ export type ResolversParentTypes = {
   OauthMutation: ModelOf<OauthMutation>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
-  PageCreateResponse: ModelOf<PageCreateResponse>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
   PageQuery: ModelOf<PageQuery>;
@@ -2899,7 +2850,6 @@ export type ResolversParentTypes = {
   Query: {};
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
-  RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
   ResourceMetadataConnection: ModelOf<ResourceMetadataConnection>;
@@ -3103,13 +3053,6 @@ export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AddRevisionResponse'] = ResolversParentTypes['AddRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
   executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'messages'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3206,12 +3149,6 @@ export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, Pa
   reason?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['AbstractRepository'], ParentType, ContextType>;
   revision?: Resolver<ResolversTypes['AbstractRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CheckoutRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionResponse'] = ResolversParentTypes['CheckoutRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3404,17 +3341,17 @@ export type DefaultResponseResolvers<ContextType = Context, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeletedEntitiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntitiesConnection'] = ResolversParentTypes['DeletedEntitiesConnection']> = {
+export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
+  dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeletedEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityConnection'] = ResolversParentTypes['DeletedEntityConnection']> = {
   edges?: Resolver<Array<ResolversTypes['DeletedEntityCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
-  dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3425,28 +3362,16 @@ export type DeletedEntityCursorResolvers<ContextType = Context, ParentType exten
 };
 
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
-  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
-  rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
+  checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
+  rejectRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
   setAbstractEntity?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetAbstractEntityArgs, 'input'>>;
-  sort?: Resolver<ResolversTypes['EntitySortResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
-  updateLicense?: Resolver<ResolversTypes['EntityUpdateLicenseResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
+  updateLicense?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
-  deletedEntities?: Resolver<ResolversTypes['DeletedEntitiesConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntitySortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntitySortResponse'] = ResolversParentTypes['EntitySortResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntityUpdateLicenseResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityUpdateLicenseResponse'] = ResolversParentTypes['EntityUpdateLicenseResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deletedEntities?: Resolver<ResolversTypes['DeletedEntityConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3713,13 +3638,6 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PageCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageCreateResponse'] = ResolversParentTypes['PageCreateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -3729,9 +3647,9 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
-  addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
-  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
-  create?: Resolver<ResolversTypes['PageCreateResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
+  addRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
+  checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
+  create?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3795,12 +3713,6 @@ export type RejectRevisionNotificationEventResolvers<ContextType = Context, Pare
   reason?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['AbstractRepository'], ParentType, ContextType>;
   revision?: Resolver<ResolversTypes['AbstractRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RejectRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionResponse'] = ResolversParentTypes['RejectRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4252,7 +4164,6 @@ export type Resolvers<ContextType = Context> = {
   AbstractTaxonomyTermChild?: AbstractTaxonomyTermChildResolvers<ContextType>;
   AbstractUuid?: AbstractUuidResolvers<ContextType>;
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
-  AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   AiQuery?: AiQueryResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
@@ -4261,7 +4172,6 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
-  CheckoutRevisionResponse?: CheckoutRevisionResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
@@ -4279,13 +4189,11 @@ export type Resolvers<ContextType = Context> = {
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DefaultResponse?: DefaultResponseResolvers<ContextType>;
-  DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
+  DeletedEntityConnection?: DeletedEntityConnectionResolvers<ContextType>;
   DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
   EntityQuery?: EntityQueryResolvers<ContextType>;
-  EntitySortResponse?: EntitySortResponseResolvers<ContextType>;
-  EntityUpdateLicenseResponse?: EntityUpdateLicenseResponseResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
@@ -4315,7 +4223,6 @@ export type Resolvers<ContextType = Context> = {
   OauthAcceptResponse?: OauthAcceptResponseResolvers<ContextType>;
   OauthMutation?: OauthMutationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
-  PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PageMutation?: PageMutationResolvers<ContextType>;
   PageQuery?: PageQueryResolvers<ContextType>;
@@ -4324,7 +4231,6 @@ export type Resolvers<ContextType = Context> = {
   PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
-  RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
   ResourceMetadataConnection?: ResourceMetadataConnectionResolvers<ContextType>;
