@@ -18,7 +18,7 @@ export type ModelOf<T> =
  *
  * type A = Typename<Article> // A equals "Article"
  */
-export type Typename<T> = T extends { __typename?: infer U }
+type Typename<T> = T extends { __typename?: infer U }
   ? U extends string
     ? U
     : '__not_a_graphql_type'
