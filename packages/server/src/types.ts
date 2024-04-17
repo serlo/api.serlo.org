@@ -855,15 +855,8 @@ export type DeletedEntityCursor = {
 
 export type EntityMetadataConnection = {
   __typename?: 'EntityMetadataConnection';
-  edges: Array<EntityMetadataCursor>;
   nodes: Array<Scalars['JSONObject']['output']>;
   pageInfo: HasNextPageInfo;
-};
-
-export type EntityMetadataCursor = {
-  __typename?: 'EntityMetadataCursor';
-  cursor: Scalars['String']['output'];
-  node: Scalars['JSONObject']['output'];
 };
 
 export type EntityMutation = {
@@ -2709,7 +2702,6 @@ export type ResolversTypes = {
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
   DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
   EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
-  EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
@@ -2898,7 +2890,6 @@ export type ResolversParentTypes = {
   DeletedEntity: ModelOf<DeletedEntity>;
   DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
   EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
-  EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
   EntitySortInput: ModelOf<EntitySortInput>;
@@ -3486,15 +3477,8 @@ export type DeletedEntityCursorResolvers<ContextType = Context, ParentType exten
 };
 
 export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntityMetadataCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataCursor'] = ResolversParentTypes['EntityMetadataCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4378,7 +4362,6 @@ export type Resolvers<ContextType = Context> = {
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
   DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
   EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
-  EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
   EntityQuery?: EntityQueryResolvers<ContextType>;
   EntitySortResponse?: EntitySortResponseResolvers<ContextType>;
