@@ -14,6 +14,7 @@ import * as R from 'ramda'
 import { Context } from '~/context'
 import { Cache } from '~/context/cache'
 import { Service } from '~/context/service'
+import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
 import {
   AuthServices,
@@ -22,7 +23,6 @@ import {
 } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
-import { SwrQueue } from '~/context/swr-queue'
 import { schema } from '~/schema'
 
 const SessionDecoder = t.type({

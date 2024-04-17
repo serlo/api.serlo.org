@@ -9,11 +9,11 @@ import { captureErrorEvent } from './error-event'
 import { log } from './log'
 import { type Context } from '~/context'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
+import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
 import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
-import { SwrQueue } from '~/context/swr-queue'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'

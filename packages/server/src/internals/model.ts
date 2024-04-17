@@ -21,11 +21,9 @@ type ModelFromTypename<T extends string> = T extends keyof Models
   ? Models[T]
   : T extends `${infer U}Connection`
     ? Connection<FromModels<U>>
-    : T extends `${infer U}Query`
+    : T extends `${string}{'Query' | 'Mutation'}`
       ? Record<string, never>
-      : T extends `${infer U}Mutation`
-        ? Record<string, never>
-        : never
+      : never
 
 type FromModels<T extends string> = T extends keyof Models ? Models[T] : never
 

@@ -1,7 +1,7 @@
 import jsonwebtoken, { type JsonWebTokenError } from 'jsonwebtoken'
 
-import { Service } from '~/context/service'
 import { Context } from '~/context'
+import { Service } from '~/context/service'
 import { AuthenticationError } from '~/errors'
 
 export async function handleAuthentication(
