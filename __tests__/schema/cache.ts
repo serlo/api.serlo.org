@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 
 import { user } from '../../__fixtures__'
 import { Client } from '../__utils__'
-import { Service } from '~/internals/authentication'
+import { Service } from '~/context/service'
 
 beforeEach(() => {
   process.env.ENVIRONMENT = 'staging'
