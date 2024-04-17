@@ -4,6 +4,7 @@ import * as t from 'io-ts'
 import {
   AbstractEntityDecoder,
   AbstractNotificationEventDecoder,
+  AbstractUuidDecoder,
   AppletDecoder,
   AppletRevisionDecoder,
   ArticleDecoder,
@@ -45,7 +46,6 @@ import {
   VideoRevisionDecoder,
 } from './decoder'
 import { Role } from '~/types'
-import { Connection } from '~/schema/connection/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -129,10 +129,15 @@ export interface Models {
   ScopedRole: { role: Role; scope: Scope }
   AbstractEntity: t.TypeOf<typeof AbstractEntityDecoder>
   AbstractNotificationEvent: t.TypeOf<typeof AbstractNotificationEventDecoder>
+  ResourceMetadata: Record<string, unknown>
   UserActivityByType: {
     edits: number
     reviews: number
     taxonomy: number
     comments: number
   }
+  MediaUpload: { uploadUrl: string; urlAfterUpload: string }
+  DefaultResponse: { success: boolean; query: Record<string, never> }
+  ExecutePromptResponse: { success: boolean; record: unknown }
+  OauthAcceptResponse: { success: boolean; redirectUri: string }
 }

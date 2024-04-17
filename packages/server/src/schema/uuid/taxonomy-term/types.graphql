@@ -15,7 +15,7 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String

@@ -1,8 +1,8 @@
 import * as auth from '@serlo/authorization'
 
 import { Context } from '~/context'
+import { Service } from '~/context/service'
 import { ForbiddenError, UserInputError } from '~/errors'
-import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

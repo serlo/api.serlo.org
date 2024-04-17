@@ -1,3 +1,5 @@
+import { A } from 'ts-toolbelt'
+
 import { Models } from '~/model/types'
 import { type Connection } from '~/schema/connection/types'
 
@@ -5,9 +7,15 @@ import { type Connection } from '~/schema/connection/types'
  * Given a GraphQL type it computes the model type of the GraphQL type based
  * on the following rules.
  */
-export type ModelOf<T> = T extends string | boolean | number | null
-  ? T
-  : ModelFromTypename<Typename<T>>
+export type ModelOf<T> =
+  // This is needed for the JSON model type
+  A.Equals<T, unknown> extends 1
+    ? unknown
+    : Record<string, unknown> extends T
+      ? Record<string, unknown>
+      : T extends string | boolean | number | null
+        ? T
+        : ModelFromTypename<Typename<T>>
 
 type ModelFromTypename<T extends string> = T extends keyof Models
   ? Models[T]

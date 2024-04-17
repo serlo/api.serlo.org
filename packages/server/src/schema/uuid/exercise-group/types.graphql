@@ -8,7 +8,7 @@ type ExerciseGroup implements AbstractUuid & AbstractRepository & AbstractEntity
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -52,7 +52,7 @@ type ExerciseGroupRevision implements AbstractUuid & AbstractRevision & Abstract
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
