@@ -2267,7 +2267,7 @@ export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
   userByUsername?: Maybe<User>;
-  usersByRole: UserWithPermissionsConnection;
+  usersByRole: UserConnection;
 };
 
 
@@ -2319,16 +2319,6 @@ export type UserSetEmailResponse = {
   email: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   username: Scalars['String']['output'];
-};
-
-export type UserWithPermissionsConnection = {
-  __typename?: 'UserWithPermissionsConnection';
-  edges: Array<UserEdge>;
-  inheritance?: Maybe<Array<Role>>;
-  nodes: Array<User>;
-  pageInfo: PageInfo;
-  permissions: Array<Scalars['String']['output']>;
-  totalCount: Scalars['Int']['output'];
 };
 
 export type UuidMutation = {
@@ -2708,7 +2698,6 @@ export type ResolversTypes = {
   UserSetDescriptionResponse: ResolverTypeWrapper<ModelOf<UserSetDescriptionResponse>>;
   UserSetEmailInput: ResolverTypeWrapper<ModelOf<UserSetEmailInput>>;
   UserSetEmailResponse: ResolverTypeWrapper<ModelOf<UserSetEmailResponse>>;
-  UserWithPermissionsConnection: ResolverTypeWrapper<ModelOf<UserWithPermissionsConnection>>;
   UuidMutation: ResolverTypeWrapper<ModelOf<UuidMutation>>;
   UuidSetStateInput: ResolverTypeWrapper<ModelOf<UuidSetStateInput>>;
   Video: ResolverTypeWrapper<ModelOf<Video>>;
@@ -2874,7 +2863,6 @@ export type ResolversParentTypes = {
   UserSetDescriptionResponse: ModelOf<UserSetDescriptionResponse>;
   UserSetEmailInput: ModelOf<UserSetEmailInput>;
   UserSetEmailResponse: ModelOf<UserSetEmailResponse>;
-  UserWithPermissionsConnection: ModelOf<UserWithPermissionsConnection>;
   UuidMutation: ModelOf<UuidMutation>;
   UuidSetStateInput: ModelOf<UuidSetStateInput>;
   Video: ModelOf<Video>;
@@ -3989,7 +3977,7 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
   userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserQueryUserByUsernameArgs, 'username'>>;
-  usersByRole?: Resolver<ResolversTypes['UserWithPermissionsConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
+  usersByRole?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4007,16 +3995,6 @@ export type UserSetEmailResponseResolvers<ContextType = Context, ParentType exte
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserWithPermissionsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserWithPermissionsConnection'] = ResolversParentTypes['UserWithPermissionsConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
-  inheritance?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  permissions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4199,7 +4177,6 @@ export type Resolvers<ContextType = Context> = {
   UserRoleResponse?: UserRoleResponseResolvers<ContextType>;
   UserSetDescriptionResponse?: UserSetDescriptionResponseResolvers<ContextType>;
   UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
-  UserWithPermissionsConnection?: UserWithPermissionsConnectionResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;
   Video?: VideoResolvers<ContextType>;
   VideoRevision?: VideoRevisionResolvers<ContextType>;

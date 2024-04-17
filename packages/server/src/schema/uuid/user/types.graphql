@@ -66,19 +66,8 @@ type UserQuery {
     instance: Instance
     first: Int
     after: String
-  ): UserWithPermissionsConnection!
+  ): UserConnection!
   userByUsername(username: String!): User
-}
-
-type UserWithPermissionsConnection {
-  permissions: [String!]!
-  inheritance: [Role!]
-
-  # extends UserConnection
-  edges: [UserEdge!]!
-  nodes: [User!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
 }
 
 type UserConnection {
