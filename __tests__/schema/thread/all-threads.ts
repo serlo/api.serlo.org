@@ -1,13 +1,14 @@
 import gql from 'graphql-tag'
 import * as mysql from 'mysql2/promise'
+
 import {
   article,
   article2,
   comment as baseComment,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import { Model } from '~/internals/graphql'
 import { Database } from '~/database'
+import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
