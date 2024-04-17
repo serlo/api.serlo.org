@@ -62,33 +62,6 @@ describe('resolveConnection', () => {
       },
     })
   })
-
-  test('backward pagination (by 5)', () => {
-    const page1 = getResult({ last: 5 })
-    expect(page1).toEqual({
-      edges: edges.slice(4, 9),
-      nodes: nodes.slice(4, 9),
-      totalCount: 9,
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: true,
-        startCursor: edges[4].cursor,
-        endCursor: edges[8].cursor,
-      },
-    })
-    const page2 = getResult({ last: 5, before: page1.pageInfo.startCursor! })
-    expect(page2).toEqual({
-      edges: edges.slice(0, 4),
-      nodes: nodes.slice(0, 4),
-      totalCount: 9,
-      pageInfo: {
-        hasNextPage: true,
-        hasPreviousPage: false,
-        startCursor: edges[0].cursor,
-        endCursor: edges[3].cursor,
-      },
-    })
-  })
 })
 
 test('sets "first = limit" when first and limit are not defined', () => {

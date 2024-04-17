@@ -10,6 +10,7 @@ declare namespace NodeJS {
     GOOGLE_SPREADSHEET_API_MOTIVATION: string
     GOOGLE_SPREADSHEET_API_SECRET: string
     LOG_LEVEL: LogLevelDesc
+    MYSQL_URI: string
     REDIS_URL: string
     REDIS_URL_TEST: string | undefined
     ROCKET_CHAT_API_AUTH_TOKEN: string
@@ -25,8 +26,6 @@ declare namespace NodeJS {
      * Used by server only
      */
     MAILCHIMP_API_KEY: string
-    METADATA_API_VERSION: string
-    MYSQL_URI: string
     SERVER_HYDRA_HOST: string
     SERVER_KRATOS_PUBLIC_HOST: string
     SERVER_KRATOS_ADMIN_HOST: string

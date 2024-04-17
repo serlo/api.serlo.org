@@ -4,6 +4,7 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { ModelDataSource } from '~/internals/data-source'
 import {
@@ -16,7 +17,6 @@ import {
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
   createNamespace,
   generateRole,
   isGlobalRole,
@@ -296,7 +296,7 @@ export const resolvers: Resolvers = {
         roleName: generateRole(role, instance),
       })
 
-      return { success: true }
+      return { success: true, query: {} }
     },
 
     async deleteBots(_parent, { input }, { dataSources, userId }) {
@@ -369,10 +369,10 @@ export const resolvers: Resolvers = {
         }
       }
 
-      return { success }
+      return { success, query: {} }
     },
 
-    async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
+    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -381,35 +381,21 @@ export const resolvers: Resolvers = {
         dataSources,
       })
 
-      const users = await Promise.all(
-        input.users.map(async ({ id, username }) => {
-          const user = await dataSources.model.serlo.getUuid({ id })
+      const { id, username } = input
+      const user = await dataSources.model.serlo.getUuid({ id: input.id })
 
-          if (!UserDecoder.is(user)) return null
-          if (user.username !== username) return null
-
-          return user
-        }),
-      )
-
-      if (!t.array(UserDecoder).is(users))
+      if (!UserDecoder.is(user) || user.username !== username) {
         throw new UserInputError(
-          'Either one id does not belong to a user or one username / id combination is wrong',
+          '`id` does not belong to a user or `username` does not match the `user`',
         )
+      }
 
-      return await Promise.all(
-        users.map(async ({ id, username }) => {
-          const result = {
-            ...(await dataSources.model.serlo.deleteRegularUsers({
-              userId: id,
-            })),
-            username: username,
-          }
+      const result = await dataSources.model.serlo.deleteRegularUsers({
+        userId: id,
+      })
 
-          if (result.success) await deleteKratosUser(id, dataSources)
-          return result
-        }),
-      )
+      if (result.success) await deleteKratosUser(id, dataSources)
+      return { success: result.success, query: {} }
     },
 
     async removeRole(_parent, { input }, { dataSources, userId }) {
@@ -436,15 +422,17 @@ export const resolvers: Resolvers = {
         roleName: generateRole(role, instance),
       })
 
-      return { success: true }
+      return { success: true, query: {} }
     },
 
     async setDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      return await dataSources.model.serlo.setDescription({
+      const result = await dataSources.model.serlo.setDescription({
         ...input,
         userId,
       })
+
+      return { success: result.success, query: {} }
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
@@ -458,7 +446,7 @@ export const resolvers: Resolvers = {
 
       const result = await dataSources.model.serlo.setEmail(input)
 
-      return { ...result, email: input.email }
+      return { ...result, query: {} }
     },
   },
 }
