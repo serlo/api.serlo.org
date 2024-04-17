@@ -1,6 +1,6 @@
 import { option as O } from "fp-ts";
-import { CacheEntry } from './cache';
-import { Time } from '~/internals/swr-queue';
+
+import { Time } from '~/timer';
 import { FunctionOrValue } from '~/utils';
 
 export interface Cache {

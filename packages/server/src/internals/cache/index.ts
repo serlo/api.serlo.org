@@ -5,13 +5,12 @@ import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 
 import { createLockManager, LockManager } from './lock-manager'
+import { Timer } from '../../timer'
 import { log } from '../log'
-import { Time, timeToMilliseconds } from '../swr-queue'
-import { Timer } from '../timer'
-import { FunctionOrValue } from '~/utils'
-import { Priority, Cache } from '~/context/cache'
-import { CacheEntry } from '~/context/cache'
-import { isUpdateFunction } from '~/utils'
+import { Priority, Cache, CacheEntry } from '~/context/cache'
+import { timeToMilliseconds } from '~/timer'
+import { Time } from '~/timer'
+import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
   createMsgpack as () => {

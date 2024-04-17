@@ -30,8 +30,8 @@ import express, { Express, RequestHandler, Request, Response } from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { Cache } from '~/context/cache'
 import { captureErrorEvent } from '../error-event'
+import { Cache } from '~/context/cache'
 
 export function applyEnmeshedMiddleware({
   app,

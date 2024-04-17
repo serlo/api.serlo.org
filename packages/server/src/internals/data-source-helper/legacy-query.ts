@@ -4,7 +4,7 @@ import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './common'
 import { Environment } from '../environment'
-import { Time, timeToSeconds } from '../swr-queue'
+import { timeToSeconds, Time } from '~/timer'
 import { FunctionOrValue } from '~/utils'
 
 /**
