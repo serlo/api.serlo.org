@@ -1829,12 +1829,6 @@ export type TaxonomyEntityLinksInput = {
   taxonomyTermId: Scalars['Int']['input'];
 };
 
-export type TaxonomyEntityLinksResponse = {
-  __typename?: 'TaxonomyEntityLinksResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'TaxonomyTerm';
   alias: Scalars['String']['output'];
@@ -1898,13 +1892,6 @@ export type TaxonomyTermCreateInput = {
   taxonomyType: TaxonomyTypeCreateOptions;
 };
 
-export type TaxonomyTermCreateResponse = {
-  __typename?: 'TaxonomyTermCreateResponse';
-  query: Query;
-  record?: Maybe<TaxonomyTerm>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type TaxonomyTermEdge = {
   __typename?: 'TaxonomyTermEdge';
   cursor: Scalars['String']['output'];
@@ -1913,11 +1900,11 @@ export type TaxonomyTermEdge = {
 
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
-  create: TaxonomyTermCreateResponse;
-  createEntityLinks: TaxonomyEntityLinksResponse;
-  deleteEntityLinks: TaxonomyEntityLinksResponse;
-  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
-  sort: TaxonomyTermSortResponse;
+  create: DefaultResponse;
+  createEntityLinks: DefaultResponse;
+  deleteEntityLinks: DefaultResponse;
+  setNameAndDescription: DefaultResponse;
+  sort: DefaultResponse;
 };
 
 
@@ -1951,21 +1938,9 @@ export type TaxonomyTermSetNameAndDescriptionInput = {
   name: Scalars['String']['input'];
 };
 
-export type TaxonomyTermSetNameAndDescriptionResponse = {
-  __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type TaxonomyTermSortInput = {
   childrenIds: Array<Scalars['Int']['input']>;
   taxonomyTermId: Scalars['Int']['input'];
-};
-
-export type TaxonomyTermSortResponse = {
-  __typename?: 'TaxonomyTermSortResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export enum TaxonomyTermType {
@@ -2358,7 +2333,7 @@ export type UserWithPermissionsConnection = {
 
 export type UuidMutation = {
   __typename?: 'UuidMutation';
-  setState?: Maybe<UuidSetStateResponse>;
+  setState: DefaultResponse;
 };
 
 
@@ -2369,12 +2344,6 @@ export type UuidMutationSetStateArgs = {
 export type UuidSetStateInput = {
   id: Array<Scalars['Int']['input']>;
   trashed: Scalars['Boolean']['input'];
-};
-
-export type UuidSetStateResponse = {
-  __typename?: 'UuidSetStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type Video = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -2700,17 +2669,13 @@ export type ResolversTypes = {
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
   TaxonomyEntityLinksInput: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksInput>>;
-  TaxonomyEntityLinksResponse: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
-  TaxonomyTermCreateResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateResponse>>;
   TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
   TaxonomyTermMutation: ResolverTypeWrapper<ModelOf<TaxonomyTermMutation>>;
   TaxonomyTermSetNameAndDescriptionInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionInput>>;
-  TaxonomyTermSetNameAndDescriptionResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionResponse>>;
   TaxonomyTermSortInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSortInput>>;
-  TaxonomyTermSortResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSortResponse>>;
   TaxonomyTermType: ResolverTypeWrapper<ModelOf<TaxonomyTermType>>;
   TaxonomyTypeCreateOptions: ResolverTypeWrapper<ModelOf<TaxonomyTypeCreateOptions>>;
   Thread: ResolverTypeWrapper<ModelOf<Thread>>;
@@ -2746,7 +2711,6 @@ export type ResolversTypes = {
   UserWithPermissionsConnection: ResolverTypeWrapper<ModelOf<UserWithPermissionsConnection>>;
   UuidMutation: ResolverTypeWrapper<ModelOf<UuidMutation>>;
   UuidSetStateInput: ResolverTypeWrapper<ModelOf<UuidSetStateInput>>;
-  UuidSetStateResponse: ResolverTypeWrapper<ModelOf<UuidSetStateResponse>>;
   Video: ResolverTypeWrapper<ModelOf<Video>>;
   VideoRevision: ResolverTypeWrapper<ModelOf<VideoRevision>>;
   VideoRevisionConnection: ResolverTypeWrapper<ModelOf<VideoRevisionConnection>>;
@@ -2873,17 +2837,13 @@ export type ResolversParentTypes = {
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
   TaxonomyEntityLinksInput: ModelOf<TaxonomyEntityLinksInput>;
-  TaxonomyEntityLinksResponse: ModelOf<TaxonomyEntityLinksResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
-  TaxonomyTermCreateResponse: ModelOf<TaxonomyTermCreateResponse>;
   TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
   TaxonomyTermMutation: ModelOf<TaxonomyTermMutation>;
   TaxonomyTermSetNameAndDescriptionInput: ModelOf<TaxonomyTermSetNameAndDescriptionInput>;
-  TaxonomyTermSetNameAndDescriptionResponse: ModelOf<TaxonomyTermSetNameAndDescriptionResponse>;
   TaxonomyTermSortInput: ModelOf<TaxonomyTermSortInput>;
-  TaxonomyTermSortResponse: ModelOf<TaxonomyTermSortResponse>;
   Thread: ModelOf<Thread>;
   ThreadAware: ResolversInterfaceTypes<ResolversParentTypes>['ThreadAware'];
   ThreadConnection: ModelOf<ThreadConnection>;
@@ -2917,7 +2877,6 @@ export type ResolversParentTypes = {
   UserWithPermissionsConnection: ModelOf<UserWithPermissionsConnection>;
   UuidMutation: ModelOf<UuidMutation>;
   UuidSetStateInput: ModelOf<UuidSetStateInput>;
-  UuidSetStateResponse: ModelOf<UuidSetStateResponse>;
   Video: ModelOf<Video>;
   VideoRevision: ModelOf<VideoRevision>;
   VideoRevisionConnection: ModelOf<VideoRevisionConnection>;
@@ -3868,12 +3827,6 @@ export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyEntityLinksResponse'] = ResolversParentTypes['TaxonomyEntityLinksResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   children?: Resolver<ResolversTypes['AbstractUuidConnection'], ParentType, ContextType, Partial<TaxonomyTermChildrenArgs>>;
@@ -3901,13 +3854,6 @@ export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TaxonomyTermCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermCreateResponse'] = ResolversParentTypes['TaxonomyTermCreateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermEdge'] = ResolversParentTypes['TaxonomyTermEdge']> = {
   cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
@@ -3915,23 +3861,11 @@ export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends 
 };
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
-  create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
-  createEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
-  deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
-  setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
-  sort?: Resolver<ResolversTypes['TaxonomyTermSortResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse'] = ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyTermSortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermSortResponse'] = ResolversParentTypes['TaxonomyTermSortResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  create?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
+  createEntityLinks?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
+  deleteEntityLinks?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
+  setNameAndDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4087,13 +4021,7 @@ export type UserWithPermissionsConnectionResolvers<ContextType = Context, Parent
 };
 
 export type UuidMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UuidMutation'] = ResolversParentTypes['UuidMutation']> = {
-  setState?: Resolver<Maybe<ResolversTypes['UuidSetStateResponse']>, ParentType, ContextType, RequireFields<UuidMutationSetStateArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UuidSetStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UuidSetStateResponse'] = ResolversParentTypes['UuidSetStateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  setState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UuidMutationSetStateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4250,14 +4178,10 @@ export type Resolvers<ContextType = Context> = {
   SubscriptionInfoConnection?: SubscriptionInfoConnectionResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
-  TaxonomyEntityLinksResponse?: TaxonomyEntityLinksResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
-  TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
   TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;
   TaxonomyTermMutation?: TaxonomyTermMutationResolvers<ContextType>;
-  TaxonomyTermSetNameAndDescriptionResponse?: TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType>;
-  TaxonomyTermSortResponse?: TaxonomyTermSortResponseResolvers<ContextType>;
   Thread?: ThreadResolvers<ContextType>;
   ThreadAware?: ThreadAwareResolvers<ContextType>;
   ThreadConnection?: ThreadConnectionResolvers<ContextType>;
@@ -4277,7 +4201,6 @@ export type Resolvers<ContextType = Context> = {
   UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
   UserWithPermissionsConnection?: UserWithPermissionsConnectionResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;
-  UuidSetStateResponse?: UuidSetStateResponseResolvers<ContextType>;
   Video?: VideoResolvers<ContextType>;
   VideoRevision?: VideoRevisionResolvers<ContextType>;
   VideoRevisionConnection?: VideoRevisionConnectionResolvers<ContextType>;

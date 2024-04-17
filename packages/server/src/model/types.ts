@@ -131,6 +131,7 @@ export interface Models {
     dateOfDeletion: string
     entity: t.TypeOf<typeof AbstractEntityDecoder>
   }
+  AbstractUuid: t.TypeOf<typeof AbstractUuidDecoder>
   AbstractEntity: t.TypeOf<typeof AbstractEntityDecoder>
   AbstractNotificationEvent: t.TypeOf<typeof AbstractNotificationEventDecoder>
   ResourceMetadata: Record<string, unknown>
@@ -146,7 +147,7 @@ export interface Models {
   OauthAcceptResponse: { success: boolean; redirectUri: string }
   SetEntityResponse: {
     success: boolean
-    record: t.TypeOf<typeof AbstractEntityDecoder>
+    record: t.TypeOf<typeof AbstractEntityDecoder> | null
     query: Record<string, never>
   }
 }
