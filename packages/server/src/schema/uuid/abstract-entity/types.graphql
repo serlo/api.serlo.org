@@ -86,7 +86,7 @@ type EntityQuery {
     first: Int
     after: String
     instance: Instance
-  ): DeletedEntitiesConnection!
+  ): DeletedEntityConnection!
 }
 
 type DeletedEntity {
@@ -99,7 +99,7 @@ type DeletedEntityCursor {
   node: DeletedEntity!
 }
 
-type DeletedEntitiesConnection {
+type DeletedEntityConnection {
   edges: [DeletedEntityCursor!]!
   nodes: [DeletedEntity!]!
   totalCount: Int!
@@ -112,10 +112,10 @@ extend type Mutation {
 
 type EntityMutation {
   setAbstractEntity(input: SetAbstractEntityInput!): SetEntityResponse!
-  updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
-  checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
-  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
-  sort(input: EntitySortInput!): EntitySortResponse!
+  updateLicense(input: EntityUpdateLicenseInput!): DefaultResponse!
+  checkoutRevision(input: CheckoutRevisionInput!): DefaultResponse!
+  rejectRevision(input: RejectRevisionInput!): DefaultResponse!
+  sort(input: EntitySortInput!): DefaultResponse!
 }
 
 input SetAbstractEntityInput {
@@ -146,19 +146,9 @@ input EntityUpdateLicenseInput {
   licenseId: Int!
 }
 
-type EntityUpdateLicenseResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input CheckoutRevisionInput {
   revisionId: Int!
   reason: String!
-}
-
-type CheckoutRevisionResponse {
-  success: Boolean!
-  query: Query!
 }
 
 input RejectRevisionInput {
@@ -166,17 +156,7 @@ input RejectRevisionInput {
   reason: String!
 }
 
-type RejectRevisionResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input EntitySortInput {
   entityId: Int!
   childrenIds: [Int!]!
-}
-
-type EntitySortResponse {
-  success: Boolean!
-  query: Query!
 }

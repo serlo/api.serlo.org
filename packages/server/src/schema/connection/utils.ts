@@ -57,6 +57,7 @@ export function resolveConnection<T>({
     nodes: selectedNodes,
     totalCount: nodes.length,
     pageInfo: {
+      // @ts-expect-error We want to delete `hasPreviousPage` anyways
       hasPreviousPage: startIndex > 0,
       hasNextPage: endIndex < nodes.length,
       startCursor: edges.length > 0 ? edges[0].cursor : null,

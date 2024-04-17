@@ -1,7 +1,8 @@
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { Context, Model } from '~/internals/graphql'
+import { Context } from '~/context'
+import { Model } from '~/internals/graphql'
 import {
   DiscriminatorType,
   EntityRevisionType,

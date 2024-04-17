@@ -5,11 +5,11 @@ import * as R from 'ramda'
 
 import { createTestEnvironment, given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
+import { Context } from '~/context'
+import { Service } from '~/context/service'
 import { Database } from '~/database'
-import { Service } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
-import { Context } from '~/internals/graphql'
 import { Sentry } from '~/internals/sentry'
 import { getGraphQLOptions } from '~/internals/server'
 

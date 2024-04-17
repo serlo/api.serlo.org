@@ -1,5 +1,4 @@
 import { Model } from '~/internals/graphql'
-import { Payload } from '~/internals/model'
 import { DiscriminatorType } from '~/model/decoder'
 
 export const user: Model<'User'> = {
@@ -26,7 +25,7 @@ export const user2: Model<'User'> = {
   roles: ['login'],
 }
 
-export const activityByType: Payload<'serlo', 'getActivityByType'> = {
+export const activityByType = {
   edits: 10,
   comments: 11,
   reviews: 0,
