@@ -2,8 +2,8 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { InvalidCurrentValueError } from './internals/data-source-helper/common'
-import { Time, timeToSeconds } from './internals/swr-queue'
 import { Context } from '~/context'
+import { Time, timeToSeconds } from '~/timer'
 
 export function createCachedResolver<P, R>(
   spec: ResolverSpec<P, R>,

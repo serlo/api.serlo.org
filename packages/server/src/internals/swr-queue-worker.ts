@@ -5,8 +5,8 @@ import { createPool } from 'mysql2/promise'
 import { createCache } from './cache'
 import { initializeSentry } from './sentry'
 import { createSwrQueueWorker } from './swr-queue'
-import { createTimer } from './timer'
 import { Database } from '~/database'
+import { createTimer } from '~/timer'
 
 export async function start() {
   dotenv.config()

@@ -12,6 +12,7 @@ import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
 import { Context } from '~/context'
+import { Cache } from '~/context/cache'
 import { Database } from '~/database'
 import {
   AuthServices,
@@ -19,7 +20,6 @@ import {
   IdentityDecoder,
   Service,
 } from '~/internals/authentication'
-import { Cache } from '~/context/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
