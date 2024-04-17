@@ -13,19 +13,10 @@ import { Database } from '~/database'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
 import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
+import { SwrQueue } from '~/context/swr-queue'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
-
-export interface SwrQueue {
-  queue(
-    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> },
-  ): Promise<never>
-  ready(): Promise<void>
-  healthy(): Promise<void>
-  quit(): Promise<void>
-  _queue: never
-}
 
 interface UpdateJob {
   key: string

@@ -1,10 +1,10 @@
 import { type Storage } from '@google-cloud/storage'
 
 // import { type ModelDataSource } from '../internals/data-source'
-// import { type SwrQueue } from '../internals/swr-queue'
 import { type Cache } from './cache'
 import { type Database } from '~/database'
 import { Service } from './service'
+import { SwrQueue } from './swr-queue'
 
 export interface Context {
   // dataSources: {
@@ -16,6 +16,6 @@ export interface Context {
   // swrQueue: SwrQueue
   dataSources: any
   cache: Cache
-  swrQueue: any
+  swrQueue: SwrQueue
   service: Service
 }
