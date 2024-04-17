@@ -1,5 +1,5 @@
 import { AuthServices } from './authentication'
-import { Cache } from './cache'
+import { Cache } from '~/context/cache'
 import { SwrQueue } from './swr-queue'
 
 export interface Environment {

@@ -10,10 +10,10 @@ import {
   MockKratos,
 } from './__tests__/__utils__'
 import {
-  type Cache,
   createCache,
   createNamespacedCache,
 } from '~/internals/cache'
+import { type Cache } from '~/context/cache'
 import { initializeSentry, Sentry } from '~/internals/sentry'
 import { Time, timeToMilliseconds } from '~/internals/swr-queue'
 import { Timer } from '~/internals/timer'

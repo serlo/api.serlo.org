@@ -8,7 +8,10 @@ import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
-import { FunctionOrValue, isUpdateFunction } from '~/utils'
+import { FunctionOrValue } from '~/utils'
+import { Priority, Cache } from '~/context/cache'
+import { CacheEntry } from '~/context/cache'
+import { isUpdateFunction } from '~/utils'
 
 const msgpack = (
   createMsgpack as () => {
@@ -16,27 +19,6 @@ const msgpack = (
     decode(buffer: Buffer): unknown
   }
 )()
-
-export enum Priority {
-  Low,
-  High,
-}
-
-export interface Cache {
-  get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
-  set<T>(
-    payload: {
-      key: string
-      source: string
-      ttlInSeconds?: number
-      priority?: Priority
-    } & FunctionOrValue<T>,
-  ): Promise<void>
-  remove(args: { key: string }): Promise<void>
-  ready(): Promise<void>
-  flush(): Promise<void>
-  quit(): Promise<void>
-}
 
 export function createCache({ timer }: { timer: Timer }): Cache {
   const redisUrl = new URL(process.env.REDIS_URL)
