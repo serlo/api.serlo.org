@@ -85,14 +85,7 @@ type ThreadQuery {
     instance: Instance
     subjectId: String
     status: CommentStatus
-  ): AllThreadsConnection!
-}
-
-type AllThreadsConnection {
-  edges: [ThreadCursor!]!
-  nodes: [Thread!]!
-  totalCount: Int!
-  pageInfo: HasNextPageInfo!
+  ): ThreadConnection!
 }
 
 extend type Mutation {
