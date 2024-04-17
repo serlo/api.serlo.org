@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-
+import * as mysql from 'mysql2/promise'
 import {
   article,
   article2,
@@ -7,7 +7,7 @@ import {
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { runSql } from '~/model/database'
+import { Database } from '~/database'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
 import { Instance } from '~/types'
@@ -115,7 +115,8 @@ describe('allThreads', () => {
 
   test('parameter "instance"', async () => {
     // temporary solution because all comments in dump are German
-    await runSql(`UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`)
+    const database = new Database(mysql.createPool(process.env.MYSQL_URI))
+    await database.mutate(`UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`)
 
     await query
       .withVariables({
@@ -126,7 +127,7 @@ describe('allThreads', () => {
         thread: { allThreads: { nodes: [comment1].map(getThreadData) } },
       })
 
-    await runSql(`UPDATE comment SET instance_id = 1 WHERE id = ${comment1.id}`)
+    await database.mutate(`UPDATE comment SET instance_id = 1 WHERE id = ${comment1.id}`)
   })
 
   test('parameter "subjectId"', async () => {
