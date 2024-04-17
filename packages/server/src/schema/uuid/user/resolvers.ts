@@ -450,7 +450,7 @@ export const resolvers: Resolvers = {
         input.description,
         userId,
       ])
-      await UuidResolver.removeCache({ id: userId}, context)
+      await UuidResolver.removeCache({ id: userId }, context)
       return { success: true, query: {} }
     },
 
