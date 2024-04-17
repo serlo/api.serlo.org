@@ -296,7 +296,7 @@ export const resolvers: Resolvers = {
         roleName: generateRole(role, instance),
       })
 
-      return { success: true }
+      return { success: true, query: {} }
     },
 
     async deleteBots(_parent, { input }, { dataSources, userId }) {
@@ -369,7 +369,7 @@ export const resolvers: Resolvers = {
         }
       }
 
-      return { success }
+      return { success, query: {} }
     },
 
     async deleteRegularUsers(_parent, { input }, { dataSources, userId }) {
@@ -436,15 +436,17 @@ export const resolvers: Resolvers = {
         roleName: generateRole(role, instance),
       })
 
-      return { success: true }
+      return { success: true, query: {} }
     },
 
     async setDescription(_parent, { input }, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
-      return await dataSources.model.serlo.setDescription({
+      const result = await dataSources.model.serlo.setDescription({
         ...input,
         userId,
       })
+
+      return { success: result.success, query: {} }
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
@@ -458,7 +460,7 @@ export const resolvers: Resolvers = {
 
       const result = await dataSources.model.serlo.setEmail(input)
 
-      return { ...result, email: input.email }
+      return { ...result, query: {} }
     },
   },
 }
