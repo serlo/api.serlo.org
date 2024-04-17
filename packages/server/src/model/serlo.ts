@@ -2,7 +2,6 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { executePrompt } from './ai'
-import * as Database from './database'
 import * as DatabaseLayer from './database-layer'
 import {
   DiscriminatorType,
@@ -192,26 +191,6 @@ export function createSerloModel({
     async updateCache({ userId }, { success }) {
       if (success) {
         await getUuid._querySpec.removeCache({ payload: { id: userId } })
-      }
-    },
-  })
-
-  const setDescription = createMutation({
-    type: 'UserSetDescriptionMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserSetDescriptionMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'UserSetDescriptionMutation'>) => {
-      return Database.setUserDescription(payload.description, payload.userId)
-    },
-    updateCache: async ({ userId, description }, { success }) => {
-      if (success) {
-        await getUuid._querySpec.setCache({
-          payload: { id: userId },
-          getValue(current) {
-            if (!current) return
-
-            return { ...current, description: description }
-          },
-        })
       }
     },
   })
@@ -1115,7 +1094,6 @@ export function createSerloModel({
     getPages,
     rejectEntityRevision,
     removeRole,
-    setDescription,
     setEmail,
     setEntityLicense,
     setNotificationState,
