@@ -8,8 +8,7 @@ import { createLockManager, LockManager } from './lock-manager'
 import { Timer } from '../../timer'
 import { log } from '../log'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
-import { timeToMilliseconds } from '~/timer'
-import { Time } from '~/timer'
+import { timeToMilliseconds, Time } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
