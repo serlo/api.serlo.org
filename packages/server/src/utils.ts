@@ -10,8 +10,6 @@ export function isDateString(text: string) {
 
 export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 
-export type AsyncOrSync<T> = Promise<T> | T
-
 interface UpdateFunction<T> {
   getValue: (current?: T) => AsyncOrSync<T | undefined>
 }

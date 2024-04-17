@@ -19,7 +19,7 @@ import {
   IdentityDecoder,
   Service,
 } from '~/internals/authentication'
-import { Cache } from '~/internals/cache'
+import { Cache } from '~/context/cache'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
 import { SwrQueue } from '~/internals/swr-queue'
