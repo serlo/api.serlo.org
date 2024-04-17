@@ -31,6 +31,7 @@ import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
+import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
@@ -440,17 +441,17 @@ export const resolvers: Resolvers = {
     },
 
     async setDescription(_parent, { input }, context) {
-      const { dataSources, userId, database } = context
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
       if (input.description.length >= 64 * 1024) {
         throw new UserInputError('description too long')
       }
-      database.mutate(
-        'update user set description = ? where id = ?',
-        [ input.description, userId, ]
-      )
-      // TODO: setCache
-      return {success: true, query: {} }
+      await database.mutate('update user set description = ? where id = ?', [
+        input.description,
+        userId,
+      ])
+      await UuidResolver.removeCache({ id: userId}, context)
+      return { success: true, query: {} }
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
