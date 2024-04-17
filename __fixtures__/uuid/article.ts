@@ -8,7 +8,9 @@ import {
 } from '~/model/decoder'
 import { Instance } from '~/types'
 
-export const article: Model<'Article'> = {
+// Here we use the type `ArticleWithAllFieldsDefined` so that TypeScript knows
+// that no property of `article` is null
+export const article: ArticleWithAllFieldsDefined = {
   __typename: EntityType.Article,
   id: 1855,
   trashed: false,
@@ -64,4 +66,9 @@ export const articleRevision2: Model<'ArticleRevision'> = {
   changes: 'changes',
   metaDescription: 'metaDescription',
   metaTitle: 'metaTitle',
+}
+
+interface ArticleWithAllFieldsDefined extends Model<'Article'> {
+  canonicalSubjectId: number
+  currentRevisionId: number
 }
