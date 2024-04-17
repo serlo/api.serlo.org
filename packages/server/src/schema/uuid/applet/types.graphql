@@ -17,7 +17,7 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   instance: Instance!
   alias: String!
   title: String!
@@ -60,7 +60,7 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   date: DateTime!
   repository: Applet!
   title: String!

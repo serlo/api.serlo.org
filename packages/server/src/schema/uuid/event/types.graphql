@@ -8,7 +8,7 @@ type Event implements AbstractUuid & AbstractRepository & AbstractEntity & Abstr
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -51,7 +51,7 @@ type EventRevision implements AbstractUuid & AbstractRevision & AbstractEntityRe
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String

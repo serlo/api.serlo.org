@@ -22,7 +22,7 @@ interface AbstractRepository {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
 
   date: DateTime!
   instance: Instance!
@@ -55,7 +55,7 @@ interface AbstractRevision {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
 
   author: User!
   date: DateTime!
