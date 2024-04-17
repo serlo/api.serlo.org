@@ -15,7 +15,7 @@ import {
   Model,
   Context,
 } from '~/internals/graphql'
-import { runSql } from '~/model/database'
+import { Database } from '~/database'
 import {
   CommentDecoder,
   DiscriminatorType,
@@ -39,7 +39,8 @@ export const resolvers: Resolvers = {
     thread: createNamespace(),
   },
   ThreadQuery: {
-    async allThreads(_parent, input, { dataSources }) {
+    async allThreads(_parent, input, context) {
+      const { dataSources, database } = context
       const subjectId = input.subjectId
         ? decodeSubjectId(input.subjectId)
         : null
@@ -57,7 +58,7 @@ export const resolvers: Resolvers = {
       interface FirstComment extends RowDataPacket {
         id: number
       }
-      const firstComments = await runSql<FirstComment>(
+      const firstComments = await database.fetchAll<FirstComment>(
         `
           WITH RECURSIVE descendants AS (
                     SELECT id, parent_id
