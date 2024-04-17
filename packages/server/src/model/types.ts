@@ -45,7 +45,6 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Role } from '~/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -150,4 +149,15 @@ export interface Models {
     record: t.TypeOf<typeof AbstractEntityDecoder> | null
     query: Record<string, never>
   }
+}
+
+enum Role {
+  Admin = 'admin',
+  Architect = 'architect',
+  Guest = 'guest',
+  Login = 'login',
+  Moderator = 'moderator',
+  Reviewer = 'reviewer',
+  StaticPagesBuilder = 'static_pages_builder',
+  Sysadmin = 'sysadmin',
 }
