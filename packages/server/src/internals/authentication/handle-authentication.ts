@@ -1,6 +1,6 @@
 import jsonwebtoken, { type JsonWebTokenError } from 'jsonwebtoken'
 
-import { Service } from './service'
+import { Service } from '~/context/service'
 import { Context } from '~/context'
 import { AuthenticationError } from '~/errors'
 
