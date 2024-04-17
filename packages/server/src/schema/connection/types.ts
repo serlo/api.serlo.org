@@ -13,6 +13,6 @@ export interface ConnectionPayload {
 }
 
 interface PageInfo {
-  endCursor?: string
+  endCursor?: string | null
   hasNextPage: boolean
 }
