@@ -127,6 +127,10 @@ export interface Models {
     typeof SetThreadStateNotificationEventDecoder
   >
   ScopedRole: { role: Role; scope: Scope }
+  DeletedEntity: {
+    dateOfDeletion: string
+    entity: t.TypeOf<typeof AbstractEntityDecoder>
+  }
   AbstractEntity: t.TypeOf<typeof AbstractEntityDecoder>
   AbstractNotificationEvent: t.TypeOf<typeof AbstractNotificationEventDecoder>
   ResourceMetadata: Record<string, unknown>
@@ -140,4 +144,9 @@ export interface Models {
   DefaultResponse: { success: boolean; query: Record<string, never> }
   ExecutePromptResponse: { success: boolean; record: unknown }
   OauthAcceptResponse: { success: boolean; redirectUri: string }
+  SetEntityResponse: {
+    success: boolean
+    record: t.TypeOf<typeof AbstractEntityDecoder>
+    query: Record<string, never>
+  }
 }
