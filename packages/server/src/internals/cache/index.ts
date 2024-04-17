@@ -8,7 +8,7 @@ import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
-import { FunctionOrValue } from '~/utils'
+import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
   createMsgpack as () => {
@@ -80,7 +80,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     try {
       let value: T | undefined
 
-      if (isFunction(payload)) {
+      if (isUpdateFunction(payload)) {
         const current = F.pipe(
           await this.get<T>({ key }),
           O.map((entry) => entry.value),
@@ -199,16 +199,6 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
   }
 }
 
-export interface CacheEntry<Value> {
-  value: Value
-  lastModified: number
-  source: string
-}
-
 function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
   return R.has('lastModified', value) && R.has('value', value)
-}
-
-function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
-  return R.has('getValue', arg) && typeof arg.getValue === 'function'
 }
