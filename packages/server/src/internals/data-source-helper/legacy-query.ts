@@ -3,9 +3,9 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './common'
-import { FunctionOrValue } from '../cache'
 import { Environment } from '../environment'
 import { Time, timeToSeconds } from '../swr-queue'
+import { FunctionOrValue } from '~/utils'
 
 /**
  * Helper function to create a query in a data source. A query operation is a

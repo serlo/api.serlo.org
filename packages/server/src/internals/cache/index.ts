@@ -8,7 +8,7 @@ import { createLockManager, LockManager } from './lock-manager'
 import { log } from '../log'
 import { Time, timeToMilliseconds } from '../swr-queue'
 import { Timer } from '../timer'
-import { AsyncOrSync } from '~/utils'
+import { FunctionOrValue } from '~/utils'
 
 const msgpack = (
   createMsgpack as () => {
@@ -21,11 +21,6 @@ export enum Priority {
   Low,
   High,
 }
-
-interface UpdateFunction<T> {
-  getValue: (current?: T) => AsyncOrSync<T | undefined>
-}
-export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
 
 export interface Cache {
   get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
