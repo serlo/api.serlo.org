@@ -7,7 +7,7 @@ export const resolvers: Resolvers = {
   },
   ExperimentMutation: {
     async createExerciseSubmission(_parent, { input }, context) {
-      const {database} = context
+      const { database } = context
       const { path, entityId, revisionId, type, result, sessionId } = input
       await database.mutate(
         `
