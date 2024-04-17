@@ -853,12 +853,6 @@ export type DeletedEntityCursor = {
   node: DeletedEntity;
 };
 
-export type EntityMetadataConnection = {
-  __typename?: 'EntityMetadataConnection';
-  nodes: Array<Scalars['JSONObject']['output']>;
-  pageInfo: HasNextPageInfo;
-};
-
 export type EntityMutation = {
   __typename?: 'EntityMutation';
   checkoutRevision: CheckoutRevisionResponse;
@@ -1319,9 +1313,9 @@ export type MediaUpload = {
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   /** @deprecated Please use the `resources` field instead. This property will be deleted. */
-  entities: EntityMetadataConnection;
+  entities: ResourceMetadataConnection;
   publisher: Scalars['JSONObject']['output'];
-  resources: EntityMetadataConnection;
+  resources: ResourceMetadataConnection;
   version: Scalars['String']['output'];
 };
 
@@ -1677,6 +1671,12 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
   instance: Instance;
   objectId: Scalars['Int']['output'];
   parent: TaxonomyTerm;
+};
+
+export type ResourceMetadataConnection = {
+  __typename?: 'ResourceMetadataConnection';
+  nodes: Array<Scalars['JSONObject']['output']>;
+  pageInfo: HasNextPageInfo;
 };
 
 export enum Role {
@@ -2701,7 +2701,6 @@ export type ResolversTypes = {
   DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
   DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
-  EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
@@ -2758,6 +2757,7 @@ export type ResolversTypes = {
   RejectRevisionResponse: ResolverTypeWrapper<ModelOf<RejectRevisionResponse>>;
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
+  ResourceMetadataConnection: ResolverTypeWrapper<ModelOf<ResourceMetadataConnection>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
   Scope: ResolverTypeWrapper<ModelOf<Scope>>;
   ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
@@ -2889,7 +2889,6 @@ export type ResolversParentTypes = {
   DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
   DeletedEntity: ModelOf<DeletedEntity>;
   DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
-  EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
   EntitySortInput: ModelOf<EntitySortInput>;
@@ -2944,6 +2943,7 @@ export type ResolversParentTypes = {
   RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
+  ResourceMetadataConnection: ModelOf<ResourceMetadataConnection>;
   ScopedRole: ModelOf<ScopedRole>;
   ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
   ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
@@ -3476,12 +3476,6 @@ export type DeletedEntityCursorResolvers<ContextType = Context, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
-  nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
   checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
@@ -3694,9 +3688,9 @@ export type MediaUploadResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
-  entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
+  entities?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  resources?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
+  resources?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3887,6 +3881,12 @@ export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, 
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   parent?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResourceMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ResourceMetadataConnection'] = ResolversParentTypes['ResourceMetadataConnection']> = {
+  nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4361,7 +4361,6 @@ export type Resolvers<ContextType = Context> = {
   DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
   DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
-  EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
   EntityQuery?: EntityQueryResolvers<ContextType>;
   EntitySortResponse?: EntitySortResponseResolvers<ContextType>;
@@ -4408,6 +4407,7 @@ export type Resolvers<ContextType = Context> = {
   RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
+  ResourceMetadataConnection?: ResourceMetadataConnectionResolvers<ContextType>;
   ScopedRole?: ScopedRoleResolvers<ContextType>;
   ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
   ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
