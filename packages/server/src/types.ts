@@ -266,14 +266,6 @@ export type AliasInput = {
   path: Scalars['String']['input'];
 };
 
-export type AllThreadsConnection = {
-  __typename?: 'AllThreadsConnection';
-  edges: Array<ThreadCursor>;
-  nodes: Array<Thread>;
-  pageInfo: HasNextPageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type Applet = AbstractEntity & AbstractRepository & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
   alias: Scalars['String']['output'];
@@ -2142,7 +2134,7 @@ export type ThreadMutationSetThreadStatusArgs = {
 
 export type ThreadQuery = {
   __typename?: 'ThreadQuery';
-  allThreads: AllThreadsConnection;
+  allThreads: ThreadConnection;
 };
 
 
@@ -2640,7 +2632,6 @@ export type ResolversTypes = {
   AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AiQuery: ResolverTypeWrapper<ModelOf<AiQuery>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
-  AllThreadsConnection: ResolverTypeWrapper<ModelOf<AllThreadsConnection>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
   AppletRevision: ResolverTypeWrapper<ModelOf<AppletRevision>>;
   AppletRevisionConnection: ResolverTypeWrapper<ModelOf<AppletRevisionConnection>>;
@@ -2825,7 +2816,6 @@ export type ResolversParentTypes = {
   AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AiQuery: ModelOf<AiQuery>;
   AliasInput: ModelOf<AliasInput>;
-  AllThreadsConnection: ModelOf<AllThreadsConnection>;
   Applet: ModelOf<Applet>;
   AppletRevision: ModelOf<AppletRevision>;
   AppletRevisionConnection: ModelOf<AppletRevisionConnection>;
@@ -3122,14 +3112,6 @@ export type AddRevisionResponseResolvers<ContextType = Context, ParentType exten
 
 export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
   executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'messages'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AllThreadsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AllThreadsConnection'] = ResolversParentTypes['AllThreadsConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ThreadCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4084,7 +4066,7 @@ export type ThreadMutationResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type ThreadQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadQuery'] = ResolversParentTypes['ThreadQuery']> = {
-  allThreads?: Resolver<ResolversTypes['AllThreadsConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
+  allThreads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4272,7 +4254,6 @@ export type Resolvers<ContextType = Context> = {
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
   AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   AiQuery?: AiQueryResolvers<ContextType>;
-  AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
   AppletRevisionConnection?: AppletRevisionConnectionResolvers<ContextType>;
