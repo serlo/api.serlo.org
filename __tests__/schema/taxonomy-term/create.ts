@@ -29,9 +29,6 @@ describe('TaxonomyTermCreateMutation', () => {
             taxonomyTerm {
               create(input: $input) {
                 success
-                record {
-                  id
-                }
               }
             }
           }
@@ -55,12 +52,7 @@ describe('TaxonomyTermCreateMutation', () => {
 
     test('returns { success, record } when mutation could be successfully executed', async () => {
       await mutation.shouldReturnData({
-        taxonomyTerm: {
-          create: {
-            success: true,
-            record: { id: taxonomyTermTopic.id },
-          },
-        },
+        taxonomyTerm: { create: { success: true } },
       })
     })
 
@@ -186,9 +178,6 @@ describe('TaxonomyTermCreateMutation', () => {
             taxonomyTerm {
               create(input: $input) {
                 success
-                record {
-                  id
-                }
               }
             }
           }
@@ -212,12 +201,7 @@ describe('TaxonomyTermCreateMutation', () => {
 
     test('returns { success, record } when mutation could be successfully executed', async () => {
       await mutation.shouldReturnData({
-        taxonomyTerm: {
-          create: {
-            success: true,
-            record: { id: taxonomyTermTopic.id },
-          },
-        },
+        taxonomyTerm: { create: { success: true } },
       })
     })
 

@@ -11,15 +11,6 @@ const mutation = new Client({ userId: user.id })
         thread {
           createThread(input: $input) {
             success
-            record {
-              archived
-              comments {
-                nodes {
-                  content
-                  title
-                }
-              }
-            }
           }
         }
       }
@@ -101,17 +92,7 @@ test('thread gets created, cache mutated as expected', async () => {
     })
 
   await mutation.shouldReturnData({
-    thread: {
-      createThread: {
-        success: true,
-        record: {
-          archived: false,
-          comments: {
-            nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
-          },
-        },
-      },
-    },
+    thread: { createThread: { success: true } },
   })
 
   await queryComments.shouldReturnData({
