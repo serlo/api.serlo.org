@@ -12,7 +12,7 @@ import { CacheEntry, Cache, Priority } from '~/context/cache'
 import { Database } from '~/database'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
-import { Timer, Time ,timeToSeconds, timeToMilliseconds } from '~/timer'
+import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
