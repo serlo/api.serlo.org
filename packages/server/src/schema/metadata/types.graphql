@@ -23,12 +23,6 @@ type MetadataQuery {
 }
 
 type EntityMetadataConnection {
-  edges: [EntityMetadataCursor!]!
   nodes: [JSONObject!]!
   pageInfo: HasNextPageInfo!
-}
-
-type EntityMetadataCursor {
-  cursor: String!
-  node: JSONObject!
 }
