@@ -1,7 +1,8 @@
 import * as t from 'io-ts'
 
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
-import { Context, Model } from '~/internals/graphql'
+import { Model } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { ThreadAwareResolvers } from '~/types'
