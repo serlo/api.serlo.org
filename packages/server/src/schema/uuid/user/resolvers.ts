@@ -13,7 +13,6 @@ import {
   ErrorEvent,
 } from '~/error-event'
 import { UserInputError } from '~/errors'
-import { ModelDataSource } from '~/internals/data-source'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -299,7 +298,11 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
 
-    async deleteBots(_parent, { input }, { dataSources, userId }) {
+    async deleteBots(
+      _parent,
+      { input },
+      { dataSources, userId, authServices },
+    ) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -349,7 +352,9 @@ export const resolvers: Resolvers = {
         { botIds },
       )
       await Promise.all(
-        botIds.map(async (botId) => await deleteKratosUser(botId, dataSources)),
+        botIds.map(
+          async (botId) => await deleteKratosUser(botId, authServices),
+        ),
       )
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
@@ -372,7 +377,11 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
 
-    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
+    async deleteRegularUser(
+      _parent,
+      { input },
+      { dataSources, authServices, userId },
+    ) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -394,7 +403,7 @@ export const resolvers: Resolvers = {
         userId: id,
       })
 
-      if (result.success) await deleteKratosUser(id, dataSources)
+      if (result.success) await deleteKratosUser(id, authServices)
       return { success: result.success, query: {} }
     },
 
@@ -496,12 +505,11 @@ function assertInstanceIsSet(instance: Instance | null) {
 }
 async function deleteKratosUser(
   userId: number,
-  dataSources: { model: ModelDataSource },
+  authServices: Context['authServices'],
 ) {
-  const identity =
-    await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(userId)
-  if (identity)
-    await dataSources.model.authServices.kratos.admin.deleteIdentity({
-      id: identity.id,
-    })
+  const identity = await authServices.kratos.db.getIdentityByLegacyId(userId)
+
+  if (identity) {
+    await authServices.kratos.admin.deleteIdentity({ id: identity.id })
+  }
 }

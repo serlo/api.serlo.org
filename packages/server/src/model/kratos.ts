@@ -3,7 +3,7 @@ import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 
 import { InstanceDecoder } from './decoder'
-import { IdentityDecoder } from '~/internals/authentication'
+import { IdentityDecoder } from '~/context/auth-services'
 import { createLegacyQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 

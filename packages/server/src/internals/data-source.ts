@@ -17,7 +17,6 @@ export class ModelDataSource extends RESTDataSource {
   public chat: ReturnType<typeof createChatModel>
   public mailchimp: ReturnType<typeof createMailchimpModel>
   public kratos: ReturnType<typeof createKratosModel>
-  public authServices: Environment['authServices']
 
   constructor(private environment: Environment) {
     super()
@@ -27,6 +26,5 @@ export class ModelDataSource extends RESTDataSource {
     this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
     this.mailchimp = createMailchimpModel()
     this.kratos = createKratosModel({ environment })
-    this.authServices = environment.authServices
   }
 }
