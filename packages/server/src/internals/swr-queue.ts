@@ -6,6 +6,7 @@ import * as R from 'ramda'
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
 import { log } from './log'
 import { type Context } from '~/context'
+import { createAuthServices } from '~/context/auth-services'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
@@ -47,7 +48,13 @@ export function createSwrQueue({
   timer: Timer
 }): SwrQueue {
   const models = R.values(modelFactories).map((createModel) =>
-    createModel({ context: { cache, swrQueue: emptySwrQueue } }),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),
@@ -142,7 +149,13 @@ export function createSwrQueueWorker({
   _queue: never
 } {
   const models = R.values(modelFactories).map((createModel) =>
-    createModel({ context: { cache, swrQueue: emptySwrQueue } }),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),
