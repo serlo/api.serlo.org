@@ -7,8 +7,8 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  Queries,
 } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
 const ChatCompletionMessageParamType = t.type({
   // Restricts role to 'user' or 'system'. Right now, we don't want to allow
@@ -20,7 +20,7 @@ const ChatCompletionMessageParamType = t.type({
 
 const ExecutePromptRequestType = t.array(ChatCompletionMessageParamType)
 
-export const resolvers: Queries<'ai'> = {
+export const resolvers: Resolvers = {
   Query: {
     ai: createNamespace(),
   },

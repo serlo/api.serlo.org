@@ -1,9 +1,8 @@
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/internals/graphql'
 import { resolveThread } from '~/schema/thread/utils'
-import { SetThreadStateNotificationEvent } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<SetThreadStateNotificationEvent> = {
+export const resolvers: Resolvers = {
   SetThreadStateNotificationEvent: {
     ...createNotificationEventResolvers(),
     thread(notificationEvent, _args, { dataSources }) {

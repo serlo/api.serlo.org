@@ -1,9 +1,9 @@
 import { defaultImport } from 'default-import'
 
 import * as PackageJson from '../../../package.json'
-import { LegacyQueries } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
-export const resolvers: LegacyQueries<'version'> = {
+export const resolvers: Resolvers = {
   Query: {
     version: () => defaultImport(PackageJson).version,
   },

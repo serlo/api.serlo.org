@@ -1,6 +1,6 @@
 import { lookupCustomAlias } from '~/config'
-import { PickResolvers } from '~/internals/graphql'
 import { isInstanceAware } from '~/schema/instance/utils'
+import { AbstractUuidResolvers } from '~/types'
 
 export function decodePath(path: string) {
   try {
@@ -19,7 +19,7 @@ export function encodePath(path: string) {
   return encodeURIComponent(path).replace(/%2F/g, '/')
 }
 
-export function createAliasResolvers(): PickResolvers<'AbstractUuid', 'alias'> {
+export function createAliasResolvers(): Pick<AbstractUuidResolvers, 'alias'> {
   return {
     alias(entity) {
       if (isInstanceAware(entity)) {

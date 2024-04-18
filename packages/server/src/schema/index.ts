@@ -2,7 +2,6 @@ import { aiSchema } from './ai'
 import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
-import { dateTimeSchema } from './date-time'
 import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
 import { experimentSchema } from './experiment'
 import { instanceSchema } from './instance'
@@ -14,7 +13,7 @@ import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
-import { uuidSchema } from './uuid'
+import { uuidCachedResolvers, uuidSchema } from './uuid'
 import { versionSchema } from './version'
 import { mergeSchemas } from '~/internals/graphql'
 
@@ -23,7 +22,6 @@ export const schema = mergeSchemas(
   authorizationSchema,
   cacheSchema,
   connectionSchema,
-  dateTimeSchema,
   experimentSchema,
   instanceSchema,
   defaultGraphQLDefinitionsSchema,
@@ -38,3 +36,5 @@ export const schema = mergeSchemas(
   uuidSchema,
   versionSchema,
 )
+
+export const cachedResolvers = [...uuidCachedResolvers]

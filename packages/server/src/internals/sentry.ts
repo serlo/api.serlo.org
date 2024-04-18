@@ -6,7 +6,7 @@ import * as Sentry from '@sentry/node'
 import * as R from 'ramda'
 
 import { InvalidCurrentValueError } from './data-source-helper'
-import { Context } from '~/internals/graphql'
+import { Context } from '~/context'
 
 export function initializeSentry({
   dsn = process.env.SENTRY_DSN,

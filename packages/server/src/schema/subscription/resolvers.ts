@@ -4,18 +4,13 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  Mutations,
-  Queries,
-  TypeResolvers,
 } from '~/internals/graphql'
 import { UuidDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { SubscriptionInfo } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<SubscriptionInfo> &
-  Queries<'subscription'> &
-  Mutations<'subscription'> = {
+export const resolvers: Resolvers = {
   SubscriptionInfo: {
     async object(parent, _args, { dataSources }) {
       return await dataSources.model.serlo.getUuidWithCustomDecoder({

@@ -1,5 +1,3 @@
-import { PageInfo } from '../../types'
-
 export interface Connection<T> {
   edges: Array<{ node: T; cursor: string }>
   nodes: T[]
@@ -12,4 +10,9 @@ export interface ConnectionPayload {
   before?: string
   first?: number
   last?: number
+}
+
+interface PageInfo {
+  endCursor?: string | null
+  hasNextPage: boolean
 }

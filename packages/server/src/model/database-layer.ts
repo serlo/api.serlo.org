@@ -340,15 +340,6 @@ export const spec = {
     response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
-  ThreadEditCommentMutation: {
-    payload: t.type({
-      commentId: t.number,
-      userId: t.number,
-      content: t.string,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
   ThreadSetThreadArchivedMutation: {
     payload: t.type({
       ids: t.array(t.number),
@@ -478,7 +469,7 @@ export async function makeRequest<M extends MessageType>(
   if (response.status === 200) {
     if (spec[type].response._tag === 'VoidType') return
 
-    return (await response.json()) as unknown
+    return await response.json()
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to
     // Sentry

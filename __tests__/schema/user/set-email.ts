@@ -11,8 +11,6 @@ const query = new Client({ userId: user.id })
         user {
           setEmail(input: $input) {
             success
-            username
-            email
           }
         }
       }
@@ -29,15 +27,7 @@ test('returns "{ success: true }" when mutation could be successfully executed',
     .withPayload({ userId: user.id, email: 'user@example.org' })
     .returns({ success: true, username: user.username })
 
-  await query.shouldReturnData({
-    user: {
-      setEmail: {
-        success: true,
-        username: user.username,
-        email: 'user@example.org',
-      },
-    },
-  })
+  await query.shouldReturnData({ user: { setEmail: { success: true } } })
 })
 
 test('fails when user is not authenticated', async () => {

@@ -4,7 +4,7 @@ import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { URL } from 'url'
 
-import { createQuery } from '~/internals/data-source-helper'
+import { createLegacyQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
 import { addContext, ErrorEvent } from '~/internals/error-event'
 
@@ -40,7 +40,10 @@ export function createGoogleSpreadsheetApiModel({
 }: {
   environment: Environment
 }) {
-  const getValues = createQuery<Arguments, E.Either<ErrorEvent, CellValues>>(
+  const getValues = createLegacyQuery<
+    Arguments,
+    E.Either<ErrorEvent, CellValues>
+  >(
     {
       type: 'google-spreadsheets-api',
       enableSwr: true,
