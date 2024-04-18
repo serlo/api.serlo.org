@@ -1,5 +1,6 @@
 import { option as O } from 'fp-ts'
 
+import { AuthServices } from '~/context/auth-services'
 import { isLegacyQuery, LegacyQuery } from '~/internals/data-source-helper'
 import { emptySwrQueue } from '~/internals/swr-queue'
 import { modelFactories } from '~/model'
@@ -9,7 +10,11 @@ describe('getPayload() is always inverse to getKey()', () => {
     '%s',
     (_name, dataSourceFactoryFunc) => {
       const dataSource = dataSourceFactoryFunc({
-        context: { cache: global.cache, swrQueue: emptySwrQueue },
+        context: {
+          cache: global.cache,
+          swrQueue: emptySwrQueue,
+          authServices: undefined as unknown as AuthServices,
+        },
       })
       const queryFunctions = Object.entries(dataSource).filter(isQueryEntry)
 
