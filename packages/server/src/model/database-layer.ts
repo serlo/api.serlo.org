@@ -425,11 +425,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserSetDescriptionMutation: {
-    payload: t.type({ userId: t.number, description: t.string }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
   UserSetEmailMutation: {
     payload: t.type({ userId: t.number, email: t.string }),
     response: t.type({ success: t.boolean, username: t.string }),
