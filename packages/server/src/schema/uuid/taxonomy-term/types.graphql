@@ -10,13 +10,17 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
   trashed: Boolean!
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -31,7 +35,12 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
   parent: TaxonomyTerm
   path: [TaxonomyTerm]!
   taxonomyId: Int!
-  children(after: String, first: Int): AbstractUuidConnection!
+  children(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AbstractUuidConnection!
 }
 
 extend type Mutation {

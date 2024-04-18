@@ -3,14 +3,18 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   trashed: Boolean!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
@@ -22,10 +26,17 @@ type Applet implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
   currentRevision: AppletRevision
   revisions(
     after: String
+    before: String
     first: Int
+    last: Int
     unrevised: Boolean
   ): AppletRevisionConnection!
-  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -35,14 +46,18 @@ type AppletRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   alias: String!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
