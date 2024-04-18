@@ -5,8 +5,8 @@ import type {
 import * as Sentry from '@sentry/node'
 import * as R from 'ramda'
 
-import { InvalidCurrentValueError } from './data-source-helper'
 import { Context } from '~/context'
+import { InvalidCurrentValueError } from '~/errors'
 
 export function initializeSentry({
   dsn = process.env.SENTRY_DSN,

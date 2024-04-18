@@ -1,7 +1,7 @@
 import { either as E } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InvalidCurrentValueError } from './common'
+import { InvalidCurrentValueError } from "~/errors"
 
 /**
  * Specification object for a request function.
