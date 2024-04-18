@@ -29,7 +29,7 @@ export const UuidResolver = createCachedResolver<
   { id: number },
   Model<'AbstractUuid'> | null
 >({
-  resolverNameForErrorMessage: 'UuidResolver',
+  name: 'UuidResolver',
   decoder: t.union([t.null, UuidDecoder]),
   enableSwr: true,
   staleAfter: { days: 1 },
@@ -39,10 +39,11 @@ export const UuidResolver = createCachedResolver<
   },
   getPayload: (key) => {
     if (!key.startsWith('uuid/')) return O.none
-    const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
+    const id = parseInt(key.replace('uuid/', ''), 10)
     return O.some({ id })
   },
   getCurrentValue: resolveUuidFromDatabase,
+  examplePayload: { id: 1 },
 })
 
 export const resolvers: Resolvers = {
