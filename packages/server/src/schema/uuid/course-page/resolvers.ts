@@ -1,19 +1,17 @@
-import { TypeResolvers } from '~/internals/graphql'
 import {
   CourseDecoder,
   CoursePageDecoder,
   CoursePageRevisionDecoder,
 } from '~/model/decoder'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-} from '~/schema/uuid/abstract-entity/utils'
-import { CoursePage, CoursePageRevision } from '~/types'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '~/schema/uuid/abstract-repository/utils'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<CoursePage> &
-  TypeResolvers<CoursePageRevision> = {
+export const resolvers: Resolvers = {
   CoursePage: {
-    ...createEntityResolvers({
+    ...createRepositoryResolvers({
       revisionDecoder: CoursePageRevisionDecoder,
     }),
     async course(coursePage, _args, { dataSources }) {
@@ -23,7 +21,7 @@ export const resolvers: TypeResolvers<CoursePage> &
       })
     },
   },
-  CoursePageRevision: createEntityRevisionResolvers({
+  CoursePageRevision: createRevisionResolvers({
     repositoryDecoder: CoursePageDecoder,
   }),
 }

@@ -3,17 +3,13 @@ type Page implements AbstractUuid & AbstractEntity & InstanceAware & ThreadAware
   trashed: Boolean!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -26,9 +22,7 @@ type Page implements AbstractUuid & AbstractEntity & InstanceAware & ThreadAware
   currentRevision: PageRevision
   revisions(
     after: String
-    before: String
     first: Int
-    last: Int
     unrevised: Boolean
   ): PageRevisionConnection!
   subject: Subject
@@ -41,17 +35,13 @@ type PageRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware
   alias: String!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -64,15 +54,9 @@ type PageRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware
 }
 
 type PageRevisionConnection implements AbstractEntityRevisionConnection {
-  edges: [PageRevisionCursor!]!
   nodes: [PageRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type PageRevisionCursor {
-  cursor: String!
-  node: PageRevision!
 }
 
 extend type Mutation {
@@ -80,9 +64,9 @@ extend type Mutation {
 }
 
 type PageMutation {
-  addRevision(input: PageAddRevisionInput!): AddRevisionResponse!
-  checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
-  create(input: CreatePageInput!): PageCreateResponse!
+  addRevision(input: PageAddRevisionInput!): DefaultResponse!
+  checkoutRevision(input: CheckoutRevisionInput!): DefaultResponse!
+  create(input: CreatePageInput!): DefaultResponse!
 }
 
 extend type Query {
@@ -99,12 +83,6 @@ input PageAddRevisionInput {
   title: String!
 }
 
-type AddRevisionResponse {
-  success: Boolean!
-  query: Query!
-  revisionId: Int
-}
-
 input CreatePageInput {
   content: String!
   discussionsEnabled: Boolean!
@@ -112,10 +90,4 @@ input CreatePageInput {
   licenseId: Int!
   title: String!
   forumId: Int
-}
-
-type PageCreateResponse {
-  record: Page
-  success: Boolean!
-  query: Query!
 }

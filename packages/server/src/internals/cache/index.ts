@@ -5,10 +5,11 @@ import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 
 import { createLockManager, LockManager } from './lock-manager'
+import { Timer } from '../../timer'
 import { log } from '../log'
-import { Time, timeToMilliseconds } from '../swr-queue'
-import { Timer } from '../timer'
-import { AsyncOrSync } from '~/utils'
+import { Priority, Cache, CacheEntry } from '~/context/cache'
+import { timeToMilliseconds, Time } from '~/timer'
+import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
   createMsgpack as () => {
@@ -16,32 +17,6 @@ const msgpack = (
     decode(buffer: Buffer): unknown
   }
 )()
-
-export enum Priority {
-  Low,
-  High,
-}
-
-interface UpdateFunction<T> {
-  getValue: (current?: T) => AsyncOrSync<T | undefined>
-}
-export type FunctionOrValue<T> = UpdateFunction<T> | { value: T }
-
-export interface Cache {
-  get<T>(args: { key: string; maxAge?: Time }): Promise<O.Option<CacheEntry<T>>>
-  set<T>(
-    payload: {
-      key: string
-      source: string
-      ttlInSeconds?: number
-      priority?: Priority
-    } & FunctionOrValue<T>,
-  ): Promise<void>
-  remove(args: { key: string }): Promise<void>
-  ready(): Promise<void>
-  flush(): Promise<void>
-  quit(): Promise<void>
-}
 
 export function createCache({ timer }: { timer: Timer }): Cache {
   const redisUrl = new URL(process.env.REDIS_URL)
@@ -85,7 +60,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     try {
       let value: T | undefined
 
-      if (isFunction(payload)) {
+      if (isUpdateFunction(payload)) {
         const current = F.pipe(
           await this.get<T>({ key }),
           O.map((entry) => entry.value),
@@ -204,16 +179,6 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
   }
 }
 
-export interface CacheEntry<Value> {
-  value: Value
-  lastModified: number
-  source: string
-}
-
 function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
   return R.has('lastModified', value) && R.has('value', value)
-}
-
-function isFunction<T>(arg: FunctionOrValue<T>): arg is UpdateFunction<T> {
-  return R.has('getValue', arg) && typeof arg.getValue === 'function'
 }

@@ -29,12 +29,6 @@ describe('PageCreateMutation', () => {
         mutation set($input: CreatePageInput!) {
           page {
             create(input: $input) {
-              record {
-                currentRevision {
-                  title
-                  content
-                }
-              }
               success
             }
           }
@@ -84,14 +78,7 @@ describe('PageCreateMutation', () => {
   })
 
   test('returns success and record  when mutation is successfully executed', async () => {
-    await mutation.shouldReturnData({
-      page: {
-        create: {
-          success: true,
-          record: { currentRevision: { title: 'title', content: 'content' } },
-        },
-      },
-    })
+    await mutation.shouldReturnData({ page: { create: { success: true } } })
   })
 
   test('fails when user is not authenticated', async () => {

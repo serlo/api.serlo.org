@@ -1,21 +1,19 @@
 import { flush as flushSentry, type Event } from '@sentry/node'
+import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
+import { createPool, type Pool, type PoolConnection } from 'mysql2/promise'
 
 import {
   defaultSpreadsheetApi,
   givenSpreadheetApi,
   MockKratos,
 } from './__tests__/__utils__'
-import {
-  type Cache,
-  createCache,
-  createNamespacedCache,
-} from '~/internals/cache'
-import { initializeSentry, Sentry } from '~/internals/sentry'
-import { Time, timeToMilliseconds } from '~/internals/swr-queue'
-import { Timer } from '~/internals/timer'
+import { type Cache } from '~/context/cache'
+import { createCache, createNamespacedCache } from '~/internals/cache'
+import { initializeSentry } from '~/internals/sentry'
+import { timeToMilliseconds, Time, Timer } from '~/timer'
 
 beforeAll(() => {
   initializeSentry({
@@ -28,6 +26,7 @@ beforeAll(() => {
   const server = setupServer()
   const kratos = new MockKratos()
 
+  global.database = createPool(process.env.MYSQL_URI)
   global.server = server
   global.timer = timer
   global.kratos = kratos
@@ -74,6 +73,10 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
+  if (global.transaction != null) {
+    await global.transaction.rollback()
+    global.transaction.release()
+  }
   await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()
@@ -122,4 +125,6 @@ declare global {
   var timer: MockTimer
   var sentryEvents: Event[]
   var kratos: MockKratos
+  var database: Pool
+  var transaction: PoolConnection
 }

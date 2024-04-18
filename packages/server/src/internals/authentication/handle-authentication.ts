@@ -1,8 +1,8 @@
 import jsonwebtoken, { type JsonWebTokenError } from 'jsonwebtoken'
 
-import { Service } from './service'
+import { Context } from '~/context'
+import { Service } from '~/context/service'
 import { AuthenticationError } from '~/errors'
-import { Context } from '~/internals/graphql'
 
 export async function handleAuthentication(
   authorizationHeader: string,

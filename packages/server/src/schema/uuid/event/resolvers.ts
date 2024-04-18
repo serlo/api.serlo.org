@@ -1,18 +1,17 @@
-import { TypeResolvers } from '~/internals/graphql'
 import { EventDecoder, EventRevisionDecoder } from '~/model/decoder'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-} from '~/schema/uuid/abstract-entity/utils'
+  createRevisionResolvers,
+  createRepositoryResolvers,
+} from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { EventRevision, Event } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<Event> & TypeResolvers<EventRevision> = {
+export const resolvers: Resolvers = {
   Event: {
-    ...createEntityResolvers({ revisionDecoder: EventRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: EventRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  EventRevision: createEntityRevisionResolvers({
+  EventRevision: createRevisionResolvers({
     repositoryDecoder: EventDecoder,
   }),
 }

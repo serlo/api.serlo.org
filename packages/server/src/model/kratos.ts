@@ -3,16 +3,16 @@ import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 
 import { InstanceDecoder } from './decoder'
-import { IdentityDecoder } from '~/internals/authentication'
-import { createQuery } from '~/internals/data-source-helper'
-import { Environment } from '~/internals/environment'
+import { Context } from '~/context'
+import { IdentityDecoder } from '~/context/auth-services'
+import { createLegacyQuery } from '~/internals/data-source-helper'
 
 export function createKratosModel({
-  environment,
+  context,
 }: {
-  environment: Environment
+  context: Pick<Context, 'authServices' | 'swrQueue' | 'cache'>
 }) {
-  const getUserLanguage = createQuery(
+  const getUserLanguage = createLegacyQuery(
     {
       type: 'kratos.serlo.org/get-user-language',
       decoder: t.union([InstanceDecoder, t.null]),
@@ -21,7 +21,7 @@ export function createKratosModel({
       maxAge: { days: 180 },
       async getCurrentValue({ userLegacyId }: { userLegacyId: number }) {
         const kratosIdentity =
-          await environment.authServices.kratos.db.getIdentityByLegacyId(
+          await context.authServices.kratos.db.getIdentityByLegacyId(
             userLegacyId,
           )
         const language = kratosIdentity?.traits?.language
@@ -45,10 +45,10 @@ export function createKratosModel({
       },
       examplePayload: { userLegacyId: 1 },
     },
-    environment,
+    context,
   )
 
-  const getLastLogin = createQuery(
+  const getLastLogin = createLegacyQuery(
     {
       type: 'kratos.serlo.org/get-last-login',
       decoder: t.union([t.string, t.null]),
@@ -57,7 +57,7 @@ export function createKratosModel({
       maxAge: { days: 30 },
       async getCurrentValue({ username }: { username: string }) {
         const identity = (
-          await environment.authServices.kratos.admin.listIdentities({
+          await context.authServices.kratos.admin.listIdentities({
             credentialsIdentifier: username,
           })
         ).data[0]
@@ -82,7 +82,7 @@ export function createKratosModel({
       },
       examplePayload: { username: 'serlouser' },
     },
-    environment,
+    context,
   )
   return {
     getLastLogin,

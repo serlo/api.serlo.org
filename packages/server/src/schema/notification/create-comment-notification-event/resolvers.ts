@@ -1,10 +1,9 @@
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/internals/graphql'
 import { CommentDecoder } from '~/model/decoder'
 import { resolveThread } from '~/schema/thread/utils'
-import { CreateCommentNotificationEvent } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<CreateCommentNotificationEvent> = {
+export const resolvers: Resolvers = {
   CreateCommentNotificationEvent: {
     ...createNotificationEventResolvers(),
     thread(notificationEvent, _args, { dataSources }) {

@@ -2,41 +2,39 @@ import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import {
-  Model,
-  PickResolvers,
-  Repository,
-  ResolverFunction,
-  Revision,
-} from '~/internals/graphql'
+import { Context } from '~/context'
+import { Model } from '~/internals/graphql'
 import { EntityRevisionType, EntityType, UserDecoder } from '~/model/decoder'
 import { Connection } from '~/schema/connection/types'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
-import { VideoRevisionsArgs } from '~/types'
+import {
+  AbstractEntityResolvers,
+  AbstractEntityRevisionResolvers,
+  AppletRevisionsArgs,
+  ResolverFn,
+} from '~/types'
 
 export function createEntityResolvers<
-  R extends Model<'AbstractEntityRevision'>,
+  Repository extends Model<'AbstractEntity'>,
+  Revision extends Model<'AbstractEntityRevision'>,
 >({
   revisionDecoder,
 }: {
-  revisionDecoder: t.Type<R, unknown>
-}): PickResolvers<
-  'AbstractEntity',
+  revisionDecoder: t.Type<Revision, unknown>
+}): Pick<
+  AbstractEntityResolvers,
   'alias' | 'threads' | 'licenseId' | 'events' | 'title'
-> &
-  PickResolvers<'AbstractEntity', 'threads'> & {
-    currentRevision: ResolverFunction<
-      R | null,
-      Repository<Model<'AbstractEntityRevision'>['__typename']>
-    >
-    revisions: ResolverFunction<
-      Connection<R>,
-      Repository<Model<'AbstractEntityRevision'>['__typename']>,
-      VideoRevisionsArgs
-    >
-  } {
+> & {
+  currentRevision: ResolverFn<Revision | null, Repository, Context, unknown>
+  revisions: ResolverFn<
+    Connection<Revision>,
+    Repository,
+    Context,
+    AppletRevisionsArgs
+  >
+} {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
@@ -73,7 +71,7 @@ export function createEntityResolvers<
           (revision) => R.isNil(cursorPayload.unrevised) || !revision.trashed,
         ),
       )
-      return resolveConnection<R>({
+      return resolveConnection({
         nodes: revisions,
         payload: cursorPayload,
         createCursor(node) {
@@ -88,20 +86,16 @@ export function createEntityResolvers<
 }
 
 export function createEntityRevisionResolvers<
-  E extends Model<'AbstractEntity'>,
+  Repository extends Model<'AbstractEntityRevision'>,
+  Revision extends Model<'AbstractEntityRevision'>,
 >({
   repositoryDecoder,
 }: {
-  repositoryDecoder: t.Type<E, unknown>
-}): PickResolvers<
-  'AbstractEntityRevision',
+  repositoryDecoder: t.Type<Repository, unknown>
+}): Pick<
+  AbstractEntityRevisionResolvers,
   'alias' | 'threads' | 'author' | 'events' | 'title'
-> & {
-  repository: ResolverFunction<
-    E,
-    Revision<Model<'AbstractEntity'>['__typename']>
-  >
-} {
+> & { repository: ResolverFn<Repository, Revision, Context, unknown> } {
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),

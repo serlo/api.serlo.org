@@ -1,6 +1,6 @@
 import type { ModelOf } from '~/internals/model'
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import type { Context } from '~/internals/graphql/context';
+import type { Context } from '~/context';
 export type Maybe<T> = T extends PromiseLike<infer U> ? Promise<U | null> : T | null;
 export type InputMaybe<T> = undefined | T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -30,7 +30,7 @@ export type AbstractEntity = {
   instance: Instance;
   licenseId: Scalars['Int']['output'];
   revisions: AppletRevisionConnection | ArticleRevisionConnection | CoursePageRevisionConnection | CourseRevisionConnection | EventRevisionConnection | ExerciseGroupRevisionConnection | ExerciseRevisionConnection | PageRevisionConnection | VideoRevisionConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -40,18 +40,14 @@ export type AbstractEntityEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type AbstractEntityRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -67,23 +63,15 @@ export type AbstractEntityThreadsArgs = {
 
 export type AbstractEntityConnection = {
   __typename?: 'AbstractEntityConnection';
-  edges: Array<AbstractEntityCursor>;
   nodes: Array<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video>;
-  pageInfo: HasNextPageInfo;
+  pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AbstractEntityCursor = {
-  __typename?: 'AbstractEntityCursor';
-  cursor: Scalars['String']['output'];
-  node: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
 };
 
 export type AbstractEntityRevision = {
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -91,7 +79,7 @@ export type AbstractEntityRevision = {
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -102,10 +90,8 @@ export type AbstractEntityRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -134,15 +120,8 @@ export type AbstractNotificationEvent = {
 
 export type AbstractNotificationEventConnection = {
   __typename?: 'AbstractNotificationEventConnection';
-  edges: Array<AbstractNotificationEventEdge>;
   nodes: Array<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
-  pageInfo: HasNextPageInfo;
-};
-
-export type AbstractNotificationEventEdge = {
-  __typename?: 'AbstractNotificationEventEdge';
-  cursor: Scalars['String']['output'];
-  node: CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent;
+  pageInfo: PageInfo;
 };
 
 export type AbstractTaxonomyTermChild = {
@@ -162,18 +141,14 @@ export type AbstractTaxonomyTermChildEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type AbstractTaxonomyTermChildTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type AbstractUuid = {
@@ -189,10 +164,8 @@ export type AbstractUuidEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type AbstractUuidConnection = {
@@ -200,13 +173,6 @@ export type AbstractUuidConnection = {
   nodes: Array<Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type AddRevisionResponse = {
-  __typename?: 'AddRevisionResponse';
-  query: Query;
-  revisionId?: Maybe<Scalars['Int']['output']>;
-  success: Scalars['Boolean']['output'];
 };
 
 export type AiQuery = {
@@ -224,14 +190,6 @@ export type AliasInput = {
   path: Scalars['String']['input'];
 };
 
-export type AllThreadsConnection = {
-  __typename?: 'AllThreadsConnection';
-  edges: Array<ThreadsCursor>;
-  nodes: Array<Thread>;
-  pageInfo: HasNextPageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type Applet = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
   __typename?: 'Applet';
   alias: Scalars['String']['output'];
@@ -243,7 +201,7 @@ export type Applet = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid &
   licenseId: Scalars['Int']['output'];
   revisions: AppletRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -253,36 +211,28 @@ export type AppletEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type AppletRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type AppletTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type AppletThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -291,7 +241,6 @@ export type AppletRevision = AbstractEntityRevision & AbstractUuid & ThreadAware
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -299,7 +248,7 @@ export type AppletRevision = AbstractEntityRevision & AbstractUuid & ThreadAware
   metaDescription: Scalars['String']['output'];
   metaTitle: Scalars['String']['output'];
   repository: Applet;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url: Scalars['String']['output'];
@@ -310,19 +259,15 @@ export type AppletRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type AppletRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -344,7 +289,7 @@ export type Article = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid 
   licenseId: Scalars['Int']['output'];
   revisions: ArticleRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -354,36 +299,28 @@ export type ArticleEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ArticleRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type ArticleTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ArticleThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -392,7 +329,6 @@ export type ArticleRevision = AbstractEntityRevision & AbstractUuid & ThreadAwar
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -400,7 +336,7 @@ export type ArticleRevision = AbstractEntityRevision & AbstractUuid & ThreadAwar
   metaDescription: Scalars['String']['output'];
   metaTitle: Scalars['String']['output'];
   repository: Article;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -411,19 +347,15 @@ export type ArticleRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ArticleRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -460,12 +392,6 @@ export type CheckoutRevisionNotificationEvent = AbstractNotificationEvent & Inst
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
 };
 
-export type CheckoutRevisionResponse = {
-  __typename?: 'CheckoutRevisionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type Comment = AbstractUuid & {
   __typename?: 'Comment';
   alias: Scalars['String']['output'];
@@ -485,10 +411,8 @@ export type CommentEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CommentConnection = {
@@ -516,7 +440,7 @@ export type Course = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid &
   pages: Array<CoursePage>;
   revisions: CourseRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -526,10 +450,8 @@ export type CourseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -541,27 +463,21 @@ export type CoursePagesArgs = {
 
 export type CourseRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type CourseTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type CourseThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -576,7 +492,7 @@ export type CoursePage = AbstractEntity & AbstractUuid & InstanceAware & ThreadA
   instance: Instance;
   licenseId: Scalars['Int']['output'];
   revisions: CoursePageRevisionConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -586,18 +502,14 @@ export type CoursePageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type CoursePageRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -605,9 +517,7 @@ export type CoursePageRevisionsArgs = {
 export type CoursePageThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -616,7 +526,6 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractUuid & ThreadA
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -624,7 +533,7 @@ export type CoursePageRevision = AbstractEntityRevision & AbstractUuid & ThreadA
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: CoursePage;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -635,19 +544,15 @@ export type CoursePageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type CoursePageRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -663,7 +568,6 @@ export type CourseRevision = AbstractEntityRevision & AbstractUuid & ThreadAware
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -671,7 +575,7 @@ export type CourseRevision = AbstractEntityRevision & AbstractUuid & ThreadAware
   metaDescription: Scalars['String']['output'];
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Course;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -682,19 +586,15 @@ export type CourseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type CourseRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -795,53 +695,26 @@ export type DefaultResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type DeletedEntitiesConnection = {
-  __typename?: 'DeletedEntitiesConnection';
-  edges: Array<DeletedEntityCursor>;
-  nodes: Array<DeletedEntity>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type DeletedEntity = {
   __typename?: 'DeletedEntity';
   dateOfDeletion?: Maybe<Scalars['String']['output']>;
   entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video>;
 };
 
-export type DeletedEntityCursor = {
-  __typename?: 'DeletedEntityCursor';
-  cursor: Scalars['String']['output'];
-  node: DeletedEntity;
-};
-
-export type EntityMetadataConnection = {
-  __typename?: 'EntityMetadataConnection';
-  edges: Array<EntityMetadataCursor>;
-  nodes: Array<Scalars['JSONObject']['output']>;
-  pageInfo: HasNextPageInfo;
-};
-
-export type EntityMetadataCursor = {
-  __typename?: 'EntityMetadataCursor';
-  cursor: Scalars['String']['output'];
-  node: Scalars['JSONObject']['output'];
+export type DeletedEntityConnection = {
+  __typename?: 'DeletedEntityConnection';
+  nodes: Array<DeletedEntity>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type EntityMutation = {
   __typename?: 'EntityMutation';
-  checkoutRevision: CheckoutRevisionResponse;
-  rejectRevision: RejectRevisionResponse;
-  setApplet: SetEntityResponse;
-  setArticle: SetEntityResponse;
-  setCourse: SetEntityResponse;
-  setCoursePage: SetEntityResponse;
-  setEvent: SetEntityResponse;
-  setExercise: SetEntityResponse;
-  setExerciseGroup: SetEntityResponse;
-  setVideo: SetEntityResponse;
-  sort: EntitySortResponse;
-  updateLicense: EntityUpdateLicenseResponse;
+  checkoutRevision: DefaultResponse;
+  rejectRevision: DefaultResponse;
+  setAbstractEntity: SetEntityResponse;
+  sort: DefaultResponse;
+  updateLicense: DefaultResponse;
 };
 
 
@@ -855,43 +728,8 @@ export type EntityMutationRejectRevisionArgs = {
 };
 
 
-export type EntityMutationSetAppletArgs = {
-  input: SetAppletInput;
-};
-
-
-export type EntityMutationSetArticleArgs = {
-  input: SetArticleInput;
-};
-
-
-export type EntityMutationSetCourseArgs = {
-  input: SetCourseInput;
-};
-
-
-export type EntityMutationSetCoursePageArgs = {
-  input: SetCoursePageInput;
-};
-
-
-export type EntityMutationSetEventArgs = {
-  input: SetEventInput;
-};
-
-
-export type EntityMutationSetExerciseArgs = {
-  input: SetGenericEntityInput;
-};
-
-
-export type EntityMutationSetExerciseGroupArgs = {
-  input: SetExerciseGroupInput;
-};
-
-
-export type EntityMutationSetVideoArgs = {
-  input: SetVideoInput;
+export type EntityMutationSetAbstractEntityArgs = {
+  input: SetAbstractEntityInput;
 };
 
 
@@ -906,7 +744,7 @@ export type EntityMutationUpdateLicenseArgs = {
 
 export type EntityQuery = {
   __typename?: 'EntityQuery';
-  deletedEntities: DeletedEntitiesConnection;
+  deletedEntities: DeletedEntityConnection;
 };
 
 
@@ -921,21 +759,9 @@ export type EntitySortInput = {
   entityId: Scalars['Int']['input'];
 };
 
-export type EntitySortResponse = {
-  __typename?: 'EntitySortResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type EntityUpdateLicenseInput = {
   entityId: Scalars['Int']['input'];
   licenseId: Scalars['Int']['input'];
-};
-
-export type EntityUpdateLicenseResponse = {
-  __typename?: 'EntityUpdateLicenseResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type Event = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -949,7 +775,7 @@ export type Event = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid & 
   licenseId: Scalars['Int']['output'];
   revisions: EventRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -959,36 +785,28 @@ export type EventEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type EventRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type EventTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type EventThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -997,7 +815,6 @@ export type EventRevision = AbstractEntityRevision & AbstractUuid & ThreadAware 
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1005,7 +822,7 @@ export type EventRevision = AbstractEntityRevision & AbstractUuid & ThreadAware 
   metaDescription: Scalars['String']['output'];
   metaTitle: Scalars['String']['output'];
   repository: Event;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -1016,34 +833,23 @@ export type EventRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type EventRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type EventRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'EventRevisionConnection';
-  edges: Array<EventRevisionCursor>;
   nodes: Array<EventRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type EventRevisionCursor = {
-  __typename?: 'EventRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: EventRevision;
 };
 
 export type ExecutePromptResponse = {
@@ -1063,7 +869,7 @@ export type Exercise = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid
   licenseId: Scalars['Int']['output'];
   revisions: ExerciseRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -1073,36 +879,28 @@ export type ExerciseEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type ExerciseTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -1117,7 +915,7 @@ export type ExerciseGroup = AbstractEntity & AbstractTaxonomyTermChild & Abstrac
   licenseId: Scalars['Int']['output'];
   revisions: ExerciseGroupRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -1127,36 +925,28 @@ export type ExerciseGroupEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseGroupRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type ExerciseGroupTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseGroupThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -1165,7 +955,6 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractUuid & Thre
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive: Scalars['Boolean']['output'];
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1173,7 +962,7 @@ export type ExerciseGroupRevision = AbstractEntityRevision & AbstractUuid & Thre
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: ExerciseGroup;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -1184,34 +973,23 @@ export type ExerciseGroupRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseGroupRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ExerciseGroupRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseGroupRevisionConnection';
-  edges: Array<ExerciseGroupRevisionCursor>;
   nodes: Array<ExerciseGroupRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ExerciseGroupRevisionCursor = {
-  __typename?: 'ExerciseGroupRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: ExerciseGroupRevision;
 };
 
 export type ExerciseRevision = AbstractEntityRevision & AbstractUuid & ThreadAware & {
@@ -1219,7 +997,6 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractUuid & ThreadAwa
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -1227,7 +1004,7 @@ export type ExerciseRevision = AbstractEntityRevision & AbstractUuid & ThreadAwa
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Exercise;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url?: Maybe<Scalars['String']['output']>;
@@ -1238,34 +1015,23 @@ export type ExerciseRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type ExerciseRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ExerciseRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'ExerciseRevisionConnection';
-  edges: Array<ExerciseRevisionCursor>;
   nodes: Array<ExerciseRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ExerciseRevisionCursor = {
-  __typename?: 'ExerciseRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: ExerciseRevision;
 };
 
 export type ExerciseSubmissionInput = {
@@ -1285,12 +1051,6 @@ export type ExperimentMutation = {
 
 export type ExperimentMutationCreateExerciseSubmissionArgs = {
   input: ExerciseSubmissionInput;
-};
-
-export type HasNextPageInfo = {
-  __typename?: 'HasNextPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
 };
 
 export enum Instance {
@@ -1333,9 +1093,9 @@ export type MediaUpload = {
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
   /** @deprecated Please use the `resources` field instead. This property will be deleted. */
-  entities: EntityMetadataConnection;
+  entities: ResourceMetadataConnection;
   publisher: Scalars['JSONObject']['output'];
-  resources: EntityMetadataConnection;
+  resources: ResourceMetadataConnection;
   version: Scalars['String']['output'];
 };
 
@@ -1381,21 +1141,14 @@ export type Notification = {
 
 export type NotificationConnection = {
   __typename?: 'NotificationConnection';
-  edges: Array<NotificationEdge>;
   nodes: Array<Notification>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
 };
 
-export type NotificationEdge = {
-  __typename?: 'NotificationEdge';
-  cursor: Scalars['String']['output'];
-  node: Notification;
-};
-
 export type NotificationMutation = {
   __typename?: 'NotificationMutation';
-  setState?: Maybe<NotificationSetStateResponse>;
+  setState?: Maybe<DefaultResponse>;
 };
 
 
@@ -1406,12 +1159,6 @@ export type NotificationMutationSetStateArgs = {
 export type NotificationSetStateInput = {
   id: Array<Scalars['Int']['input']>;
   unread: Scalars['Boolean']['input'];
-};
-
-export type NotificationSetStateResponse = {
-  __typename?: 'NotificationSetStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type OauthAcceptInput = {
@@ -1458,7 +1205,7 @@ export type Page = AbstractEntity & AbstractUuid & InstanceAware & ThreadAware &
   licenseId: Scalars['Int']['output'];
   revisions: PageRevisionConnection;
   subject?: Maybe<Subject>;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -1468,18 +1215,14 @@ export type PageEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type PageRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -1487,9 +1230,7 @@ export type PageRevisionsArgs = {
 export type PageThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -1499,26 +1240,17 @@ export type PageAddRevisionInput = {
   title: Scalars['String']['input'];
 };
 
-export type PageCreateResponse = {
-  __typename?: 'PageCreateResponse';
-  query: Query;
-  record?: Maybe<Page>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
-  hasPreviousPage: Scalars['Boolean']['output'];
-  startCursor?: Maybe<Scalars['String']['output']>;
 };
 
 export type PageMutation = {
   __typename?: 'PageMutation';
-  addRevision: AddRevisionResponse;
-  checkoutRevision: CheckoutRevisionResponse;
-  create: PageCreateResponse;
+  addRevision: DefaultResponse;
+  checkoutRevision: DefaultResponse;
+  create: DefaultResponse;
 };
 
 
@@ -1556,7 +1288,7 @@ export type PageRevision = AbstractEntityRevision & AbstractUuid & ThreadAware &
   events: AbstractNotificationEventConnection;
   id: Scalars['Int']['output'];
   repository: Page;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -1566,34 +1298,23 @@ export type PageRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type PageRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type PageRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'PageRevisionConnection';
-  edges: Array<PageRevisionCursor>;
   nodes: Array<PageRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type PageRevisionCursor = {
-  __typename?: 'PageRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: PageRevision;
 };
 
 export type Query = {
@@ -1620,7 +1341,6 @@ export type QueryEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
   last?: InputMaybe<Scalars['Int']['input']>;
@@ -1635,11 +1355,9 @@ export type QueryNotificationEventArgs = {
 
 export type QueryNotificationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['Boolean']['input']>;
   emailSent?: InputMaybe<Scalars['Boolean']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unread?: InputMaybe<Scalars['Boolean']['input']>;
   userId?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1667,12 +1385,6 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
 };
 
-export type RejectRevisionResponse = {
-  __typename?: 'RejectRevisionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'RemoveEntityLinkNotificationEvent';
   actor: User;
@@ -1693,6 +1405,12 @@ export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & In
   instance: Instance;
   objectId: Scalars['Int']['output'];
   parent: TaxonomyTerm;
+};
+
+export type ResourceMetadataConnection = {
+  __typename?: 'ResourceMetadataConnection';
+  nodes: Array<Scalars['JSONObject']['output']>;
+  pageInfo: PageInfo;
 };
 
 export enum Role {
@@ -1724,66 +1442,24 @@ export type ScopedRole = {
 
 export type ScopedRoleConnection = {
   __typename?: 'ScopedRoleConnection';
-  edges: Array<ScopedRoleCursor>;
   nodes: Array<ScopedRole>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
 };
 
-export type ScopedRoleCursor = {
-  __typename?: 'ScopedRoleCursor';
-  cursor: Scalars['String']['output'];
-  node: ScopedRole;
-};
-
-export type SetAppletInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  metaDescription?: InputMaybe<Scalars['String']['input']>;
-  metaTitle?: InputMaybe<Scalars['String']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
-  url: Scalars['String']['input'];
-};
-
-export type SetArticleInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  metaDescription?: InputMaybe<Scalars['String']['input']>;
-  metaTitle?: InputMaybe<Scalars['String']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
-};
-
-export type SetCourseInput = {
+export type SetAbstractEntityInput = {
   changes: Scalars['String']['input'];
   content?: InputMaybe<Scalars['String']['input']>;
   entityId?: InputMaybe<Scalars['Int']['input']>;
+  entityType: Scalars['String']['input'];
   metaDescription?: InputMaybe<Scalars['String']['input']>;
+  metaTitle?: InputMaybe<Scalars['String']['input']>;
   needsReview: Scalars['Boolean']['input'];
   parentId?: InputMaybe<Scalars['Int']['input']>;
   subscribeThis: Scalars['Boolean']['input'];
   subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
-};
-
-export type SetCoursePageInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SetEntityResponse = {
@@ -1791,40 +1467,6 @@ export type SetEntityResponse = {
   query: Query;
   record?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video>;
   success: Scalars['Boolean']['output'];
-};
-
-export type SetEventInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  metaDescription?: InputMaybe<Scalars['String']['input']>;
-  metaTitle?: InputMaybe<Scalars['String']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
-};
-
-export type SetExerciseGroupInput = {
-  changes: Scalars['String']['input'];
-  cohesive: Scalars['Boolean']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-};
-
-export type SetGenericEntityInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
 };
 
 export type SetLicenseNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1881,18 +1523,6 @@ export type SetUuidStateNotificationEvent = AbstractNotificationEvent & Instance
   trashed: Scalars['Boolean']['output'];
 };
 
-export type SetVideoInput = {
-  changes: Scalars['String']['input'];
-  content: Scalars['String']['input'];
-  entityId?: InputMaybe<Scalars['Int']['input']>;
-  needsReview: Scalars['Boolean']['input'];
-  parentId?: InputMaybe<Scalars['Int']['input']>;
-  subscribeThis: Scalars['Boolean']['input'];
-  subscribeThisByEmail: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
-  url: Scalars['String']['input'];
-};
-
 export type Subject = {
   __typename?: 'Subject';
   id: Scalars['String']['output'];
@@ -1903,9 +1533,7 @@ export type Subject = {
 
 export type SubjectUnrevisedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type SubjectQuery = {
@@ -1918,29 +1546,22 @@ export type SubjectQuerySubjectsArgs = {
   instance: Instance;
 };
 
-export type SubscriptionConnection = {
-  __typename?: 'SubscriptionConnection';
-  edges: Array<SubscriptionCursor>;
-  nodes: Array<SubscriptionInfo>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type SubscriptionCursor = {
-  __typename?: 'SubscriptionCursor';
-  cursor: Scalars['String']['output'];
-  node: SubscriptionInfo;
-};
-
 export type SubscriptionInfo = {
   __typename?: 'SubscriptionInfo';
   object: Applet | AppletRevision | Article | ArticleRevision | Comment | Course | CoursePage | CoursePageRevision | CourseRevision | Event | EventRevision | Exercise | ExerciseGroup | ExerciseGroupRevision | ExerciseRevision | Page | PageRevision | TaxonomyTerm | User | Video | VideoRevision;
   sendEmail: Scalars['Boolean']['output'];
 };
 
+export type SubscriptionInfoConnection = {
+  __typename?: 'SubscriptionInfoConnection';
+  nodes: Array<SubscriptionInfo>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type SubscriptionMutation = {
   __typename?: 'SubscriptionMutation';
-  set?: Maybe<SubscriptionSetResponse>;
+  set: DefaultResponse;
 };
 
 
@@ -1951,7 +1572,7 @@ export type SubscriptionMutationSetArgs = {
 export type SubscriptionQuery = {
   __typename?: 'SubscriptionQuery';
   currentUserHasSubscribed: Scalars['Boolean']['output'];
-  getSubscriptions: SubscriptionConnection;
+  getSubscriptions: SubscriptionInfoConnection;
 };
 
 
@@ -1962,9 +1583,7 @@ export type SubscriptionQueryCurrentUserHasSubscribedArgs = {
 
 export type SubscriptionQueryGetSubscriptionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type SubscriptionSetInput = {
@@ -1973,21 +1592,9 @@ export type SubscriptionSetInput = {
   subscribe: Scalars['Boolean']['input'];
 };
 
-export type SubscriptionSetResponse = {
-  __typename?: 'SubscriptionSetResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type TaxonomyEntityLinksInput = {
   entityIds: Array<Scalars['Int']['input']>;
   taxonomyTermId: Scalars['Int']['input'];
-};
-
-export type TaxonomyEntityLinksResponse = {
-  __typename?: 'TaxonomyEntityLinksResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
@@ -2002,7 +1609,7 @@ export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   parent?: Maybe<TaxonomyTerm>;
   path: Array<Maybe<TaxonomyTerm>>;
   taxonomyId: Scalars['Int']['output'];
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   type: TaxonomyTermType;
@@ -2012,9 +1619,7 @@ export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
 
 export type TaxonomyTermChildrenArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -2022,25 +1627,20 @@ export type TaxonomyTermEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type TaxonomyTermThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type TaxonomyTermConnection = {
   __typename?: 'TaxonomyTermConnection';
-  edges?: Maybe<Array<Maybe<TaxonomyTermEdge>>>;
   nodes: Array<TaxonomyTerm>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
@@ -2053,26 +1653,13 @@ export type TaxonomyTermCreateInput = {
   taxonomyType: TaxonomyTypeCreateOptions;
 };
 
-export type TaxonomyTermCreateResponse = {
-  __typename?: 'TaxonomyTermCreateResponse';
-  query: Query;
-  record?: Maybe<TaxonomyTerm>;
-  success: Scalars['Boolean']['output'];
-};
-
-export type TaxonomyTermEdge = {
-  __typename?: 'TaxonomyTermEdge';
-  cursor: Scalars['String']['output'];
-  node: TaxonomyTerm;
-};
-
 export type TaxonomyTermMutation = {
   __typename?: 'TaxonomyTermMutation';
-  create: TaxonomyTermCreateResponse;
-  createEntityLinks: TaxonomyEntityLinksResponse;
-  deleteEntityLinks: TaxonomyEntityLinksResponse;
-  setNameAndDescription: TaxonomyTermSetNameAndDescriptionResponse;
-  sort: TaxonomyTermSortResponse;
+  create: DefaultResponse;
+  createEntityLinks: DefaultResponse;
+  deleteEntityLinks: DefaultResponse;
+  setNameAndDescription: DefaultResponse;
+  sort: DefaultResponse;
 };
 
 
@@ -2106,21 +1693,9 @@ export type TaxonomyTermSetNameAndDescriptionInput = {
   name: Scalars['String']['input'];
 };
 
-export type TaxonomyTermSetNameAndDescriptionResponse = {
-  __typename?: 'TaxonomyTermSetNameAndDescriptionResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
-};
-
 export type TaxonomyTermSortInput = {
   childrenIds: Array<Scalars['Int']['input']>;
   taxonomyTermId: Scalars['Int']['input'];
-};
-
-export type TaxonomyTermSortResponse = {
-  __typename?: 'TaxonomyTermSortResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export enum TaxonomyTermType {
@@ -2150,23 +1725,26 @@ export type Thread = {
 
 export type ThreadCommentsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ThreadAware = {
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
 };
 
 
 export type ThreadAwareThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ThreadConnection = {
+  __typename?: 'ThreadConnection';
+  nodes: Array<Thread>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type ThreadCreateCommentInput = {
@@ -2174,13 +1752,6 @@ export type ThreadCreateCommentInput = {
   sendEmail: Scalars['Boolean']['input'];
   subscribe: Scalars['Boolean']['input'];
   threadId: Scalars['String']['input'];
-};
-
-export type ThreadCreateCommentResponse = {
-  __typename?: 'ThreadCreateCommentResponse';
-  query: Query;
-  record?: Maybe<Comment>;
-  success: Scalars['Boolean']['output'];
 };
 
 export type ThreadCreateThreadInput = {
@@ -2191,13 +1762,6 @@ export type ThreadCreateThreadInput = {
   title: Scalars['String']['input'];
 };
 
-export type ThreadCreateThreadResponse = {
-  __typename?: 'ThreadCreateThreadResponse';
-  query: Query;
-  record?: Maybe<Thread>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type ThreadEditCommentInput = {
   commentId: Scalars['Int']['input'];
   content: Scalars['String']['input'];
@@ -2205,8 +1769,8 @@ export type ThreadEditCommentInput = {
 
 export type ThreadMutation = {
   __typename?: 'ThreadMutation';
-  createComment: ThreadCreateCommentResponse;
-  createThread: ThreadCreateThreadResponse;
+  createComment: DefaultResponse;
+  createThread: DefaultResponse;
   editComment: DefaultResponse;
   setCommentState: DefaultResponse;
   setThreadArchived: DefaultResponse;
@@ -2251,7 +1815,7 @@ export type ThreadMutationSetThreadStatusArgs = {
 
 export type ThreadQuery = {
   __typename?: 'ThreadQuery';
-  allThreads: AllThreadsConnection;
+  allThreads: ThreadConnection;
 };
 
 
@@ -2283,20 +1847,6 @@ export type ThreadSetThreadStatusInput = {
   status: CommentStatus;
 };
 
-export type ThreadsConnection = {
-  __typename?: 'ThreadsConnection';
-  edges: Array<ThreadsCursor>;
-  nodes: Array<Thread>;
-  pageInfo: PageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type ThreadsCursor = {
-  __typename?: 'ThreadsCursor';
-  cursor: Scalars['String']['output'];
-  node: Thread;
-};
-
 export type User = AbstractUuid & ThreadAware & {
   __typename?: 'User';
   activityByType: UserActivityByType;
@@ -2316,7 +1866,7 @@ export type User = AbstractUuid & ThreadAware & {
   lastLogin?: Maybe<Scalars['DateTime']['output']>;
   motivation?: Maybe<Scalars['String']['output']>;
   roles: ScopedRoleConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   unrevisedEntities: AbstractEntityConnection;
@@ -2328,46 +1878,36 @@ export type UserEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type UserEventsByUserArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   objectId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type UserRolesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type UserThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type UserUnrevisedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UserActivityByType = {
@@ -2380,7 +1920,6 @@ export type UserActivityByType = {
 
 export type UserConnection = {
   __typename?: 'UserConnection';
-  edges: Array<UserEdge>;
   nodes: Array<User>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
@@ -2390,13 +1929,9 @@ export type UserDeleteBotsInput = {
   botIds: Array<Scalars['Int']['input']>;
 };
 
-export type UserDeleteBotsResponse = {
-  __typename?: 'UserDeleteBotsResponse';
-  success: Scalars['Boolean']['output'];
-};
-
 export type UserDeleteRegularUsersInput = {
-  users: Array<UserDescriptionInput>;
+  id: Scalars['Int']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type UserDeleteRegularUsersResponse = {
@@ -2406,25 +1941,14 @@ export type UserDeleteRegularUsersResponse = {
   username?: Maybe<Scalars['String']['output']>;
 };
 
-export type UserDescriptionInput = {
-  id: Scalars['Int']['input'];
-  username: Scalars['String']['input'];
-};
-
-export type UserEdge = {
-  __typename?: 'UserEdge';
-  cursor: Scalars['String']['output'];
-  node: User;
-};
-
 export type UserMutation = {
   __typename?: 'UserMutation';
-  addRole: UserRoleResponse;
-  deleteBots: UserDeleteBotsResponse;
-  deleteRegularUsers: Array<UserDeleteRegularUsersResponse>;
-  removeRole: UserRoleResponse;
-  setDescription: UserSetDescriptionResponse;
-  setEmail: UserSetEmailResponse;
+  addRole: DefaultResponse;
+  deleteBots: DefaultResponse;
+  deleteRegularUser: DefaultResponse;
+  removeRole: DefaultResponse;
+  setDescription: DefaultResponse;
+  setEmail: DefaultResponse;
 };
 
 
@@ -2438,7 +1962,7 @@ export type UserMutationDeleteBotsArgs = {
 };
 
 
-export type UserMutationDeleteRegularUsersArgs = {
+export type UserMutationDeleteRegularUserArgs = {
   input: UserDeleteRegularUsersInput;
 };
 
@@ -2461,7 +1985,7 @@ export type UserQuery = {
   __typename?: 'UserQuery';
   potentialSpamUsers: UserConnection;
   userByUsername?: Maybe<User>;
-  usersByRole: UserWithPermissionsConnection;
+  usersByRole: UserConnection;
 };
 
 
@@ -2489,18 +2013,8 @@ export type UserRoleInput = {
   username: Scalars['String']['input'];
 };
 
-export type UserRoleResponse = {
-  __typename?: 'UserRoleResponse';
-  success: Scalars['Boolean']['output'];
-};
-
 export type UserSetDescriptionInput = {
   description: Scalars['String']['input'];
-};
-
-export type UserSetDescriptionResponse = {
-  __typename?: 'UserSetDescriptionResponse';
-  success: Scalars['Boolean']['output'];
 };
 
 export type UserSetEmailInput = {
@@ -2508,26 +2022,9 @@ export type UserSetEmailInput = {
   userId: Scalars['Int']['input'];
 };
 
-export type UserSetEmailResponse = {
-  __typename?: 'UserSetEmailResponse';
-  email: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-  username: Scalars['String']['output'];
-};
-
-export type UserWithPermissionsConnection = {
-  __typename?: 'UserWithPermissionsConnection';
-  edges: Array<UserEdge>;
-  inheritance?: Maybe<Array<Role>>;
-  nodes: Array<User>;
-  pageInfo: PageInfo;
-  permissions: Array<Scalars['String']['output']>;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type UuidMutation = {
   __typename?: 'UuidMutation';
-  setState?: Maybe<UuidSetStateResponse>;
+  setState: DefaultResponse;
 };
 
 
@@ -2538,12 +2035,6 @@ export type UuidMutationSetStateArgs = {
 export type UuidSetStateInput = {
   id: Array<Scalars['Int']['input']>;
   trashed: Scalars['Boolean']['input'];
-};
-
-export type UuidSetStateResponse = {
-  __typename?: 'UuidSetStateResponse';
-  query: Query;
-  success: Scalars['Boolean']['output'];
 };
 
 export type Video = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid & InstanceAware & ThreadAware & {
@@ -2557,7 +2048,7 @@ export type Video = AbstractEntity & AbstractTaxonomyTermChild & AbstractUuid & 
   licenseId: Scalars['Int']['output'];
   revisions: VideoRevisionConnection;
   taxonomyTerms: TaxonomyTermConnection;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
 };
@@ -2567,36 +2058,28 @@ export type VideoEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type VideoRevisionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   unrevised?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
 export type VideoTaxonomyTermsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type VideoThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -2605,7 +2088,6 @@ export type VideoRevision = AbstractEntityRevision & AbstractUuid & ThreadAware 
   alias: Scalars['String']['output'];
   author: User;
   changes: Scalars['String']['output'];
-  cohesive?: Maybe<Scalars['Boolean']['output']>;
   content: Scalars['String']['output'];
   date: Scalars['DateTime']['output'];
   events: AbstractNotificationEventConnection;
@@ -2613,7 +2095,7 @@ export type VideoRevision = AbstractEntityRevision & AbstractUuid & ThreadAware 
   metaDescription?: Maybe<Scalars['String']['output']>;
   metaTitle?: Maybe<Scalars['String']['output']>;
   repository: Video;
-  threads: ThreadsConnection;
+  threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
   url: Scalars['String']['output'];
@@ -2624,34 +2106,23 @@ export type VideoRevisionEventsArgs = {
   actorId?: InputMaybe<Scalars['Int']['input']>;
   actorUsername?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type VideoRevisionThreadsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   archived?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type VideoRevisionConnection = AbstractEntityRevisionConnection & {
   __typename?: 'VideoRevisionConnection';
-  edges: Array<VideoRevisionCursor>;
   nodes: Array<VideoRevision>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
-};
-
-export type VideoRevisionCursor = {
-  __typename?: 'VideoRevisionCursor';
-  cursor: Scalars['String']['output'];
-  node: VideoRevision;
 };
 
 export type _CacheMutation = {
@@ -2748,19 +2219,15 @@ export type ResolversInterfaceTypes<RefType extends Record<string, unknown>> = {
 export type ResolversTypes = {
   AbstractEntity: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntity']>;
   AbstractEntityConnection: ResolverTypeWrapper<ModelOf<AbstractEntityConnection>>;
-  AbstractEntityCursor: ResolverTypeWrapper<ModelOf<AbstractEntityCursor>>;
   AbstractEntityRevision: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevision']>;
   AbstractEntityRevisionConnection: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractEntityRevisionConnection']>;
   AbstractNotificationEvent: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractNotificationEvent']>;
   AbstractNotificationEventConnection: ResolverTypeWrapper<ModelOf<AbstractNotificationEventConnection>>;
-  AbstractNotificationEventEdge: ResolverTypeWrapper<ModelOf<AbstractNotificationEventEdge>>;
   AbstractTaxonomyTermChild: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractTaxonomyTermChild']>;
   AbstractUuid: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['AbstractUuid']>;
   AbstractUuidConnection: ResolverTypeWrapper<ModelOf<AbstractUuidConnection>>;
-  AddRevisionResponse: ResolverTypeWrapper<ModelOf<AddRevisionResponse>>;
   AiQuery: ResolverTypeWrapper<ModelOf<AiQuery>>;
   AliasInput: ResolverTypeWrapper<ModelOf<AliasInput>>;
-  AllThreadsConnection: ResolverTypeWrapper<ModelOf<AllThreadsConnection>>;
   Applet: ResolverTypeWrapper<ModelOf<Applet>>;
   AppletRevision: ResolverTypeWrapper<ModelOf<AppletRevision>>;
   AppletRevisionConnection: ResolverTypeWrapper<ModelOf<AppletRevisionConnection>>;
@@ -2772,7 +2239,6 @@ export type ResolversTypes = {
   ChatCompletionMessageParam: ResolverTypeWrapper<ModelOf<ChatCompletionMessageParam>>;
   CheckoutRevisionInput: ResolverTypeWrapper<ModelOf<CheckoutRevisionInput>>;
   CheckoutRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<CheckoutRevisionNotificationEvent>>;
-  CheckoutRevisionResponse: ResolverTypeWrapper<ModelOf<CheckoutRevisionResponse>>;
   Comment: ResolverTypeWrapper<ModelOf<Comment>>;
   CommentConnection: ResolverTypeWrapper<ModelOf<CommentConnection>>;
   CommentStatus: ResolverTypeWrapper<ModelOf<CommentStatus>>;
@@ -2792,33 +2258,24 @@ export type ResolversTypes = {
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<CreateThreadNotificationEvent>>;
   DateTime: ResolverTypeWrapper<ModelOf<Scalars['DateTime']['output']>>;
   DefaultResponse: ResolverTypeWrapper<ModelOf<DefaultResponse>>;
-  DeletedEntitiesConnection: ResolverTypeWrapper<ModelOf<DeletedEntitiesConnection>>;
   DeletedEntity: ResolverTypeWrapper<ModelOf<DeletedEntity>>;
-  DeletedEntityCursor: ResolverTypeWrapper<ModelOf<DeletedEntityCursor>>;
-  EntityMetadataConnection: ResolverTypeWrapper<ModelOf<EntityMetadataConnection>>;
-  EntityMetadataCursor: ResolverTypeWrapper<ModelOf<EntityMetadataCursor>>;
+  DeletedEntityConnection: ResolverTypeWrapper<ModelOf<DeletedEntityConnection>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
   EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
-  EntitySortResponse: ResolverTypeWrapper<ModelOf<EntitySortResponse>>;
   EntityUpdateLicenseInput: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseInput>>;
-  EntityUpdateLicenseResponse: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseResponse>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
   EventRevisionConnection: ResolverTypeWrapper<ModelOf<EventRevisionConnection>>;
-  EventRevisionCursor: ResolverTypeWrapper<ModelOf<EventRevisionCursor>>;
   ExecutePromptResponse: ResolverTypeWrapper<ModelOf<ExecutePromptResponse>>;
   Exercise: ResolverTypeWrapper<ModelOf<Exercise>>;
   ExerciseGroup: ResolverTypeWrapper<ModelOf<ExerciseGroup>>;
   ExerciseGroupRevision: ResolverTypeWrapper<ModelOf<ExerciseGroupRevision>>;
   ExerciseGroupRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseGroupRevisionConnection>>;
-  ExerciseGroupRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseGroupRevisionCursor>>;
   ExerciseRevision: ResolverTypeWrapper<ModelOf<ExerciseRevision>>;
   ExerciseRevisionConnection: ResolverTypeWrapper<ModelOf<ExerciseRevisionConnection>>;
-  ExerciseRevisionCursor: ResolverTypeWrapper<ModelOf<ExerciseRevisionCursor>>;
   ExerciseSubmissionInput: ResolverTypeWrapper<ModelOf<ExerciseSubmissionInput>>;
   ExperimentMutation: ResolverTypeWrapper<ModelOf<ExperimentMutation>>;
-  HasNextPageInfo: ResolverTypeWrapper<ModelOf<HasNextPageInfo>>;
   Instance: ResolverTypeWrapper<ModelOf<Instance>>;
   InstanceAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['InstanceAware']>;
   Int: ResolverTypeWrapper<ModelOf<Scalars['Int']['output']>>;
@@ -2831,77 +2288,57 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Notification: ResolverTypeWrapper<ModelOf<Notification>>;
   NotificationConnection: ResolverTypeWrapper<ModelOf<NotificationConnection>>;
-  NotificationEdge: ResolverTypeWrapper<ModelOf<NotificationEdge>>;
   NotificationMutation: ResolverTypeWrapper<ModelOf<NotificationMutation>>;
   NotificationSetStateInput: ResolverTypeWrapper<ModelOf<NotificationSetStateInput>>;
-  NotificationSetStateResponse: ResolverTypeWrapper<ModelOf<NotificationSetStateResponse>>;
   OauthAcceptInput: ResolverTypeWrapper<ModelOf<OauthAcceptInput>>;
   OauthAcceptResponse: ResolverTypeWrapper<ModelOf<OauthAcceptResponse>>;
   OauthMutation: ResolverTypeWrapper<ModelOf<OauthMutation>>;
   Page: ResolverTypeWrapper<ModelOf<Page>>;
   PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
-  PageCreateResponse: ResolverTypeWrapper<ModelOf<PageCreateResponse>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
   PageMutation: ResolverTypeWrapper<ModelOf<PageMutation>>;
   PageQuery: ResolverTypeWrapper<ModelOf<PageQuery>>;
   PageRevision: ResolverTypeWrapper<ModelOf<PageRevision>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<PageRevisionConnection>>;
-  PageRevisionCursor: ResolverTypeWrapper<ModelOf<PageRevisionCursor>>;
   Query: ResolverTypeWrapper<{}>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<RejectRevisionNotificationEvent>>;
-  RejectRevisionResponse: ResolverTypeWrapper<ModelOf<RejectRevisionResponse>>;
   RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveEntityLinkNotificationEvent>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<RemoveTaxonomyLinkNotificationEvent>>;
+  ResourceMetadataConnection: ResolverTypeWrapper<ModelOf<ResourceMetadataConnection>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
   Scope: ResolverTypeWrapper<ModelOf<Scope>>;
   ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
   ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
-  ScopedRoleCursor: ResolverTypeWrapper<ModelOf<ScopedRoleCursor>>;
-  SetAppletInput: ResolverTypeWrapper<ModelOf<SetAppletInput>>;
-  SetArticleInput: ResolverTypeWrapper<ModelOf<SetArticleInput>>;
-  SetCourseInput: ResolverTypeWrapper<ModelOf<SetCourseInput>>;
-  SetCoursePageInput: ResolverTypeWrapper<ModelOf<SetCoursePageInput>>;
+  SetAbstractEntityInput: ResolverTypeWrapper<ModelOf<SetAbstractEntityInput>>;
   SetEntityResponse: ResolverTypeWrapper<ModelOf<SetEntityResponse>>;
-  SetEventInput: ResolverTypeWrapper<ModelOf<SetEventInput>>;
-  SetExerciseGroupInput: ResolverTypeWrapper<ModelOf<SetExerciseGroupInput>>;
-  SetGenericEntityInput: ResolverTypeWrapper<ModelOf<SetGenericEntityInput>>;
   SetLicenseNotificationEvent: ResolverTypeWrapper<ModelOf<SetLicenseNotificationEvent>>;
   SetTaxonomyParentNotificationEvent: ResolverTypeWrapper<ModelOf<SetTaxonomyParentNotificationEvent>>;
   SetTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<SetTaxonomyTermNotificationEvent>>;
   SetThreadStateNotificationEvent: ResolverTypeWrapper<ModelOf<SetThreadStateNotificationEvent>>;
   SetUuidStateNotificationEvent: ResolverTypeWrapper<ModelOf<SetUuidStateNotificationEvent>>;
-  SetVideoInput: ResolverTypeWrapper<ModelOf<SetVideoInput>>;
   String: ResolverTypeWrapper<ModelOf<Scalars['String']['output']>>;
   Subject: ResolverTypeWrapper<ModelOf<Subject>>;
   SubjectQuery: ResolverTypeWrapper<ModelOf<SubjectQuery>>;
-  SubscriptionConnection: ResolverTypeWrapper<ModelOf<SubscriptionConnection>>;
-  SubscriptionCursor: ResolverTypeWrapper<ModelOf<SubscriptionCursor>>;
   SubscriptionInfo: ResolverTypeWrapper<ModelOf<SubscriptionInfo>>;
+  SubscriptionInfoConnection: ResolverTypeWrapper<ModelOf<SubscriptionInfoConnection>>;
   SubscriptionMutation: ResolverTypeWrapper<ModelOf<SubscriptionMutation>>;
   SubscriptionQuery: ResolverTypeWrapper<ModelOf<SubscriptionQuery>>;
   SubscriptionSetInput: ResolverTypeWrapper<ModelOf<SubscriptionSetInput>>;
-  SubscriptionSetResponse: ResolverTypeWrapper<ModelOf<SubscriptionSetResponse>>;
   TaxonomyEntityLinksInput: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksInput>>;
-  TaxonomyEntityLinksResponse: ResolverTypeWrapper<ModelOf<TaxonomyEntityLinksResponse>>;
   TaxonomyTerm: ResolverTypeWrapper<ModelOf<TaxonomyTerm>>;
   TaxonomyTermConnection: ResolverTypeWrapper<ModelOf<TaxonomyTermConnection>>;
   TaxonomyTermCreateInput: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateInput>>;
-  TaxonomyTermCreateResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermCreateResponse>>;
-  TaxonomyTermEdge: ResolverTypeWrapper<ModelOf<TaxonomyTermEdge>>;
   TaxonomyTermMutation: ResolverTypeWrapper<ModelOf<TaxonomyTermMutation>>;
   TaxonomyTermSetNameAndDescriptionInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionInput>>;
-  TaxonomyTermSetNameAndDescriptionResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSetNameAndDescriptionResponse>>;
   TaxonomyTermSortInput: ResolverTypeWrapper<ModelOf<TaxonomyTermSortInput>>;
-  TaxonomyTermSortResponse: ResolverTypeWrapper<ModelOf<TaxonomyTermSortResponse>>;
   TaxonomyTermType: ResolverTypeWrapper<ModelOf<TaxonomyTermType>>;
   TaxonomyTypeCreateOptions: ResolverTypeWrapper<ModelOf<TaxonomyTypeCreateOptions>>;
   Thread: ResolverTypeWrapper<ModelOf<Thread>>;
   ThreadAware: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['ThreadAware']>;
+  ThreadConnection: ResolverTypeWrapper<ModelOf<ThreadConnection>>;
   ThreadCreateCommentInput: ResolverTypeWrapper<ModelOf<ThreadCreateCommentInput>>;
-  ThreadCreateCommentResponse: ResolverTypeWrapper<ModelOf<ThreadCreateCommentResponse>>;
   ThreadCreateThreadInput: ResolverTypeWrapper<ModelOf<ThreadCreateThreadInput>>;
-  ThreadCreateThreadResponse: ResolverTypeWrapper<ModelOf<ThreadCreateThreadResponse>>;
   ThreadEditCommentInput: ResolverTypeWrapper<ModelOf<ThreadEditCommentInput>>;
   ThreadMutation: ResolverTypeWrapper<ModelOf<ThreadMutation>>;
   ThreadQuery: ResolverTypeWrapper<ModelOf<ThreadQuery>>;
@@ -2909,33 +2346,22 @@ export type ResolversTypes = {
   ThreadSetThreadArchivedInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadArchivedInput>>;
   ThreadSetThreadStateInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStateInput>>;
   ThreadSetThreadStatusInput: ResolverTypeWrapper<ModelOf<ThreadSetThreadStatusInput>>;
-  ThreadsConnection: ResolverTypeWrapper<ModelOf<ThreadsConnection>>;
-  ThreadsCursor: ResolverTypeWrapper<ModelOf<ThreadsCursor>>;
   User: ResolverTypeWrapper<ModelOf<User>>;
   UserActivityByType: ResolverTypeWrapper<ModelOf<UserActivityByType>>;
   UserConnection: ResolverTypeWrapper<ModelOf<UserConnection>>;
   UserDeleteBotsInput: ResolverTypeWrapper<ModelOf<UserDeleteBotsInput>>;
-  UserDeleteBotsResponse: ResolverTypeWrapper<ModelOf<UserDeleteBotsResponse>>;
   UserDeleteRegularUsersInput: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersInput>>;
   UserDeleteRegularUsersResponse: ResolverTypeWrapper<ModelOf<UserDeleteRegularUsersResponse>>;
-  UserDescriptionInput: ResolverTypeWrapper<ModelOf<UserDescriptionInput>>;
-  UserEdge: ResolverTypeWrapper<ModelOf<UserEdge>>;
   UserMutation: ResolverTypeWrapper<ModelOf<UserMutation>>;
   UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
   UserRoleInput: ResolverTypeWrapper<ModelOf<UserRoleInput>>;
-  UserRoleResponse: ResolverTypeWrapper<ModelOf<UserRoleResponse>>;
   UserSetDescriptionInput: ResolverTypeWrapper<ModelOf<UserSetDescriptionInput>>;
-  UserSetDescriptionResponse: ResolverTypeWrapper<ModelOf<UserSetDescriptionResponse>>;
   UserSetEmailInput: ResolverTypeWrapper<ModelOf<UserSetEmailInput>>;
-  UserSetEmailResponse: ResolverTypeWrapper<ModelOf<UserSetEmailResponse>>;
-  UserWithPermissionsConnection: ResolverTypeWrapper<ModelOf<UserWithPermissionsConnection>>;
   UuidMutation: ResolverTypeWrapper<ModelOf<UuidMutation>>;
   UuidSetStateInput: ResolverTypeWrapper<ModelOf<UuidSetStateInput>>;
-  UuidSetStateResponse: ResolverTypeWrapper<ModelOf<UuidSetStateResponse>>;
   Video: ResolverTypeWrapper<ModelOf<Video>>;
   VideoRevision: ResolverTypeWrapper<ModelOf<VideoRevision>>;
   VideoRevisionConnection: ResolverTypeWrapper<ModelOf<VideoRevisionConnection>>;
-  VideoRevisionCursor: ResolverTypeWrapper<ModelOf<VideoRevisionCursor>>;
   _cacheMutation: ResolverTypeWrapper<ModelOf<_CacheMutation>>;
 };
 
@@ -2943,19 +2369,15 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AbstractEntity: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntity'];
   AbstractEntityConnection: ModelOf<AbstractEntityConnection>;
-  AbstractEntityCursor: ModelOf<AbstractEntityCursor>;
   AbstractEntityRevision: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevision'];
   AbstractEntityRevisionConnection: ResolversInterfaceTypes<ResolversParentTypes>['AbstractEntityRevisionConnection'];
   AbstractNotificationEvent: ResolversInterfaceTypes<ResolversParentTypes>['AbstractNotificationEvent'];
   AbstractNotificationEventConnection: ModelOf<AbstractNotificationEventConnection>;
-  AbstractNotificationEventEdge: ModelOf<AbstractNotificationEventEdge>;
   AbstractTaxonomyTermChild: ResolversInterfaceTypes<ResolversParentTypes>['AbstractTaxonomyTermChild'];
   AbstractUuid: ResolversInterfaceTypes<ResolversParentTypes>['AbstractUuid'];
   AbstractUuidConnection: ModelOf<AbstractUuidConnection>;
-  AddRevisionResponse: ModelOf<AddRevisionResponse>;
   AiQuery: ModelOf<AiQuery>;
   AliasInput: ModelOf<AliasInput>;
-  AllThreadsConnection: ModelOf<AllThreadsConnection>;
   Applet: ModelOf<Applet>;
   AppletRevision: ModelOf<AppletRevision>;
   AppletRevisionConnection: ModelOf<AppletRevisionConnection>;
@@ -2967,7 +2389,6 @@ export type ResolversParentTypes = {
   ChatCompletionMessageParam: ModelOf<ChatCompletionMessageParam>;
   CheckoutRevisionInput: ModelOf<CheckoutRevisionInput>;
   CheckoutRevisionNotificationEvent: ModelOf<CheckoutRevisionNotificationEvent>;
-  CheckoutRevisionResponse: ModelOf<CheckoutRevisionResponse>;
   Comment: ModelOf<Comment>;
   CommentConnection: ModelOf<CommentConnection>;
   Course: ModelOf<Course>;
@@ -2986,33 +2407,24 @@ export type ResolversParentTypes = {
   CreateThreadNotificationEvent: ModelOf<CreateThreadNotificationEvent>;
   DateTime: ModelOf<Scalars['DateTime']['output']>;
   DefaultResponse: ModelOf<DefaultResponse>;
-  DeletedEntitiesConnection: ModelOf<DeletedEntitiesConnection>;
   DeletedEntity: ModelOf<DeletedEntity>;
-  DeletedEntityCursor: ModelOf<DeletedEntityCursor>;
-  EntityMetadataConnection: ModelOf<EntityMetadataConnection>;
-  EntityMetadataCursor: ModelOf<EntityMetadataCursor>;
+  DeletedEntityConnection: ModelOf<DeletedEntityConnection>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
   EntitySortInput: ModelOf<EntitySortInput>;
-  EntitySortResponse: ModelOf<EntitySortResponse>;
   EntityUpdateLicenseInput: ModelOf<EntityUpdateLicenseInput>;
-  EntityUpdateLicenseResponse: ModelOf<EntityUpdateLicenseResponse>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
   EventRevisionConnection: ModelOf<EventRevisionConnection>;
-  EventRevisionCursor: ModelOf<EventRevisionCursor>;
   ExecutePromptResponse: ModelOf<ExecutePromptResponse>;
   Exercise: ModelOf<Exercise>;
   ExerciseGroup: ModelOf<ExerciseGroup>;
   ExerciseGroupRevision: ModelOf<ExerciseGroupRevision>;
   ExerciseGroupRevisionConnection: ModelOf<ExerciseGroupRevisionConnection>;
-  ExerciseGroupRevisionCursor: ModelOf<ExerciseGroupRevisionCursor>;
   ExerciseRevision: ModelOf<ExerciseRevision>;
   ExerciseRevisionConnection: ModelOf<ExerciseRevisionConnection>;
-  ExerciseRevisionCursor: ModelOf<ExerciseRevisionCursor>;
   ExerciseSubmissionInput: ModelOf<ExerciseSubmissionInput>;
   ExperimentMutation: ModelOf<ExperimentMutation>;
-  HasNextPageInfo: ModelOf<HasNextPageInfo>;
   InstanceAware: ResolversInterfaceTypes<ResolversParentTypes>['InstanceAware'];
   Int: ModelOf<Scalars['Int']['output']>;
   JSON: ModelOf<Scalars['JSON']['output']>;
@@ -3023,73 +2435,53 @@ export type ResolversParentTypes = {
   Mutation: {};
   Notification: ModelOf<Notification>;
   NotificationConnection: ModelOf<NotificationConnection>;
-  NotificationEdge: ModelOf<NotificationEdge>;
   NotificationMutation: ModelOf<NotificationMutation>;
   NotificationSetStateInput: ModelOf<NotificationSetStateInput>;
-  NotificationSetStateResponse: ModelOf<NotificationSetStateResponse>;
   OauthAcceptInput: ModelOf<OauthAcceptInput>;
   OauthAcceptResponse: ModelOf<OauthAcceptResponse>;
   OauthMutation: ModelOf<OauthMutation>;
   Page: ModelOf<Page>;
   PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
-  PageCreateResponse: ModelOf<PageCreateResponse>;
   PageInfo: ModelOf<PageInfo>;
   PageMutation: ModelOf<PageMutation>;
   PageQuery: ModelOf<PageQuery>;
   PageRevision: ModelOf<PageRevision>;
   PageRevisionConnection: ModelOf<PageRevisionConnection>;
-  PageRevisionCursor: ModelOf<PageRevisionCursor>;
   Query: {};
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<RejectRevisionNotificationEvent>;
-  RejectRevisionResponse: ModelOf<RejectRevisionResponse>;
   RemoveEntityLinkNotificationEvent: ModelOf<RemoveEntityLinkNotificationEvent>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<RemoveTaxonomyLinkNotificationEvent>;
+  ResourceMetadataConnection: ModelOf<ResourceMetadataConnection>;
   ScopedRole: ModelOf<ScopedRole>;
   ScopedRoleConnection: ModelOf<ScopedRoleConnection>;
-  ScopedRoleCursor: ModelOf<ScopedRoleCursor>;
-  SetAppletInput: ModelOf<SetAppletInput>;
-  SetArticleInput: ModelOf<SetArticleInput>;
-  SetCourseInput: ModelOf<SetCourseInput>;
-  SetCoursePageInput: ModelOf<SetCoursePageInput>;
+  SetAbstractEntityInput: ModelOf<SetAbstractEntityInput>;
   SetEntityResponse: ModelOf<SetEntityResponse>;
-  SetEventInput: ModelOf<SetEventInput>;
-  SetExerciseGroupInput: ModelOf<SetExerciseGroupInput>;
-  SetGenericEntityInput: ModelOf<SetGenericEntityInput>;
   SetLicenseNotificationEvent: ModelOf<SetLicenseNotificationEvent>;
   SetTaxonomyParentNotificationEvent: ModelOf<SetTaxonomyParentNotificationEvent>;
   SetTaxonomyTermNotificationEvent: ModelOf<SetTaxonomyTermNotificationEvent>;
   SetThreadStateNotificationEvent: ModelOf<SetThreadStateNotificationEvent>;
   SetUuidStateNotificationEvent: ModelOf<SetUuidStateNotificationEvent>;
-  SetVideoInput: ModelOf<SetVideoInput>;
   String: ModelOf<Scalars['String']['output']>;
   Subject: ModelOf<Subject>;
   SubjectQuery: ModelOf<SubjectQuery>;
-  SubscriptionConnection: ModelOf<SubscriptionConnection>;
-  SubscriptionCursor: ModelOf<SubscriptionCursor>;
   SubscriptionInfo: ModelOf<SubscriptionInfo>;
+  SubscriptionInfoConnection: ModelOf<SubscriptionInfoConnection>;
   SubscriptionMutation: ModelOf<SubscriptionMutation>;
   SubscriptionQuery: ModelOf<SubscriptionQuery>;
   SubscriptionSetInput: ModelOf<SubscriptionSetInput>;
-  SubscriptionSetResponse: ModelOf<SubscriptionSetResponse>;
   TaxonomyEntityLinksInput: ModelOf<TaxonomyEntityLinksInput>;
-  TaxonomyEntityLinksResponse: ModelOf<TaxonomyEntityLinksResponse>;
   TaxonomyTerm: ModelOf<TaxonomyTerm>;
   TaxonomyTermConnection: ModelOf<TaxonomyTermConnection>;
   TaxonomyTermCreateInput: ModelOf<TaxonomyTermCreateInput>;
-  TaxonomyTermCreateResponse: ModelOf<TaxonomyTermCreateResponse>;
-  TaxonomyTermEdge: ModelOf<TaxonomyTermEdge>;
   TaxonomyTermMutation: ModelOf<TaxonomyTermMutation>;
   TaxonomyTermSetNameAndDescriptionInput: ModelOf<TaxonomyTermSetNameAndDescriptionInput>;
-  TaxonomyTermSetNameAndDescriptionResponse: ModelOf<TaxonomyTermSetNameAndDescriptionResponse>;
   TaxonomyTermSortInput: ModelOf<TaxonomyTermSortInput>;
-  TaxonomyTermSortResponse: ModelOf<TaxonomyTermSortResponse>;
   Thread: ModelOf<Thread>;
   ThreadAware: ResolversInterfaceTypes<ResolversParentTypes>['ThreadAware'];
+  ThreadConnection: ModelOf<ThreadConnection>;
   ThreadCreateCommentInput: ModelOf<ThreadCreateCommentInput>;
-  ThreadCreateCommentResponse: ModelOf<ThreadCreateCommentResponse>;
   ThreadCreateThreadInput: ModelOf<ThreadCreateThreadInput>;
-  ThreadCreateThreadResponse: ModelOf<ThreadCreateThreadResponse>;
   ThreadEditCommentInput: ModelOf<ThreadEditCommentInput>;
   ThreadMutation: ModelOf<ThreadMutation>;
   ThreadQuery: ModelOf<ThreadQuery>;
@@ -3097,33 +2489,22 @@ export type ResolversParentTypes = {
   ThreadSetThreadArchivedInput: ModelOf<ThreadSetThreadArchivedInput>;
   ThreadSetThreadStateInput: ModelOf<ThreadSetThreadStateInput>;
   ThreadSetThreadStatusInput: ModelOf<ThreadSetThreadStatusInput>;
-  ThreadsConnection: ModelOf<ThreadsConnection>;
-  ThreadsCursor: ModelOf<ThreadsCursor>;
   User: ModelOf<User>;
   UserActivityByType: ModelOf<UserActivityByType>;
   UserConnection: ModelOf<UserConnection>;
   UserDeleteBotsInput: ModelOf<UserDeleteBotsInput>;
-  UserDeleteBotsResponse: ModelOf<UserDeleteBotsResponse>;
   UserDeleteRegularUsersInput: ModelOf<UserDeleteRegularUsersInput>;
   UserDeleteRegularUsersResponse: ModelOf<UserDeleteRegularUsersResponse>;
-  UserDescriptionInput: ModelOf<UserDescriptionInput>;
-  UserEdge: ModelOf<UserEdge>;
   UserMutation: ModelOf<UserMutation>;
   UserQuery: ModelOf<UserQuery>;
   UserRoleInput: ModelOf<UserRoleInput>;
-  UserRoleResponse: ModelOf<UserRoleResponse>;
   UserSetDescriptionInput: ModelOf<UserSetDescriptionInput>;
-  UserSetDescriptionResponse: ModelOf<UserSetDescriptionResponse>;
   UserSetEmailInput: ModelOf<UserSetEmailInput>;
-  UserSetEmailResponse: ModelOf<UserSetEmailResponse>;
-  UserWithPermissionsConnection: ModelOf<UserWithPermissionsConnection>;
   UuidMutation: ModelOf<UuidMutation>;
   UuidSetStateInput: ModelOf<UuidSetStateInput>;
-  UuidSetStateResponse: ModelOf<UuidSetStateResponse>;
   Video: ModelOf<Video>;
   VideoRevision: ModelOf<VideoRevision>;
   VideoRevisionConnection: ModelOf<VideoRevisionConnection>;
-  VideoRevisionCursor: ModelOf<VideoRevisionCursor>;
   _cacheMutation: ModelOf<_CacheMutation>;
 };
 
@@ -3137,22 +2518,15 @@ export type AbstractEntityResolvers<ContextType = Context, ParentType extends Re
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['AbstractEntityRevisionConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AbstractEntityThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AbstractEntityThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityConnection'] = ResolversParentTypes['AbstractEntityConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['AbstractEntityCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AbstractEntityCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityCursor'] = ResolversParentTypes['AbstractEntityCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3161,7 +2535,6 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionEventsArgs>>;
@@ -3169,7 +2542,7 @@ export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType ex
   metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3192,15 +2565,8 @@ export type AbstractNotificationEventResolvers<ContextType = Context, ParentType
 };
 
 export type AbstractNotificationEventConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventConnection'] = ResolversParentTypes['AbstractNotificationEventConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['AbstractNotificationEventEdge']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AbstractNotificationEventEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventEdge'] = ResolversParentTypes['AbstractNotificationEventEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['AbstractNotificationEvent'], ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3233,23 +2599,8 @@ export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AddRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AddRevisionResponse'] = ResolversParentTypes['AddRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  revisionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
   executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'messages'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AllThreadsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AllThreadsConnection'] = ResolversParentTypes['AllThreadsConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ThreadsCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3263,7 +2614,7 @@ export type AppletResolvers<ContextType = Context, ParentType extends ResolversP
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['AppletRevisionConnection'], ParentType, ContextType, Partial<AppletRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AppletTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AppletThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AppletThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3273,7 +2624,6 @@ export type AppletRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<AppletRevisionEventsArgs>>;
@@ -3281,7 +2631,7 @@ export type AppletRevisionResolvers<ContextType = Context, ParentType extends Re
   metaDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   metaTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Applet'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<AppletRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AppletRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3305,7 +2655,7 @@ export type ArticleResolvers<ContextType = Context, ParentType extends Resolvers
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ArticleRevisionConnection'], ParentType, ContextType, Partial<ArticleRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ArticleTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ArticleThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ArticleThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3315,7 +2665,6 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ArticleRevisionEventsArgs>>;
@@ -3323,7 +2672,7 @@ export type ArticleRevisionResolvers<ContextType = Context, ParentType extends R
   metaDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   metaTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Article'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ArticleRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ArticleRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3346,12 +2695,6 @@ export type CheckoutRevisionNotificationEventResolvers<ContextType = Context, Pa
   reason?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
   revision?: Resolver<ResolversTypes['AbstractEntityRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CheckoutRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CheckoutRevisionResponse'] = ResolversParentTypes['CheckoutRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3387,7 +2730,7 @@ export type CourseResolvers<ContextType = Context, ParentType extends ResolversP
   pages?: Resolver<Array<ResolversTypes['CoursePage']>, ParentType, ContextType, Partial<CoursePagesArgs>>;
   revisions?: Resolver<ResolversTypes['CourseRevisionConnection'], ParentType, ContextType, Partial<CourseRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<CourseTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CourseThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<CourseThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3403,7 +2746,7 @@ export type CoursePageResolvers<ContextType = Context, ParentType extends Resolv
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['CoursePageRevisionConnection'], ParentType, ContextType, Partial<CoursePageRevisionsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CoursePageThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<CoursePageThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3413,7 +2756,6 @@ export type CoursePageRevisionResolvers<ContextType = Context, ParentType extend
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CoursePageRevisionEventsArgs>>;
@@ -3421,7 +2763,7 @@ export type CoursePageRevisionResolvers<ContextType = Context, ParentType extend
   metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['CoursePage'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CoursePageRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<CoursePageRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3439,7 +2781,6 @@ export type CourseRevisionResolvers<ContextType = Context, ParentType extends Re
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<CourseRevisionEventsArgs>>;
@@ -3447,7 +2788,7 @@ export type CourseRevisionResolvers<ContextType = Context, ParentType extends Re
   metaDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<CourseRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<CourseRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3546,69 +2887,30 @@ export type DefaultResponseResolvers<ContextType = Context, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeletedEntitiesConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntitiesConnection'] = ResolversParentTypes['DeletedEntitiesConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['DeletedEntityCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
   dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeletedEntityCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityCursor'] = ResolversParentTypes['DeletedEntityCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['DeletedEntity'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntityMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataConnection'] = ResolversParentTypes['EntityMetadataConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['EntityMetadataCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['HasNextPageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntityMetadataCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMetadataCursor'] = ResolversParentTypes['EntityMetadataCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+export type DeletedEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityConnection'] = ResolversParentTypes['DeletedEntityConnection']> = {
+  nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
-  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
-  rejectRevision?: Resolver<ResolversTypes['RejectRevisionResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
-  setApplet?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetAppletArgs, 'input'>>;
-  setArticle?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetArticleArgs, 'input'>>;
-  setCourse?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetCourseArgs, 'input'>>;
-  setCoursePage?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetCoursePageArgs, 'input'>>;
-  setEvent?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetEventArgs, 'input'>>;
-  setExercise?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseArgs, 'input'>>;
-  setExerciseGroup?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetExerciseGroupArgs, 'input'>>;
-  setVideo?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetVideoArgs, 'input'>>;
-  sort?: Resolver<ResolversTypes['EntitySortResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
-  updateLicense?: Resolver<ResolversTypes['EntityUpdateLicenseResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
+  checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
+  rejectRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
+  setAbstractEntity?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetAbstractEntityArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
+  updateLicense?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
-  deletedEntities?: Resolver<ResolversTypes['DeletedEntitiesConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntitySortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntitySortResponse'] = ResolversParentTypes['EntitySortResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EntityUpdateLicenseResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityUpdateLicenseResponse'] = ResolversParentTypes['EntityUpdateLicenseResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deletedEntities?: Resolver<ResolversTypes['DeletedEntityConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3622,7 +2924,7 @@ export type EventResolvers<ContextType = Context, ParentType extends ResolversPa
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['EventRevisionConnection'], ParentType, ContextType, Partial<EventRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<EventTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<EventThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<EventThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3632,7 +2934,6 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<EventRevisionEventsArgs>>;
@@ -3640,7 +2941,7 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
   metaDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   metaTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Event'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<EventRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<EventRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3648,16 +2949,9 @@ export type EventRevisionResolvers<ContextType = Context, ParentType extends Res
 };
 
 export type EventRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EventRevisionConnection'] = ResolversParentTypes['EventRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['EventRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['EventRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EventRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EventRevisionCursor'] = ResolversParentTypes['EventRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['EventRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3677,7 +2971,7 @@ export type ExerciseResolvers<ContextType = Context, ParentType extends Resolver
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ExerciseRevisionConnection'], ParentType, ContextType, Partial<ExerciseRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ExerciseThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3693,7 +2987,7 @@ export type ExerciseGroupResolvers<ContextType = Context, ParentType extends Res
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['ExerciseGroupRevisionConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<ExerciseGroupTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseGroupThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ExerciseGroupThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3703,7 +2997,6 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionEventsArgs>>;
@@ -3711,7 +3004,7 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
   metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['ExerciseGroup'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ExerciseGroupRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3719,16 +3012,9 @@ export type ExerciseGroupRevisionResolvers<ContextType = Context, ParentType ext
 };
 
 export type ExerciseGroupRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroupRevisionConnection'] = ResolversParentTypes['ExerciseGroupRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ExerciseGroupRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['ExerciseGroupRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ExerciseGroupRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseGroupRevisionCursor'] = ResolversParentTypes['ExerciseGroupRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['ExerciseGroupRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3736,7 +3022,6 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<ExerciseRevisionEventsArgs>>;
@@ -3744,7 +3029,7 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
   metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Exercise'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ExerciseRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ExerciseRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3752,27 +3037,14 @@ export type ExerciseRevisionResolvers<ContextType = Context, ParentType extends 
 };
 
 export type ExerciseRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevisionConnection'] = ResolversParentTypes['ExerciseRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ExerciseRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['ExerciseRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ExerciseRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExerciseRevisionCursor'] = ResolversParentTypes['ExerciseRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['ExerciseRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type ExperimentMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentMutation'] = ResolversParentTypes['ExperimentMutation']> = {
   createExerciseSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateExerciseSubmissionArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type HasNextPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['HasNextPageInfo'] = ResolversParentTypes['HasNextPageInfo']> = {
-  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3801,9 +3073,9 @@ export type MediaUploadResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
-  entities?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
+  entities?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  resources?: Resolver<ResolversTypes['EntityMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
+  resources?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3832,27 +3104,14 @@ export type NotificationResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type NotificationConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationConnection'] = ResolversParentTypes['NotificationConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['NotificationEdge']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type NotificationEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationEdge'] = ResolversParentTypes['NotificationEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['Notification'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type NotificationMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationMutation'] = ResolversParentTypes['NotificationMutation']> = {
-  setState?: Resolver<Maybe<ResolversTypes['NotificationSetStateResponse']>, ParentType, ContextType, RequireFields<NotificationMutationSetStateArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type NotificationSetStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationSetStateResponse'] = ResolversParentTypes['NotificationSetStateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  setState?: Resolver<Maybe<ResolversTypes['DefaultResponse']>, ParentType, ContextType, RequireFields<NotificationMutationSetStateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3879,31 +3138,22 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['PageRevisionConnection'], ParentType, ContextType, Partial<PageRevisionsArgs>>;
   subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<PageThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<PageThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PageCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageCreateResponse'] = ResolversParentTypes['PageCreateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
-  addRevision?: Resolver<ResolversTypes['AddRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
-  checkoutRevision?: Resolver<ResolversTypes['CheckoutRevisionResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
-  create?: Resolver<ResolversTypes['PageCreateResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
+  addRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
+  checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
+  create?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3921,23 +3171,16 @@ export type PageRevisionResolvers<ContextType = Context, ParentType extends Reso
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<PageRevisionEventsArgs>>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Page'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<PageRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<PageRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevisionConnection'] = ResolversParentTypes['PageRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['PageRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['PageRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PageRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevisionCursor'] = ResolversParentTypes['PageRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['PageRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3971,12 +3214,6 @@ export type RejectRevisionNotificationEventResolvers<ContextType = Context, Pare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RejectRevisionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RejectRevisionResponse'] = ResolversParentTypes['RejectRevisionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type RemoveEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveEntityLinkNotificationEvent'] = ResolversParentTypes['RemoveEntityLinkNotificationEvent']> = {
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   child?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
@@ -3999,6 +3236,12 @@ export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ResourceMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ResourceMetadataConnection'] = ResolversParentTypes['ResourceMetadataConnection']> = {
+  nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
   role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4006,16 +3249,9 @@ export type ScopedRoleResolvers<ContextType = Context, ParentType extends Resolv
 };
 
 export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ScopedRoleCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ScopedRoleCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleCursor'] = ResolversParentTypes['ScopedRoleCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['ScopedRole'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4092,46 +3328,27 @@ export type SubjectQueryResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubscriptionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionConnection'] = ResolversParentTypes['SubscriptionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['SubscriptionCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['SubscriptionInfo']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SubscriptionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionCursor'] = ResolversParentTypes['SubscriptionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['SubscriptionInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type SubscriptionInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionInfo'] = ResolversParentTypes['SubscriptionInfo']> = {
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   sendEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubscriptionInfoConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionInfoConnection'] = ResolversParentTypes['SubscriptionInfoConnection']> = {
+  nodes?: Resolver<Array<ResolversTypes['SubscriptionInfo']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SubscriptionMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionMutation'] = ResolversParentTypes['SubscriptionMutation']> = {
-  set?: Resolver<Maybe<ResolversTypes['SubscriptionSetResponse']>, ParentType, ContextType, RequireFields<SubscriptionMutationSetArgs, 'input'>>;
+  set?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<SubscriptionMutationSetArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionQuery'] = ResolversParentTypes['SubscriptionQuery']> = {
   currentUserHasSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<SubscriptionQueryCurrentUserHasSubscribedArgs, 'id'>>;
-  getSubscriptions?: Resolver<ResolversTypes['SubscriptionConnection'], ParentType, ContextType, Partial<SubscriptionQueryGetSubscriptionsArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SubscriptionSetResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionSetResponse'] = ResolversParentTypes['SubscriptionSetResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyEntityLinksResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyEntityLinksResponse'] = ResolversParentTypes['TaxonomyEntityLinksResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  getSubscriptions?: Resolver<ResolversTypes['SubscriptionInfoConnection'], ParentType, ContextType, Partial<SubscriptionQueryGetSubscriptionsArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4146,7 +3363,7 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   path?: Resolver<Array<Maybe<ResolversTypes['TaxonomyTerm']>>, ParentType, ContextType>;
   taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['TaxonomyTermType'], ParentType, ContextType>;
@@ -4155,44 +3372,18 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
 };
 
 export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermConnection'] = ResolversParentTypes['TaxonomyTermConnection']> = {
-  edges?: Resolver<Maybe<Array<Maybe<ResolversTypes['TaxonomyTermEdge']>>>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TaxonomyTermCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermCreateResponse'] = ResolversParentTypes['TaxonomyTermCreateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyTermEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermEdge'] = ResolversParentTypes['TaxonomyTermEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
-  create?: Resolver<ResolversTypes['TaxonomyTermCreateResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
-  createEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
-  deleteEntityLinks?: Resolver<ResolversTypes['TaxonomyEntityLinksResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
-  setNameAndDescription?: Resolver<ResolversTypes['TaxonomyTermSetNameAndDescriptionResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
-  sort?: Resolver<ResolversTypes['TaxonomyTermSortResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse'] = ResolversParentTypes['TaxonomyTermSetNameAndDescriptionResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TaxonomyTermSortResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermSortResponse'] = ResolversParentTypes['TaxonomyTermSortResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  create?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateArgs, 'input'>>;
+  createEntityLinks?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationCreateEntityLinksArgs, 'input'>>;
+  deleteEntityLinks?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
+  setNameAndDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
+  sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4210,26 +3401,19 @@ export type ThreadResolvers<ContextType = Context, ParentType extends ResolversP
 
 export type ThreadAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadAware'] = ResolversParentTypes['ThreadAware']> = {
   __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<ThreadAwareThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ThreadAwareThreadsArgs>>;
 };
 
-export type ThreadCreateCommentResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadCreateCommentResponse'] = ResolversParentTypes['ThreadCreateCommentResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['Comment']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadCreateThreadResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadCreateThreadResponse'] = ResolversParentTypes['ThreadCreateThreadResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  record?: Resolver<Maybe<ResolversTypes['Thread']>, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+export type ThreadConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadConnection'] = ResolversParentTypes['ThreadConnection']> = {
+  nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadMutation'] = ResolversParentTypes['ThreadMutation']> = {
-  createComment?: Resolver<ResolversTypes['ThreadCreateCommentResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
-  createThread?: Resolver<ResolversTypes['ThreadCreateThreadResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
+  createComment?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateCommentArgs, 'input'>>;
+  createThread?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationCreateThreadArgs, 'input'>>;
   editComment?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationEditCommentArgs, 'input'>>;
   setCommentState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetCommentStateArgs, 'input'>>;
   setThreadArchived?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
@@ -4239,21 +3423,7 @@ export type ThreadMutationResolvers<ContextType = Context, ParentType extends Re
 };
 
 export type ThreadQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadQuery'] = ResolversParentTypes['ThreadQuery']> = {
-  allThreads?: Resolver<ResolversTypes['AllThreadsConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadsConnection'] = ResolversParentTypes['ThreadsConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['ThreadsCursor']>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ThreadsCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadsCursor'] = ResolversParentTypes['ThreadsCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['Thread'], ParentType, ContextType>;
+  allThreads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4275,7 +3445,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   lastLogin?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   motivation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   roles?: Resolver<ResolversTypes['ScopedRoleConnection'], ParentType, ContextType, Partial<UserRolesArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<UserThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<UserThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   unrevisedEntities?: Resolver<ResolversTypes['AbstractEntityConnection'], ParentType, ContextType, Partial<UserUnrevisedEntitiesArgs>>;
@@ -4292,15 +3462,9 @@ export type UserActivityByTypeResolvers<ContextType = Context, ParentType extend
 };
 
 export type UserConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserDeleteBotsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteBotsResponse'] = ResolversParentTypes['UserDeleteBotsResponse']> = {
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4311,64 +3475,25 @@ export type UserDeleteRegularUsersResponseResolvers<ContextType = Context, Paren
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserEdge'] = ResolversParentTypes['UserEdge']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
-  addRole?: Resolver<ResolversTypes['UserRoleResponse'], ParentType, ContextType, RequireFields<UserMutationAddRoleArgs, 'input'>>;
-  deleteBots?: Resolver<ResolversTypes['UserDeleteBotsResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
-  deleteRegularUsers?: Resolver<Array<ResolversTypes['UserDeleteRegularUsersResponse']>, ParentType, ContextType, RequireFields<UserMutationDeleteRegularUsersArgs, 'input'>>;
-  removeRole?: Resolver<ResolversTypes['UserRoleResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
-  setDescription?: Resolver<ResolversTypes['UserSetDescriptionResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
-  setEmail?: Resolver<ResolversTypes['UserSetEmailResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
+  addRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationAddRoleArgs, 'input'>>;
+  deleteBots?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteBotsArgs, 'input'>>;
+  deleteRegularUser?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
+  removeRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
+  setDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
+  setEmail?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
   userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserQueryUserByUsernameArgs, 'username'>>;
-  usersByRole?: Resolver<ResolversTypes['UserWithPermissionsConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserRoleResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserRoleResponse'] = ResolversParentTypes['UserRoleResponse']> = {
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserSetDescriptionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetDescriptionResponse'] = ResolversParentTypes['UserSetDescriptionResponse']> = {
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserSetEmailResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSetEmailResponse'] = ResolversParentTypes['UserSetEmailResponse']> = {
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UserWithPermissionsConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserWithPermissionsConnection'] = ResolversParentTypes['UserWithPermissionsConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['UserEdge']>, ParentType, ContextType>;
-  inheritance?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  permissions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  usersByRole?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UuidMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UuidMutation'] = ResolversParentTypes['UuidMutation']> = {
-  setState?: Resolver<Maybe<ResolversTypes['UuidSetStateResponse']>, ParentType, ContextType, RequireFields<UuidMutationSetStateArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UuidSetStateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UuidSetStateResponse'] = ResolversParentTypes['UuidSetStateResponse']> = {
-  query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  setState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UuidMutationSetStateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4382,7 +3507,7 @@ export type VideoResolvers<ContextType = Context, ParentType extends ResolversPa
   licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   revisions?: Resolver<ResolversTypes['VideoRevisionConnection'], ParentType, ContextType, Partial<VideoRevisionsArgs>>;
   taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<VideoTaxonomyTermsArgs>>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<VideoThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<VideoThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4392,7 +3517,6 @@ export type VideoRevisionResolvers<ContextType = Context, ParentType extends Res
   alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  cohesive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   events?: Resolver<ResolversTypes['AbstractNotificationEventConnection'], ParentType, ContextType, Partial<VideoRevisionEventsArgs>>;
@@ -4400,7 +3524,7 @@ export type VideoRevisionResolvers<ContextType = Context, ParentType extends Res
   metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['Video'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadsConnection'], ParentType, ContextType, Partial<VideoRevisionThreadsArgs>>;
+  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<VideoRevisionThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -4408,16 +3532,9 @@ export type VideoRevisionResolvers<ContextType = Context, ParentType extends Res
 };
 
 export type VideoRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['VideoRevisionConnection'] = ResolversParentTypes['VideoRevisionConnection']> = {
-  edges?: Resolver<Array<ResolversTypes['VideoRevisionCursor']>, ParentType, ContextType>;
   nodes?: Resolver<Array<ResolversTypes['VideoRevision']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type VideoRevisionCursorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['VideoRevisionCursor'] = ResolversParentTypes['VideoRevisionCursor']> = {
-  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['VideoRevision'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -4429,18 +3546,14 @@ export type _CacheMutationResolvers<ContextType = Context, ParentType extends Re
 export type Resolvers<ContextType = Context> = {
   AbstractEntity?: AbstractEntityResolvers<ContextType>;
   AbstractEntityConnection?: AbstractEntityConnectionResolvers<ContextType>;
-  AbstractEntityCursor?: AbstractEntityCursorResolvers<ContextType>;
   AbstractEntityRevision?: AbstractEntityRevisionResolvers<ContextType>;
   AbstractEntityRevisionConnection?: AbstractEntityRevisionConnectionResolvers<ContextType>;
   AbstractNotificationEvent?: AbstractNotificationEventResolvers<ContextType>;
   AbstractNotificationEventConnection?: AbstractNotificationEventConnectionResolvers<ContextType>;
-  AbstractNotificationEventEdge?: AbstractNotificationEventEdgeResolvers<ContextType>;
   AbstractTaxonomyTermChild?: AbstractTaxonomyTermChildResolvers<ContextType>;
   AbstractUuid?: AbstractUuidResolvers<ContextType>;
   AbstractUuidConnection?: AbstractUuidConnectionResolvers<ContextType>;
-  AddRevisionResponse?: AddRevisionResponseResolvers<ContextType>;
   AiQuery?: AiQueryResolvers<ContextType>;
-  AllThreadsConnection?: AllThreadsConnectionResolvers<ContextType>;
   Applet?: AppletResolvers<ContextType>;
   AppletRevision?: AppletRevisionResolvers<ContextType>;
   AppletRevisionConnection?: AppletRevisionConnectionResolvers<ContextType>;
@@ -4448,7 +3561,6 @@ export type Resolvers<ContextType = Context> = {
   ArticleRevision?: ArticleRevisionResolvers<ContextType>;
   ArticleRevisionConnection?: ArticleRevisionConnectionResolvers<ContextType>;
   CheckoutRevisionNotificationEvent?: CheckoutRevisionNotificationEventResolvers<ContextType>;
-  CheckoutRevisionResponse?: CheckoutRevisionResponseResolvers<ContextType>;
   Comment?: CommentResolvers<ContextType>;
   CommentConnection?: CommentConnectionResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
@@ -4466,30 +3578,21 @@ export type Resolvers<ContextType = Context> = {
   CreateThreadNotificationEvent?: CreateThreadNotificationEventResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DefaultResponse?: DefaultResponseResolvers<ContextType>;
-  DeletedEntitiesConnection?: DeletedEntitiesConnectionResolvers<ContextType>;
   DeletedEntity?: DeletedEntityResolvers<ContextType>;
-  DeletedEntityCursor?: DeletedEntityCursorResolvers<ContextType>;
-  EntityMetadataConnection?: EntityMetadataConnectionResolvers<ContextType>;
-  EntityMetadataCursor?: EntityMetadataCursorResolvers<ContextType>;
+  DeletedEntityConnection?: DeletedEntityConnectionResolvers<ContextType>;
   EntityMutation?: EntityMutationResolvers<ContextType>;
   EntityQuery?: EntityQueryResolvers<ContextType>;
-  EntitySortResponse?: EntitySortResponseResolvers<ContextType>;
-  EntityUpdateLicenseResponse?: EntityUpdateLicenseResponseResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
   EventRevision?: EventRevisionResolvers<ContextType>;
   EventRevisionConnection?: EventRevisionConnectionResolvers<ContextType>;
-  EventRevisionCursor?: EventRevisionCursorResolvers<ContextType>;
   ExecutePromptResponse?: ExecutePromptResponseResolvers<ContextType>;
   Exercise?: ExerciseResolvers<ContextType>;
   ExerciseGroup?: ExerciseGroupResolvers<ContextType>;
   ExerciseGroupRevision?: ExerciseGroupRevisionResolvers<ContextType>;
   ExerciseGroupRevisionConnection?: ExerciseGroupRevisionConnectionResolvers<ContextType>;
-  ExerciseGroupRevisionCursor?: ExerciseGroupRevisionCursorResolvers<ContextType>;
   ExerciseRevision?: ExerciseRevisionResolvers<ContextType>;
   ExerciseRevisionConnection?: ExerciseRevisionConnectionResolvers<ContextType>;
-  ExerciseRevisionCursor?: ExerciseRevisionCursorResolvers<ContextType>;
   ExperimentMutation?: ExperimentMutationResolvers<ContextType>;
-  HasNextPageInfo?: HasNextPageInfoResolvers<ContextType>;
   InstanceAware?: InstanceAwareResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
@@ -4499,27 +3602,22 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   Notification?: NotificationResolvers<ContextType>;
   NotificationConnection?: NotificationConnectionResolvers<ContextType>;
-  NotificationEdge?: NotificationEdgeResolvers<ContextType>;
   NotificationMutation?: NotificationMutationResolvers<ContextType>;
-  NotificationSetStateResponse?: NotificationSetStateResponseResolvers<ContextType>;
   OauthAcceptResponse?: OauthAcceptResponseResolvers<ContextType>;
   OauthMutation?: OauthMutationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
-  PageCreateResponse?: PageCreateResponseResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   PageMutation?: PageMutationResolvers<ContextType>;
   PageQuery?: PageQueryResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
-  PageRevisionCursor?: PageRevisionCursorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
-  RejectRevisionResponse?: RejectRevisionResponseResolvers<ContextType>;
   RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
+  ResourceMetadataConnection?: ResourceMetadataConnectionResolvers<ContextType>;
   ScopedRole?: ScopedRoleResolvers<ContextType>;
   ScopedRoleConnection?: ScopedRoleConnectionResolvers<ContextType>;
-  ScopedRoleCursor?: ScopedRoleCursorResolvers<ContextType>;
   SetEntityResponse?: SetEntityResponseResolvers<ContextType>;
   SetLicenseNotificationEvent?: SetLicenseNotificationEventResolvers<ContextType>;
   SetTaxonomyParentNotificationEvent?: SetTaxonomyParentNotificationEventResolvers<ContextType>;
@@ -4528,46 +3626,28 @@ export type Resolvers<ContextType = Context> = {
   SetUuidStateNotificationEvent?: SetUuidStateNotificationEventResolvers<ContextType>;
   Subject?: SubjectResolvers<ContextType>;
   SubjectQuery?: SubjectQueryResolvers<ContextType>;
-  SubscriptionConnection?: SubscriptionConnectionResolvers<ContextType>;
-  SubscriptionCursor?: SubscriptionCursorResolvers<ContextType>;
   SubscriptionInfo?: SubscriptionInfoResolvers<ContextType>;
+  SubscriptionInfoConnection?: SubscriptionInfoConnectionResolvers<ContextType>;
   SubscriptionMutation?: SubscriptionMutationResolvers<ContextType>;
   SubscriptionQuery?: SubscriptionQueryResolvers<ContextType>;
-  SubscriptionSetResponse?: SubscriptionSetResponseResolvers<ContextType>;
-  TaxonomyEntityLinksResponse?: TaxonomyEntityLinksResponseResolvers<ContextType>;
   TaxonomyTerm?: TaxonomyTermResolvers<ContextType>;
   TaxonomyTermConnection?: TaxonomyTermConnectionResolvers<ContextType>;
-  TaxonomyTermCreateResponse?: TaxonomyTermCreateResponseResolvers<ContextType>;
-  TaxonomyTermEdge?: TaxonomyTermEdgeResolvers<ContextType>;
   TaxonomyTermMutation?: TaxonomyTermMutationResolvers<ContextType>;
-  TaxonomyTermSetNameAndDescriptionResponse?: TaxonomyTermSetNameAndDescriptionResponseResolvers<ContextType>;
-  TaxonomyTermSortResponse?: TaxonomyTermSortResponseResolvers<ContextType>;
   Thread?: ThreadResolvers<ContextType>;
   ThreadAware?: ThreadAwareResolvers<ContextType>;
-  ThreadCreateCommentResponse?: ThreadCreateCommentResponseResolvers<ContextType>;
-  ThreadCreateThreadResponse?: ThreadCreateThreadResponseResolvers<ContextType>;
+  ThreadConnection?: ThreadConnectionResolvers<ContextType>;
   ThreadMutation?: ThreadMutationResolvers<ContextType>;
   ThreadQuery?: ThreadQueryResolvers<ContextType>;
-  ThreadsConnection?: ThreadsConnectionResolvers<ContextType>;
-  ThreadsCursor?: ThreadsCursorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserActivityByType?: UserActivityByTypeResolvers<ContextType>;
   UserConnection?: UserConnectionResolvers<ContextType>;
-  UserDeleteBotsResponse?: UserDeleteBotsResponseResolvers<ContextType>;
   UserDeleteRegularUsersResponse?: UserDeleteRegularUsersResponseResolvers<ContextType>;
-  UserEdge?: UserEdgeResolvers<ContextType>;
   UserMutation?: UserMutationResolvers<ContextType>;
   UserQuery?: UserQueryResolvers<ContextType>;
-  UserRoleResponse?: UserRoleResponseResolvers<ContextType>;
-  UserSetDescriptionResponse?: UserSetDescriptionResponseResolvers<ContextType>;
-  UserSetEmailResponse?: UserSetEmailResponseResolvers<ContextType>;
-  UserWithPermissionsConnection?: UserWithPermissionsConnectionResolvers<ContextType>;
   UuidMutation?: UuidMutationResolvers<ContextType>;
-  UuidSetStateResponse?: UuidSetStateResponseResolvers<ContextType>;
   Video?: VideoResolvers<ContextType>;
   VideoRevision?: VideoRevisionResolvers<ContextType>;
   VideoRevisionConnection?: VideoRevisionConnectionResolvers<ContextType>;
-  VideoRevisionCursor?: VideoRevisionCursorResolvers<ContextType>;
   _cacheMutation?: _CacheMutationResolvers<ContextType>;
 };
 

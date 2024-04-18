@@ -3,26 +3,20 @@ import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { createAuthServices } from './authentication'
-import { Cache, CacheEntry, Priority } from './cache'
-import { isQuery, QuerySpec } from './data-source-helper'
-import { captureErrorEvent } from './error-event'
+import { isLegacyQuery, LegacyQuery } from './data-source-helper'
 import { log } from './log'
-import { Timer } from './timer'
+import { type Context } from '~/context'
+import { createAuthServices } from '~/context/auth-services'
+import { CacheEntry, Cache, Priority } from '~/context/cache'
+import { SwrQueue } from '~/context/swr-queue'
+import { Database } from '~/database'
+import { captureErrorEvent } from '~/error-event'
 import { modelFactories } from '~/model'
+import { cachedResolvers } from '~/schema'
+import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
-
-export interface SwrQueue {
-  queue(
-    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> },
-  ): Promise<never>
-  ready(): Promise<void>
-  healthy(): Promise<void>
-  quit(): Promise<void>
-  _queue: never
-}
 
 interface UpdateJob {
   key: string
@@ -53,15 +47,17 @@ export function createSwrQueue({
   cache: Cache
   timer: Timer
 }): SwrQueue {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
+  )
+  const legacyQueries = models.flatMap((model) =>
+    Object.values(model).filter(isLegacyQuery),
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
@@ -83,7 +79,7 @@ export function createSwrQueue({
       const result = await shouldProcessJob({
         key,
         cache,
-        models,
+        legacyQueries,
         timer,
         cacheEntry,
       })
@@ -139,10 +135,12 @@ export function createSwrQueueWorker({
   cache,
   timer,
   concurrency,
+  database,
 }: {
   cache: Cache
   timer: Timer
   concurrency: number
+  database: Database
 }): {
   checkStalledJobs(timeout: number): Promise<void>
   ready(): Promise<void>
@@ -150,15 +148,17 @@ export function createSwrQueueWorker({
   quit(): Promise<void>
   _queue: never
 } {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
+  )
+  const legacyQueries = models.flatMap((model) =>
+    Object.values(model).filter(isLegacyQuery),
   )
 
   const queue = new Queue<UpdateJob>(queueName, {
@@ -174,7 +174,7 @@ export function createSwrQueueWorker({
       const result = await shouldProcessJob({
         key,
         cache,
-        models,
+        legacyQueries,
         timer,
       })
 
@@ -189,13 +189,11 @@ export function createSwrQueueWorker({
         ttlInSeconds: spec.maxAge ? timeToSeconds(spec.maxAge) : undefined,
         source: 'SWR worker',
         priority: Priority.Low,
-        getValue: async (current) => {
-          const value = await spec.getCurrentValue(payload, current ?? null)
-          const decoder = spec.decoder || t.unknown
-          const decodedValue = decoder.decode(value)
+        getValue: async () => {
+          const value = await spec.getCurrentValue(payload, { database })
 
-          if (E.isRight(decodedValue)) {
-            return decodedValue.right
+          if (spec.decoder.is(value)) {
+            return value
           } else {
             captureErrorEvent({
               error: new Error(INVALID_VALUE_RECEIVED),
@@ -204,7 +202,7 @@ export function createSwrQueueWorker({
               errorContext: {
                 key,
                 invalidValue: value,
-                decoder: decoder.name,
+                decoder: spec.decoder.name,
               },
             })
 
@@ -247,24 +245,29 @@ export function createSwrQueueWorker({
 async function shouldProcessJob({
   key,
   cache,
-  models,
+  legacyQueries,
   timer,
   cacheEntry,
 }: {
   key: string
   cache: Cache
-  models: Record<string, unknown>[]
+  legacyQueries: LegacyQuery<unknown, unknown>[]
   timer: Timer
   cacheEntry?: O.Option<CacheEntry<unknown>>
-}): Promise<
-  E.Either<string, { spec: QuerySpec<unknown, unknown>; payload: unknown }>
-> {
-  function getSpec(key: string): QuerySpec<unknown, unknown> | null {
-    for (const model of models) {
-      for (const prop of Object.values(model)) {
-        if (isQuery(prop) && O.isSome(prop._querySpec.getPayload(key))) {
-          return prop._querySpec
+}): Promise<E.Either<string, { spec: JobSpec; payload: unknown }>> {
+  function getSpec(key: string): JobSpec | null {
+    for (const legacyQuery of legacyQueries) {
+      if (O.isSome(legacyQuery._querySpec.getPayload(key))) {
+        return {
+          ...legacyQuery._querySpec,
+          decoder: legacyQuery._querySpec.decoder ?? t.unknown,
         }
+      }
+    }
+    for (const cachedResolver of cachedResolvers) {
+      if (O.isSome(cachedResolver.spec.getPayload(key))) {
+        // TODO: Change types so that `as` is not needed here
+        return cachedResolver.spec as unknown as JobSpec
       }
     }
     return null
@@ -300,24 +303,17 @@ async function shouldProcessJob({
   })
 }
 
-export interface Time {
-  days?: number
-  hours?: number
-  minutes?: number
-  seconds?: number
-}
-
-export function timeToSeconds({
-  days = 0,
-  hours = 0,
-  minutes = 0,
-  seconds = 0,
-}: Time) {
-  return ((days * 24 + hours) * 60 + minutes) * 60 + seconds
-}
-
-export function timeToMilliseconds(time: Time) {
-  return timeToSeconds(time) * 1000
+// TODO: Merge with CachedResolverSpec in `cached-resolver.ts`
+interface JobSpec<P = unknown> {
+  decoder: { is: (a: unknown) => a is P; name: string }
+  getPayload: (key: string) => O.Option<P>
+  getCurrentValue: (
+    payload: P,
+    context: Pick<Context, 'database'>,
+  ) => Promise<unknown>
+  maxAge?: Time
+  staleAfter?: Time
+  enableSwr: boolean
 }
 
 function reportError({

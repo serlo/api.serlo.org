@@ -1,6 +1,7 @@
 import { abstractEntitySchema } from './abstract-entity'
 import { abstractTaxonomyTermChildSchema } from './abstract-taxonomy-term-child'
 import { abstractUuidSchema } from './abstract-uuid'
+import { UuidResolver } from './abstract-uuid/resolvers'
 import { aliasSchema } from './alias'
 import { appletSchema } from './applet'
 import { articleSchema } from './article'
@@ -32,3 +33,5 @@ export const uuidSchema = mergeSchemas(
   userSchema,
   videoSchema,
 )
+
+export const uuidCachedResolvers = [UuidResolver]

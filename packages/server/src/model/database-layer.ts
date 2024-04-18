@@ -340,15 +340,6 @@ export const spec = {
     response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
-  ThreadEditCommentMutation: {
-    payload: t.type({
-      commentId: t.number,
-      userId: t.number,
-      content: t.string,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
   ThreadSetThreadArchivedMutation: {
     payload: t.type({
       ids: t.array(t.number),
@@ -432,11 +423,6 @@ export const spec = {
     response: t.strict({
       success: t.literal(true),
     }),
-    canBeNull: false,
-  },
-  UserSetDescriptionMutation: {
-    payload: t.type({ userId: t.number, description: t.string }),
-    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   UserSetEmailMutation: {

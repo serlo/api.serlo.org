@@ -1,20 +1,24 @@
 import dotenv from 'dotenv'
 import createApp from 'express'
+import { createPool } from 'mysql2/promise'
 
 import { createCache } from './cache'
 import { initializeSentry } from './sentry'
 import { createSwrQueueWorker } from './swr-queue'
-import { createTimer } from './timer'
+import { Database } from '~/database'
+import { createTimer } from '~/timer'
 
 export async function start() {
   dotenv.config()
   initializeSentry({ context: 'swr-queue-worker' })
   const timer = createTimer()
   const cache = createCache({ timer })
+  const pool = createPool(process.env.MYSQL_URI)
   const swrQueueWorker = createSwrQueueWorker({
     cache,
     timer,
     concurrency: parseInt(process.env.SWR_QUEUE_WORKER_CONCURRENCY, 10),
+    database: new Database(pool),
   })
   await swrQueueWorker.ready()
 

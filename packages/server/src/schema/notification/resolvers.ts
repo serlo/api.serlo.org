@@ -1,25 +1,18 @@
 import * as auth from '@serlo/authorization'
 
+import { Context } from '~/context'
+import { Service } from '~/context/service'
 import { ForbiddenError, UserInputError } from '~/errors'
-import { Service } from '~/internals/authentication'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
   createNamespace,
-  InterfaceResolvers,
-  Mutations,
-  LegacyQueries,
-  TypeResolvers,
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Instance, Notification, QueryEventsArgs } from '~/types'
+import { Instance, Resolvers, QueryEventsArgs } from '~/types'
 
-export const resolvers: TypeResolvers<Notification> &
-  InterfaceResolvers<'AbstractNotificationEvent'> &
-  LegacyQueries<'events' | 'notifications' | 'notificationEvent'> &
-  Mutations<'notification'> = {
+export const resolvers: Resolvers = {
   AbstractNotificationEvent: {
     __resolveType(notificationEvent) {
       return notificationEvent.__typename
@@ -167,7 +160,6 @@ export async function resolveEvents({
       ...connection,
       pageInfo: {
         ...pageInfo,
-        __typename: 'HasNextPageInfo' as const,
         hasNextPage: pageInfo.hasNextPage || hasNextPage,
       },
     }
@@ -193,11 +185,7 @@ export async function resolveEvents({
 
     return {
       ...connection,
-      pageInfo: {
-        ...pageInfo,
-        hasNextPage,
-        __typename: 'HasNextPageInfo' as const,
-      },
+      pageInfo: { ...pageInfo, hasNextPage },
     }
   }
 }

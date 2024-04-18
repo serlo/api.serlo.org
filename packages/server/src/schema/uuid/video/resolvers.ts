@@ -1,18 +1,17 @@
-import { TypeResolvers } from '~/internals/graphql'
 import { VideoDecoder, VideoRevisionDecoder } from '~/model/decoder'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-} from '~/schema/uuid/abstract-entity/utils'
+  createRevisionResolvers,
+  createRepositoryResolvers,
+} from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { Video, VideoRevision } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<Video> & TypeResolvers<VideoRevision> = {
+export const resolvers: Resolvers = {
   Video: {
-    ...createEntityResolvers({ revisionDecoder: VideoRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: VideoRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
-  VideoRevision: createEntityRevisionResolvers({
+  VideoRevision: createRevisionResolvers({
     repositoryDecoder: VideoDecoder,
   }),
 }

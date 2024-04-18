@@ -6,30 +6,24 @@ import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
-  Mutations,
-  Queries,
-  TypeResolvers,
 } from '~/internals/graphql'
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
-  createEntityResolvers,
-  createEntityRevisionResolvers,
-} from '~/schema/uuid/abstract-entity/utils'
-import { Page, PageRevision } from '~/types'
+  createRepositoryResolvers,
+  createRevisionResolvers,
+} from '~/schema/uuid/abstract-repository/utils'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<Page> &
-  TypeResolvers<PageRevision> &
-  Queries<'page'> &
-  Mutations<'page'> = {
+export const resolvers: Resolvers = {
   Query: {
     page: createNamespace(),
   },
   Mutation: {
     page: createNamespace(),
   },
-  Page: createEntityResolvers({ revisionDecoder: PageRevisionDecoder }),
-  PageRevision: createEntityRevisionResolvers({
+  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+  PageRevision: createRevisionResolvers({
     repositoryDecoder: PageDecoder,
   }),
   PageMutation: {

@@ -1,14 +1,15 @@
-import { createNamespace, Mutations } from '~/internals/graphql'
-import { runSql } from '~/model/database'
+import { createNamespace } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
-export const resolvers: Mutations<'experiment'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     experiment: createNamespace(),
   },
   ExperimentMutation: {
-    async createExerciseSubmission(_parent, { input }) {
+    async createExerciseSubmission(_parent, { input }, context) {
+      const { database } = context
       const { path, entityId, revisionId, type, result, sessionId } = input
-      await runSql(
+      await database.mutate(
         `
         INSERT INTO 
           exercise_submission 

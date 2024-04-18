@@ -3,17 +3,13 @@ type Event implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild 
   trashed: Boolean!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -26,17 +22,10 @@ type Event implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild 
   currentRevision: EventRevision
   revisions(
     after: String
-    before: String
     first: Int
-    last: Int
     unrevised: Boolean
   ): EventRevisionConnection!
-  taxonomyTerms(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): TaxonomyTermConnection!
+  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
 }
 
 type EventRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
@@ -46,17 +35,13 @@ type EventRevision implements AbstractUuid & AbstractEntityRevision & ThreadAwar
   alias: String!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -70,17 +55,10 @@ type EventRevision implements AbstractUuid & AbstractEntityRevision & ThreadAwar
   metaDescription: String!
 
   url: String
-  cohesive: Boolean
 }
 
 type EventRevisionConnection implements AbstractEntityRevisionConnection {
-  edges: [EventRevisionCursor!]!
   nodes: [EventRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type EventRevisionCursor {
-  cursor: String!
-  node: EventRevision!
 }

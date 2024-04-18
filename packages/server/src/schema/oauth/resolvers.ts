@@ -1,22 +1,19 @@
 import { Session } from '@ory/client'
 import * as t from 'io-ts'
 
+import { captureErrorEvent } from '~/error-event'
 import { ForbiddenError } from '~/errors'
-import { captureErrorEvent } from '~/internals/error-event'
-import {
-  Mutations,
-  createNamespace,
-  assertUserIsAuthenticated,
-} from '~/internals/graphql'
+import { createNamespace, assertUserIsAuthenticated } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
 const TraitsDecoder = t.type({ username: t.string, email: t.string })
 
-export const resolvers: Mutations<'oauth'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     oauth: createNamespace(),
   },
   OauthMutation: {
-    async acceptLogin(_parent, { input }, { dataSources, userId }) {
+    async acceptLogin(_parent, { input }, { userId, authServices }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input
@@ -31,7 +28,7 @@ export const resolvers: Mutations<'oauth'> = {
         )
       }
 
-      const { hydra } = dataSources.model.authServices
+      const { hydra } = authServices
 
       return await hydra
         .getOAuth2LoginRequest({ loginChallenge: challenge })
@@ -67,7 +64,7 @@ export const resolvers: Mutations<'oauth'> = {
           )
         })
     },
-    acceptConsent(_parent, { input }, { dataSources, userId }) {
+    acceptConsent(_parent, { input }, { userId, authServices }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input as {
@@ -92,7 +89,7 @@ export const resolvers: Mutations<'oauth'> = {
       }
 
       const { username, email } = traits
-      const { hydra } = dataSources.model.authServices
+      const { hydra } = authServices
 
       return hydra
         .getOAuth2ConsentRequest({ consentChallenge: challenge })
@@ -145,8 +142,8 @@ export const resolvers: Mutations<'oauth'> = {
           )
         })
     },
-    async acceptLogout(_parent, { challenge }, { dataSources }) {
-      const { hydra } = dataSources.model.authServices
+    async acceptLogout(_parent, { challenge }, { authServices }) {
+      const { hydra } = authServices
       return await hydra
         .getOAuth2LogoutRequest({ logoutChallenge: challenge })
         .then(async () => {

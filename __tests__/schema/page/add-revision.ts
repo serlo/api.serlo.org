@@ -21,7 +21,6 @@ describe('PageAddRevisionMutation', () => {
           page {
             addRevision(input: $input) {
               success
-              revisionId
             }
           }
         }
@@ -54,7 +53,7 @@ describe('PageAddRevisionMutation', () => {
 
   test('returns "{ success: true }" when mutation could be successfully executed', async () => {
     await mutation.shouldReturnData({
-      page: { addRevision: { success: true, revisionId: newRevisionId } },
+      page: { addRevision: { success: true } },
     })
   })
 

@@ -5,9 +5,7 @@ interface AbstractUuid {
   title: String!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -29,15 +27,10 @@ extend type Mutation {
 }
 
 type UuidMutation {
-  setState(input: UuidSetStateInput!): UuidSetStateResponse
+  setState(input: UuidSetStateInput!): DefaultResponse!
 }
 
 input UuidSetStateInput {
   id: [Int!]!
   trashed: Boolean!
-}
-
-type UuidSetStateResponse {
-  success: Boolean!
-  query: Query!
 }

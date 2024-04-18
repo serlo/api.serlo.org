@@ -3,21 +3,17 @@ type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   trashed: Boolean!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   instance: Instance!
   alias: String!
   title: String!
@@ -26,17 +22,10 @@ type Applet implements AbstractUuid & AbstractEntity & AbstractTaxonomyTermChild
   currentRevision: AppletRevision
   revisions(
     after: String
-    before: String
     first: Int
-    last: Int
     unrevised: Boolean
   ): AppletRevisionConnection!
-  taxonomyTerms(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): TaxonomyTermConnection!
+  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
 }
 
 type AppletRevision implements AbstractUuid & AbstractEntityRevision & ThreadAware {
@@ -46,21 +35,17 @@ type AppletRevision implements AbstractUuid & AbstractEntityRevision & ThreadAwa
   alias: String!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
   ): AbstractNotificationEventConnection!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   date: DateTime!
   repository: Applet!
   title: String!
@@ -71,7 +56,6 @@ type AppletRevision implements AbstractUuid & AbstractEntityRevision & ThreadAwa
   metaDescription: String!
 
   url: String!
-  cohesive: Boolean
 }
 
 type AppletRevisionConnection implements AbstractEntityRevisionConnection {

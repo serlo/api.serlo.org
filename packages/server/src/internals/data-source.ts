@@ -1,6 +1,6 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 
-import { Environment } from '~/internals/environment'
+import { Context } from '~/context'
 import {
   createGoogleSpreadsheetApiModel,
   createSerloModel,
@@ -17,22 +17,14 @@ export class ModelDataSource extends RESTDataSource {
   public chat: ReturnType<typeof createChatModel>
   public mailchimp: ReturnType<typeof createMailchimpModel>
   public kratos: ReturnType<typeof createKratosModel>
-  public authServices: Environment['authServices']
 
-  constructor(private environment: Environment) {
+  constructor(context: Pick<Context, 'swrQueue' | 'cache' | 'authServices'>) {
     super()
 
-    this.chat = createChatModel({ environment })
-    this.serlo = createSerloModel({ environment })
-    this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ environment })
+    this.chat = createChatModel({ context })
+    this.serlo = createSerloModel({ context })
+    this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ context })
     this.mailchimp = createMailchimpModel()
-    this.kratos = createKratosModel({ environment })
-    this.authServices = environment.authServices
-  }
-
-  public async removeCacheValue({ keys }: { keys: string[] }) {
-    for (const key of keys) {
-      await this.environment.cache.remove({ key })
-    }
+    this.kratos = createKratosModel({ context })
   }
 }

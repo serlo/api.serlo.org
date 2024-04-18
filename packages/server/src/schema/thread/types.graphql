@@ -11,12 +11,7 @@ type Thread {
   archived: Boolean!
   trashed: Boolean!
   object: AbstractUuid!
-  comments(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CommentConnection!
+  comments(after: String, first: Int): CommentConnection!
   status: CommentStatus!
 }
 
@@ -27,9 +22,7 @@ type Comment implements AbstractUuid {
   alias: String!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -48,24 +41,16 @@ type Comment implements AbstractUuid {
 interface ThreadAware {
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
 }
 
-type ThreadsConnection {
-  edges: [ThreadsCursor!]!
+type ThreadConnection {
   nodes: [Thread!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type ThreadsCursor {
-  cursor: String!
-  node: Thread!
 }
 
 type CommentConnection {
@@ -85,14 +70,7 @@ type ThreadQuery {
     instance: Instance
     subjectId: String
     status: CommentStatus
-  ): AllThreadsConnection!
-}
-
-type AllThreadsConnection {
-  edges: [ThreadsCursor!]!
-  nodes: [Thread!]!
-  totalCount: Int!
-  pageInfo: HasNextPageInfo!
+  ): ThreadConnection!
 }
 
 extend type Mutation {
@@ -100,8 +78,8 @@ extend type Mutation {
 }
 
 type ThreadMutation {
-  createThread(input: ThreadCreateThreadInput!): ThreadCreateThreadResponse!
-  createComment(input: ThreadCreateCommentInput!): ThreadCreateCommentResponse!
+  createThread(input: ThreadCreateThreadInput!): DefaultResponse!
+  createComment(input: ThreadCreateCommentInput!): DefaultResponse!
   editComment(input: ThreadEditCommentInput!): DefaultResponse!
   setThreadArchived(input: ThreadSetThreadArchivedInput!): DefaultResponse!
   setThreadState(input: ThreadSetThreadStateInput!): DefaultResponse!
@@ -117,23 +95,11 @@ input ThreadCreateThreadInput {
   sendEmail: Boolean!
 }
 
-type ThreadCreateThreadResponse {
-  record: Thread
-  success: Boolean!
-  query: Query!
-}
-
 input ThreadCreateCommentInput {
   content: String!
   threadId: String!
   subscribe: Boolean!
   sendEmail: Boolean!
-}
-
-type ThreadCreateCommentResponse {
-  record: Comment
-  success: Boolean!
-  query: Query!
 }
 
 input ThreadEditCommentInput {

@@ -35,7 +35,6 @@ import { Instance } from '~/types'
 
 interface EntityFields {
   title: string
-  cohesive: boolean
   content: string
   description: string
   metaTitle: string
@@ -45,7 +44,6 @@ interface EntityFields {
 
 const ALL_POSSIBLE_FIELDS: EntityFields = {
   title: 'title',
-  cohesive: false,
   content: 'content',
   description: 'description',
   metaTitle: 'metaTitle',
@@ -69,7 +67,7 @@ const fieldKeys: Record<
   [EntityType.CoursePage]: ['title', 'content'],
   [EntityType.Event]: ['title', 'content', 'metaTitle', 'metaDescription'],
   [EntityType.Exercise]: ['content'],
-  [EntityType.ExerciseGroup]: ['cohesive', 'content'],
+  [EntityType.ExerciseGroup]: ['content'],
   [EntityType.Page]: ['title', 'content'],
   [EntityType.Video]: ['title', 'content', 'url'],
 }
@@ -85,22 +83,14 @@ const entities = [
 ]
 
 class EntitySetTestCase {
-  public mutationName: string
   public fields: Partial<EntityFields>
 
   constructor(public entity: Model<'AbstractEntity'>) {
-    this.mutationName = `set${this.entityType}`
     this.fields = R.pick(fieldKeys[this.entityType], ALL_POSSIBLE_FIELDS)
   }
 
   get entityType() {
     return this.entity.__typename
-  }
-
-  get inputName() {
-    return EntityType.Exercise === this.entityType
-      ? 'SetGenericEntityInput'
-      : `Set${this.entityType}Input`
   }
 
   get parent(): Model<'AbstractEntity' | 'TaxonomyTerm'> {
@@ -115,7 +105,6 @@ class EntitySetTestCase {
   get fieldsToDBLayer() {
     if (this.entityType === EntityType.ExerciseGroup) {
       return {
-        cohesive: this.fields.cohesive!.toString(),
         content: this.fields.content!,
       }
     } else if (this.entityType === EntityType.Course) {
@@ -164,8 +153,9 @@ beforeEach(() => {
 })
 
 testCases.forEach((testCase) => {
-  describe(testCase.mutationName, () => {
+  describe('setAbstractEntity', () => {
     const input: SetAbstractEntityInput = {
+      entityType: testCase.entityType,
       changes: 'changes',
       needsReview: true,
       subscribeThis: false,
@@ -176,9 +166,9 @@ testCases.forEach((testCase) => {
     const mutationWithParentId = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
-          mutation set($input: ${testCase.inputName}!) {
+          mutation set($input: SetAbstractEntityInput!) {
             entity {
-              ${testCase.mutationName}(input: $input) {
+              setAbstractEntity(input: $input) {
                 success
                 record {
                   id
@@ -195,9 +185,9 @@ testCases.forEach((testCase) => {
     const mutationWithEntityId = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
-          mutation set($input: ${testCase.inputName}!) {
+          mutation set($input: SetAbstractEntityInput!) {
             entity {
-              ${testCase.mutationName}(input: $input) {
+              setAbstractEntity(input: $input) {
                 success
                 record {
                   id
@@ -258,7 +248,7 @@ testCases.forEach((testCase) => {
 
       await mutationWithParentId.shouldReturnData({
         entity: {
-          [testCase.mutationName]: {
+          setAbstractEntity: {
             success: true,
             record: { id: testCase.entity.id },
           },
@@ -275,7 +265,7 @@ testCases.forEach((testCase) => {
 
       await mutationWithEntityId.shouldReturnData({
         entity: {
-          [testCase.mutationName]: {
+          setAbstractEntity: {
             success: true,
             record: { id: testCase.entity.id },
           },
@@ -344,7 +334,7 @@ testCases.forEach((testCase) => {
       await mutationWithParentId.shouldFailWithError('BAD_USER_INPUT')
     })
 
-    describe(`Cache after ${testCase.mutationName} call`, () => {
+    describe(`Cache after setAbstractEntity call`, () => {
       const newRevision = { ...testCase.revision, id: 123 }
       const anotherEntity = { ...testCase.entity, id: 456 }
 
@@ -519,9 +509,9 @@ test('uses default license of the instance', async () => {
   await new Client({ userId: user.id })
     .prepareQuery({
       query: gql`
-        mutation ($input: SetGenericEntityInput!) {
+        mutation ($input: SetAbstractEntityInput!) {
           entity {
-            setExercise(input: $input) {
+            setAbstractEntity(input: $input) {
               success
             }
           }
@@ -529,6 +519,7 @@ test('uses default license of the instance', async () => {
       `,
     })
     .withInput({
+      entityType: EntityType.Exercise,
       changes: 'changes',
       subscribeThis: true,
       subscribeThisByEmail: true,
@@ -536,11 +527,12 @@ test('uses default license of the instance', async () => {
       parentId: exerciseEn.id,
       content: 'Hello World',
     })
-    .shouldReturnData({ entity: { setExercise: { success: true } } })
+    .shouldReturnData({ entity: { setAbstractEntity: { success: true } } })
 })
 
 describe('Autoreview entities', () => {
   const input = {
+    entityType: EntityType.Exercise,
     changes: 'changes',
     needsReview: true,
     subscribeThis: false,
@@ -550,9 +542,9 @@ describe('Autoreview entities', () => {
 
   const mutation = new Client({ userId: user.id }).prepareQuery({
     query: gql`
-      mutation ($input: SetGenericEntityInput!) {
+      mutation ($input: SetAbstractEntityInput!) {
         entity {
-          setExercise(input: $input) {
+          setAbstractEntity(input: $input) {
             record {
               ... on Exercise {
                 currentRevision {
@@ -612,7 +604,9 @@ describe('Autoreview entities', () => {
         .withInput({ ...input, entityId: entity.id })
         .shouldReturnData({
           entity: {
-            setExercise: { record: { currentRevision: { id: newRevisionId } } },
+            setAbstractEntity: {
+              record: { currentRevision: { id: newRevisionId } },
+            },
           },
         })
     })
@@ -622,7 +616,9 @@ describe('Autoreview entities', () => {
         .withInput({ ...input, parentId: taxonomy.id })
         .shouldReturnData({
           entity: {
-            setExercise: { record: { currentRevision: { id: newRevisionId } } },
+            setAbstractEntity: {
+              record: { currentRevision: { id: newRevisionId } },
+            },
           },
         })
     })
@@ -641,7 +637,9 @@ describe('Autoreview entities', () => {
       .withInput({ ...input, entityId: entity.id })
       .shouldReturnData({
         entity: {
-          setExercise: { record: { currentRevision: { id: oldRevisionId } } },
+          setAbstractEntity: {
+            record: { currentRevision: { id: oldRevisionId } },
+          },
         },
       })
   })
