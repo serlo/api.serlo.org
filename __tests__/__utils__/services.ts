@@ -7,7 +7,7 @@ import type {
 import { HttpResponse, ResponseResolver, http } from 'msw'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { Identity, KratosDB } from '~/internals/authentication'
+import type { Identity, KratosDB } from '~/context/auth-services'
 import { Model } from '~/internals/graphql'
 import type { MajorDimension } from '~/model'
 

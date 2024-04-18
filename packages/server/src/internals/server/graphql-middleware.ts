@@ -12,15 +12,12 @@ import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
 import { Context } from '~/context'
+import { AuthServices, IdentityDecoder } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { Service } from '~/context/service'
 import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
-import {
-  AuthServices,
-  handleAuthentication,
-  IdentityDecoder,
-} from '~/internals/authentication'
+import { handleAuthentication } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
 import { schema } from '~/schema'
@@ -68,6 +65,7 @@ export async function applyGraphQLMiddleware({
             database,
             cache,
             swrQueue,
+            authServices,
           })
         }
         const partialContext = await handleAuthentication(
@@ -98,6 +96,7 @@ export async function applyGraphQLMiddleware({
           database,
           cache,
           swrQueue,
+          authServices,
         }
       },
     }),

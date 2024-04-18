@@ -1,7 +1,7 @@
 import { option as O } from 'fp-ts'
 
-import { createTestEnvironment } from '../__utils__'
 import { isLegacyQuery, LegacyQuery } from '~/internals/data-source-helper'
+import { emptySwrQueue } from '~/internals/swr-queue'
 import { modelFactories } from '~/model'
 
 describe('getPayload() is always inverse to getKey()', () => {
@@ -9,7 +9,7 @@ describe('getPayload() is always inverse to getKey()', () => {
     '%s',
     (_name, dataSourceFactoryFunc) => {
       const dataSource = dataSourceFactoryFunc({
-        environment: createTestEnvironment(),
+        context: { cache: global.cache, swrQueue: emptySwrQueue },
       })
       const queryFunctions = Object.entries(dataSource).filter(isQueryEntry)
 

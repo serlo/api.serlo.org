@@ -1,5 +1,6 @@
 import { type Storage } from '@google-cloud/storage'
 
+import { AuthServices } from './auth-services'
 import { type Cache } from './cache'
 import { Service } from './service'
 import { SwrQueue } from './swr-queue'
@@ -7,6 +8,7 @@ import { type ModelDataSource } from '../internals/data-source'
 import { type Database } from '~/database'
 
 export interface Context {
+  authServices: AuthServices
   dataSources: {
     model: ModelDataSource
   }

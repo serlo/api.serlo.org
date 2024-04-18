@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { array as A } from 'fp-ts'
-import * as F from 'fp-ts/lib/function'
+import { Predicate } from 'fp-ts/lib/Predicate'
+import { Refinement } from 'fp-ts/lib/Refinement'
 import * as R from 'ramda'
 
 export interface ErrorEvent extends ErrorContext {
@@ -26,10 +27,10 @@ export function consumeErrorEvent<A>(defaultValue: A) {
 }
 
 export function assertAll<A, B extends A>(
-  args: { assertion: F.Refinement<A, B> } & ErrorEvent,
+  args: { assertion: Refinement<A, B> } & ErrorEvent,
 ): (list: A[]) => B[]
 export function assertAll<A>(
-  args: { assertion: F.Predicate<A> } & ErrorEvent,
+  args: { assertion: Predicate<A> } & ErrorEvent,
 ): (list: A[]) => A[]
 export function assertAll(
   args: { assertion: (x: unknown) => boolean } & ErrorEvent,

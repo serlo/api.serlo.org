@@ -1,8 +1,8 @@
 import { Session } from '@ory/client'
 import * as t from 'io-ts'
 
+import { captureErrorEvent } from '~/error-event'
 import { ForbiddenError } from '~/errors'
-import { captureErrorEvent } from '~/internals/error-event'
 import { createNamespace, assertUserIsAuthenticated } from '~/internals/graphql'
 import { Resolvers } from '~/types'
 
@@ -13,7 +13,7 @@ export const resolvers: Resolvers = {
     oauth: createNamespace(),
   },
   OauthMutation: {
-    async acceptLogin(_parent, { input }, { dataSources, userId }) {
+    async acceptLogin(_parent, { input }, { userId, authServices }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input
@@ -28,7 +28,7 @@ export const resolvers: Resolvers = {
         )
       }
 
-      const { hydra } = dataSources.model.authServices
+      const { hydra } = authServices
 
       return await hydra
         .getOAuth2LoginRequest({ loginChallenge: challenge })
@@ -64,7 +64,7 @@ export const resolvers: Resolvers = {
           )
         })
     },
-    acceptConsent(_parent, { input }, { dataSources, userId }) {
+    acceptConsent(_parent, { input }, { userId, authServices }) {
       assertUserIsAuthenticated(userId)
 
       const { challenge, session } = input as {
@@ -89,7 +89,7 @@ export const resolvers: Resolvers = {
       }
 
       const { username, email } = traits
-      const { hydra } = dataSources.model.authServices
+      const { hydra } = authServices
 
       return hydra
         .getOAuth2ConsentRequest({ consentChallenge: challenge })
@@ -142,8 +142,8 @@ export const resolvers: Resolvers = {
           )
         })
     },
-    async acceptLogout(_parent, { challenge }, { dataSources }) {
-      const { hydra } = dataSources.model.authServices
+    async acceptLogout(_parent, { challenge }, { authServices }) {
+      const { hydra } = authServices
       return await hydra
         .getOAuth2LogoutRequest({ logoutChallenge: challenge })
         .then(async () => {

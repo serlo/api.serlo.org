@@ -3,7 +3,7 @@ import * as t from 'io-ts'
 import { DateFromISOString } from 'io-ts-types'
 import postgress, { type DatabaseError } from 'pg'
 
-import { captureErrorEvent } from '../error-event'
+import { captureErrorEvent } from '~/error-event'
 
 export interface Kratos {
   public: FrontendApi
