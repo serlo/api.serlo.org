@@ -2,6 +2,9 @@ import { Scope } from '@serlo/authorization'
 import * as t from 'io-ts'
 
 import {
+  AbstractEntityDecoder,
+  AbstractNotificationEventDecoder,
+  AbstractUuidDecoder,
   AppletDecoder,
   AppletRevisionDecoder,
   ArticleDecoder,
@@ -42,7 +45,6 @@ import {
   VideoDecoder,
   VideoRevisionDecoder,
 } from './decoder'
-import { Role } from '~/types'
 
 export interface Models {
   Applet: t.TypeOf<typeof AppletDecoder>
@@ -124,4 +126,38 @@ export interface Models {
     typeof SetThreadStateNotificationEventDecoder
   >
   ScopedRole: { role: Role; scope: Scope }
+  DeletedEntity: {
+    dateOfDeletion: string
+    entity: t.TypeOf<typeof AbstractEntityDecoder>
+  }
+  AbstractUuid: t.TypeOf<typeof AbstractUuidDecoder>
+  AbstractEntity: t.TypeOf<typeof AbstractEntityDecoder>
+  AbstractNotificationEvent: t.TypeOf<typeof AbstractNotificationEventDecoder>
+  ResourceMetadata: Record<string, unknown>
+  UserActivityByType: {
+    edits: number
+    reviews: number
+    taxonomy: number
+    comments: number
+  }
+  MediaUpload: { uploadUrl: string; urlAfterUpload: string }
+  DefaultResponse: { success: boolean; query: Record<string, never> }
+  ExecutePromptResponse: { success: boolean; record: unknown }
+  OauthAcceptResponse: { success: boolean; redirectUri: string }
+  SetEntityResponse: {
+    success: boolean
+    record: t.TypeOf<typeof AbstractEntityDecoder> | null
+    query: Record<string, never>
+  }
+}
+
+enum Role {
+  Admin = 'admin',
+  Architect = 'architect',
+  Guest = 'guest',
+  Login = 'login',
+  Moderator = 'moderator',
+  Reviewer = 'reviewer',
+  StaticPagesBuilder = 'static_pages_builder',
+  Sysadmin = 'sysadmin',
 }

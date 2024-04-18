@@ -7,13 +7,13 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
+import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
   Model,
-  Context,
 } from '~/internals/graphql'
 import {
   CommentDecoder,

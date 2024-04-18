@@ -4,12 +4,13 @@ import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
 import { autoreviewTaxonomyIds, defaultLicenseIds } from '~/config'
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import {
+  Model,
   assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
-  Context,
 } from '~/internals/graphql'
 import {
   EntityDecoder,
@@ -53,7 +54,7 @@ export function createSetEntityResolver() {
     _parent: unknown,
     { input }: { input: SetAbstractEntityInput },
     { dataSources, userId }: Context,
-  ) => {
+  ): Promise<Model<'SetEntityResponse'>> => {
     const {
       entityType,
       changes,

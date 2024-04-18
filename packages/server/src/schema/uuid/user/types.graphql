@@ -8,7 +8,7 @@ type User implements AbstractUuid & ThreadAware {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -66,19 +66,8 @@ type UserQuery {
     instance: Instance
     first: Int
     after: String
-  ): UserWithPermissionsConnection!
+  ): UserConnection!
   userByUsername(username: String!): User
-}
-
-type UserWithPermissionsConnection {
-  permissions: [String!]!
-  inheritance: [Role!]
-
-  # extends UserConnection
-  edges: [UserEdge!]!
-  nodes: [User!]!
-  totalCount: Int!
-  pageInfo: PageInfo!
 }
 
 type UserConnection {
@@ -105,29 +94,19 @@ extend type Mutation {
 }
 
 type UserMutation {
-  addRole(input: UserRoleInput!): UserRoleResponse!
-  deleteBots(input: UserDeleteBotsInput!): UserDeleteBotsResponse!
-  deleteRegularUsers(
-    input: UserDeleteRegularUsersInput!
-  ): [UserDeleteRegularUsersResponse!]!
-  removeRole(input: UserRoleInput!): UserRoleResponse!
-  setDescription(input: UserSetDescriptionInput!): UserSetDescriptionResponse!
-  setEmail(input: UserSetEmailInput!): UserSetEmailResponse!
+  addRole(input: UserRoleInput!): DefaultResponse!
+  deleteBots(input: UserDeleteBotsInput!): DefaultResponse!
+  deleteRegularUser(input: UserDeleteRegularUsersInput!): DefaultResponse!
+  removeRole(input: UserRoleInput!): DefaultResponse!
+  setDescription(input: UserSetDescriptionInput!): DefaultResponse!
+  setEmail(input: UserSetEmailInput!): DefaultResponse!
 }
 
 input UserDeleteBotsInput {
   botIds: [Int!]!
 }
 
-type UserDeleteBotsResponse {
-  success: Boolean!
-}
-
 input UserDeleteRegularUsersInput {
-  users: [UserDescriptionInput!]!
-}
-
-input UserDescriptionInput {
   id: Int!
   username: String!
 }
@@ -144,25 +123,11 @@ input UserRoleInput {
   instance: Instance
 }
 
-type UserRoleResponse {
-  success: Boolean!
-}
-
 input UserSetDescriptionInput {
   description: String!
 }
 
-type UserSetDescriptionResponse {
-  success: Boolean!
-}
-
 input UserSetEmailInput {
   userId: Int!
-  email: String!
-}
-
-type UserSetEmailResponse {
-  success: Boolean!
-  username: String!
   email: String!
 }
