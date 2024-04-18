@@ -3,7 +3,7 @@ import type { Server } from 'http'
 import { bypass } from 'msw'
 
 import { given } from '../__utils__'
-import { Kratos } from '~/internals/authentication'
+import { Kratos } from '~/context/auth-services'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 const port = 8100
