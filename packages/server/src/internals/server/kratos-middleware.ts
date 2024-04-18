@@ -1,11 +1,11 @@
 import { IdentityStateEnum } from '@ory/client'
+import * as Sentry from '@sentry/node'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 import { validate as uuidValidate } from 'uuid'
 
 import { Kratos } from '../authentication'
-import { Sentry } from '../sentry'
 import { createRequest } from '~/internals/data-source-helper'
 import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'

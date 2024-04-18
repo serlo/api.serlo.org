@@ -1,8 +1,7 @@
+import * as Sentry from '@sentry/node'
 import { array as A } from 'fp-ts'
 import * as F from 'fp-ts/lib/function'
 import * as R from 'ramda'
-
-import { Sentry } from '~/internals/sentry'
 
 export interface ErrorEvent extends ErrorContext {
   error: Error
