@@ -435,8 +435,13 @@ export const resolvers: Resolvers = {
         input.description,
         userId,
       ])
-      await dataSources.model.serlo.getUuid._querySpec.removeCache({
-        payload: { id: userId },
+      await dataSources.model.serlo.getUuid._querySpec.setCache({
+          payload: { id: userId },
+          getValue(current) {
+            if (!current) return
+
+            return { ...current, description: input.description }
+          },
       })
       return { success: true, query: {} }
     },
