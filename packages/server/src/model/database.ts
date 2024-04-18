@@ -1,7 +1,7 @@
 import * as mysql from 'mysql2/promise'
 
+import { captureErrorEvent } from '~/error-event'
 import { UserInputError } from '~/errors'
-import { captureErrorEvent } from '~/internals/error-event'
 
 let pool: mysql.Pool | null
 
