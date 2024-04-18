@@ -5,15 +5,15 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { Context } from '~/context'
-import { UserInputError } from '~/errors'
-import { ModelDataSource } from '~/internals/data-source'
 import {
   addContext,
   assertAll,
   captureErrorEvent,
   consumeErrorEvent,
   ErrorEvent,
-} from '~/internals/error-event'
+} from '~/error-event'
+import { UserInputError } from '~/errors'
+import { ModelDataSource } from '~/internals/data-source'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,

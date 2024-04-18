@@ -1,8 +1,8 @@
 import { Session } from '@ory/client'
 import * as t from 'io-ts'
 
+import { captureErrorEvent } from '~/error-event'
 import { ForbiddenError } from '~/errors'
-import { captureErrorEvent } from '~/internals/error-event'
 import { createNamespace, assertUserIsAuthenticated } from '~/internals/graphql'
 import { Resolvers } from '~/types'
 

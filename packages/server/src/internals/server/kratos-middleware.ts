@@ -6,8 +6,8 @@ import { JwtPayload, decode } from 'jsonwebtoken'
 import { validate as uuidValidate } from 'uuid'
 
 import { Kratos } from '../authentication'
+import { captureErrorEvent } from '~/error-event'
 import { createRequest } from '~/internals/data-source-helper'
-import { captureErrorEvent } from '~/internals/error-event'
 import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'

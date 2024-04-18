@@ -4,9 +4,9 @@ import * as t from 'io-ts'
 import { nonEmptyArray } from 'io-ts-types/lib/nonEmptyArray'
 import { URL } from 'url'
 
+import { addContext, ErrorEvent } from '~/error-event'
 import { createLegacyQuery } from '~/internals/data-source-helper'
 import { Environment } from '~/internals/environment'
-import { addContext, ErrorEvent } from '~/internals/error-event'
 
 export enum MajorDimension {
   Rows = 'ROWS',
