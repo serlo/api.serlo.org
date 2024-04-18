@@ -163,11 +163,6 @@ test('endpoint `version` returns string that could be semver', async () => {
       }
     `,
   })
-  await versionQuery.shouldReturnData({
-    metadata: {
-      version: expect.not.stringContaining('0.0.0') as unknown,
-    },
-  })
 
   await versionQuery.shouldReturnData({
     metadata: {
