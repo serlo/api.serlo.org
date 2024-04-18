@@ -2,13 +2,17 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import { URL } from 'url'
 
+import { Context } from '~/context'
 import {
   createMutation,
   createLegacyQuery,
 } from '~/internals/data-source-helper'
-import { Environment } from '~/internals/environment'
 
-export function createChatModel({ environment }: { environment: Environment }) {
+export function createChatModel({
+  context,
+}: {
+  context: Pick<Context, 'swrQueue' | 'cache'>
+}) {
   const getUsersInfo = createLegacyQuery(
     {
       type: 'community.serlo.org/get-users-info',
@@ -33,7 +37,7 @@ export function createChatModel({ environment }: { environment: Environment }) {
       },
       examplePayload: { username: 'aeneas' },
     },
-    environment,
+    context,
   )
 
   const deleteUser = createMutation({

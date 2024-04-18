@@ -2,7 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { Environment } from '../environment'
+import { Context } from '~/context'
 import { InvalidCurrentValueError } from '~/errors'
 import { timeToSeconds, Time } from '~/timer'
 import { FunctionOrValue } from '~/utils'
@@ -13,7 +13,7 @@ import { FunctionOrValue } from '~/utils'
  */
 export function createLegacyQuery<P, R>(
   spec: LegacyQuerySpec<P, R>,
-  environment: Environment,
+  context: Pick<Context, 'swrQueue' | 'cache'>,
 ): LegacyQuery<P, R> {
   const ttlInSeconds = spec.maxAge ? timeToSeconds(spec.maxAge) : undefined
 
@@ -22,7 +22,7 @@ export function createLegacyQuery<P, R>(
     customDecoder?: t.Type<S, unknown>,
   ): Promise<S> {
     const key = spec.getKey(payload)
-    const cacheValue = await environment.cache.get<R>({
+    const cacheValue = await context.cache.get<R>({
       key,
       maxAge: spec.maxAge,
     })
@@ -37,7 +37,7 @@ export function createLegacyQuery<P, R>(
           spec.swrFrequency === undefined ||
           Math.random() < spec.swrFrequency
         ) {
-          await environment.swrQueue.queue({ key, cacheEntry: cacheValue })
+          await context.swrQueue.queue({ key, cacheEntry: cacheValue })
         }
 
         return cacheEntry.value as S
@@ -48,7 +48,7 @@ export function createLegacyQuery<P, R>(
     const value = await spec.getCurrentValue(payload)
 
     if (decoder.is(value)) {
-      await environment.cache.set({
+      await context.cache.set({
         key,
         value,
         source: 'API: From a call to a data source',
@@ -80,14 +80,14 @@ export function createLegacyQuery<P, R>(
     async removeCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          environment.cache.remove({ key: spec.getKey(payload) }),
+          context.cache.remove({ key: spec.getKey(payload) }),
         ),
       )
     },
     async setCache(args) {
       await Promise.all(
         toPayloadArray(args).map((payload) =>
-          environment.cache.set({
+          context.cache.set({
             key: spec.getKey(payload),
             ...args,
             ttlInSeconds,
