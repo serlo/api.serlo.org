@@ -29,7 +29,7 @@ export const UuidResolver = createCachedResolver<
   { id: number },
   Model<'AbstractUuid'> | null
 >({
-  resolverNameForErrorMessage: 'UuidResolver',
+  name: 'UuidResolver',
   decoder: t.union([t.null, UuidDecoder]),
   enableSwr: true,
   staleAfter: { days: 1 },
