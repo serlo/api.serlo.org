@@ -39,7 +39,7 @@ export const UuidResolver = createCachedResolver<
   },
   getPayload: (key) => {
     if (!key.startsWith('uuid/')) return O.none
-    const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
+    const id = parseInt(key.replace('uuid/', ''), 10)
     return O.some({ id })
   },
   getCurrentValue: resolveUuidFromDatabase,
