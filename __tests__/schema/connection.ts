@@ -74,5 +74,5 @@ test('throws an error when first > limit', () => {
       createCursor: (node) => node.toString(),
       limit: 500,
     })
-  }).toThrowError(UserInputError)
+  }).toThrow(UserInputError)
 })
