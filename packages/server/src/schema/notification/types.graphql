@@ -18,6 +18,7 @@ extend type Query {
   events(
     after: String
     first: Int
+    last: Int
     actorId: Int
     actorUsername: String
     objectId: Int
