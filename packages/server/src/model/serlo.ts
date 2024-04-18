@@ -11,12 +11,12 @@ import {
   PageRevisionDecoder,
   UserDecoder,
 } from './decoder'
+import { Context } from '~/context'
 import {
   createMutation,
   createLegacyQuery,
   createRequest,
 } from '~/internals/data-source-helper'
-import { Environment } from '~/internals/environment'
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
 import { isSupportedNotificationEvent } from '~/schema/notification/utils'
@@ -25,9 +25,9 @@ import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
 
 export function createSerloModel({
-  environment,
+  context,
 }: {
-  environment: Environment
+  context: Pick<Context, 'cache' | 'swrQueue'>
 }) {
   const getUuid = createLegacyQuery(
     {
@@ -50,7 +50,7 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment,
+    context,
   )
 
   async function getUuidWithCustomDecoder<
@@ -100,7 +100,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment,
+    context,
   )
 
   const getActiveReviewerIds = createLegacyQuery(
@@ -121,7 +121,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment,
+    context,
   )
 
   const getActivityByType = createLegacyQuery(
@@ -149,7 +149,7 @@ export function createSerloModel({
       },
       examplePayload: { userId: 1 },
     },
-    environment,
+    context,
   )
 
   const getPotentialSpamUsers = createRequest({
@@ -231,7 +231,7 @@ export function createSerloModel({
       },
       examplePayload: { path: '/math', instance: Instance.En },
     },
-    environment,
+    context,
   )
 
   const getSubjects = createLegacyQuery(
@@ -249,7 +249,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment,
+    context,
   )
 
   const getUnrevisedEntities = createLegacyQuery(
@@ -268,7 +268,7 @@ export function createSerloModel({
       },
       examplePayload: undefined,
     },
-    environment,
+    context,
   )
 
   const getUnrevisedEntitiesPerSubject = createRequest({
@@ -315,7 +315,7 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment,
+    context,
   )
 
   const getEventsAfter = createRequest({
@@ -357,7 +357,7 @@ export function createSerloModel({
       maxAge: { hours: 1 },
       examplePayload: { first: 5 },
     },
-    environment,
+    context,
   )
 
   const getNotifications = createLegacyQuery(
@@ -381,7 +381,7 @@ export function createSerloModel({
       },
       examplePayload: { userId: 1 },
     },
-    environment,
+    context,
   )
 
   const setNotificationState = createMutation({
@@ -429,7 +429,7 @@ export function createSerloModel({
       },
       examplePayload: { userId: 1 },
     },
-    environment,
+    context,
   )
 
   const setSubscription = createMutation({
@@ -485,7 +485,7 @@ export function createSerloModel({
       },
       examplePayload: { id: 1 },
     },
-    environment,
+    context,
   )
 
   const createThread = createMutation({

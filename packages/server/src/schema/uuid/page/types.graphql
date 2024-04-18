@@ -3,17 +3,13 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
   trashed: Boolean!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -26,9 +22,7 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
   currentRevision: PageRevision
   revisions(
     after: String
-    before: String
     first: Int
-    last: Int
     unrevised: Boolean
   ): PageRevisionConnection!
 }
@@ -40,17 +34,13 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
   alias: String!
   threads(
     after: String
-    before: String
     first: Int
-    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -62,15 +52,9 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
 }
 
 type PageRevisionConnection {
-  edges: [PageRevisionCursor!]!
   nodes: [PageRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type PageRevisionCursor {
-  cursor: String!
-  node: PageRevision!
 }
 
 extend type Mutation {

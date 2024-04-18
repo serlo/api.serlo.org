@@ -1,4 +1,5 @@
 import { flush as flushSentry, type Event } from '@sentry/node'
+import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
@@ -11,7 +12,7 @@ import {
 } from './__tests__/__utils__'
 import { type Cache } from '~/context/cache'
 import { createCache, createNamespacedCache } from '~/internals/cache'
-import { initializeSentry, Sentry } from '~/internals/sentry'
+import { initializeSentry } from '~/internals/sentry'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 
 beforeAll(() => {

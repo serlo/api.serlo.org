@@ -3,14 +3,13 @@ import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { createAuthServices } from './authentication'
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
-import { captureErrorEvent } from './error-event'
 import { log } from './log'
 import { type Context } from '~/context'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
+import { captureErrorEvent } from '~/error-event'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
 import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
@@ -47,15 +46,8 @@ export function createSwrQueue({
   cache: Cache
   timer: Timer
 }): SwrQueue {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({ context: { cache, swrQueue: emptySwrQueue } }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),
@@ -149,15 +141,8 @@ export function createSwrQueueWorker({
   quit(): Promise<void>
   _queue: never
 } {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({ context: { cache, swrQueue: emptySwrQueue } }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),
