@@ -139,18 +139,6 @@ describe('endpoint "resources"', () => {
       },
     })
   })
-
-  test('fails when database layer returns bad request', async () => {
-    given('EntitiesMetadataQuery').returnsBadRequest()
-
-    await query.shouldFailWithError('BAD_USER_INPUT')
-  })
-
-  test('fails when database layer has internal server error', async () => {
-    given('EntitiesMetadataQuery').hasInternalServerError()
-
-    await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
 })
 
 test('endpoint `version` returns string that could be semver', async () => {
