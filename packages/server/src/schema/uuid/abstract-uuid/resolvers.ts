@@ -43,6 +43,7 @@ export const UuidResolver = createCachedResolver<
     return O.some({ id })
   },
   getCurrentValue: resolveUuidFromDatabase,
+  examplePayload: { id: 1 },
 })
 
 export const resolvers: Resolvers = {
