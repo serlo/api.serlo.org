@@ -1,3 +1,5 @@
+import * as R from 'ramda'
+
 import { Connection, ConnectionPayload } from './types'
 import { UserInputError } from '~/errors'
 
@@ -13,10 +15,22 @@ export function resolveConnection<T>({
   createCursor(node: T): string
   limit?: number
 }): Connection<T> {
-  const { after, first = limit } = payload
+  const { before, after, last } = payload
+  let { first } = payload
 
   if (first != null && first > limit) {
     throw new UserInputError(`first cannot be higher than limit=${limit}`)
+  }
+  if (last != null && last > limit) {
+    throw new UserInputError(`last cannot be higher than limit=${limit}`)
+  }
+  if (first != null && last != null) {
+    throw new UserInputError(
+      '`first` and `last` cannot be set at the same time',
+    )
+  }
+  if (first == null && last == null) {
+    first = limit
   }
 
   let startIndex = 0
@@ -25,19 +39,29 @@ export function resolveConnection<T>({
   if (after != null) {
     startIndex = nodes.findIndex((node) => encodeCursor(node) === after) + 1
   }
+  if (before != null) {
+    endIndex = R.findLastIndex((node) => encodeCursor(node) === before, nodes)
+    if (endIndex < 0) endIndex = nodes.length
+  }
 
   if (first != null) endIndex = Math.min(endIndex, startIndex + first)
+  if (last != null) startIndex = Math.max(startIndex, endIndex - last)
 
   const selectedNodes = nodes.slice(startIndex, endIndex)
-  const lastSelectNode = selectedNodes.at(-1)
+  const edges = selectedNodes.map((node) => {
+    return { cursor: encodeCursor(node), node }
+  })
 
   return {
+    edges,
     nodes: selectedNodes,
     totalCount: nodes.length,
     pageInfo: {
+      // @ts-expect-error We want to delete `hasPreviousPage` anyways
+      hasPreviousPage: startIndex > 0,
       hasNextPage: endIndex < nodes.length,
-      endCursor:
-        lastSelectNode !== undefined ? encodeCursor(lastSelectNode) : null,
+      startCursor: edges.length > 0 ? edges[0].cursor : null,
+      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     },
   }
 

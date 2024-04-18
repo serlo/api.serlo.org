@@ -6,7 +6,9 @@ interface AbstractRepository {
   title: String!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -15,7 +17,9 @@ interface AbstractRepository {
   # extends ThreadAware
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
@@ -35,7 +39,9 @@ interface AbstractRevision {
   title: String!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -44,7 +50,9 @@ interface AbstractRevision {
   # extends ThreadAware
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
