@@ -31,7 +31,6 @@ import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
-import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
@@ -427,7 +426,7 @@ export const resolvers: Resolvers = {
     },
 
     async setDescription(_parent, { input }, context) {
-      const { userId, database } = context
+      const { dataSources, userId, database } = context
       assertUserIsAuthenticated(userId)
       if (input.description.length >= 64 * 1024) {
         throw new UserInputError('description too long')
@@ -436,7 +435,9 @@ export const resolvers: Resolvers = {
         input.description,
         userId,
       ])
-      await dataSources.model.getUuid._querySpec.removeCache()
+      await dataSources.model.serlo.getUuid._querySpec.removeCache({
+        payload: { id: userId },
+      })
       return { success: true, query: {} }
     },
 
