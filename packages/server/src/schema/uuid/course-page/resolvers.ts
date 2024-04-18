@@ -4,14 +4,14 @@ import {
   CoursePageRevisionDecoder,
 } from '~/model/decoder'
 import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+  createEntityRevisionResolvers,
+  createEntityResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
   CoursePage: {
-    ...createRepositoryResolvers({
+    ...createEntityResolvers({
       revisionDecoder: CoursePageRevisionDecoder,
     }),
     async course(coursePage, _args, { dataSources }) {
@@ -21,7 +21,7 @@ export const resolvers: Resolvers = {
       })
     },
   },
-  CoursePageRevision: createRevisionResolvers({
+  CoursePageRevision: createEntityRevisionResolvers({
     repositoryDecoder: CoursePageDecoder,
   }),
 }

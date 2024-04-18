@@ -21,7 +21,7 @@ interface AbstractEntity {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
 
   date: DateTime!
   instance: Instance!
@@ -64,10 +64,9 @@ interface AbstractEntityRevision {
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
 
   # Implicitly has the following field
-  # repository: AbstractRepository!
   author: User!
   date: DateTime!
   content: String!

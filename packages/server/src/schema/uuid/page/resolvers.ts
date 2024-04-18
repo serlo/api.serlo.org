@@ -10,9 +10,9 @@ import {
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import {
-  createRepositoryResolvers,
-  createRevisionResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+  createEntityRevisionResolvers,
+  createEntityResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
@@ -22,8 +22,8 @@ export const resolvers: Resolvers = {
   Mutation: {
     page: createNamespace(),
   },
-  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
-  PageRevision: createRevisionResolvers({
+  Page: createEntityResolvers({ revisionDecoder: PageRevisionDecoder }),
+  PageRevision: createEntityRevisionResolvers({
     repositoryDecoder: PageDecoder,
   }),
   PageMutation: {

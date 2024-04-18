@@ -6,15 +6,15 @@ import {
   CourseRevisionDecoder,
 } from '~/model/decoder'
 import {
-  createRevisionResolvers,
-  createRepositoryResolvers,
-} from '~/schema/uuid/abstract-repository/utils'
+  createEntityRevisionResolvers,
+  createEntityResolvers,
+} from '~/schema/uuid/abstract-entity/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
   Course: {
-    ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
+    ...createEntityResolvers({ revisionDecoder: CourseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
     async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
       const pages = await Promise.all(
@@ -38,7 +38,7 @@ export const resolvers: Resolvers = {
       })
     },
   },
-  CourseRevision: createRevisionResolvers({
+  CourseRevision: createEntityRevisionResolvers({
     repositoryDecoder: CourseDecoder,
   }),
 }
