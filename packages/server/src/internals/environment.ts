@@ -1,4 +1,4 @@
-import { AuthServices } from './authentication'
+import { AuthServices } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
 
