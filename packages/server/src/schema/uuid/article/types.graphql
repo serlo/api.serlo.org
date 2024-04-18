@@ -8,7 +8,7 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -51,7 +51,7 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -66,8 +66,11 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   title: String!
   content: String!
   changes: String!
+
   metaTitle: String!
   metaDescription: String!
+
+  url: String
 }
 
 type ArticleRevisionConnection implements AbstractEntityRevisionConnection {

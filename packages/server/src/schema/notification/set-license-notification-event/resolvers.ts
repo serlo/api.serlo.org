@@ -1,9 +1,8 @@
 import { createNotificationEventResolvers } from '../utils'
-import { TypeResolvers } from '~/internals/graphql'
 import { RepositoryDecoder } from '~/model/decoder'
-import { SetLicenseNotificationEvent } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<SetLicenseNotificationEvent> = {
+export const resolvers: Resolvers = {
   SetLicenseNotificationEvent: {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, { dataSources }) {

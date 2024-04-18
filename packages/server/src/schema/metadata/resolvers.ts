@@ -1,8 +1,9 @@
 import { resolveConnection } from '../connection/utils'
 import { UserInputError } from '~/errors'
-import { createNamespace, decodeId, Queries } from '~/internals/graphql'
+import { createNamespace, decodeId } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
-export const resolvers: Queries<'metadata'> = {
+export const resolvers: Resolvers = {
   Query: {
     metadata: createNamespace(),
   },
@@ -39,7 +40,7 @@ export const resolvers: Queries<'metadata'> = {
      * @deprecated
      */
     entities(parent, args, context, info) {
-      if (typeof resolvers.MetadataQuery.resources === 'function') {
+      if (typeof resolvers.MetadataQuery?.resources === 'function') {
         return resolvers.MetadataQuery.resources(parent, args, context, info)
       } else {
         throw new Error('Illegal State')
@@ -82,7 +83,7 @@ export const resolvers: Queries<'metadata'> = {
       }
     },
     version() {
-      return process.env.METADATA_API_VERSION ?? '1.3.0'
+      return '2.0.0'
     },
   },
 }

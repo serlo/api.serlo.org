@@ -1,15 +1,18 @@
 import dotenv from 'dotenv'
 import createApp from 'express'
+import { Pool, createPool } from 'mysql2/promise'
 
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { createAuthServices, AuthServices } from '../authentication'
-import { Cache, createCache, createEmptyCache } from '../cache'
+import { createCache, createEmptyCache } from '../cache'
 import { initializeSentry } from '../sentry'
-import { createSwrQueue, SwrQueue } from '../swr-queue'
-import { createTimer } from '../timer'
+import { createSwrQueue } from '../swr-queue'
+import { Cache } from '~/context/cache'
+import { SwrQueue } from '~/context/swr-queue'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
+import { createTimer } from '~/timer'
 
 export { getGraphQLOptions } from './graphql-middleware'
 
@@ -24,17 +27,20 @@ export async function start() {
       : createCache({ timer })
   const swrQueue = createSwrQueue({ cache, timer })
   const authServices = createAuthServices()
-  await initializeServer({ cache, swrQueue, authServices })
+  const pool = createPool(process.env.MYSQL_URI)
+  await initializeServer({ cache, swrQueue, authServices, pool })
 }
 
 async function initializeServer({
   cache,
   swrQueue,
   authServices,
+  pool,
 }: {
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
+  pool: Pool
 }) {
   const app = createApp()
   const healthPath = '/health'
@@ -44,6 +50,7 @@ async function initializeServer({
     cache,
     swrQueue,
     authServices,
+    pool,
   })
   const kratosPath = applyKratosMiddleware({
     app,

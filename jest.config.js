@@ -7,7 +7,7 @@ export default {
     '@serlo/authorization': '@serlo/authorization/src',
   },
   setupFiles: ['dotenv/config'],
-  setupFilesAfterEnv: ['<rootDir>/__config__/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   // Fixes issue with memory leak in Jest see
   // https://github.com/jestjs/jest/issues/11956
   workerIdleMemoryLimit: '1GB',

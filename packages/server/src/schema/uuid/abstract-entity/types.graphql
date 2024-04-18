@@ -57,6 +57,12 @@ interface AbstractEntityRevision {
 
   repository: AbstractEntity!
   changes: String!
+
+  # optional fields that we should get rid of or generalize in the long term :)
+  metaTitle: String
+  metaDescription: String
+
+  url: String
 }
 
 type AbstractEntityConnection {
@@ -80,7 +86,7 @@ type EntityQuery {
     first: Int
     after: String
     instance: Instance
-  ): DeletedEntitiesConnection!
+  ): DeletedEntityConnection!
 }
 
 type DeletedEntity {
@@ -93,7 +99,7 @@ type DeletedEntityCursor {
   node: DeletedEntity!
 }
 
-type DeletedEntitiesConnection {
+type DeletedEntityConnection {
   edges: [DeletedEntityCursor!]!
   nodes: [DeletedEntity!]!
   totalCount: Int!
@@ -105,21 +111,16 @@ extend type Mutation {
 }
 
 type EntityMutation {
-  setApplet(input: SetAppletInput!): SetEntityResponse!
-  setArticle(input: SetArticleInput!): SetEntityResponse!
-  setCourse(input: SetCourseInput!): SetEntityResponse!
-  setCoursePage(input: SetCoursePageInput!): SetEntityResponse!
-  setEvent(input: SetEventInput!): SetEntityResponse!
-  setExercise(input: SetGenericEntityInput!): SetEntityResponse!
-  setExerciseGroup(input: SetExerciseGroupInput!): SetEntityResponse!
-  setVideo(input: SetVideoInput!): SetEntityResponse!
-  updateLicense(input: EntityUpdateLicenseInput!): EntityUpdateLicenseResponse!
-  checkoutRevision(input: CheckoutRevisionInput!): CheckoutRevisionResponse!
-  rejectRevision(input: RejectRevisionInput!): RejectRevisionResponse!
-  sort(input: EntitySortInput!): EntitySortResponse!
+  setAbstractEntity(input: SetAbstractEntityInput!): SetEntityResponse!
+  updateLicense(input: EntityUpdateLicenseInput!): DefaultResponse!
+  checkoutRevision(input: CheckoutRevisionInput!): DefaultResponse!
+  rejectRevision(input: RejectRevisionInput!): DefaultResponse!
+  sort(input: EntitySortInput!): DefaultResponse!
 }
 
-input SetAppletInput {
+input SetAbstractEntityInput {
+  entityType: String!
+
   changes: String!
   subscribeThis: Boolean!
   subscribeThisByEmail: Boolean!
@@ -127,100 +128,11 @@ input SetAppletInput {
   entityId: Int
   parentId: Int
 
-  content: String!
-  title: String!
-  url: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input SetArticleInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-  metaDescription: String
-  metaTitle: String
-}
-
-input SetCourseInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  title: String!
   content: String
-  metaDescription: String
-}
-
-input SetCoursePageInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-}
-
-input SetEventInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
+  title: String
   metaDescription: String
   metaTitle: String
-}
-
-input SetExerciseGroupInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  cohesive: Boolean!
-  content: String!
-}
-
-input SetGenericEntityInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-}
-
-input SetVideoInput {
-  changes: String!
-  subscribeThis: Boolean!
-  subscribeThisByEmail: Boolean!
-  needsReview: Boolean!
-  entityId: Int
-  parentId: Int
-
-  content: String!
-  title: String!
-  url: String!
+  url: String
 }
 
 type SetEntityResponse {
@@ -234,19 +146,9 @@ input EntityUpdateLicenseInput {
   licenseId: Int!
 }
 
-type EntityUpdateLicenseResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input CheckoutRevisionInput {
   revisionId: Int!
   reason: String!
-}
-
-type CheckoutRevisionResponse {
-  success: Boolean!
-  query: Query!
 }
 
 input RejectRevisionInput {
@@ -254,17 +156,7 @@ input RejectRevisionInput {
   reason: String!
 }
 
-type RejectRevisionResponse {
-  success: Boolean!
-  query: Query!
-}
-
 input EntitySortInput {
   entityId: Int!
   childrenIds: [Int!]!
-}
-
-type EntitySortResponse {
-  success: Boolean!
-  query: Query!
 }

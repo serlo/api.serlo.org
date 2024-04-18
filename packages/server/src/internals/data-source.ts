@@ -29,10 +29,4 @@ export class ModelDataSource extends RESTDataSource {
     this.kratos = createKratosModel({ environment })
     this.authServices = environment.authServices
   }
-
-  public async removeCacheValue({ keys }: { keys: string[] }) {
-    for (const key of keys) {
-      await this.environment.cache.remove({ key })
-    }
-  }
 }

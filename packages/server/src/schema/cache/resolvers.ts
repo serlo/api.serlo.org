@@ -1,5 +1,6 @@
 import { ForbiddenError } from '~/errors'
-import { createNamespace, Mutations } from '~/internals/graphql'
+import { createNamespace } from '~/internals/graphql'
+import { Resolvers } from '~/types'
 
 const allowedUserIds = [
   26217, // kulla
@@ -9,12 +10,12 @@ const allowedUserIds = [
   245844, // MoeHome
 ]
 
-export const resolvers: Mutations<'_cache'> = {
+export const resolvers: Resolvers = {
   Mutation: {
     _cache: createNamespace(),
   },
   _cacheMutation: {
-    async remove(_parent, { input }, { dataSources, userId }) {
+    async remove(_parent, { input }, { cache, userId }) {
       if (
         process.env.ENVIRONMENT !== 'local' &&
         (userId === null || !allowedUserIds.includes(userId))
@@ -24,7 +25,8 @@ export const resolvers: Mutations<'_cache'> = {
         )
       }
 
-      await dataSources.model.removeCacheValue({ keys: input.keys })
+      await Promise.all(input.keys.map((key) => cache.remove({ key })))
+
       return { success: true, query: {} }
     },
   },

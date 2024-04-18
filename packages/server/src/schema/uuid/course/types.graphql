@@ -8,7 +8,7 @@ type Course implements AbstractUuid & AbstractRepository & AbstractEntity & Abst
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -52,7 +52,7 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
     last: Int
     archived: Boolean
     trashed: Boolean
-  ): ThreadsConnection!
+  ): ThreadConnection!
   events(
     after: String
     before: String
@@ -67,7 +67,11 @@ type CourseRevision implements AbstractUuid & AbstractRevision & AbstractEntityR
   title: String!
   content: String!
   changes: String!
+
+  metaTitle: String
   metaDescription: String!
+
+  url: String
 }
 
 type CourseRevisionConnection implements AbstractEntityRevisionConnection {

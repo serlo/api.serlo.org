@@ -18,7 +18,6 @@ export const exerciseGroupRevision: Model<'ExerciseGroupRevision'> = {
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: exerciseGroupId,
-  cohesive: false,
   content: castToNonEmptyString('content'),
   changes: 'changes',
 }

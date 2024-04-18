@@ -1,14 +1,14 @@
-import { TypeResolvers } from '~/internals/graphql'
 import { ArticleDecoder, ArticleRevisionDecoder } from '~/model/decoder'
-import { createEntityResolvers } from '~/schema/uuid/abstract-entity/utils'
-import { createRevisionResolvers } from '~/schema/uuid/abstract-repository/utils'
+import {
+  createRevisionResolvers,
+  createRepositoryResolvers,
+} from '~/schema/uuid/abstract-repository/utils'
 import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
-import { Article, ArticleRevision } from '~/types'
+import { Resolvers } from '~/types'
 
-export const resolvers: TypeResolvers<Article> &
-  TypeResolvers<ArticleRevision> = {
+export const resolvers: Resolvers = {
   Article: {
-    ...createEntityResolvers({ revisionDecoder: ArticleRevisionDecoder }),
+    ...createRepositoryResolvers({ revisionDecoder: ArticleRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
   ArticleRevision: createRevisionResolvers({
