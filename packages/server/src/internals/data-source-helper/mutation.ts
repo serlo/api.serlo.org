@@ -1,7 +1,7 @@
 import { either as E } from 'fp-ts'
 import t from 'io-ts'
 
-import { InvalidCurrentValueError } from './common'
+import { InvalidCurrentValueError } from "~/errors"
 import { AsyncOrSync } from '~/utils'
 
 /**

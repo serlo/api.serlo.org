@@ -2,8 +2,8 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { InvalidCurrentValueError } from './common'
 import { Environment } from '../environment'
+import { InvalidCurrentValueError } from "~/errors"
 import { timeToSeconds, Time } from '~/timer'
 import { FunctionOrValue } from '~/utils'
 

@@ -1,8 +1,8 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InvalidCurrentValueError } from './internals/data-source-helper/common'
 import { Context } from '~/context'
+import { InvalidCurrentValueError } from "~/errors"
 import { Time, timeToSeconds } from '~/timer'
 
 export function createCachedResolver<P, R>(
