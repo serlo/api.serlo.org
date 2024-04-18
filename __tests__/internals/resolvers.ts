@@ -4,8 +4,7 @@ import { cachedResolvers } from '~/schema'
 
 describe('getPayload() is always the inverse to getKey()', () => {
   const testCases = cachedResolvers.map(
-    (resolver) =>
-      [resolver.spec.resolverNameForErrorMessage, resolver.spec] as const,
+    (resolver) => [resolver.spec.name, resolver.spec] as const,
   )
 
   test.each(testCases)(

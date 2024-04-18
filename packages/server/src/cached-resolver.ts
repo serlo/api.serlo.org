@@ -52,7 +52,7 @@ export function createCachedResolver<P, R>(
           invalidCurrentValue: value,
           decoder: customDecoder.name,
           payload,
-          type: spec.resolverNameForErrorMessage,
+          type: spec.name,
           key,
         })
       }
@@ -79,7 +79,7 @@ interface ResolverSpec<Payload, Result> {
   swrFrequency?: number
   staleAfter?: Time
   maxAge?: Time
-  resolverNameForErrorMessage: string
+  name: string
   examplePayload: Payload
 }
 
