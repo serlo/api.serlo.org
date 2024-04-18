@@ -1376,6 +1376,7 @@ export type QueryEventsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
+  last?: InputMaybe<Scalars['Int']['input']>;
   objectId?: InputMaybe<Scalars['Int']['input']>;
 };
 
