@@ -15,7 +15,7 @@ export const resolvers: Resolvers = {
     _cache: createNamespace(),
   },
   _cacheMutation: {
-    async remove(_parent, { input }, { dataSources, userId }) {
+    async remove(_parent, { input }, { cache, userId }) {
       if (
         process.env.ENVIRONMENT !== 'local' &&
         (userId === null || !allowedUserIds.includes(userId))
@@ -25,7 +25,8 @@ export const resolvers: Resolvers = {
         )
       }
 
-      await dataSources.model.removeCacheValue({ keys: input.keys })
+      await Promise.all(input.keys.map((key) => cache.remove({ key })))
+
       return { success: true, query: {} }
     },
   },

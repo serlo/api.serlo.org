@@ -139,7 +139,7 @@ describe('allThreads', () => {
     await query
       .withVariables({
         first: 2,
-        subjectId: encodeSubjectId(article.canonicalSubjectId!),
+        subjectId: encodeSubjectId(article.canonicalSubjectId),
       })
       .shouldReturnData({
         thread: {

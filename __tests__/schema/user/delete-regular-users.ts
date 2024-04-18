@@ -9,7 +9,6 @@ let client: Client
 let mutation: Query
 
 const user = { ...baseUser, roles: ['sysadmin'] }
-const users = [user, { ...user, username: 'foo', id: nextUuid(user.id) }]
 const noUserId = nextUuid(nextUuid(user.id))
 
 beforeEach(() => {
@@ -20,16 +19,14 @@ beforeEach(() => {
       query: gql`
         mutation ($input: UserDeleteRegularUsersInput!) {
           user {
-            deleteRegularUsers(input: $input) {
+            deleteRegularUser(input: $input) {
               success
-              username
-              reason
             }
           }
         }
       `,
     })
-    .withInput({ users: users.map(R.pick(['id', 'username'])) })
+    .withInput(R.pick(['id', 'username'], user))
 
   given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
     const body = await request.json()
@@ -40,47 +37,29 @@ beforeEach(() => {
     return HttpResponse.json({ success: true })
   })
 
-  given('UuidQuery').for(users)
+  given('UuidQuery').for(user)
 })
 
 test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(users.length)
+  expect(global.kratos.identities).toHaveLength(1)
 
   await mutation.shouldReturnData({
-    user: {
-      deleteRegularUsers: [
-        { success: true, username: user.username, reason: null },
-        { success: true, username: 'foo', reason: null },
-      ],
-    },
+    user: { deleteRegularUser: { success: true } },
   })
-  expect(global.kratos.identities).toHaveLength(users.length - 2)
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
-test('runs partially when one of the mutations failed', async () => {
-  given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
-    const body = await request.json()
-    const { userId } = body.payload
-
-    if (userId === user.id)
-      return HttpResponse.json({ success: false, reason: 'failure!' })
-
-    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
-
-    return HttpResponse.json({ success: true })
+test('fails when mutation failes', async () => {
+  given('UserDeleteRegularUsersMutation').returns({
+    success: false,
+    reason: 'failure',
   })
-
-  expect(global.kratos.identities).toHaveLength(users.length)
+  expect(global.kratos.identities).toHaveLength(1)
 
   await mutation.shouldReturnData({
-    user: {
-      deleteRegularUsers: [
-        { success: false, username: user.username, reason: 'failure!' },
-        { success: true, username: 'foo', reason: null },
-      ],
-    },
+    user: { deleteRegularUser: { success: false } },
   })
-  expect(global.kratos.identities).toHaveLength(users.length - 1)
+  expect(global.kratos.identities).toHaveLength(1)
 })
 
 test('fails when username does not match user', async () => {
@@ -128,7 +107,7 @@ test('fails when database layer has an internal error', async () => {
 
   await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 
-  expect(global.kratos.identities).toHaveLength(users.length)
+  expect(global.kratos.identities).toHaveLength(1)
 })
 
 test('fails when kratos has an error', async () => {

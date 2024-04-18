@@ -11,18 +11,18 @@ import jwt from 'jsonwebtoken'
 import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
+import { Cache } from '~/context/cache'
+import { Service } from '~/context/service'
+import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
 import {
   AuthServices,
   handleAuthentication,
   IdentityDecoder,
-  Service,
 } from '~/internals/authentication'
-import { Cache } from '~/internals/cache'
 import { ModelDataSource } from '~/internals/data-source'
-import { Context } from '~/internals/graphql'
 import { createSentryPlugin } from '~/internals/sentry'
-import { SwrQueue } from '~/internals/swr-queue'
 import { schema } from '~/schema'
 
 const SessionDecoder = t.type({

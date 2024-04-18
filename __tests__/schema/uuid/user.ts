@@ -471,7 +471,7 @@ describe('User', () => {
   test('property unrevisedEntities', async () => {
     const unrevisedRevisionByUser: Model<'ArticleRevision'> = {
       ...articleRevision,
-      id: nextUuid(article.currentRevisionId!),
+      id: nextUuid(article.currentRevisionId),
       authorId: user.id,
     }
     const unrevisedRevisionByAnotherUser: Model<'ArticleRevision'> = {

@@ -30,7 +30,7 @@ import {
   user2,
 } from '../../__fixtures__'
 import { getTypenameAndId, givenThreads, Client, given } from '../__utils__'
-import { Service } from '~/internals/authentication'
+import { Service } from '~/context/service'
 import { Instance } from '~/types'
 
 const notificationsQuery = new Client({ userId: user.id }).prepareQuery({

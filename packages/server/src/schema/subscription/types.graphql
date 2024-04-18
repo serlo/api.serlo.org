@@ -13,10 +13,10 @@ type SubscriptionQuery {
     before: String
     first: Int
     last: Int
-  ): SubscriptionConnection!
+  ): SubscriptionInfoConnection!
 }
 
-type SubscriptionConnection {
+type SubscriptionInfoConnection {
   edges: [SubscriptionCursor!]!
   nodes: [SubscriptionInfo!]!
   totalCount: Int!
@@ -34,16 +34,11 @@ type SubscriptionInfo {
 }
 
 type SubscriptionMutation {
-  set(input: SubscriptionSetInput!): SubscriptionSetResponse
+  set(input: SubscriptionSetInput!): DefaultResponse!
 }
 
 input SubscriptionSetInput {
   id: [Int!]!
   subscribe: Boolean!
   sendEmail: Boolean!
-}
-
-type SubscriptionSetResponse {
-  success: Boolean!
-  query: Query!
 }

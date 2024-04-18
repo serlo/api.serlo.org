@@ -43,17 +43,12 @@ extend type Mutation {
 }
 
 type NotificationMutation {
-  setState(input: NotificationSetStateInput!): NotificationSetStateResponse
+  setState(input: NotificationSetStateInput!): DefaultResponse
 }
 
 input NotificationSetStateInput {
   id: [Int!]!
   unread: Boolean!
-}
-
-type NotificationSetStateResponse {
-  success: Boolean!
-  query: Query!
 }
 
 type NotificationConnection {

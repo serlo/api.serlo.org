@@ -4,28 +4,19 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { createAuthServices } from './authentication'
-import { Cache, CacheEntry, Priority } from './cache'
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
 import { captureErrorEvent } from './error-event'
-import { type Context } from './graphql'
 import { log } from './log'
-import { Timer } from './timer'
+import { type Context } from '~/context'
+import { CacheEntry, Cache, Priority } from '~/context/cache'
+import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
+import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
-
-export interface SwrQueue {
-  queue(
-    updateJob: UpdateJob & { cacheEntry?: O.Option<CacheEntry<unknown>> },
-  ): Promise<never>
-  ready(): Promise<void>
-  healthy(): Promise<void>
-  quit(): Promise<void>
-  _queue: never
-}
 
 interface UpdateJob {
   key: string
@@ -325,26 +316,6 @@ interface JobSpec<P = unknown> {
   maxAge?: Time
   staleAfter?: Time
   enableSwr: boolean
-}
-
-export interface Time {
-  days?: number
-  hours?: number
-  minutes?: number
-  seconds?: number
-}
-
-export function timeToSeconds({
-  days = 0,
-  hours = 0,
-  minutes = 0,
-  seconds = 0,
-}: Time) {
-  return ((days * 24 + hours) * 60 + minutes) * 60 + seconds
-}
-
-export function timeToMilliseconds(time: Time) {
-  return timeToSeconds(time) * 1000
 }
 
 function reportError({

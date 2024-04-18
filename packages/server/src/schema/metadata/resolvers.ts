@@ -83,7 +83,7 @@ export const resolvers: Resolvers = {
       }
     },
     version() {
-      return process.env.METADATA_API_VERSION ?? '1.3.0'
+      return '2.0.0'
     },
   },
 }
