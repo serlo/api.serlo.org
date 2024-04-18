@@ -5,10 +5,9 @@ import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import Redlock from 'redlock'
 
-import { Timer } from '../../timer'
 import { log } from '../log'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
-import { timeToMilliseconds, Time } from '~/timer'
+import { timeToMilliseconds, Time, Timer } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
@@ -179,20 +178,7 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
   }
 }
 
-function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
-  return R.has('lastModified', value) && R.has('value', value)
-}
-
-export interface LockManager {
-  lock(key: string): Promise<Lock>
-  quit(): Promise<void>
-}
-
-interface Lock {
-  unlock(): Promise<void>
-}
-
-export function createLockManager({
+function createLockManager({
   retryCount,
 }: {
   retryCount: number
@@ -219,4 +205,13 @@ export function createLockManager({
       await client.quit()
     },
   }
+}
+
+interface LockManager {
+  lock(key: string): Promise<{ unlock(): Promise<void> }>
+  quit(): Promise<void>
+}
+
+function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
+  return R.has('lastModified', value) && R.has('value', value)
 }
