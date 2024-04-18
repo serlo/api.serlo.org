@@ -1,17 +1,18 @@
 import { ApolloServer } from '@apollo/server'
 import { type Storage } from '@google-cloud/storage'
+import type { OAuth2Api } from '@ory/client'
 import * as Sentry from '@sentry/node'
 import { DocumentNode } from 'graphql'
 import * as R from 'ramda'
 
-import { createTestEnvironment, given, nextUuid } from '.'
+import { given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
 import { Context } from '~/context'
 import { Service } from '~/context/service'
 import { Database } from '~/database'
 import { ModelDataSource } from '~/internals/data-source'
-import { Environment } from '~/internals/environment'
 import { getGraphQLOptions } from '~/internals/server'
+import { emptySwrQueue } from '~/internals/swr-queue'
 
 export class Client {
   private apolloServer: ApolloServer<ClientContext>
@@ -31,12 +32,17 @@ export class Client {
   }
 
   async execute(query: QuerySpec<Variables<Input>>) {
-    const environment: Environment = createTestEnvironment()
-
     return this.apolloServer.executeOperation(query, {
       contextValue: {
         dataSources: {
-          model: new ModelDataSource(environment),
+          model: new ModelDataSource({
+            cache: global.cache,
+            swrQueue: emptySwrQueue,
+            authServices: {
+              kratos: global.kratos,
+              hydra: {} as unknown as OAuth2Api,
+            },
+          }),
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
         userId: this.context?.userId ?? null,
@@ -54,8 +60,8 @@ export class Client {
           },
         } as unknown as Storage,
         database: new Database(await this.getTransaction()),
-        cache: environment.cache,
-        swrQueue: environment.swrQueue,
+        cache: global.cache,
+        swrQueue: emptySwrQueue,
       } as Context,
     })
   }
