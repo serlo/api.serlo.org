@@ -5,9 +5,7 @@ interface AbstractUuid {
   title: String!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
