@@ -80,6 +80,7 @@ interface ResolverSpec<Payload, Result> {
   staleAfter?: Time
   maxAge?: Time
   resolverNameForErrorMessage: string
+  examplePayload: Payload
 }
 
 export interface CachedResolver<Payload, Result> {
