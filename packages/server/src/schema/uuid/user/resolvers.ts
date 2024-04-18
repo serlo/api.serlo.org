@@ -436,7 +436,7 @@ export const resolvers: Resolvers = {
         input.description,
         userId,
       ])
-      await UuidResolver.removeCache({ id: userId }, context)
+      await dataSources.model.getUuid._querySpec.removeCache()
       return { success: true, query: {} }
     },
 
