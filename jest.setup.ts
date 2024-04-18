@@ -10,8 +10,8 @@ import {
   givenSpreadheetApi,
   MockKratos,
 } from './__tests__/__utils__'
+import { createCache, createNamespacedCache } from '~/cache'
 import { type Cache } from '~/context/cache'
-import { createCache, createNamespacedCache } from '~/internals/cache'
 import { initializeSentry } from '~/internals/sentry'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 

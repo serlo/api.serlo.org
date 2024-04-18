@@ -5,7 +5,7 @@ import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import Redlock from 'redlock'
 
-import { log } from '../log'
+import { log } from './internals/log'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
