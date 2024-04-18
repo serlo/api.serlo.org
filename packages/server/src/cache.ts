@@ -3,12 +3,11 @@ import Redis from 'ioredis'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
+import Redlock from 'redlock'
 
-import { createLockManager, LockManager } from './lock-manager'
-import { Timer } from '../../timer'
-import { log } from '../log'
+import { log } from './internals/log'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
-import { timeToMilliseconds, Time } from '~/timer'
+import { timeToMilliseconds, Time, Timer } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
@@ -177,6 +176,40 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
       return cache.quit()
     },
   }
+}
+
+function createLockManager({
+  retryCount,
+}: {
+  retryCount: number
+}): LockManager {
+  const client = new Redis(process.env.REDIS_URL)
+  const redlock = new Redlock([client], { retryCount })
+
+  redlock.on('clientError', function (err) {
+    log.error('A redis error has occurred:', err)
+  })
+
+  return {
+    async lock(key: string) {
+      log.debug('Locking key', key)
+      const lock = await redlock.acquire([`locks:${key}`], 10000)
+      return {
+        async unlock() {
+          log.debug('Unlocking key', key)
+          await lock.release()
+        },
+      }
+    },
+    async quit() {
+      await client.quit()
+    },
+  }
+}
+
+interface LockManager {
+  lock(key: string): Promise<{ unlock(): Promise<void> }>
+  quit(): Promise<void>
 }
 
 function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
