@@ -17,7 +17,6 @@ interface AbstractNotificationEvent {
 extend type Query {
   events(
     after: String
-    before: String
     first: Int
     last: Int
     actorId: Int
@@ -27,9 +26,7 @@ extend type Query {
   ): AbstractNotificationEventConnection!
   notifications(
     after: String
-    before: String
     first: Int
-    last: Int
     emailSent: Boolean
     email: Boolean
     unread: Boolean
@@ -52,24 +49,12 @@ input NotificationSetStateInput {
 }
 
 type NotificationConnection {
-  edges: [NotificationEdge!]!
   nodes: [Notification!]!
   totalCount: Int!
   pageInfo: PageInfo!
 }
 
-type NotificationEdge {
-  cursor: String!
-  node: Notification!
-}
-
 type AbstractNotificationEventConnection {
-  edges: [AbstractNotificationEventEdge!]!
   nodes: [AbstractNotificationEvent!]!
-  pageInfo: HasNextPageInfo!
-}
-
-type AbstractNotificationEventEdge {
-  cursor: String!
-  node: AbstractNotificationEvent!
+  pageInfo: PageInfo!
 }

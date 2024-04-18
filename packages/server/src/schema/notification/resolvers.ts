@@ -160,7 +160,6 @@ export async function resolveEvents({
       ...connection,
       pageInfo: {
         ...pageInfo,
-        __typename: 'HasNextPageInfo' as const,
         hasNextPage: pageInfo.hasNextPage || hasNextPage,
       },
     }
@@ -186,11 +185,7 @@ export async function resolveEvents({
 
     return {
       ...connection,
-      pageInfo: {
-        ...pageInfo,
-        hasNextPage,
-        __typename: 'HasNextPageInfo' as const,
-      },
+      pageInfo: { ...pageInfo, hasNextPage },
     }
   }
 }
