@@ -3,13 +3,17 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   trashed: Boolean!
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -22,10 +26,17 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
   currentRevision: ArticleRevision
   revisions(
     after: String
+    before: String
     first: Int
+    last: Int
     unrevised: Boolean
   ): ArticleRevisionConnection!
-  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
+  taxonomyTerms(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TaxonomyTermConnection!
 }
 
 type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
@@ -35,13 +46,17 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
   alias: String!
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String

@@ -15,7 +15,13 @@ enum Role {
 }
 
 type ScopedRoleConnection {
+  edges: [ScopedRoleCursor!]!
   nodes: [ScopedRole!]!
   totalCount: Int!
   pageInfo: PageInfo!
+}
+
+type ScopedRoleCursor {
+  cursor: String!
+  node: ScopedRole!
 }

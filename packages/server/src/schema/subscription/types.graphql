@@ -8,13 +8,24 @@ extend type Mutation {
 
 type SubscriptionQuery {
   currentUserHasSubscribed(id: Int!): Boolean!
-  getSubscriptions(after: String, first: Int): SubscriptionInfoConnection!
+  getSubscriptions(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SubscriptionInfoConnection!
 }
 
 type SubscriptionInfoConnection {
+  edges: [SubscriptionCursor!]!
   nodes: [SubscriptionInfo!]!
   totalCount: Int!
   pageInfo: PageInfo!
+}
+
+type SubscriptionCursor {
+  cursor: String!
+  node: SubscriptionInfo!
 }
 
 type SubscriptionInfo {

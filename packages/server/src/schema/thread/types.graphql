@@ -11,7 +11,12 @@ type Thread {
   archived: Boolean!
   trashed: Boolean!
   object: AbstractUuid!
-  comments(after: String, first: Int): CommentConnection!
+  comments(
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CommentConnection!
   status: CommentStatus!
 }
 
@@ -22,7 +27,9 @@ type Comment implements AbstractUuid {
   alias: String!
   events(
     after: String
+    before: String
     first: Int
+    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -41,16 +48,24 @@ type Comment implements AbstractUuid {
 interface ThreadAware {
   threads(
     after: String
+    before: String
     first: Int
+    last: Int
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
 }
 
 type ThreadConnection {
+  edges: [ThreadCursor!]!
   nodes: [Thread!]!
   totalCount: Int!
   pageInfo: PageInfo!
+}
+
+type ThreadCursor {
+  cursor: String!
+  node: Thread!
 }
 
 type CommentConnection {
