@@ -18,10 +18,7 @@ export class UserInputError extends GraphQLError {
   }
 }
 
-/**
- * Error for the case an invalid value was returned by a data source function.
- */
-export class InvalidCurrentValueError extends Error {
+export class InvalidCurrentValueError extends GraphQLError {
   constructor(
     public errorContext: {
       invalidCachedValue?: unknown
@@ -32,6 +29,8 @@ export class InvalidCurrentValueError extends Error {
       key?: string
     },
   ) {
-    super('Invalid value received from data source.')
+    super('Invalid value received from data source.', {
+      extensions: { code: 'INTERNAL_SERVER_ERROR' },
+    })
   }
 }
