@@ -15,14 +15,12 @@ import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
 
 export class Client {
-  private apolloServer: ApolloServer<ClientContext>
+  private apolloServer: ApolloServer<Context>
   private readonly context?: ClientContext
 
   constructor(context?: ClientContext) {
     this.context = context
-    this.apolloServer = new ApolloServer<
-      Partial<Pick<Context, 'service' | 'userId'>>
-    >(getGraphQLOptions())
+    this.apolloServer = new ApolloServer<Context>(getGraphQLOptions())
   }
 
   prepareQuery<I extends Input = Input, V extends Variables<I> = Variables<I>>(
@@ -32,16 +30,17 @@ export class Client {
   }
 
   async execute(query: QuerySpec<Variables<Input>>) {
+    const authServices = {
+      kratos: global.kratos,
+      hydra: {} as unknown as OAuth2Api,
+    }
     return this.apolloServer.executeOperation(query, {
       contextValue: {
         dataSources: {
           model: new ModelDataSource({
             cache: global.cache,
             swrQueue: emptySwrQueue,
-            authServices: {
-              kratos: global.kratos,
-              hydra: {} as unknown as OAuth2Api,
-            },
+            authServices,
           }),
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
@@ -62,7 +61,8 @@ export class Client {
         database: new Database(await this.getTransaction()),
         cache: global.cache,
         swrQueue: emptySwrQueue,
-      } as Context,
+        authServices,
+      },
     })
   }
 
