@@ -4,9 +4,7 @@ interface AbstractEntity {
   trashed: Boolean!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -22,9 +20,7 @@ interface AbstractEntity {
   currentRevision: AbstractEntityRevision
   revisions(
     after: String
-    before: String
     first: Int
-    last: Int
     unrevised: Boolean
   ): AbstractEntityRevisionConnection!
 }
@@ -41,9 +37,7 @@ interface AbstractEntityRevision {
   trashed: Boolean!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -66,15 +60,9 @@ interface AbstractEntityRevision {
 }
 
 type AbstractEntityConnection {
-  edges: [AbstractEntityCursor!]!
   nodes: [AbstractEntity!]!
   totalCount: Int!
-  pageInfo: HasNextPageInfo!
-}
-
-type AbstractEntityCursor {
-  cursor: String!
-  node: AbstractEntity!
+  pageInfo: PageInfo!
 }
 
 extend type Query {
@@ -94,13 +82,7 @@ type DeletedEntity {
   entity: AbstractEntity
 }
 
-type DeletedEntityCursor {
-  cursor: String!
-  node: DeletedEntity!
-}
-
 type DeletedEntityConnection {
-  edges: [DeletedEntityCursor!]!
   nodes: [DeletedEntity!]!
   totalCount: Int!
   pageInfo: PageInfo!

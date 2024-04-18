@@ -1,11 +1,4 @@
 type PageInfo {
   hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
-}
-
-type HasNextPageInfo {
-  hasNextPage: Boolean!
   endCursor: String
 }
