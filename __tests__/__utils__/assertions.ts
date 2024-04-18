@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { type Storage } from '@google-cloud/storage'
+import * as Sentry from '@sentry/node'
 import { DocumentNode } from 'graphql'
 import * as R from 'ramda'
 
@@ -10,7 +11,6 @@ import { Service } from '~/context/service'
 import { Database } from '~/database'
 import { ModelDataSource } from '~/internals/data-source'
 import { Environment } from '~/internals/environment'
-import { Sentry } from '~/internals/sentry'
 import { getGraphQLOptions } from '~/internals/server'
 
 export class Client {
