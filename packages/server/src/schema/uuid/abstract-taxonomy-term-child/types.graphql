@@ -6,9 +6,7 @@ interface AbstractTaxonomyTermChild {
   title: String!
   events(
     after: String
-    before: String
     first: Int
-    last: Int
     instance: Instance
     actorId: Int
     actorUsername: String
@@ -16,22 +14,11 @@ interface AbstractTaxonomyTermChild {
   date: DateTime!
   instance: Instance!
   licenseId: Int!
-  taxonomyTerms(
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): TaxonomyTermConnection!
+  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
 }
 
 type TaxonomyTermConnection {
-  edges: [TaxonomyTermEdge]
   nodes: [TaxonomyTerm!]!
   totalCount: Int!
   pageInfo: PageInfo!
-}
-
-type TaxonomyTermEdge {
-  cursor: String!
-  node: TaxonomyTerm!
 }
