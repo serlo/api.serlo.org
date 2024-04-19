@@ -106,6 +106,12 @@ describe('endpoint "resources"', () => {
     ])
   })
 
+  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
+    await query
+      .withVariables({ first: 1001 })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('with parameter "after"', async () => {
     const data = await query
       .withVariables({ first: 1, after: afterForId(1947) })
@@ -122,28 +128,14 @@ describe('endpoint "resources"', () => {
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
-  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
-    await query
-      .withVariables({ first: 1001 })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
-
   test('with parameter "modifiedAfter"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101, modifiedAfter: '2019-12-01' })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+    const data = await query
+      .withVariables({ first: 1, modifiedAfter: '2015-01-01T00:00:00Z' })
+      .getData()
 
-    await query
-      .withVariables({ modifiedAfter: '2019-12-01' })
-      .shouldReturnData({
-        metadata: {
-          resources: {
-            nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-          },
-        },
-      })
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1647',
+    })
   })
 
   test('with parameter "instance"', async () => {
