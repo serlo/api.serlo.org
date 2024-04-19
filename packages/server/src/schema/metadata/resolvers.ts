@@ -218,8 +218,8 @@ export const resolvers: Resolvers = {
           type: ['LearningResource', schemaType],
           about,
           description: row.description,
-          dateCreated: row.dateCreated.toISOString(),
-          dateModified: row.dateModified.toISOString(),
+          dateCreated: convertToISO(row.dateCreated),
+          dateModified: convertToISO(row.dateModified),
           headline: row.title,
           creator: creators,
           identifier: {
@@ -568,4 +568,10 @@ function nonNullable<A extends object>(result: A): A {
         value != null && (typeof value != 'string' || value.length > 0),
     ),
   ) as unknown as A
+}
+
+function convertToISO(dateInput: Date): string {
+  return new Date(
+    dateInput.getTime() + 60000 * dateInput.getTimezoneOffset(),
+  ).toISOString()
 }
