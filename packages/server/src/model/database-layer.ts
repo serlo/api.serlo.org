@@ -63,27 +63,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  EntitiesMetadataQuery: {
-    payload: t.intersection([
-      t.type({
-        first: t.number,
-      }),
-      t.partial({
-        after: t.number,
-        instance: InstanceDecoder,
-        modifiedAfter: t.string,
-      }),
-    ]),
-    response: t.type({
-      entities: t.array(
-        t.intersection([
-          t.type({ identifier: t.type({ value: t.number }) }),
-          t.UnknownRecord,
-        ]),
-      ),
-    }),
-    canBeNull: false,
-  },
   EntityAddRevisionMutation: {
     payload: t.type({
       userId: t.number,

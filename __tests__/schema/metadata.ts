@@ -1,7 +1,12 @@
+import { jest } from '@jest/globals'
 import gql from 'graphql-tag'
 
+import { metadataExamples } from '../../__fixtures__/metadata'
 import { Client, given } from '../__utils__'
+import { encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
+
+jest.setTimeout(60 * 1000)
 
 test('endpoint `publisher` returns publisher', async () => {
   await new Client()
@@ -46,19 +51,21 @@ describe('endpoint "resources"', () => {
     `,
   })
 
-  test('returns list of metadata for resources', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101 })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+  describe('returns metadata of learning resources', () => {
+    const testCases = metadataExamples.map((res) => {
+      const name = `${res.type[1]} ${res.identifier.value}`
+      return [name, res] as const
+    })
 
-    await query.shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
+    test.each(testCases)('%s', async (_, resource) => {
+      const after = encodeToBase64((resource.identifier.value - 1).toString())
+      await query.withVariables({ first: 1, after }).shouldReturnData({
+        metadata: {
+          resources: {
+            nodes: [resource],
+          },
         },
-      },
+      })
     })
   })
 
