@@ -107,18 +107,12 @@ describe('endpoint "resources"', () => {
   })
 
   test('with parameter "after"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101, after: 1513 })
-      .returns({
-        entities: [{ identifier: { value: 11 }, id: 'https://serlo.org/11' }],
-      })
+    const data = await query
+      .withVariables({ first: 1, after: afterForId(1947) })
+      .getData()
 
-    await query.withVariables({ after: 'MTUxMw==' }).shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 11 }, id: 'https://serlo.org/11' }],
-        },
-      },
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1947',
     })
   })
 
