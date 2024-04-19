@@ -122,6 +122,31 @@ describe('endpoint "resources"', () => {
     })
   })
 
+  test('returns original source as creator followed by serlo authors', async () => {
+    const after = afterForId(12160)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      creator: [
+        {
+          type: 'Organization',
+          id: 'http://www.raschweb.de/',
+          name: 'http://www.raschweb.de/',
+        },
+        {
+          affiliation: {
+            id: 'https://serlo.org/organization',
+            name: 'Serlo Education e.V.',
+            type: 'Organization',
+          },
+          id: 'https://serlo.org/6',
+          name: '12297c72',
+          type: 'Person',
+        },
+      ],
+    })
+  })
+
   test('with parameter "first"', async () => {
     const data = await query.withVariables({ first: 10 }).getData()
     const nodes = R.path(['metadata', 'resources', 'nodes'], data)
