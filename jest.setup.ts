@@ -12,9 +12,9 @@ import {
 } from './__tests__/__utils__'
 import { createCache, createNamespacedCache } from '~/cache'
 import { type Cache } from '~/context/cache'
+import { Database } from '~/database'
 import { initializeSentry } from '~/internals/sentry'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
-import { Database } from '~/database'
 
 beforeAll(() => {
   initializeSentry({
