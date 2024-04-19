@@ -3,7 +3,7 @@ import type { Server } from 'http'
 import { bypass } from 'msw'
 
 import { given } from '../__utils__'
-import { Kratos } from '~/context/auth-services'
+import { Identity, Kratos } from '~/context/auth-services'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 const port = 8100
@@ -31,34 +31,24 @@ describe('Kratos middleware - register endpoint', () => {
     expect(await response.text()).toBe('Kratos secret mismatch')
   })
 
-  test('fails when userId is not provided', async () => {
-    const response = await fetchKratosRegister({
-      body: {},
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe('Valid identity id has to be provided')
-  })
-
-  test('fails when an invalid userId is provided', async () => {
-    // kratos identity is a uuidv4, not a number like in legacy
-    const response = await fetchKratosRegister({
-      body: { userId: 1 },
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe('Valid identity id has to be provided')
-  })
-
-  test('with valid userId', async () => {
+  test('successful if it finds an account to sync', async () => {
     given('UserCreateMutation').returns({
       userId: 1,
       success: true,
     })
+    kratosMock.db.executeSingleQuery<Identity> = async () => {
+      return Promise.resolve([
+        {
+          id: '23af75f5-009a-4a11-a9d0-d79ac8bc8d34',
+          traits: {
+            username: 'serlo-user',
+            email: 'email@serlo.org',
+          },
+        },
+      ] as Identity[])
+    }
 
-    const response = await fetchKratosRegister({
-      body: { userId: 'e4c6a348-ab17-4b82-95e9-c5354a7f58eb' },
-    })
+    const response = await fetchKratosRegister({})
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
