@@ -5,7 +5,7 @@ import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
 import { validate as uuidValidate } from 'uuid'
 
-import { Kratos } from '~/context/auth-services'
+import { Identity, Kratos } from '~/context/auth-services'
 import { captureErrorEvent } from '~/error-event'
 import { createRequest } from '~/internals/data-source-helper'
 import { DatabaseLayer } from '~/model'
@@ -45,7 +45,7 @@ export function applyKratosMiddleware({
 
 function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
-    // TODO: delete after debugging See # https://github.com/ory/kratos/issues/3258#issuecomment-1535356934
+    // TODO: delete after debugging
     Sentry.captureMessage(`/kratos/register reached`, {
       contexts: {
         request: {
@@ -64,44 +64,52 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
       return
     }
 
-    if (!t.type({ userId: t.string }).is(request.body)) {
-      response.statusCode = 400
-      response.end('Valid identity id has to be provided')
-      return
-    }
-
-    const { userId } = request.body
-
     try {
-      const kratosUser = (await kratos.admin.getIdentity({ id: userId })).data
-
-      const { username, email } = kratosUser.traits as {
-        username: string
-        email: string
-      }
-      const { userId: legacyUserId } = await createLegacyUser({
-        username,
-        // we just need to store something, since the password in legacy DB is not going to be used anymore
-        // storing the kratos id is just a good way of easily seeing this value in case we need it
-        password: kratosUser.id,
-        email,
+      const unsyncedAccounts = await kratos.db.executeSingleQuery<Identity>({
+        query:
+          "SELECT * FROM identities WHERE (metadata_public->'legacy_id') IS NULL",
       })
 
-      await kratos.admin.updateIdentity({
-        id: kratosUser.id,
-        updateIdentityBody: {
-          schema_id: 'default',
-          metadata_public: {
-            legacy_id: legacyUserId,
+      if (!unsyncedAccounts) {
+        response.json({ status: 'no account to sync' }).end()
+
+        // TODO: delete after debugging
+        Sentry.captureMessage(`/kratos/register processed`, {
+          contexts: {
+            request: {
+              time: new Date().toISOString(),
+              body: request.body,
+            },
           },
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          traits: kratosUser.traits,
-          state: IdentityStateEnum.Active,
-        },
-      })
+        })
+        return
+      }
+
+      for (const account of unsyncedAccounts) {
+        const { userId: legacyUserId } = await createLegacyUser({
+          username: account.traits.username,
+          // we just need to store something, since the password in legacy DB is not going to be used anymore
+          // storing the kratos id is just a good way of easily seeing this value in case we need it
+          password: account.id,
+          email: account.traits.email,
+        })
+
+        await kratos.admin.updateIdentity({
+          id: account.id,
+          updateIdentityBody: {
+            ...account,
+            schema_id: 'default',
+            metadata_public: {
+              legacy_id: legacyUserId,
+            },
+            state: IdentityStateEnum.Active,
+          },
+        })
+      }
 
       response.json({ status: 'success' }).end()
-      // TODO: delete after debugging See # https://github.com/ory/kratos/issues/3258#issuecomment-1535356934
+
+      // TODO: delete after debugging
       Sentry.captureMessage(`/kratos/register processed`, {
         contexts: {
           request: {
@@ -113,7 +121,7 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
     } catch (error: unknown) {
       captureErrorEvent({
         error: new Error('Could not synchronize user registration'),
-        errorContext: { userId, error },
+        errorContext: { error },
       })
 
       response.statusCode = 500
