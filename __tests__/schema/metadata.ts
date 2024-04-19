@@ -1,12 +1,11 @@
 import { jest } from '@jest/globals'
+import assert from 'assert'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import { metadataExamples } from '../../__fixtures__/metadata'
-import { Client, given } from '../__utils__'
+import { Client } from '../__utils__'
 import { encodeToBase64 } from '~/internals/graphql'
-import { Instance } from '~/types'
-import assert from 'assert'
 
 jest.setTimeout(60 * 1000)
 
