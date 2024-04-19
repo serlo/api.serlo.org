@@ -9,7 +9,6 @@ import { given, nextUuid } from '.'
 import { user } from '../../__fixtures__'
 import { Context } from '~/context'
 import { Service } from '~/context/service'
-import { Database } from '~/database'
 import { ModelDataSource } from '~/internals/data-source'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
@@ -58,22 +57,12 @@ export class Client {
             }
           },
         } as unknown as Storage,
-        database: new Database(await this.getTransaction()),
+        database: global.database,
         cache: global.cache,
         swrQueue: emptySwrQueue,
         authServices,
       },
     })
-  }
-
-  private async getTransaction() {
-    if (global.transaction != null) return global.transaction
-
-    global.transaction = await global.database.getConnection()
-
-    await global.transaction.beginTransaction()
-
-    return global.transaction
   }
 }
 
@@ -123,6 +112,16 @@ export class Query<
 
   execute() {
     return this.client.execute(this.query)
+  }
+
+  async getData(): Promise<unknown> {
+    const result = await this.execute()
+
+    if (result.body.kind === 'single') {
+      return result.body.singleResult['data']
+    }
+
+    return null
   }
 
   async shouldReturnData(data: unknown) {

@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 
 import { metadataExamples } from '../../__fixtures__/metadata'
 import { Client, given } from '../__utils__'
@@ -58,7 +59,7 @@ describe('endpoint "resources"', () => {
     })
 
     test.each(testCases)('%s', async (_, resource) => {
-      const after = encodeToBase64((resource.identifier.value - 1).toString())
+      const after = afterForId(resource.identifier.value)
       await query.withVariables({ first: 1, after }).shouldReturnData({
         metadata: {
           resources: {
@@ -66,6 +67,21 @@ describe('endpoint "resources"', () => {
           },
         },
       })
+    })
+  })
+
+  test('shows description when it is set', async () => {
+    await global.database.mutate(`
+      update entity_revision_field
+      set value = "description for entity 2153"
+      where id = 41509 and field = "meta_description";`)
+
+    const after = afterForId(2153)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/2153',
+      description: 'description for entity 2153',
     })
   })
 
@@ -165,3 +181,7 @@ test('endpoint `version` returns string that could be semver', async () => {
     },
   })
 })
+
+function afterForId(id: number) {
+  return encodeToBase64((id - 1).toString())
+}
