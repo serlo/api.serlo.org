@@ -4106,7 +4106,6 @@ __metadata:
     io-ts-types: ^0.5.19
     ioredis: ^5.3.2
     jsonwebtoken: ^9.0.2
-    loglevel: ^1.9.1
     monocle-ts: ^2.3.13
     msgpack5: ^6.0.2
     mysql2: ^3.9.2
@@ -13267,7 +13266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loglevel@npm:^1.6.8, loglevel@npm:^1.9.1":
+"loglevel@npm:^1.6.8":
   version: 1.9.1
   resolution: "loglevel@npm:1.9.1"
   checksum: e1c8586108c4d566122e91f8a79c8df728920e3a714875affa5120566761a24077ec8ec9e5fc388b022e39fc411ec6e090cde1b5775871241b045139771eeb06

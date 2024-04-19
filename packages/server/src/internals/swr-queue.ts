@@ -4,7 +4,6 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
-import { log } from './log'
 import { type Context } from '~/context'
 import { createAuthServices } from '~/context/auth-services'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
@@ -67,8 +66,8 @@ export function createSwrQueue({
     removeOnSuccess: true,
   })
 
-  queue.on('error', (err) => {
-    log.error(`Queue error event - ${err.message}`)
+  queue.on('error', (error) => {
+    captureErrorEvent({ error, location: 'swrQueue' })
   })
 
   return {
@@ -85,11 +84,8 @@ export function createSwrQueue({
       })
 
       if (E.isLeft(result)) {
-        log.debug('Skipped job', key, 'because', result.left)
         return undefined as never
       }
-
-      log.debug('Queuing job', key)
 
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
@@ -103,18 +99,10 @@ export function createSwrQueue({
 
       job.on('failed', (error) => {
         reportError({ jobStatus: 'failed', error })
-        log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
       job.on('retrying', (error) => {
         reportError({ jobStatus: 'retrying', error })
-        log.debug(
-          `Job ${job.id} failed with error ${error.message} but is being retried!`,
-        )
-      })
-
-      job.on('succeeded', (result: string) => {
-        log.debug(`Job ${job.id} succeeded with result: ${result}`)
       })
 
       return job as never
