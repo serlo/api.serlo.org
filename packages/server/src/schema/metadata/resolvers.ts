@@ -78,8 +78,6 @@ export const resolvers: Resolvers = {
         authorEdits: Record<number, number>
       }
 
-      console.time('sql')
-
       const rows = await database.fetchAll<Row>(
         `
         WITH RECURSIVE subject_mapping AS (
@@ -161,9 +159,6 @@ export const resolvers: Resolvers = {
         ],
       )
 
-      console.timeEnd('sql')
-      console.time('convert')
-
       const resources = rows.map((row) => {
         const identifier = row.id
         const id = getIri(row.id)
@@ -223,8 +218,8 @@ export const resolvers: Resolvers = {
           type: ['LearningResource', schemaType],
           about,
           description: row.description,
-          dateCreated: toISOString(row.dateCreated),
-          dateModified: toISOString(row.dateModified),
+          dateCreated: row.dateCreated.toISOString(),
+          dateModified: row.dateModified.toISOString(),
           headline: row.title,
           creator: creators,
           identifier: {
@@ -325,7 +320,6 @@ export const resolvers: Resolvers = {
         limit,
       })
 
-      console.timeEnd('convert')
       return foo
     },
     version() {
@@ -574,13 +568,4 @@ function nonNullable<A extends object>(result: A): A {
         value != null && (typeof value != 'string' || value.length > 0),
     ),
   ) as unknown as A
-}
-
-function toISOString(date: Date) {
-  console.log(date)
-
-  date.setHours(date.getHours() + 1)
-  const result = date.toISOString()
-
-  return result.endsWith('.000Z') ? result.slice(0, -5) + '+00:00' : result
 }
