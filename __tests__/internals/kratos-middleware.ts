@@ -36,6 +36,7 @@ describe('Kratos middleware - register endpoint', () => {
       userId: 1,
       success: true,
     })
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     kratosMock.db.executeSingleQuery<Identity> = async () => {
       return Promise.resolve([
         {
