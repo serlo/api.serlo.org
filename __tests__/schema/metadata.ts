@@ -102,6 +102,26 @@ describe('endpoint "resources"', () => {
     ])
   })
 
+  test('returns several subjects in about property', async () => {
+    const after = afterForId(25506)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      about: [
+        {
+          type: 'Concept',
+          id: 'http://w3id.org/kim/schulfaecher/s1001',
+          inScheme: { id: 'http://w3id.org/kim/schulfaecher/' },
+        },
+        {
+          type: 'Concept',
+          id: 'http://w3id.org/kim/schulfaecher/s1008',
+          inScheme: { id: 'http://w3id.org/kim/schulfaecher/' },
+        },
+      ],
+    })
+  })
+
   test('with parameter "first"', async () => {
     const data = await query.withVariables({ first: 10 }).getData()
     const nodes = R.path(['metadata', 'resources', 'nodes'], data)
