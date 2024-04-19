@@ -85,6 +85,23 @@ describe('endpoint "resources"', () => {
     })
   })
 
+  test('returns creators sorted by contributions', async () => {
+    const after = afterForId(9066)
+    const data = await query.withVariables({ first: 1, after }).getData()
+    const creators = R.path(
+      ['metadata', 'resources', 'nodes', 0, 'creator'],
+      data,
+    )
+    assert(Array.isArray(creators))
+
+    // There are two edits from user with id 15491 which is why they
+    // should be listed first
+    expect(R.map(R.prop('id'), creators)).toEqual([
+      'https://serlo.org/15491',
+      'https://serlo.org/6',
+    ])
+  })
+
   test('with parameter "first"', async () => {
     const data = await query.withVariables({ first: 10 }).getData()
     const nodes = R.path(['metadata', 'resources', 'nodes'], data)
