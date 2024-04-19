@@ -6,6 +6,7 @@ import { metadataExamples } from '../../__fixtures__/metadata'
 import { Client, given } from '../__utils__'
 import { encodeToBase64 } from '~/internals/graphql'
 import { Instance } from '~/types'
+import assert from 'assert'
 
 jest.setTimeout(60 * 1000)
 
@@ -86,19 +87,23 @@ describe('endpoint "resources"', () => {
   })
 
   test('with parameter "first"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 11 })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+    const data = await query.withVariables({ first: 10 }).getData()
+    const nodes = R.path(['metadata', 'resources', 'nodes'], data)
 
-    await query.withVariables({ first: 10 }).shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-        },
-      },
-    })
+    assert(Array.isArray(nodes))
+
+    expect(R.map(R.prop('id'), nodes)).toEqual([
+      'https://serlo.org/1495',
+      'https://serlo.org/1497',
+      'https://serlo.org/1499',
+      'https://serlo.org/1501',
+      'https://serlo.org/1503',
+      'https://serlo.org/1505',
+      'https://serlo.org/1507',
+      'https://serlo.org/1509',
+      'https://serlo.org/1511',
+      'https://serlo.org/1513',
+    ])
   })
 
   test('with parameter "after"', async () => {
