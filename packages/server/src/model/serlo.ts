@@ -837,16 +837,6 @@ export function createSerloModel({
     },
   })
 
-  const getEntitiesMetadata = createRequest({
-    type: 'EntitiesMetadataQuery',
-    decoder: DatabaseLayer.getDecoderFor('EntitiesMetadataQuery'),
-    async getCurrentValue(
-      payload: DatabaseLayer.Payload<'EntitiesMetadataQuery'>,
-    ) {
-      return DatabaseLayer.makeRequest('EntitiesMetadataQuery', payload)
-    },
-  })
-
   const linkEntitiesToTaxonomy = createMutation({
     type: 'TaxonomyCreateEntityLinksMutation',
     decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
@@ -1076,7 +1066,6 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getDeletedEntities,
-    getEntitiesMetadata,
     getEvents,
     getEventsAfter,
     getNotificationEvent,
