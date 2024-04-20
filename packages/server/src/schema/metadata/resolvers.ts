@@ -49,6 +49,18 @@ export const resolvers: Resolvers = {
       }
     },
     async resources(_parent, payload, { database }) {
+      // Change the default value of this variable whenever you change the
+      // resolver in a way that any crawler should fetch all resources again
+      //
+      // TODO: We use process variables to change this variable from tests
+      // so that we do not need to change the test cases any time we change
+      // this variable. Controlling this variable via the context should be
+      // the prefered way
+      const dateOfLastChangeInResolver = new Date(
+        process.env.METADATA_API_LAST_CHANGES_DATE ??
+          '2024-04-20T10:22:51.778Z',
+      )
+
       const limit = 1000
 
       const after = payload.after
@@ -61,6 +73,12 @@ export const resolvers: Resolvers = {
       if (modifiedAfterDate !== null && isNaN(modifiedAfterDate.getTime())) {
         throw new UserInputError('`modifiedAfter` has an invalid date format')
       }
+
+      const modifiedAfterForQuery =
+        modifiedAfterDate === null ||
+        modifiedAfterDate.getTime() >= dateOfLastChangeInResolver.getTime()
+          ? modifiedAfter
+          : null
 
       if (first > limit) {
         throw new UserInputError(`first cannot be higher than limit=${limit}`)
@@ -159,8 +177,8 @@ export const resolvers: Resolvers = {
           after ?? 0,
           instance,
           instance,
-          modifiedAfter,
-          modifiedAfter,
+          modifiedAfterForQuery,
+          modifiedAfterForQuery,
           `${first + 1}`,
         ],
       )
