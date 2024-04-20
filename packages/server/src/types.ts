@@ -1127,19 +1127,9 @@ export type MediaUpload = {
 
 export type MetadataQuery = {
   __typename?: 'MetadataQuery';
-  /** @deprecated Please use the `resources` field instead. This property will be deleted. */
-  entities: ResourceMetadataConnection;
   publisher: Scalars['JSONObject']['output'];
   resources: ResourceMetadataConnection;
   version: Scalars['String']['output'];
-};
-
-
-export type MetadataQueryEntitiesArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  instance?: InputMaybe<Instance>;
-  modifiedAfter?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -3135,7 +3125,6 @@ export type MediaUploadResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
-  entities?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryEntitiesArgs>>;
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   resources?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

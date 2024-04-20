@@ -36,18 +36,6 @@ export const resolvers: Resolvers = {
         email: 'de@serlo.org',
       }
     },
-    /**
-     * TODO: Remove when property is not used any more by WLO and Datenraum (NBP).
-     *
-     * @deprecated
-     */
-    entities(parent, args, context, info) {
-      if (typeof resolvers.MetadataQuery?.resources === 'function') {
-        return resolvers.MetadataQuery.resources(parent, args, context, info)
-      } else {
-        throw new Error('Illegal State')
-      }
-    },
     async resources(_parent, payload, { database }) {
       // Change the default value of this variable whenever you change the
       // resolver in a way that any crawler should fetch all resources again
