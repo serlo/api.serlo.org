@@ -190,12 +190,26 @@ describe('endpoint "resources"', () => {
   })
 
   test('with parameter "modifiedAfter"', async () => {
+    process.env.METADATA_API_LAST_CHANGES_DATE = '2014-12-30T00:00:00Z'
+
     const data = await query
       .withVariables({ first: 1, modifiedAfter: '2015-01-01T00:00:00Z' })
       .getData()
 
     expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
       id: 'https://serlo.org/1647',
+    })
+  })
+
+  test('returns all resources when "modifiedAfter" is smaller than last change in metadata API', async () => {
+    process.env.METADATA_API_LAST_CHANGES_DATE = '2015-01-01T00:00:01Z'
+
+    const data = await query
+      .withVariables({ first: 1, modifiedAfter: '2015-01-01T00:00:00Z' })
+      .getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1495',
     })
   })
 
