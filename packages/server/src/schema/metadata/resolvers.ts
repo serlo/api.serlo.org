@@ -571,6 +571,11 @@ function nonNullable<A extends object>(result: A): A {
 }
 
 function convertToISO(dateInput: Date): string {
+  console.log({
+    timezoneOffset: dateInput.getTimezoneOffset(),
+    date: dateInput.toISOString(),
+  })
+
   return new Date(
     dateInput.getTime() + 60000 * dateInput.getTimezoneOffset(),
   ).toISOString()
