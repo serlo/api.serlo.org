@@ -56,6 +56,12 @@ export const resolvers: Resolvers = {
         : null
       const { first = 100, modifiedAfter = null, instance = null } = payload
 
+      const modifiedAfterDate = modifiedAfter ? new Date(modifiedAfter) : null
+
+      if (modifiedAfterDate !== null && isNaN(modifiedAfterDate.getTime())) {
+        throw new UserInputError('`modifiedAfter` has an invalid date format')
+      }
+
       if (first > limit) {
         throw new UserInputError(`first cannot be higher than limit=${limit}`)
       }

@@ -199,6 +199,12 @@ describe('endpoint "resources"', () => {
     })
   })
 
+  test('fails when "modifiedAfter" is an invalid date', async () => {
+    await query
+      .withVariables({ first: 1, modifiedAfter: 'hello' })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
+
   test('with parameter "instance"', async () => {
     const data = await query
       .withVariables({ first: 1, instance: 'en' })
