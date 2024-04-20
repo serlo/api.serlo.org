@@ -218,8 +218,8 @@ export const resolvers: Resolvers = {
           type: ['LearningResource', schemaType],
           about,
           description: row.description,
-          dateCreated: convertToISO(row.dateCreated),
-          dateModified: convertToISO(row.dateModified),
+          dateCreated: row.dateCreated.toISOString(),
+          dateModified: row.dateModified.toISOString(),
           headline: row.title,
           creator: creators,
           identifier: {
@@ -313,14 +313,12 @@ export const resolvers: Resolvers = {
         }
       })
 
-      const foo = resolveConnection({
+      return resolveConnection({
         nodes: resources,
         payload,
         createCursor: (node) => node.identifier.value.toString(),
         limit,
       })
-
-      return foo
     },
     version() {
       return '2.0.0'
@@ -568,15 +566,4 @@ function nonNullable<A extends object>(result: A): A {
         value != null && (typeof value != 'string' || value.length > 0),
     ),
   ) as unknown as A
-}
-
-function convertToISO(dateInput: Date): string {
-  console.log({
-    timezoneOffset: dateInput.getTimezoneOffset(),
-    date: dateInput.toISOString(),
-  })
-
-  return new Date(
-    dateInput.getTime() + 60000 * dateInput.getTimezoneOffset(),
-  ).toISOString()
 }
