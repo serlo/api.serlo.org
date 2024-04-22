@@ -17,6 +17,7 @@ export interface Cache {
   ready(): Promise<void>
   flush(): Promise<void>
   quit(): Promise<void>
+  keys(pattern: string): Promise<string[]>
 }
 
 export enum Priority {

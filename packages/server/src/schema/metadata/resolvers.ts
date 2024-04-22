@@ -1,9 +1,23 @@
+import { option as O, predicate } from 'fp-ts'
 import * as R from 'ramda'
 
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { createNamespace, decodeId } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
+import { Time, timeToSeconds } from '~/timer'
 import { Resolvers } from '~/types'
+import { isDefined } from '~/utils'
+
+const MetadataResourcesReolver = createGeneratorResolver({
+  name: 'MetadataResourcesReolver',
+  cacheKeySuffix: 'metadata',
+  chunkSize: 500,
+  maxAge: { days: 7 },
+  staleAfter: { days: 1 },
+  getChunk: resolveResourcesFromDB,
+  getId: (element) => element.identifier.value,
+})
 
 export const resolvers: Resolvers = {
   Query: {
@@ -48,7 +62,7 @@ export const resolvers: Resolvers = {
         throw new Error('Illegal State')
       }
     },
-    async resources(_parent, payload, { database }) {
+    async resources(_parent, payload, context) {
       // Change the default value of this variable whenever you change the
       // resolver in a way that any crawler should fetch all resources again
       //
@@ -74,268 +88,37 @@ export const resolvers: Resolvers = {
         throw new UserInputError('`modifiedAfter` has an invalid date format')
       }
 
-      const modifiedAfterForQuery =
+      const modifiedAfterForPredicate =
         modifiedAfterDate === null ||
         modifiedAfterDate.getTime() >= dateOfLastChangeInResolver.getTime()
-          ? modifiedAfter
+          ? modifiedAfterDate
           : null
 
       if (first > limit) {
         throw new UserInputError(`first cannot be higher than limit=${limit}`)
       }
 
-      interface Row {
-        id: number
-        subjectIds: number[]
-        resourceType: string
-        title: string | null
-        description: string
-        dateCreated: Date
-        dateModified: Date
-        currentRevisionId: number | null
-        licenseUrl: string
-        originalAuthorUrl: string | null
-        instance: string
-        taxonomyTermIds: number[]
-        termNames: Record<number, string | undefined>
-        authors: Record<number, string | undefined>
-        authorEdits: Record<number, number>
-      }
+      const resources = await MetadataResourcesReolver.loadElements(
+        {
+          after,
+          first: first + 1,
+          predicate(element) {
+            if (instance && element.inLanguage.at(0) !== instance) {
+              return false
+            }
+            if (
+              modifiedAfterForPredicate &&
+              new Date(element.dateModified).getTime() >=
+                modifiedAfterForPredicate.getTime()
+            ) {
+              return false
+            }
 
-      const rows = await database.fetchAll<Row>(
-        `
-        WITH RECURSIVE subject_mapping AS (
-            SELECT
-                subject.id AS term_taxonomy_id,
-                subject.id AS subject_id,
-                root.id AS root_id
-            FROM term_taxonomy root
-            JOIN term_taxonomy subject ON subject.parent_id = root.id
-            WHERE root.parent_id IS NULL
-            OR root.id IN (106081, 146728)
-
-            UNION
-
-            SELECT
-                child.id,
-                subject_mapping.subject_id,
-                subject_mapping.root_id
-            FROM term_taxonomy child
-            JOIN subject_mapping ON subject_mapping.term_taxonomy_id = child.parent_id
-            -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
-            -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
-            WHERE child.parent_id NOT IN (87993, 106081, 146728)
-                -- Exclude content under "Baustelle", "Community", "Zum Testen" and "Testbereich" taxonomies
-                AND child.id NOT IN (75211, 105140, 107772, 135390, 25107, 106082)
-        )
-        SELECT
-            entity.id,
-            JSON_ARRAYAGG(subject_mapping.subject_id) AS subjectIds,
-            type.name AS resourceType,
-            MIN(field_title.value) AS title,
-            MIN(field_description.value) AS description,
-            entity.date AS dateCreated,
-            entity_revision.date AS dateModified,
-            entity.current_revision_id AS currentRevisionId,
-            license.url AS licenseUrl,
-            license.original_author_url as originalAuthorUrl,
-            instance.subdomain AS instance,
-            JSON_ARRAYAGG(term_taxonomy.id) AS taxonomyTermIds,
-            JSON_OBJECTAGG(term_taxonomy.id, term.name) AS termNames,
-            JSON_OBJECTAGG(user.id, user.username) AS authors,
-            JSON_OBJECTAGG(all_revisions_of_entity.id, user.id) AS authorEdits
-        FROM entity
-        JOIN uuid ON uuid.id = entity.id
-        JOIN instance ON entity.instance_id = instance.id
-        JOIN type on entity.type_id = type.id
-        JOIN license on license.id = entity.license_id
-        JOIN entity_revision ON entity.current_revision_id = entity_revision.id
-        LEFT JOIN entity_revision_field field_title on
-            field_title.entity_revision_id = entity_revision.id AND
-            field_title.field = "title"
-        LEFT JOIN entity_revision_field field_description on
-            field_description.entity_revision_id = entity_revision.id AND
-            field_description.field = "meta_description"
-        JOIN term_taxonomy_entity on term_taxonomy_entity.entity_id = entity.id
-        JOIN term_taxonomy on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
-        JOIN term on term_taxonomy.term_id = term.id
-        JOIN entity_revision all_revisions_of_entity ON all_revisions_of_entity.repository_id = entity.id
-        JOIN user ON all_revisions_of_entity.author_id = user.id
-        JOIN subject_mapping on subject_mapping.term_taxonomy_id = term_taxonomy_entity.term_taxonomy_id
-        WHERE entity.id > ?
-            AND (? is NULL OR instance.subdomain = ?)
-            AND (? is NULL OR entity_revision.date > ?)
-            AND uuid.trashed = 0
-            AND type.name IN ("applet", "article", "course", "text-exercise",
-                              "text-exercise-group", "video")
-            AND NOT subject_mapping.subject_id = 146728
-        GROUP BY entity.id
-        ORDER BY entity.id
-        LIMIT ?
-        `,
-        [
-          after ?? 0,
-          instance,
-          instance,
-          modifiedAfterForQuery,
-          modifiedAfterForQuery,
-          `${first + 1}`,
-        ],
-      )
-
-      const resources = rows.map((row) => {
-        const identifier = row.id
-        const id = getIri(row.id)
-
-        const editCounts: Record<number, number | undefined> = {}
-
-        for (const userId of Object.values(row.authorEdits)) {
-          editCounts[userId] = (editCounts[userId] ?? 0) + 1
-        }
-
-        const creators = [
-          ...(row.originalAuthorUrl
-            ? [
-                {
-                  type: 'Organization',
-                  id: row.originalAuthorUrl,
-                  name: row.originalAuthorUrl,
-                },
-              ]
-            : []),
-          ...R.sortBy(
-            ([id]) => -1 * (editCounts[parseInt(id)] ?? 0),
-            Object.entries(row.authors),
-          ).map(([id, username]) => ({
-            type: 'Person',
-            id: getIri(id),
-            name: username,
-            affiliation: getSerloOrganizationMetadata(),
-          })),
-        ]
-
-        const about = [...new Set(row.subjectIds)]
-          .flatMap(getRaWSubject)
-          .map(toSubject)
-        const isPartOf = R.sortBy(
-          (x) => x,
-          [...new Set(row.taxonomyTermIds)],
-        ).map((id) => ({
-          id: getIri(id),
-        }))
-
-        const schemaType = getSchemaType(row.resourceType)
-
-        const currentDate = new Date().toISOString()
-
-        const result = {
-          ['@context']: [
-            'https://w3id.org/kim/amb/context.jsonld',
-            {
-              '@language': row.instance,
-              '@vocab': 'http://schema.org/',
-              type: '@type',
-              id: '@id',
-            },
-          ],
-          id: id,
-          type: ['LearningResource', schemaType],
-          about,
-          description: row.description,
-          dateCreated: row.dateCreated.toISOString(),
-          dateModified: row.dateModified.toISOString(),
-          headline: row.title,
-          creator: creators,
-          identifier: {
-            type: 'PropertyValue',
-            propertyID: 'UUID',
-            value: identifier,
+            return true
           },
-          image:
-            row.subjectIds.length > 0
-              ? mapSerloSubjectsToThumbnail(row.subjectIds[0])
-              : null,
-          inLanguage: [row.instance],
-          isAccessibleForFree: true,
-          isFamilyFriendly: true,
-          learningResourceType: getLearningResourceType(row.resourceType),
-          license: { id: row.licenseUrl },
-          mainEntityOfPage: [
-            {
-              id: 'https://serlo.org/metadata',
-              type: 'WebContent',
-              provider: getSerloOrganizationMetadata(),
-              dateCreated: currentDate,
-              dateModified: currentDate,
-            },
-          ],
-          maintainer: getSerloOrganizationMetadata(),
-          name: row.title ?? getDefaultName(),
-          publisher: [getSerloOrganizationMetadata()],
-          isPartOf,
-          version: row.currentRevisionId
-            ? { id: getIri(row.currentRevisionId) }
-            : null,
-        }
-
-        return nonNullable(result)
-
-        function getDefaultName() {
-          let schemaTypeI18n: string
-
-          switch (row.instance) {
-            case 'de':
-              switch (row.resourceType) {
-                case 'article':
-                  schemaTypeI18n = 'Artikel'
-                  break
-                case 'course':
-                  schemaTypeI18n = 'Kurs'
-                  break
-                case 'text-exercise':
-                case 'text-exercise-group':
-                  schemaTypeI18n = 'Aufgabe'
-                  break
-                case 'video':
-                  schemaTypeI18n = 'Video'
-                  break
-                case 'applet':
-                  schemaTypeI18n = 'Applet'
-                  break
-                default:
-                  schemaTypeI18n = 'Inhalt'
-              }
-              break
-            default:
-              switch (row.resourceType) {
-                case 'article':
-                  schemaTypeI18n = 'Article'
-                  break
-                case 'course':
-                  schemaTypeI18n = 'Course'
-                  break
-                case 'text-exercise':
-                case 'text-exercise-group':
-                  schemaTypeI18n = 'Exercise'
-                  break
-                case 'video':
-                  schemaTypeI18n = 'Video'
-                  break
-                case 'applet':
-                  schemaTypeI18n = 'Applet'
-                  break
-                default:
-                  schemaTypeI18n = 'Content'
-              }
-          }
-          const termName =
-            R.sortBy(([id]) => parseInt(id), Object.entries(row.termNames))
-              .map((x) => x[1])
-              .at(0) ?? '<unknown>'
-          const fromI18n: string = row.instance === 'de' ? 'aus' : 'from'
-          return `${schemaTypeI18n} ${fromI18n} "${termName}"`
-        }
-      })
+        },
+        context,
+      )
 
       return resolveConnection({
         nodes: resources,
@@ -348,6 +131,387 @@ export const resolvers: Resolvers = {
       return '2.0.0'
     },
   },
+}
+
+function createGeneratorResolver<Result>(
+  spec: GeneratorResolverSpec<Result>,
+): GeneratorResolver<Result> {
+  const { maxAge, cacheKeySuffix, chunkSize } = spec
+  const { firstAfterValue = 0 } = spec
+
+  return {
+    async loadElements(payload, context) {
+      const { first, predicate = () => true } = payload
+      const result: Result[] = []
+      const after = payload.after != null ? payload.after : firstAfterValue
+      let nextAfterValue: number | undefined
+
+      nextAfterValue = await getFirstAfterValue(after, context)
+
+      whileLoop: while (nextAfterValue != null) {
+        const nextChunk = await loadChunk(nextAfterValue, context)
+
+        for (const element of nextChunk) {
+          if (spec.getId(element) > after && predicate(element)) {
+            result.push(element)
+          }
+
+          if (result.length >= first) {
+            break whileLoop
+          }
+        }
+
+        const lastElement = nextChunk.at(-1)
+
+        nextAfterValue =
+          lastElement != null ? spec.getId(lastElement) : undefined
+      }
+
+      return result
+    },
+  }
+
+  async function loadChunk(
+    after: number,
+    context: Pick<Context, 'cache' | 'database'>,
+  ) {
+    const { cache } = context
+
+    const chunkFromCache = await cache.get<Result[]>({
+      key: getKey(after),
+      maxAge,
+    })
+
+    if (O.isSome(chunkFromCache)) {
+      const cacheEntry = chunkFromCache.value
+
+      // TODO: Check `staleAfter`
+
+      return cacheEntry.value
+    }
+
+    const fallbackChunk = await spec.getChunk(
+      { after, first: chunkSize },
+      context,
+    )
+
+    await cache.set<Result[]>({
+      key: getKey(after),
+      value: fallbackChunk,
+      ttlInSeconds: timeToSeconds(maxAge),
+      source: spec.name,
+    })
+
+    return fallbackChunk
+  }
+
+  async function getFirstAfterValue(
+    after: number,
+    { cache }: { cache: Context['cache'] },
+  ) {
+    const chunkKeys = await cache.keys(cacheKeySuffix + '/*')
+    const chunkAfterValues = chunkKeys
+      .map(getAfterValueFromKey)
+      .filter(isDefined)
+      .filter((x) => x <= after)
+
+    return R.sortBy((x) => x, chunkAfterValues).at(-1) ?? firstAfterValue
+  }
+
+  function getKey(after: number) {
+    return `${cacheKeySuffix}/${after}`
+  }
+
+  function getAfterValueFromKey(key: string) {
+    const suffix = cacheKeySuffix + '/'
+    const afterValue = key.startsWith(suffix)
+      ? parseInt(key.slice(suffix.length))
+      : null
+
+    return afterValue != null && !isNaN(afterValue) ? afterValue : null
+  }
+}
+
+// TODO: Add decoder to check cached value
+interface GeneratorResolverSpec<Result> {
+  name: string
+  chunkSize: number
+  cacheKeySuffix: string
+  maxAge: Time
+  staleAfter: Time
+  getChunk(
+    args: { first: number; after?: number },
+    context: Pick<Context, 'database'>,
+  ): Promise<Result[]>
+  getId(element: Result): number
+  firstAfterValue?: number
+}
+
+interface GeneratorResolver<Result> {
+  loadElements(
+    args: {
+      after: number | null
+      first: number
+      predicate?: (x: Result) => boolean
+    },
+    context: Pick<Context, 'database' | 'cache'>,
+  ): Promise<Result[]>
+}
+
+async function resolveResourcesFromDB(
+  {
+    after = 0,
+    first,
+  }: {
+    after?: number
+    first: number
+  },
+  { database }: Pick<Context, 'database'>,
+) {
+  interface Row {
+    id: number
+    subjectIds: number[]
+    resourceType: string
+    title: string | null
+    description: string
+    dateCreated: Date
+    dateModified: Date
+    currentRevisionId: number | null
+    licenseUrl: string
+    originalAuthorUrl: string | null
+    instance: string
+    taxonomyTermIds: number[]
+    termNames: Record<number, string | undefined>
+    authors: Record<number, string | undefined>
+    authorEdits: Record<number, number>
+  }
+
+  const rows = await database.fetchAll<Row>(
+    `
+      WITH RECURSIVE subject_mapping AS (
+          SELECT
+              subject.id AS term_taxonomy_id,
+              subject.id AS subject_id,
+              root.id AS root_id
+          FROM term_taxonomy root
+          JOIN term_taxonomy subject ON subject.parent_id = root.id
+          WHERE root.parent_id IS NULL
+          OR root.id IN (106081, 146728)
+
+          UNION
+
+          SELECT
+              child.id,
+              subject_mapping.subject_id,
+              subject_mapping.root_id
+          FROM term_taxonomy child
+          JOIN subject_mapping ON subject_mapping.term_taxonomy_id = child.parent_id
+          -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
+          -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
+          WHERE child.parent_id NOT IN (87993, 106081, 146728)
+              -- Exclude content under "Baustelle", "Community", "Zum Testen" and "Testbereich" taxonomies
+              AND child.id NOT IN (75211, 105140, 107772, 135390, 25107, 106082)
+      )
+      SELECT
+          entity.id,
+          JSON_ARRAYAGG(subject_mapping.subject_id) AS subjectIds,
+          type.name AS resourceType,
+          MIN(field_title.value) AS title,
+          MIN(field_description.value) AS description,
+          entity.date AS dateCreated,
+          entity_revision.date AS dateModified,
+          entity.current_revision_id AS currentRevisionId,
+          license.url AS licenseUrl,
+          license.original_author_url as originalAuthorUrl,
+          instance.subdomain AS instance,
+          JSON_ARRAYAGG(term_taxonomy.id) AS taxonomyTermIds,
+          JSON_OBJECTAGG(term_taxonomy.id, term.name) AS termNames,
+          JSON_OBJECTAGG(user.id, user.username) AS authors,
+          JSON_OBJECTAGG(all_revisions_of_entity.id, user.id) AS authorEdits
+      FROM entity
+      JOIN uuid ON uuid.id = entity.id
+      JOIN instance ON entity.instance_id = instance.id
+      JOIN type on entity.type_id = type.id
+      JOIN license on license.id = entity.license_id
+      JOIN entity_revision ON entity.current_revision_id = entity_revision.id
+      LEFT JOIN entity_revision_field field_title on
+          field_title.entity_revision_id = entity_revision.id AND
+          field_title.field = "title"
+      LEFT JOIN entity_revision_field field_description on
+          field_description.entity_revision_id = entity_revision.id AND
+          field_description.field = "meta_description"
+      JOIN term_taxonomy_entity on term_taxonomy_entity.entity_id = entity.id
+      JOIN term_taxonomy on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+      JOIN term on term_taxonomy.term_id = term.id
+      JOIN entity_revision all_revisions_of_entity ON all_revisions_of_entity.repository_id = entity.id
+      JOIN user ON all_revisions_of_entity.author_id = user.id
+      JOIN subject_mapping on subject_mapping.term_taxonomy_id = term_taxonomy_entity.term_taxonomy_id
+      WHERE entity.id > ?
+          AND uuid.trashed = 0
+          AND type.name IN ("applet", "article", "course", "text-exercise",
+                            "text-exercise-group", "video")
+          AND NOT subject_mapping.subject_id = 146728
+      GROUP BY entity.id
+      ORDER BY entity.id
+      LIMIT ?
+    `,
+    [after, `${first}`],
+  )
+
+  const resources = rows.map((row) => {
+    const identifier = row.id
+    const id = getIri(row.id)
+
+    const editCounts: Record<number, number | undefined> = {}
+
+    for (const userId of Object.values(row.authorEdits)) {
+      editCounts[userId] = (editCounts[userId] ?? 0) + 1
+    }
+
+    const creators = [
+      ...(row.originalAuthorUrl
+        ? [
+            {
+              type: 'Organization',
+              id: row.originalAuthorUrl,
+              name: row.originalAuthorUrl,
+            },
+          ]
+        : []),
+      ...R.sortBy(
+        ([id]) => -1 * (editCounts[parseInt(id)] ?? 0),
+        Object.entries(row.authors),
+      ).map(([id, username]) => ({
+        type: 'Person',
+        id: getIri(id),
+        name: username,
+        affiliation: getSerloOrganizationMetadata(),
+      })),
+    ]
+
+    const about = [...new Set(row.subjectIds)]
+      .flatMap(getRaWSubject)
+      .map(toSubject)
+    const isPartOf = R.sortBy((x) => x, [...new Set(row.taxonomyTermIds)]).map(
+      (id) => ({
+        id: getIri(id),
+      }),
+    )
+
+    const schemaType = getSchemaType(row.resourceType)
+
+    const currentDate = new Date().toISOString()
+
+    const result = {
+      ['@context']: [
+        'https://w3id.org/kim/amb/context.jsonld',
+        {
+          '@language': row.instance,
+          '@vocab': 'http://schema.org/',
+          type: '@type',
+          id: '@id',
+        },
+      ],
+      id: id,
+      type: ['LearningResource', schemaType],
+      about,
+      description: row.description,
+      dateCreated: row.dateCreated.toISOString(),
+      dateModified: row.dateModified.toISOString(),
+      headline: row.title,
+      creator: creators,
+      identifier: {
+        type: 'PropertyValue',
+        propertyID: 'UUID',
+        value: identifier,
+      },
+      image:
+        row.subjectIds.length > 0
+          ? mapSerloSubjectsToThumbnail(row.subjectIds[0])
+          : null,
+      inLanguage: [row.instance],
+      isAccessibleForFree: true,
+      isFamilyFriendly: true,
+      learningResourceType: getLearningResourceType(row.resourceType),
+      license: { id: row.licenseUrl },
+      mainEntityOfPage: [
+        {
+          id: 'https://serlo.org/metadata',
+          type: 'WebContent',
+          provider: getSerloOrganizationMetadata(),
+          dateCreated: currentDate,
+          dateModified: currentDate,
+        },
+      ],
+      maintainer: getSerloOrganizationMetadata(),
+      name: row.title ?? getDefaultName(),
+      publisher: [getSerloOrganizationMetadata()],
+      isPartOf,
+      version: row.currentRevisionId
+        ? { id: getIri(row.currentRevisionId) }
+        : null,
+    }
+
+    return nonNullable(result)
+
+    function getDefaultName() {
+      let schemaTypeI18n: string
+
+      switch (row.instance) {
+        case 'de':
+          switch (row.resourceType) {
+            case 'article':
+              schemaTypeI18n = 'Artikel'
+              break
+            case 'course':
+              schemaTypeI18n = 'Kurs'
+              break
+            case 'text-exercise':
+            case 'text-exercise-group':
+              schemaTypeI18n = 'Aufgabe'
+              break
+            case 'video':
+              schemaTypeI18n = 'Video'
+              break
+            case 'applet':
+              schemaTypeI18n = 'Applet'
+              break
+            default:
+              schemaTypeI18n = 'Inhalt'
+          }
+          break
+        default:
+          switch (row.resourceType) {
+            case 'article':
+              schemaTypeI18n = 'Article'
+              break
+            case 'course':
+              schemaTypeI18n = 'Course'
+              break
+            case 'text-exercise':
+            case 'text-exercise-group':
+              schemaTypeI18n = 'Exercise'
+              break
+            case 'video':
+              schemaTypeI18n = 'Video'
+              break
+            case 'applet':
+              schemaTypeI18n = 'Applet'
+              break
+            default:
+              schemaTypeI18n = 'Content'
+          }
+      }
+      const termName =
+        R.sortBy(([id]) => parseInt(id), Object.entries(row.termNames))
+          .map((x) => x[1])
+          .at(0) ?? '<unknown>'
+      const fromI18n: string = row.instance === 'de' ? 'aus' : 'from'
+      return `${schemaTypeI18n} ${fromI18n} "${termName}"`
+    }
+  })
+
+  return resources
 }
 
 function getIri(id: number | string): string {

@@ -141,6 +141,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
 
       await client.quit()
     },
+    keys: (pattern) => client.keys(pattern),
   }
 }
 
@@ -152,6 +153,7 @@ export function createEmptyCache(): Cache {
     ready: async () => {},
     flush: async () => {},
     quit: async () => {},
+    keys: () => Promise.resolve([]),
   }
 }
 
@@ -175,6 +177,7 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
     quit() {
       return cache.quit()
     },
+    keys: (pattern) => cache.keys(namespace + pattern),
   }
 }
 
