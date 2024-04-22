@@ -446,6 +446,7 @@ function getRaWSubject(id: number): RawSubject[] {
 
     // Politik => Politik, Sachunterricht (Schule)
     case 79159:
+    case 107556:
       return [
         { id: '1023', scheme: Scheme.SchoolSubject },
         { id: '1028', scheme: Scheme.SchoolSubject },
