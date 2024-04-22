@@ -12,6 +12,7 @@ import {
 } from './__tests__/__utils__'
 import { createCache, createNamespacedCache } from '~/cache'
 import { type Cache } from '~/context/cache'
+import { Database } from '~/database'
 import { initializeSentry } from '~/internals/sentry'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 
@@ -26,7 +27,7 @@ beforeAll(() => {
   const server = setupServer()
   const kratos = new MockKratos()
 
-  global.database = createPool(process.env.MYSQL_URI)
+  global.pool = createPool(process.env.MYSQL_URI)
   global.server = server
   global.timer = timer
   global.kratos = kratos
@@ -48,6 +49,11 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
+  global.transaction = await pool.getConnection()
+  await global.transaction.beginTransaction()
+
+  global.database = new Database(global.transaction)
+
   const baseCache = createCache({ timer: global.timer })
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
 
@@ -73,10 +79,9 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  if (global.transaction != null) {
-    await global.transaction.rollback()
-    global.transaction.release()
-  }
+  await global.transaction.rollback()
+  global.transaction.release()
+
   await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()
@@ -125,6 +130,7 @@ declare global {
   var timer: MockTimer
   var sentryEvents: Event[]
   var kratos: MockKratos
-  var database: Pool
+  var pool: Pool
   var transaction: PoolConnection
+  var database: Database
 }
