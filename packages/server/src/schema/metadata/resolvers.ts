@@ -266,7 +266,7 @@ export const resolvers: Resolvers = {
             : null,
         }
 
-        return nonNullable(result)
+        return filterNullAndEmpty(result)
 
         function getDefaultName() {
           let schemaTypeI18n: string
