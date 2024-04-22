@@ -433,7 +433,7 @@ function getRaWSubject(id: number): RawSubject[] {
     case 107557:
     case 113127:
       return [{ id: '1007', scheme: Scheme.SchoolSubject }]
-    // Latain (Schule)
+    // Latein (Schule)
     case 33894:
     case 106085:
       return [{ id: '1016', scheme: Scheme.SchoolSubject }]
