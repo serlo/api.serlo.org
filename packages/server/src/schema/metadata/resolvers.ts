@@ -361,7 +361,7 @@ function getSchemaType(entityType: string): string {
 }
 
 function getLearningResourceType(entityType: string): { id: string }[] {
-  return getOpeneduhubIds(entityType)
+  return getOpenEduHubIds(entityType)
     .map((vocab) => `http://w3id.org/openeduhub/vocabs/new_lrt/${vocab}`)
     .map((id) => ({ id }))
 }
