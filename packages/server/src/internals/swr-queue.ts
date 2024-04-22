@@ -3,14 +3,13 @@ import { either as E, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { createAuthServices } from './authentication'
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
-import { captureErrorEvent } from './error-event'
-import { log } from './log'
 import { type Context } from '~/context'
+import { createAuthServices } from '~/context/auth-services'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
+import { captureErrorEvent } from '~/error-event'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
 import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
@@ -47,15 +46,14 @@ export function createSwrQueue({
   cache: Cache
   timer: Timer
 }): SwrQueue {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),
@@ -68,8 +66,8 @@ export function createSwrQueue({
     removeOnSuccess: true,
   })
 
-  queue.on('error', (err) => {
-    log.error(`Queue error event - ${err.message}`)
+  queue.on('error', (error) => {
+    captureErrorEvent({ error, location: 'swrQueue' })
   })
 
   return {
@@ -86,11 +84,8 @@ export function createSwrQueue({
       })
 
       if (E.isLeft(result)) {
-        log.debug('Skipped job', key, 'because', result.left)
         return undefined as never
       }
-
-      log.debug('Queuing job', key)
 
       // By setting the job's ID, we make sure that there will be only one update job for the same key
       // See also https://github.com/bee-queue/bee-queue#jobsetidid
@@ -104,18 +99,10 @@ export function createSwrQueue({
 
       job.on('failed', (error) => {
         reportError({ jobStatus: 'failed', error })
-        log.error(`Job ${job.id} failed with error ${error.message}`)
       })
 
       job.on('retrying', (error) => {
         reportError({ jobStatus: 'retrying', error })
-        log.debug(
-          `Job ${job.id} failed with error ${error.message} but is being retried!`,
-        )
-      })
-
-      job.on('succeeded', (result: string) => {
-        log.debug(`Job ${job.id} succeeded with result: ${result}`)
       })
 
       return job as never
@@ -149,15 +136,14 @@ export function createSwrQueueWorker({
   quit(): Promise<void>
   _queue: never
 } {
-  const args = {
-    environment: {
-      cache,
-      swrQueue: emptySwrQueue,
-      authServices: createAuthServices(),
-    },
-  }
   const models = R.values(modelFactories).map((createModel) =>
-    createModel(args),
+    createModel({
+      context: {
+        cache,
+        swrQueue: emptySwrQueue,
+        authServices: createAuthServices(),
+      },
+    }),
   )
   const legacyQueries = models.flatMap((model) =>
     Object.values(model).filter(isLegacyQuery),

@@ -54,7 +54,6 @@
     "io-ts-types": "^0.5.19",
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
-    "loglevel": "^1.9.1",
     "monocle-ts": "^2.3.13",
     "msgpack5": "^6.0.2",
     "mysql2": "^3.9.2",

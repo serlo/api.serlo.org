@@ -2,9 +2,9 @@ import dotenv from 'dotenv'
 import createApp from 'express'
 import { createPool } from 'mysql2/promise'
 
-import { createCache } from './cache'
 import { initializeSentry } from './sentry'
 import { createSwrQueueWorker } from './swr-queue'
+import { createCache } from '~/cache'
 import { Database } from '~/database'
 import { createTimer } from '~/timer'
 

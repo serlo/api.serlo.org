@@ -5,15 +5,14 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { Context } from '~/context'
-import { UserInputError } from '~/errors'
-import { ModelDataSource } from '~/internals/data-source'
 import {
   addContext,
   assertAll,
   captureErrorEvent,
   consumeErrorEvent,
   ErrorEvent,
-} from '~/internals/error-event'
+} from '~/error-event'
+import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -299,7 +298,11 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
 
-    async deleteBots(_parent, { input }, { dataSources, userId }) {
+    async deleteBots(
+      _parent,
+      { input },
+      { dataSources, userId, authServices },
+    ) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -349,7 +352,9 @@ export const resolvers: Resolvers = {
         { botIds },
       )
       await Promise.all(
-        botIds.map(async (botId) => await deleteKratosUser(botId, dataSources)),
+        botIds.map(
+          async (botId) => await deleteKratosUser(botId, authServices),
+        ),
       )
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
@@ -372,7 +377,11 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
 
-    async deleteRegularUser(_parent, { input }, { dataSources, userId }) {
+    async deleteRegularUser(
+      _parent,
+      { input },
+      { dataSources, authServices, userId },
+    ) {
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         userId,
@@ -394,7 +403,7 @@ export const resolvers: Resolvers = {
         userId: id,
       })
 
-      if (result.success) await deleteKratosUser(id, dataSources)
+      if (result.success) await deleteKratosUser(id, authServices)
       return { success: result.success, query: {} }
     },
 
@@ -425,14 +434,25 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
 
-    async setDescription(_parent, { input }, { dataSources, userId }) {
+    async setDescription(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
       assertUserIsAuthenticated(userId)
-      const result = await dataSources.model.serlo.setDescription({
-        ...input,
+      if (input.description.length >= 64 * 1024) {
+        throw new UserInputError('description too long')
+      }
+      await database.mutate('update user set description = ? where id = ?', [
+        input.description,
         userId,
-      })
+      ])
+      await dataSources.model.serlo.getUuid._querySpec.setCache({
+        payload: { id: userId },
+        getValue(current) {
+          if (!current) return
 
-      return { success: result.success, query: {} }
+          return { ...current, description: input.description }
+        },
+      })
+      return { success: true, query: {} }
     },
 
     async setEmail(_parent, { input }, { dataSources, userId }) {
@@ -496,12 +516,11 @@ function assertInstanceIsSet(instance: Instance | null) {
 }
 async function deleteKratosUser(
   userId: number,
-  dataSources: { model: ModelDataSource },
+  authServices: Context['authServices'],
 ) {
-  const identity =
-    await dataSources.model.authServices.kratos.db.getIdentityByLegacyId(userId)
-  if (identity)
-    await dataSources.model.authServices.kratos.admin.deleteIdentity({
-      id: identity.id,
-    })
+  const identity = await authServices.kratos.db.getIdentityByLegacyId(userId)
+
+  if (identity) {
+    await authServices.kratos.admin.deleteIdentity({ id: identity.id })
+  }
 }

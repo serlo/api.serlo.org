@@ -1,8 +1,8 @@
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InvalidCurrentValueError } from './internals/data-source-helper/common'
 import { Context } from '~/context'
+import { InvalidCurrentValueError } from '~/errors'
 import { Time, timeToSeconds } from '~/timer'
 
 export function createCachedResolver<P, R>(
@@ -52,7 +52,7 @@ export function createCachedResolver<P, R>(
           invalidCurrentValue: value,
           decoder: customDecoder.name,
           payload,
-          type: spec.resolverNameForErrorMessage,
+          type: spec.name,
           key,
         })
       }
@@ -79,7 +79,8 @@ interface ResolverSpec<Payload, Result> {
   swrFrequency?: number
   staleAfter?: Time
   maxAge?: Time
-  resolverNameForErrorMessage: string
+  name: string
+  examplePayload: Payload
 }
 
 export interface CachedResolver<Payload, Result> {

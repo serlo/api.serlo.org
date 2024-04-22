@@ -3,12 +3,10 @@ import Redis from 'ioredis'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
+import Redlock from 'redlock'
 
-import { createLockManager, LockManager } from './lock-manager'
-import { Timer } from '../../timer'
-import { log } from '../log'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
-import { timeToMilliseconds, Time } from '~/timer'
+import { timeToMilliseconds, Time, Timer } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
 
 const msgpack = (
@@ -24,8 +22,6 @@ export function createCache({ timer }: { timer: Timer }): Cache {
     host: redisUrl.hostname,
     port: Number(redisUrl.port),
     retryStrategy(times) {
-      log.error(`\nTrying to reconnect to redis, ${times}th attempt\n`)
-
       const delay = 2000
       // return any value that is not a number to stop retrying.
       if (times * delay > 300_000) throw new Error('Redis connection timed out')
@@ -85,9 +81,6 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       const THREE_DAYS = 60 * 60 * 24 * 3
 
       await client.expire(key, ttlInSeconds ?? THREE_DAYS)
-    } catch (e) {
-      log.error(`Failed to set key "${key}":`, e)
-      throw e
     } finally {
       await lock.unlock()
     }
@@ -177,6 +170,35 @@ export function createNamespacedCache(cache: Cache, namespace: string): Cache {
       return cache.quit()
     },
   }
+}
+
+function createLockManager({
+  retryCount,
+}: {
+  retryCount: number
+}): LockManager {
+  const client = new Redis(process.env.REDIS_URL)
+  const redlock = new Redlock([client], { retryCount })
+
+  return {
+    async lock(key: string) {
+      const lock = await redlock.acquire([`locks:${key}`], 10000)
+
+      return {
+        unlock: async () => {
+          await lock.release()
+        },
+      }
+    },
+    async quit() {
+      await client.quit()
+    },
+  }
+}
+
+interface LockManager {
+  lock(key: string): Promise<{ unlock(): Promise<void> }>
+  quit(): Promise<void>
 }
 
 function isCacheEntry<Value>(value: unknown): value is CacheEntry<Value> {
