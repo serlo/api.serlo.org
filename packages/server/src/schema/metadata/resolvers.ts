@@ -366,7 +366,7 @@ function getLearningResourceType(entityType: string): { id: string }[] {
     .map((id) => ({ id }))
 }
 
-function getOpeneduhubIds(entityType: string): string[] {
+function getOpenEduHubIds(entityType: string): string[] {
   switch (entityType) {
     case 'article':
       return ['588efe4f-976f-48eb-84aa-8bcb45679f85']
