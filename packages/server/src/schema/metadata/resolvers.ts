@@ -573,7 +573,7 @@ function mapSerloSubjectsToThumbnail(id: number | undefined): string {
   return `https://de.serlo.org/_assets/img/meta/${thumbnailImage}`
 }
 
-function nonNullable<A extends object>(result: A): A {
+function filterNullAndEmpty<A extends object>(result: A): A {
   return Object.fromEntries(
     Object.entries(result).filter(
       ([_, value]) =>
