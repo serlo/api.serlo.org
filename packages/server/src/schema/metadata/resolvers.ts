@@ -466,6 +466,7 @@ function getRaWSubject(id: number): RawSubject[] {
     case 112723:
       return [{ id: '1006', scheme: Scheme.SchoolSubject }]
     // Geschichte (Schule)
+    case 136362:
     case 140528:
       return [{ id: '1011', scheme: Scheme.SchoolSubject }]
     // Wirtschaftskunde (Schule)
