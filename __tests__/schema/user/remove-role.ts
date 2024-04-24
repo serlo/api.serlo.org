@@ -64,13 +64,13 @@ describe('remove global role', () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('ignores instance when given one', async () => {
+  test('ignores instance if given', async () => {
     await mutation
       .withInput({ username: admin.username, role: globalRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when only scoped admin', async () => {
+  test('fails if only scoped admin', async () => {
     await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
   })
 })
@@ -91,21 +91,21 @@ describe('remove scoped role', () => {
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('removes a role successfully when scoped admin', async () => {
+  test('removes a role successfully if scoped admin', async () => {
     await mutation
       .forLoginUser('de_admin')
       .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when admin in wrong scope', async () => {
+  test('fails if admin in wrong scope', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when not given an instance', async () => {
+  test('fails if not given an instance', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole })
       .shouldFailWithError('BAD_USER_INPUT')
