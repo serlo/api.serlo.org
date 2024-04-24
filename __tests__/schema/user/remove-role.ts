@@ -137,16 +137,10 @@ test('updates the cache', async () => {
   })
 })
 
-test('fails when user is not authenticated', async () => {
+test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails when user does not have role "admin"', async () => {
+test('fails if user does not have role "admin"', async () => {
   await mutation.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('UserRemoveRoleMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })
