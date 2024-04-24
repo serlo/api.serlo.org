@@ -51,18 +51,6 @@ beforeEach(() => {
       `,
     })
     .withVariables({ id: admin.id })
-
-  given('UuidQuery').for(admin)
-  given('AliasQuery')
-    .withPayload({
-      instance: Instance.De,
-      path: `user/profile/${admin.username}`,
-    })
-    .returns({
-      id: admin.id,
-      instance: Instance.De,
-      path: `/user/${admin.id}/${admin.username}`,
-    })
 })
 
 describe('remove global role', () => {
