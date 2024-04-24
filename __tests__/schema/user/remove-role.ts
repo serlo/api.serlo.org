@@ -54,12 +54,6 @@ beforeEach(() => {
 })
 
 describe('remove global role', () => {
-  beforeEach(() => {
-    given('UserRemoveRoleMutation')
-      .withPayload({ roleName: globalRole, username: admin.username })
-      .returns({ success: true })
-  })
-
   test('removes a role successfully', async () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
