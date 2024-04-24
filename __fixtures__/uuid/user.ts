@@ -6,7 +6,7 @@ export const user: Model<'User'> = {
   id: 1,
   trashed: false,
   alias: '/user/1/admin',
-  username: 'alpha',
+  username: 'admin',
   date: '2014-03-01T20:36:21Z',
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
