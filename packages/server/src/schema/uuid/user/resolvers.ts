@@ -174,10 +174,18 @@ export const resolvers: Resolvers = {
         ? `https://community.serlo.org/direct/${user.username}`
         : null
     },
-    async isActiveAuthor(user, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
-        user.id,
+    async isActiveAuthor(user, _args, context) {
+      const { database, timer } = context
+      const ids = await database.fetchAll(
+        `SELECT u.id
+              FROM user u
+              JOIN event_log e ON u.id = e.actor_id
+              WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+              GROUP BY u.id
+              HAVING count(e.event_id) > 10`,
+        [new Date(timer.now()).toISOString()],
       )
+      return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
       const ids = await activeDonorIDs(context)

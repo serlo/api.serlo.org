@@ -21,6 +21,7 @@ import { handleAuthentication } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
 import { schema } from '~/schema'
+import { createTimer } from '~/timer'
 
 const SessionDecoder = t.type({
   identity: IdentityDecoder,
@@ -56,6 +57,7 @@ export async function applyGraphQLMiddleware({
           model: new ModelDataSource(environment),
         }
         const authorizationHeader = req.headers.authorization
+        const timer = createTimer()
         if (!authorizationHeader) {
           return Promise.resolve({
             dataSources,
@@ -66,6 +68,7 @@ export async function applyGraphQLMiddleware({
             cache,
             swrQueue,
             authServices,
+            timer,
           })
         }
         const partialContext = await handleAuthentication(
@@ -97,6 +100,7 @@ export async function applyGraphQLMiddleware({
           cache,
           swrQueue,
           authServices,
+          timer,
         }
       },
     }),
