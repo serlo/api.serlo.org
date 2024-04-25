@@ -61,7 +61,6 @@ export async function createEvent(
         FROM event
         WHERE name = ?
     `,
-    //TODO: map eventtype to raw event type name!!
     [actorId, objectId, instance_id, date, eventType],
   )
   const eventId = (
@@ -228,7 +227,6 @@ export async function createNotifications(
 ) {
   const { objectId, actorId } = event
 
-  // TODO: Get uuidParameters
   const objectIds = [objectId, ...Object.values(event.uuidParameters)]
   const subscribers: Subscriber[] = []
 
