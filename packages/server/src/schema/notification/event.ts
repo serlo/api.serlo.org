@@ -237,11 +237,6 @@ export async function getEvent(id: number, database: Database) {
   }
 }
 
-interface Subscriber {
-  userId: number
-  sendEmail: boolean
-}
-
 export async function createNotifications(
   event: AbstractEvent,
   database: Database,
@@ -249,56 +244,44 @@ export async function createNotifications(
   const { objectId, actorId } = event
 
   const objectIds = [objectId, ...Object.values(event.uuidParameters)]
-  const subscribers: Subscriber[] = []
+  const subscribers = []
 
   for (const objectId of objectIds) {
-    let subscriptions = await database.fetchAll<{
-      objectId: number
-      userId: number
-      sendEmail: boolean
+    const subscriptions = await database.fetchAll<{
+      uuid_id: number
+      user_id: number
+      notify_mailman: boolean
     }>(
       `
-      SELECT uuid_id AS objectId, user_id AS userId, notify_mailman AS sendEmail
-        FROM subscription WHERE uuid_id = ?
+      SELECT uuid_id, user_id, notify_mailman
+        FROM subscription WHERE uuid_id = ? AND user_id != ?
     `,
-      [objectId],
-    )
-
-    subscriptions = subscriptions.filter(
-      (subscription) => subscription.userId !== actorId,
+      [objectId, actorId],
     )
 
     for (const subscription of subscriptions) {
       subscribers.push({
-        userId: subscription.userId,
-        sendEmail: subscription.sendEmail,
+        userId: subscription.user_id,
+        sendEmail: subscription.notify_mailman,
       })
     }
-
-    for (const subscriber of subscribers) {
-      await createNotification(event, subscriber, database)
-    }
   }
-}
 
-async function createNotification(
-  event: AbstractEvent,
-  subscriber: Subscriber,
-  database: Database,
-) {
-  await database.mutate(
-    `
-      INSERT INTO notification (user_id, date, email)
-        VALUES (?, ?, ?)
-    `,
-    [subscriber.userId, event.date, subscriber.sendEmail],
-  )
+  for (const subscriber of subscribers) {
+    await database.mutate(
+      `
+        INSERT INTO notification (user_id, email)
+          VALUES (?, ?)
+      `,
+      [subscriber.userId, subscriber.sendEmail],
+    )
 
-  await database.mutate(
-    `
-      INSERT INTO notification_event (notification_id, event_log_id)
-        SELECT LAST_INSERT_ID(), ?
-    `,
-    [event.id],
-  )
+    await database.mutate(
+      `
+        INSERT INTO notification_event (notification_id, event_log_id)
+          SELECT LAST_INSERT_ID(), ?
+      `,
+      [event.id],
+    )
+  }
 }
