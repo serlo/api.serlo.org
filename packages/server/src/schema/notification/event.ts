@@ -1,5 +1,4 @@
 import { Database } from '~/database'
-import { AbstractNotificationEvent } from '~/types'
 
 export enum EventType {
   ArchiveThread = 'discussion/comment/archive',
@@ -32,6 +31,7 @@ export async function createEvent(
     stringParameters,
     uuidParameters,
   }: {
+    // TODO: Ideally we type it so that string and uuid parameters are mandatory depending on event type
     eventType: EventType
     actorId: number
     objectId: number
@@ -116,9 +116,105 @@ export async function createEvent(
     )
   }
 
-  // TODO: getEvent
+  const event = await getEvent(eventId, database)
 
   await createNotifications(event, database)
+
+  return event
+}
+
+interface AbstractEvent {
+  actorId: number
+  date: Date
+  id: number
+  instance: string
+  objectId: number
+  rawTypename: string
+  stringParameters: Record<string, string>
+  uuidParameters: Record<string, number>
+}
+
+export async function getEvent(id: number, database: Database) {
+  const event = await database.fetchOne<{
+    id: number
+    actor_id: number
+    uuid_id: number
+    date: string
+    subdomain: string
+    name: string
+  }>(
+    `
+    SELECT l.id, l.actor_id, l.uuid_id, l.date, i.subdomain, e.name
+      FROM event_log l
+      LEFT JOIN event_parameter p ON l.id = p.log_id
+      JOIN instance i ON l.instance_id = i.id
+      JOIN event e ON l.event_id = e.id
+      WHERE l.id = ?
+    `,
+    [id],
+  )
+  if (!event) {
+    return Promise.reject(new Error('No event found'))
+  }
+
+  const stringParametersRaw = await database.fetchAll<{
+    name: string
+    value: string
+  }>(
+    `
+    SELECT n.name, s.value
+      FROM event_parameter p
+      JOIN event_parameter_name n ON n.id = p.name_id
+      JOIN event_parameter_string s ON s.event_parameter_id = p.id
+      WHERE p.name_id = n.id AND p.log_id = ?
+    `,
+    [id],
+  )
+
+  const stringParameters: Record<string, string> = {}
+
+  for (const param of stringParametersRaw) {
+    stringParameters[param.name] = param.value
+  }
+
+  const uuidParametersRaw = await database.fetchAll<{
+    name: string
+    uuid_id: number
+  }>(
+    `
+    SELECT n.name, u.uuid_id
+      FROM event_parameter p
+      JOIN event_parameter_name n ON n.id = p.name_id
+      JOIN event_parameter_uuid u ON u.event_parameter_id = p.id
+      WHERE p.name_id = n.id AND p.log_id = ?`,
+    [id],
+  )
+
+  const uuidParameters: Record<string, number> = {}
+
+  for (const param of uuidParametersRaw) {
+    uuidParameters[param.name] = param.uuid_id
+  }
+
+  if (!Object.values(EventType).includes(event.name as EventType)) {
+    return Promise.reject(
+      new Error('Event cannot be fetched because its type is invalid.'),
+    )
+  }
+
+  // TODO: check if instance is valid?
+
+  return {
+    __typename: event.name,
+    id: event.id,
+    instance: event.subdomain,
+    date: new Date(event.date),
+    actorId: event.actor_id,
+    objectId: event.uuid_id,
+    rawTypename: event.name,
+    stringParameters,
+    uuidParameters,
+  }
 }
 
 interface Subscriber {
@@ -127,13 +223,13 @@ interface Subscriber {
 }
 
 export async function createNotifications(
-  event: AbstractNotificationEvent,
+  event: AbstractEvent,
   database: Database,
 ) {
-  const { objectId, actor } = event
+  const { objectId, actorId } = event
 
   // TODO: Get uuidParameters
-  const objectIds = [objectId, ...Object.values(uuidParameters)]
+  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
   const subscribers: Subscriber[] = []
 
   for (const objectId of objectIds) {
@@ -143,14 +239,14 @@ export async function createNotifications(
       sendEmail: boolean
     }>(
       `
-      SELECT uuid_id AS objectId, user_id AS userId, notify_mailman AS send_email
+      SELECT uuid_id AS objectId, user_id AS userId, notify_mailman AS sendEmail
         FROM subscription WHERE uuid_id = ?
     `,
       [objectId],
     )
 
     subscriptions = subscriptions.filter(
-      (subscription) => subscription.userId !== actor.id,
+      (subscription) => subscription.userId !== actorId,
     )
 
     for (const subscription of subscriptions) {
@@ -167,7 +263,7 @@ export async function createNotifications(
 }
 
 async function createNotification(
-  event: AbstractNotificationEvent,
+  event: AbstractEvent,
   subscriber: Subscriber,
   database: Database,
 ) {
