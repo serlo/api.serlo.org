@@ -48,7 +48,6 @@ export async function createEvent(
     const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
       actorId,
     ])
-
     if (!user) {
       await database.rollbackTransaction()
       return Promise.reject(
@@ -57,6 +56,7 @@ export async function createEvent(
         ),
       )
     }
+
     await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id, date)
@@ -88,19 +88,33 @@ export async function createEvent(
       await database.mutate(
         `
         INSERT INTO event_parameter_string (value, event_parameter_id)
-            VALUES (?, ?)
+          VALUES (?, ?)
       `,
         [value, parameterId],
       )
     }
 
     for (const [parameter, uuidId] of Object.entries(uuidParameters)) {
+      // TODO: shouldn't we add a fk check in the table event_parameter_uuid instead?
+      const uuid = await database.fetchOne(
+        'SELECT *  FROM uuid  WHERE id = ?',
+        [uuidId],
+      )
+      if (!uuid) {
+        await database.rollbackTransaction()
+        return Promise.reject(
+          new Error(
+            `Event cannot be saved because uuid ${uuidId} in uuidParameters does not exist.`,
+          ),
+        )
+      }
+
       await database.mutate(
         `
         INSERT INTO event_parameter (log_id, name_id)
-            SELECT ?, id
-            FROM event_parameter_name
-            WHERE name = ?
+          SELECT ?, id
+          FROM event_parameter_name
+          WHERE name = ?
       `,
         [eventId, parameter],
       )
@@ -112,7 +126,7 @@ export async function createEvent(
       await database.mutate(
         `
         INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
-            VALUES (?, ?)
+          VALUES (?, ?)
       `,
         [uuidId, parameterId],
       )
