@@ -277,7 +277,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, dataSources, userId } = context
 
       assertUserIsAuthenticated(userId)
 
@@ -291,7 +291,19 @@ export const resolvers: Resolvers = {
 
       await assertUserIsAuthorizedOrTookPartInDiscussion({ context, threads })
 
-      await dataSources.model.serlo.setThreadStatus({ ids, status })
+      await database.mutate(
+        `
+        UPDATE comment
+        SET comment_status_id = (SELECT id from comment_status where name = ?)
+        WHERE comment.id IN (?)
+        `,
+        [status, ids.join(',')],
+      )
+
+      const promises = ids.map((id) =>
+        UuidResolver.removeCache({ id }, context),
+      )
+      await Promise.all(promises)
 
       return { success: true, query: {} }
     },
