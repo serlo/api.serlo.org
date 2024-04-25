@@ -1008,36 +1008,6 @@ export function createSerloModel({
     },
   })
 
-  const removeRole = createMutation({
-    type: 'UserRemoveRoleMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserRemoveRoleMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'UserRemoveRoleMutation'>) => {
-      return DatabaseLayer.makeRequest('UserRemoveRoleMutation', payload)
-    },
-    async updateCache({ username, roleName }, { success }) {
-      if (success) {
-        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
-          instance: Instance.De,
-          path: `user/profile/${username}`,
-        })) as { id: number }
-
-        await getUuid._querySpec.setCache({
-          payload: { id: alias.id },
-          getValue(current) {
-            if (!current) return
-            if (!UserDecoder.is(current)) return
-
-            if (!current.roles.includes(roleName)) return current
-            current.roles = current.roles.filter(
-              (currentRole) => currentRole !== roleName,
-            )
-            return current
-          },
-        })
-      }
-    },
-  })
-
   const getUsersByRole = createRequest({
     type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
@@ -1082,7 +1052,6 @@ export function createSerloModel({
     linkEntitiesToTaxonomy,
     getPages,
     rejectEntityRevision,
-    removeRole,
     setEmail,
     setEntityLicense,
     setNotificationState,
