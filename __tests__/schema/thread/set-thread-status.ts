@@ -45,12 +45,6 @@ test('unauthenticated user gets error', async () => {
 })
 
 describe('Authorization:', () => {
-  beforeEach(() => {
-    given('ThreadSetThreadStatusMutation')
-      .withPayload({ ids: [thread.id], status: 'open' })
-      .returns({ success: true })
-  })
-
   test('thread initiators are allowed to change thread status', async () => {
     await mutation.shouldReturnData({
       thread: { setThreadStatus: { success: true } },
