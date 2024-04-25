@@ -12,6 +12,7 @@ import { Service } from '~/context/service'
 import { ModelDataSource } from '~/internals/data-source'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
+import { createTimer } from '~/timer'
 
 export class Client {
   private apolloServer: ApolloServer<Context>
@@ -61,6 +62,7 @@ export class Client {
         cache: global.cache,
         swrQueue: emptySwrQueue,
         authServices,
+        timer: this.context?.timer ?? createTimer(),
       },
     })
   }
@@ -151,7 +153,7 @@ export class Query<
   }
 }
 
-type ClientContext = Partial<Pick<Context, 'service' | 'userId'>>
+type ClientContext = Partial<Pick<Context, 'service' | 'userId' | 'timer'>>
 type Variables<I> = { input: I } | Record<string, unknown>
 type Input = Record<string, unknown>
 interface QuerySpec<V> {

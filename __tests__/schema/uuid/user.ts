@@ -270,13 +270,13 @@ describe('User', () => {
       .withVariables({ id: user.id })
 
     test('by id (w/ activeAuthor when user is an active author)', async () => {
-      given('ActiveAuthorsQuery').returns([user.id])
+      timer.setCurrentTime(new Date('2015-04-16 14:48:29').getTime())
 
       await query.shouldReturnData({ uuid: { isActiveAuthor: true } })
     })
 
     test('by id (w/ activeAuthor when user is not an active author', async () => {
-      given('ActiveAuthorsQuery').returns([])
+      query.changeInput({ id: user2.id })
 
       await query.shouldReturnData({ uuid: { isActiveAuthor: false } })
     })
