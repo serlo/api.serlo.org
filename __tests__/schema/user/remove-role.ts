@@ -51,6 +51,8 @@ beforeEach(() => {
       `,
     })
     .withVariables({ id: admin.id })
+
+  given('UuidQuery').for(admin)
 })
 
 describe('remove global role', () => {
@@ -107,7 +109,7 @@ describe('remove scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  given('UserRemoveRoleMutation').returns({ success: true })
+  //given('UserRemoveRoleMutation').returns({ success: true })
 
   await uuidQuery.shouldReturnData({
     uuid: {
