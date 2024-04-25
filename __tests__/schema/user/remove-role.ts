@@ -72,15 +72,6 @@ describe('remove global role', () => {
 })
 
 describe('remove scoped role', () => {
-  beforeEach(() => {
-    given('UserRemoveRoleMutation')
-      .withPayload({
-        roleName: `${instance}_${scopedRole}`,
-        username: admin.username,
-      })
-      .returns({ success: true })
-  })
-
   test('removes a role successfully', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
@@ -109,8 +100,6 @@ describe('remove scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  //given('UserRemoveRoleMutation').returns({ success: true })
-
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
