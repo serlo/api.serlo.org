@@ -7,6 +7,18 @@ import {
 export class Database {
   constructor(private connection: Connection) {}
 
+  public async beginTransaction() {
+    await this.connection.beginTransaction()
+  }
+
+  public async commitTransaction() {
+    await this.connection.commit()
+  }
+
+  public async rollbackTransaction() {
+    await this.connection.rollback()
+  }
+
   public async fetchAll<T = unknown>(
     sql: string,
     params?: unknown[],

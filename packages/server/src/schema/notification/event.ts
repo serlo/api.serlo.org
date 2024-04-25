@@ -42,84 +42,93 @@ export async function createEvent(
   },
   database: Database,
 ) {
-  const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
-    actorId,
-  ])
-  // TODO: start a database transaction!
+  try {
+    await database.beginTransaction()
 
-  if (!user) {
-    return Promise.reject(
-      new Error(
-        'Event cannot be saved because the acting user does not exist.',
-      ),
-    )
-  }
-  await database.mutate(
-    `
+    const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
+      actorId,
+    ])
+
+    if (!user) {
+      await database.rollbackTransaction()
+      return Promise.reject(
+        new Error(
+          'Event cannot be saved because the acting user does not exist.',
+        ),
+      )
+    }
+    await database.mutate(
+      `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id, date)
         SELECT ?, id, ?, ?, ?
         FROM event
         WHERE name = ?
     `,
-    [actorId, objectId, instance_id, date, eventType],
-  )
-  const eventId = (
-    await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-  ).id
+      [actorId, objectId, instance_id, date, eventType],
+    )
+    const eventId = (
+      await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
+    ).id
 
-  for (const [parameter, value] of Object.entries(stringParameters)) {
-    await database.mutate(
-      `
+    for (const [parameter, value] of Object.entries(stringParameters)) {
+      await database.mutate(
+        `
         INSERT INTO event_parameter (log_id, name_id)
           SELECT ?, id
           FROM event_parameter_name
           WHERE name = ?
       `,
-      [eventId, parameter],
-    )
+        [eventId, parameter],
+      )
 
-    const parameterId = (
-      await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-    ).id
+      const parameterId = (
+        await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
+      ).id
 
-    await database.mutate(
-      `
+      await database.mutate(
+        `
         INSERT INTO event_parameter_string (value, event_parameter_id)
             VALUES (?, ?)
       `,
-      [value, parameterId],
-    )
-  }
+        [value, parameterId],
+      )
+    }
 
-  for (const [parameter, uuidId] of Object.entries(uuidParameters)) {
-    await database.mutate(
-      `
+    for (const [parameter, uuidId] of Object.entries(uuidParameters)) {
+      await database.mutate(
+        `
         INSERT INTO event_parameter (log_id, name_id)
             SELECT ?, id
             FROM event_parameter_name
             WHERE name = ?
       `,
-      [eventId, parameter],
-    )
+        [eventId, parameter],
+      )
 
-    const parameterId = (
-      await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-    ).id
+      const parameterId = (
+        await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
+      ).id
 
-    await database.mutate(
-      `
+      await database.mutate(
+        `
         INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
             VALUES (?, ?)
       `,
-      [uuidId, parameterId],
-    )
+        [uuidId, parameterId],
+      )
+    }
+
+    const event = await getEvent(eventId, database)
+
+    await createNotifications(event, database)
+
+    await database.commitTransaction()
+
+    return event
+  } catch (error) {
+    await database.rollbackTransaction()
+    return Promise.reject(error)
   }
-
-  const event = await getEvent(eventId, database)
-
-  await createNotifications(event, database)
-
-  return event
 }
 
 interface AbstractEvent {
