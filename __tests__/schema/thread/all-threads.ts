@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import * as mysql from 'mysql2/promise'
 
 import {
   article,
@@ -7,7 +6,6 @@ import {
   comment as baseComment,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import { Database } from '~/database'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -116,8 +114,7 @@ describe('allThreads', () => {
 
   test('parameter "instance"', async () => {
     // temporary solution because all comments in dump are German
-    const database = new Database(mysql.createPool(process.env.MYSQL_URI))
-    await database.mutate(
+    await global.database.mutate(
       `UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`,
     )
 
