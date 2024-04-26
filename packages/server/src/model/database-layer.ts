@@ -18,11 +18,6 @@ import {
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  ActiveAuthorsQuery: {
-    payload: t.undefined,
-    response: t.array(t.number),
-    canBeNull: false,
-  },
   ActiveReviewersQuery: {
     payload: t.undefined,
     response: t.array(t.number),
