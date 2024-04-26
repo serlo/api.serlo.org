@@ -4,6 +4,7 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
 import {
   addContext,
@@ -32,6 +33,39 @@ import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
+
+export const activeUserIdsQuery = createCachedResolver<
+  Record<string, never>,
+  number[]
+>({
+  name: 'ActiveUserIdsQuery',
+  decoder: t.array(t.number),
+  enableSwr: true,
+  staleAfter: { hours: 3 },
+  maxAge: { days: 3 },
+  getKey: () => {
+    return 'user/active-user-ids'
+  },
+  getPayload: (key) => {
+    return key === 'user/active-user-ids' ? O.some({}) : O.none
+  },
+  async getCurrentValue(_args, { database, timer }) {
+    const rows = await database.fetchAll<{ id: number }>(
+      `
+        SELECT u.id
+        FROM user u
+        JOIN event_log e ON u.id = e.actor_id
+        WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+        GROUP BY u.id
+        HAVING count(e.event_id) > 10
+      `,
+      [new Date(timer.now()).toISOString()],
+    )
+
+    return rows.map((x) => x.id)
+  },
+  examplePayload: {},
+})
 
 export const resolvers: Resolvers = {
   Query: {
@@ -175,16 +209,7 @@ export const resolvers: Resolvers = {
         : null
     },
     async isActiveAuthor(user, _args, context) {
-      const { database, timer } = context
-      const ids = await database.fetchAll(
-        `SELECT u.id
-              FROM user u
-              JOIN event_log e ON u.id = e.actor_id
-              WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
-              GROUP BY u.id
-              HAVING count(e.event_id) > 10`,
-        [new Date(timer.now()).toISOString()],
-      )
+      const ids = await activeUserIdsQuery.resolve({}, context)
       return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
