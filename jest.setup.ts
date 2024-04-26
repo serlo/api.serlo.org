@@ -111,8 +111,8 @@ class MockTimer implements Timer {
     this.currentTime += timeToMilliseconds(time)
   }
 
-  public setCurrentTime(time: number) {
-    this.currentTime = time
+  public setCurrentDate(date: Date) {
+    this.currentTime = date.getTime()
   }
 }
 
