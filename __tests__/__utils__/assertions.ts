@@ -12,7 +12,6 @@ import { Service } from '~/context/service'
 import { ModelDataSource } from '~/internals/data-source'
 import { getGraphQLOptions } from '~/internals/server'
 import { emptySwrQueue } from '~/internals/swr-queue'
-import { createTimer } from '~/timer'
 
 export class Client {
   private apolloServer: ApolloServer<Context>
@@ -62,7 +61,7 @@ export class Client {
         cache: global.cache,
         swrQueue: emptySwrQueue,
         authServices,
-        timer: this.context?.timer ?? createTimer(),
+        timer: global.timer,
       },
     })
   }
