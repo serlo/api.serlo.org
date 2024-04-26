@@ -270,7 +270,7 @@ describe('User', () => {
       .withVariables({ id: user.id })
 
     test('by id (w/ activeAuthor when user is an active author)', async () => {
-      timer.setCurrentTime(new Date('2015-04-16 14:48:29').getTime())
+      timer.setCurrentTime(new Date('2014-04-16T14:48:29').getTime())
 
       await query.shouldReturnData({ uuid: { isActiveAuthor: true } })
     })
