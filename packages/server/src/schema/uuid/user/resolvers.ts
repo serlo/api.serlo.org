@@ -4,8 +4,8 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import { createCachedResolver } from '~/cached-resolver'
 import * as DatabaseLayer from '../../../model/database-layer'
+import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
 import {
   addContext,
