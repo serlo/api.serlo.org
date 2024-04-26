@@ -40,13 +40,16 @@ describe('createEvent', () => {
     ).rejects.toThrow()
   })
 
-  test('fails if name from uuidParameters is invalid', async () => {
+  test('fails if name from uuidParameters is invalid and makes sure rolllback works', async () => {
+    const initialEventsNumber = await getEventsNumber()
     await expect(
       createEvent(
         { ...basePayload, uuidParameters: { bla: article.id } },
         global.database,
       ),
     ).rejects.toThrow()
+    const finalEventsNumber = await getEventsNumber()
+    expect(finalEventsNumber).toEqual(initialEventsNumber)
   })
 
   test('fails if uuid from uuidParameter does not exist', async () => {
@@ -59,7 +62,9 @@ describe('createEvent', () => {
   })
 
   test('creates event successfully with right payload', async () => {
-    const event = await createEvent(basePayload, global.database)
+    const initialEventsNumber = await getEventsNumber()
+
+    const event = await createEvent(basePayload, database)
     expect(event.__typename).toBe(basePayload.eventType)
     expect(event.actorId).toBe(basePayload.actorId)
     expect(event.objectId).toBe(basePayload.objectId)
@@ -72,5 +77,16 @@ describe('createEvent', () => {
       ),
     ).not.toHaveLength(0)
     // TODO: be sure the notifications are set to right users and objects
+
+    const finalEventsNumber = await getEventsNumber()
+    expect(finalEventsNumber).not.toEqual(initialEventsNumber)
   })
 })
+
+async function getEventsNumber() {
+  return (
+    await global.database.fetchOne<{ n: number }>(
+      'SELECT count(*) AS n FROM event_log',
+    )
+  ).n
+}
