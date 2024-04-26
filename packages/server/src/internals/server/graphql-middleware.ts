@@ -21,7 +21,7 @@ import { handleAuthentication } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
 import { createSentryPlugin } from '~/internals/sentry'
 import { schema } from '~/schema'
-import { createTimer } from '~/timer'
+import { Timer } from '~/timer'
 
 const SessionDecoder = t.type({
   identity: IdentityDecoder,
@@ -33,12 +33,14 @@ export async function applyGraphQLMiddleware({
   swrQueue,
   authServices,
   pool,
+  timer,
 }: {
   app: Express
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
   pool: Pool
+  timer: Timer
 }) {
   const graphQLPath = '/graphql'
   const environment = { cache, swrQueue, authServices }
@@ -57,7 +59,6 @@ export async function applyGraphQLMiddleware({
           model: new ModelDataSource(environment),
         }
         const authorizationHeader = req.headers.authorization
-        const timer = createTimer()
         if (!authorizationHeader) {
           return Promise.resolve({
             dataSources,
