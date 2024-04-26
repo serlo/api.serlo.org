@@ -53,71 +53,46 @@ beforeEach(() => {
     .withVariables({ id: admin.id })
 
   given('UuidQuery').for(admin)
-  given('AliasQuery')
-    .withPayload({
-      instance: Instance.De,
-      path: `user/profile/${admin.username}`,
-    })
-    .returns({
-      id: admin.id,
-      instance: Instance.De,
-      path: `/user/${admin.id}/${admin.username}`,
-    })
 })
 
 describe('remove global role', () => {
-  beforeEach(() => {
-    given('UserRemoveRoleMutation')
-      .withPayload({ roleName: globalRole, username: admin.username })
-      .returns({ success: true })
-  })
-
   test('removes a role successfully', async () => {
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('ignores instance when given one', async () => {
+  test('ignores instance if given', async () => {
     await mutation
       .withInput({ username: admin.username, role: globalRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when only scoped admin', async () => {
+  test('fails if only scoped admin', async () => {
     await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
   })
 })
 
 describe('remove scoped role', () => {
-  beforeEach(() => {
-    given('UserRemoveRoleMutation')
-      .withPayload({
-        roleName: `${instance}_${scopedRole}`,
-        username: admin.username,
-      })
-      .returns({ success: true })
-  })
-
   test('removes a role successfully', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('removes a role successfully when scoped admin', async () => {
+  test('removes a role successfully if scoped admin', async () => {
     await mutation
       .forLoginUser('de_admin')
       .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
-  test('fails when admin in wrong scope', async () => {
+  test('fails if admin in wrong scope', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
       .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
-  test('fails when not given an instance', async () => {
+  test('fails if not given an instance', async () => {
     await mutation
       .withInput({ username: admin.username, role: scopedRole })
       .shouldFailWithError('BAD_USER_INPUT')
@@ -125,8 +100,6 @@ describe('remove scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  given('UserRemoveRoleMutation').returns({ success: true })
-
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
@@ -149,16 +122,10 @@ test('updates the cache', async () => {
   })
 })
 
-test('fails when user is not authenticated', async () => {
+test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails when user does not have role "admin"', async () => {
+test('fails if user does not have role "admin"', async () => {
   await mutation.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('UserRemoveRoleMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

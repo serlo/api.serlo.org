@@ -5,6 +5,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { createCachedResolver } from '~/cached-resolver'
+import * as DatabaseLayer from '../../../model/database-layer'
 import { Context } from '~/context'
 import {
   addContext,
@@ -440,7 +441,8 @@ export const resolvers: Resolvers = {
       return { success: result.success, query: {} }
     },
 
-    async removeRole(_parent, { input }, { dataSources, userId }) {
+    async removeRole(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -459,9 +461,35 @@ export const resolvers: Resolvers = {
         dataSources,
       })
 
-      await dataSources.model.serlo.removeRole({
-        username,
-        roleName: generateRole(role, instance),
+      const roleName = generateRole(role, instance)
+      await database.mutate(
+        `
+        DELETE role_user
+        FROM role_user
+        JOIN role ON role_user.role_id = role.id
+        JOIN user ON role_user.user_id = user.id
+        WHERE role.name = ? AND user.username = ?
+        `,
+        [roleName, username],
+      )
+
+      const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+        instance: Instance.De,
+        path: `user/profile/${username}`,
+      })) as { id: number }
+
+      await dataSources.model.serlo.getUuid._querySpec.setCache({
+        payload: { id: alias.id },
+        getValue(current) {
+          if (!current) return
+          if (!UserDecoder.is(current)) return
+
+          if (!current.roles.includes(roleName)) return current
+          current.roles = current.roles.filter(
+            (currentRole) => currentRole !== roleName,
+          )
+          return current
+        },
       })
 
       return { success: true, query: {} }

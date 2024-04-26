@@ -166,7 +166,7 @@ describe('User', () => {
       })
       .withVariables(user)
       .shouldReturnData({
-        uuid: { imageUrl: 'https://community.serlo.org/avatar/alpha' },
+        uuid: { imageUrl: 'https://community.serlo.org/avatar/admin' },
       })
   })
 
@@ -442,7 +442,7 @@ describe('User', () => {
         })
         .withVariables(user)
         .shouldReturnData({
-          uuid: { chatUrl: 'https://community.serlo.org/direct/alpha' },
+          uuid: { chatUrl: 'https://community.serlo.org/direct/admin' },
         })
     })
 
