@@ -80,29 +80,6 @@ export function createSerloModel({
     },
   })
 
-  const getActiveAuthorIds = createLegacyQuery(
-    {
-      type: 'ActiveAuthorsQuery',
-      decoder: DatabaseLayer.getDecoderFor('ActiveAuthorsQuery'),
-      enableSwr: true,
-      getCurrentValue() {
-        return DatabaseLayer.makeRequest('ActiveAuthorsQuery', undefined)
-        //could be used instead but test cases need adapting:
-        //return Database.activeAuthorsQuery()
-      },
-      staleAfter: { hours: 1 },
-      getKey: () => {
-        return 'de.serlo.org/api/user/active-authors'
-      },
-      getPayload: (key: string) => {
-        if (key !== 'de.serlo.org/api/user/active-authors') return O.none
-        return O.some(undefined)
-      },
-      examplePayload: undefined,
-    },
-    context,
-  )
-
   const getActiveReviewerIds = createLegacyQuery(
     {
       type: 'ActiveReviewersQuery',
@@ -1031,7 +1008,6 @@ export function createSerloModel({
     deleteBots,
     deleteRegularUsers,
     executePrompt,
-    getActiveAuthorIds,
     getActiveReviewerIds,
     getActivityByType,
     getAlias,

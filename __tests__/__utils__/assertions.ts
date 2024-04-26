@@ -61,6 +61,7 @@ export class Client {
         cache: global.cache,
         swrQueue: emptySwrQueue,
         authServices,
+        timer: global.timer,
       },
     })
   }
@@ -151,7 +152,7 @@ export class Query<
   }
 }
 
-type ClientContext = Partial<Pick<Context, 'service' | 'userId'>>
+type ClientContext = Partial<Pick<Context, 'service' | 'userId' | 'timer'>>
 type Variables<I> = { input: I } | Record<string, unknown>
 type Input = Record<string, unknown>
 interface QuerySpec<V> {

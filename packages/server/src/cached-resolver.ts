@@ -73,7 +73,7 @@ interface ResolverSpec<Payload, Result> {
   getPayload: (key: string) => O.Option<Payload>
   getCurrentValue: (
     args: Payload,
-    context: Pick<Context, 'database'>,
+    context: Pick<Context, 'database' | 'timer'>,
   ) => Promise<unknown>
   enableSwr: boolean
   swrFrequency?: number
