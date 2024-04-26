@@ -143,17 +143,6 @@ export async function createEvent(
   }
 }
 
-interface AbstractEvent {
-  actorId: number
-  date: Date
-  id: number
-  instance: string
-  objectId: number
-  rawTypename: string
-  stringParameters: Record<string, string>
-  uuidParameters: Record<string, number>
-}
-
 export async function getEvent(id: number, database: Database) {
   const event = await database.fetchOne<{
     id: number
@@ -175,6 +164,12 @@ export async function getEvent(id: number, database: Database) {
   )
   if (!event) {
     return Promise.reject(new Error('No event found'))
+  }
+
+  if (!Object.values(EventType).includes(event.name as EventType)) {
+    return Promise.reject(
+      new Error('Event cannot be fetched because its type is invalid.'),
+    )
   }
 
   const stringParametersRaw = await database.fetchAll<{
@@ -216,14 +211,6 @@ export async function getEvent(id: number, database: Database) {
     uuidParameters[param.name] = param.uuid_id
   }
 
-  if (!Object.values(EventType).includes(event.name as EventType)) {
-    return Promise.reject(
-      new Error('Event cannot be fetched because its type is invalid.'),
-    )
-  }
-
-  // TODO: check if instance is valid?
-
   return {
     __typename: event.name,
     id: event.id,
@@ -238,7 +225,12 @@ export async function getEvent(id: number, database: Database) {
 }
 
 export async function createNotifications(
-  event: AbstractEvent,
+  event: {
+    actorId: number
+    id: number
+    objectId: number
+    uuidParameters: Record<string, number>
+  },
   database: Database,
 ) {
   const { objectId, actorId } = event
