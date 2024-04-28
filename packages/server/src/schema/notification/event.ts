@@ -35,6 +35,7 @@ interface EventParameter {
 }
 
 interface AbstractEvent {
+  id: number
   type: EventType
   actorId: number
   objectId: number
@@ -43,9 +44,11 @@ interface AbstractEvent {
 }
 
 export async function createEvent(
-  { type, actorId, objectId, instance, parameters }: AbstractEvent,
+  payload: Omit<AbstractEvent, 'id'>,
   { database }: Pick<Context, 'database'>,
 ) {
+  const { type, actorId, objectId, instance, parameters } = payload
+
   try {
     await database.beginTransaction()
 
@@ -89,7 +92,7 @@ export async function createEvent(
       }
     }
 
-    const event = await getEvent(eventId, database)
+    const event = { ...payload, id: eventId }
 
     await createNotifications(event, { database })
 
@@ -102,99 +105,14 @@ export async function createEvent(
   }
 }
 
-export async function getEvent(id: number, database: Database) {
-  const event = await database.fetchOne<{
-    id: number
-    actor_id: number
-    uuid_id: number
-    date: string
-    subdomain: string
-    name: string
-  }>(
-    `
-    SELECT l.id, l.actor_id, l.uuid_id, l.date, i.subdomain, e.name
-      FROM event_log l
-      LEFT JOIN event_parameter p ON l.id = p.log_id
-      JOIN instance i ON l.instance_id = i.id
-      JOIN event e ON l.event_id = e.id
-      WHERE l.id = ?
-    `,
-    [id],
-  )
-  if (!event) {
-    return Promise.reject(new Error('No event found'))
-  }
-
-  if (!Object.values(EventType).includes(event.name as EventType)) {
-    return Promise.reject(
-      new Error('Event cannot be fetched because its type is invalid.'),
-    )
-  }
-
-  const stringParametersRaw = await database.fetchAll<{
-    name: string
-    value: string
-  }>(
-    `
-    SELECT n.name, s.value
-      FROM event_parameter p
-      JOIN event_parameter_name n ON n.id = p.name_id
-      JOIN event_parameter_string s ON s.event_parameter_id = p.id
-      WHERE p.name_id = n.id AND p.log_id = ?
-    `,
-    [id],
-  )
-
-  const stringParameters: Record<string, string> = {}
-
-  for (const param of stringParametersRaw) {
-    stringParameters[param.name] = param.value
-  }
-
-  const uuidParametersRaw = await database.fetchAll<{
-    name: string
-    uuid_id: number
-  }>(
-    `
-    SELECT n.name, u.uuid_id
-      FROM event_parameter p
-      JOIN event_parameter_name n ON n.id = p.name_id
-      JOIN event_parameter_uuid u ON u.event_parameter_id = p.id
-      WHERE p.name_id = n.id AND p.log_id = ?`,
-    [id],
-  )
-
-  const uuidParameters: Record<string, number> = {}
-
-  for (const param of uuidParametersRaw) {
-    uuidParameters[param.name] = param.uuid_id
-  }
-
-  return {
-    __typename: event.name,
-    id: event.id,
-    instance: event.subdomain,
-    date: new Date(event.date),
-    actorId: event.actor_id,
-    objectId: event.uuid_id,
-    rawTypename: event.name,
-    stringParameters,
-    uuidParameters,
-  }
-}
-
 async function createNotifications(
-  event: {
-    actorId: number
-    id: number
-    objectId: number
-    uuidParameters: Record<string, number>
-  },
+  event: AbstractEvent,
   { database }: Pick<Context, 'database'>,
 ) {
   const { objectId, actorId } = event
 
-  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
+  const uuidParameters = Object.values(event.parameters).filter(isNumber)
+  const objectIds = [objectId, ...uuidParameters]
   const subscribers = []
 
   for (const objectId of objectIds) {
@@ -204,9 +122,9 @@ async function createNotifications(
       notify_mailman: boolean
     }>(
       `
-      SELECT uuid_id, user_id, notify_mailman
-        FROM subscription WHERE uuid_id = ? AND user_id != ?
-    `,
+        SELECT uuid_id, user_id, notify_mailman
+          FROM subscription WHERE uuid_id = ? AND user_id != ?
+      `,
       [objectId, actorId],
     )
 
@@ -235,4 +153,8 @@ async function createNotifications(
       [event.id],
     )
   }
+}
+
+function isNumber(x: unknown): x is number {
+  return typeof x === 'number'
 }
