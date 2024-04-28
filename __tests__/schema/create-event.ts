@@ -11,12 +11,11 @@ import { Instance } from '~/types'
 
 describe('createEvent', () => {
   const basePayload = {
+    type: EventType.CheckoutRevision,
     actorId: user.id,
-    eventType: EventType.CheckoutRevision,
-    instanceId: 1,
+    instance: Instance.De,
     objectId: article.id,
-    stringParameters: {},
-    uuidParameters: {},
+    parameters: {},
   }
 
   test('fails if actor does not exist', async () => {
@@ -31,31 +30,28 @@ describe('createEvent', () => {
     ).rejects.toThrow()
   })
 
-  test('fails if name from stringParameters is invalid', async () => {
-    await expect(
-      createEvent(
-        { ...basePayload, stringParameters: { bla: 'approved' } },
-        global.database,
-      ),
-    ).rejects.toThrow()
-  })
-
-  test('fails if name from uuidParameters is invalid and makes sure rolllback works', async () => {
+  test('fails if name from parameters is invalid', async () => {
     const initialEventsNumber = await getEventsNumber()
+
+    await global.database.mutate(
+      'delete from event_parameter_name where name = "to"',
+    )
+
     await expect(
       createEvent(
-        { ...basePayload, uuidParameters: { bla: article.id } },
+        { ...basePayload, parameters: { to: 'approved' } },
         global.database,
       ),
     ).rejects.toThrow()
+
     const finalEventsNumber = await getEventsNumber()
     expect(finalEventsNumber).toEqual(initialEventsNumber)
   })
 
-  test('fails if uuid from uuidParameter does not exist', async () => {
+  test('fails if uuid number in parameters does not exist', async () => {
     await expect(
       createEvent(
-        { ...basePayload, uuidParameters: { object: 40000 } },
+        { ...basePayload, parameters: { object: 40000 } },
         global.database,
       ),
     ).rejects.toThrow()
@@ -65,7 +61,7 @@ describe('createEvent', () => {
     const initialEventsNumber = await getEventsNumber()
 
     const event = await createEvent(basePayload, database)
-    expect(event.__typename).toBe(basePayload.eventType)
+    expect(event.__typename).toBe(basePayload.type)
     expect(event.actorId).toBe(basePayload.actorId)
     expect(event.objectId).toBe(basePayload.objectId)
     expect(event.instance).toBe(Instance.De)
