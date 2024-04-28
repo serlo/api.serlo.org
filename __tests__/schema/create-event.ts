@@ -20,13 +20,13 @@ describe('createEvent', () => {
 
   test('fails if actor does not exist', async () => {
     await expect(
-      createEvent({ ...basePayload, actorId: 5 }, global.database),
+      createEvent({ ...basePayload, actorId: 5 }, getContext()),
     ).rejects.toThrow()
   })
 
   test('fails if object does not exist', async () => {
     await expect(
-      createEvent({ ...basePayload, objectId: 0 }, global.database),
+      createEvent({ ...basePayload, objectId: 0 }, getContext()),
     ).rejects.toThrow()
   })
 
@@ -40,7 +40,7 @@ describe('createEvent', () => {
     await expect(
       createEvent(
         { ...basePayload, parameters: { to: 'approved' } },
-        global.database,
+        getContext(),
       ),
     ).rejects.toThrow()
 
@@ -52,7 +52,7 @@ describe('createEvent', () => {
     await expect(
       createEvent(
         { ...basePayload, parameters: { object: 40000 } },
-        global.database,
+        getContext(),
       ),
     ).rejects.toThrow()
   })
@@ -60,7 +60,7 @@ describe('createEvent', () => {
   test('creates event successfully with right payload', async () => {
     const initialEventsNumber = await getEventsNumber()
 
-    const event = await createEvent(basePayload, database)
+    const event = await createEvent(basePayload, getContext())
     expect(event.__typename).toBe(basePayload.type)
     expect(event.actorId).toBe(basePayload.actorId)
     expect(event.objectId).toBe(basePayload.objectId)
@@ -85,4 +85,8 @@ async function getEventsNumber() {
       'SELECT count(*) AS n FROM event_log',
     )
   ).n
+}
+
+function getContext() {
+  return { database: global.database }
 }

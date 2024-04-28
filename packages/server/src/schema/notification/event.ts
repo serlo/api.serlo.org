@@ -1,3 +1,4 @@
+import { Context } from '~/context'
 import { Database } from '~/database'
 import { Instance } from '~/types'
 
@@ -43,7 +44,7 @@ interface AbstractEvent {
 
 export async function createEvent(
   { type, actorId, objectId, instance, parameters }: AbstractEvent,
-  database: Database,
+  { database }: Pick<Context, 'database'>,
 ) {
   try {
     await database.beginTransaction()
@@ -90,7 +91,7 @@ export async function createEvent(
 
     const event = await getEvent(eventId, database)
 
-    await createNotifications(event, database)
+    await createNotifications(event, { database })
 
     await database.commitLastTransaction()
 
@@ -182,14 +183,14 @@ export async function getEvent(id: number, database: Database) {
   }
 }
 
-export async function createNotifications(
+async function createNotifications(
   event: {
     actorId: number
     id: number
     objectId: number
     uuidParameters: Record<string, number>
   },
-  database: Database,
+  { database }: Pick<Context, 'database'>,
 ) {
   const { objectId, actorId } = event
 
