@@ -48,18 +48,6 @@ export async function createEvent(
   try {
     await database.beginTransaction()
 
-    const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
-      actorId,
-    ])
-    if (!user) {
-      await database.rollbackLastTransaction()
-      return Promise.reject(
-        new Error(
-          'Event cannot be saved because the acting user does not exist.',
-        ),
-      )
-    }
-
     const { insertId: eventId } = await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
