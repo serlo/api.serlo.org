@@ -60,7 +60,7 @@ export async function createEvent(
       )
     }
 
-    await database.mutate(
+    const { insertId: eventId } = await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
         SELECT ?, event.id, ?, instance.id
@@ -70,12 +70,8 @@ export async function createEvent(
       [actorId, objectId, type, instance],
     )
 
-    const eventId = (
-      await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-    ).id
-
     for (const [parameter, value] of Object.entries(parameters)) {
-      await database.mutate(
+      const { insertId: parameterId } = await database.mutate(
         `
           INSERT INTO event_parameter (log_id, name_id)
             SELECT ?, id
@@ -84,10 +80,6 @@ export async function createEvent(
         `,
         [eventId, parameter],
       )
-
-      const parameterId = (
-        await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-      ).id
 
       if (typeof value === 'string') {
         await database.mutate(
