@@ -47,7 +47,7 @@ export async function createEvent(
       actorId,
     ])
     if (!user) {
-      await database.rollbackTransaction()
+      await database.rollbackLastTransaction()
       return Promise.reject(
         new Error(
           'Event cannot be saved because the acting user does not exist.',
@@ -99,7 +99,7 @@ export async function createEvent(
         [uuidId],
       )
       if (!uuid) {
-        await database.rollbackTransaction()
+        await database.rollbackLastTransaction()
         return Promise.reject(
           new Error(
             `Event cannot be saved because uuid ${uuidId} in uuidParameters does not exist.`,
@@ -134,11 +134,11 @@ export async function createEvent(
 
     await createNotifications(event, database)
 
-    await database.commitTransaction()
+    await database.commitLastTransaction()
 
     return event
   } catch (error) {
-    await database.rollbackTransaction()
+    await database.rollbackLastTransaction()
     return Promise.reject(error)
   }
 }
