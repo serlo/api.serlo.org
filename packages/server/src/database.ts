@@ -25,7 +25,7 @@ export class Database {
       const newDepth =
         this.state.type === 'InsideSavepoint' ? this.state.depth + 1 : 0
 
-      await transaction.execute(`SAVEPOINT _savepoint_${newDepth}`)
+      await transaction.query(`SAVEPOINT _savepoint_${newDepth}`)
 
       this.state = { type: 'InsideSavepoint', transaction, depth: newDepth }
     }
@@ -44,7 +44,7 @@ export class Database {
     } else {
       const { depth } = this.state
 
-      await transaction.execute(`RELEASE SAVEPOINT _savepoint_${depth}`)
+      await transaction.query(`RELEASE SAVEPOINT _savepoint_${depth}`)
 
       this.state =
         depth > 0
@@ -63,7 +63,7 @@ export class Database {
     } else {
       const { depth } = this.state
 
-      await transaction.execute(`ROLLBACK TO SAVEPOINT _savepoint_${depth}`)
+      await transaction.query(`ROLLBACK TO SAVEPOINT _savepoint_${depth}`)
 
       this.state =
         depth > 0
