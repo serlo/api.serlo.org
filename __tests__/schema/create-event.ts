@@ -58,10 +58,12 @@ describe('createEvent', () => {
   })
 
   test('creates event successfully with right payload', async () => {
+    // TODO: After removing getEvent() this needs to be rewritten
+
     const initialEventsNumber = await getEventsNumber()
 
     const event = await createEvent(basePayload, getContext())
-    expect(event.__typename).toBe(basePayload.type)
+    expect(event.type).toBe(basePayload.type)
     expect(event.actorId).toBe(basePayload.actorId)
     expect(event.objectId).toBe(basePayload.objectId)
     expect(event.instance).toBe(Instance.De)
