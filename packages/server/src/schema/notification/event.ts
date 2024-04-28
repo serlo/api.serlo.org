@@ -26,7 +26,7 @@ export async function createEvent(
     eventType,
     actorId,
     objectId,
-    instance_id,
+    instanceId,
     stringParameters,
     uuidParameters,
   }: {
@@ -34,7 +34,7 @@ export async function createEvent(
     eventType: EventType
     actorId: number
     objectId: number
-    instance_id: number
+    instanceId: number
     stringParameters: Record<string, string>
     uuidParameters: Record<string, number>
   },
@@ -62,7 +62,7 @@ export async function createEvent(
         FROM event
         WHERE name = ?
     `,
-      [actorId, objectId, instance_id, eventType],
+      [actorId, objectId, instanceId, eventType],
     )
     const eventId = (
       await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
