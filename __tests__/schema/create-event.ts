@@ -13,7 +13,7 @@ describe('createEvent', () => {
   const basePayload = {
     actorId: user.id,
     eventType: EventType.CheckoutRevision,
-    instance_id: 1,
+    instanceId: 1,
     objectId: article.id,
     stringParameters: {},
     uuidParameters: {},
