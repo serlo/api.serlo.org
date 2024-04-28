@@ -48,13 +48,6 @@ export async function createEvent(
   try {
     await database.beginTransaction()
 
-    // TODO: Move into utility function
-    // TODO: Add test when instance cannot be found
-    const { instanceId } = await database.fetchOne<{ instanceId: number }>(
-      'select id as instanceId from instance where subdomain = ?',
-      [instance],
-    )
-
     const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
       actorId,
     ])
@@ -70,11 +63,11 @@ export async function createEvent(
     await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
-        SELECT ?, id, ?, ?
-        FROM event
-        WHERE name = ?
+        SELECT ?, event.id, ?, instance.id
+        FROM event, instance
+        WHERE event.name = ? and instance.subdomain = ?
       `,
-      [actorId, objectId, instanceId, type],
+      [actorId, objectId, type, instance],
     )
 
     const eventId = (
