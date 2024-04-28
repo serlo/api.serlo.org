@@ -1,5 +1,4 @@
 import { Context } from '~/context'
-import { Database } from '~/database'
 import { Instance } from '~/types'
 
 export enum EventType {
