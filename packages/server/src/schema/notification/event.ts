@@ -1,4 +1,5 @@
 import { Database } from '~/database'
+import { Instance } from '~/types'
 
 export enum EventType {
   ArchiveThread = 'discussion/comment/archive',
@@ -21,27 +22,38 @@ export enum EventType {
   TrashUuid = 'uuid/trash',
 }
 
+interface EventParameter {
+  object?: string | number
+  repository?: string | number
+  parent?: string | number
+  on?: string | number
+  discussion?: string | number
+  reason?: string | number
+  from?: string | number
+  to?: string | number
+}
+
+interface AbstractEvent {
+  type: EventType
+  actorId: number
+  objectId: number
+  instance: Instance
+  parameters: EventParameter
+}
+
 export async function createEvent(
-  {
-    eventType,
-    actorId,
-    objectId,
-    instanceId,
-    stringParameters,
-    uuidParameters,
-  }: {
-    // TODO: Ideally we type it so that string and uuid parameters are mandatory depending on event type
-    eventType: EventType
-    actorId: number
-    objectId: number
-    instanceId: number
-    stringParameters: Record<string, string>
-    uuidParameters: Record<string, number>
-  },
+  { type, actorId, objectId, instance, parameters }: AbstractEvent,
   database: Database,
 ) {
   try {
     await database.beginTransaction()
+
+    // TODO: Move into utility function
+    // TODO: Add test when instance cannot be found
+    const { instanceId } = await database.fetchOne<{ instanceId: number }>(
+      'select id as instanceId from instance where subdomain = ?',
+      [instance],
+    )
 
     const user = await database.fetchOne('SELECT *  FROM user  WHERE id = ?', [
       actorId,
@@ -61,21 +73,22 @@ export async function createEvent(
         SELECT ?, id, ?, ?
         FROM event
         WHERE name = ?
-    `,
-      [actorId, objectId, instanceId, eventType],
+      `,
+      [actorId, objectId, instanceId, type],
     )
+
     const eventId = (
       await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
     ).id
 
-    for (const [parameter, value] of Object.entries(stringParameters)) {
+    for (const [parameter, value] of Object.entries(parameters)) {
       await database.mutate(
         `
-        INSERT INTO event_parameter (log_id, name_id)
-          SELECT ?, id
-          FROM event_parameter_name
-          WHERE name = ?
-      `,
+          INSERT INTO event_parameter (log_id, name_id)
+            SELECT ?, id
+            FROM event_parameter_name
+            WHERE name = ?
+        `,
         [eventId, parameter],
       )
 
@@ -83,51 +96,23 @@ export async function createEvent(
         await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
       ).id
 
-      await database.mutate(
-        `
-        INSERT INTO event_parameter_string (value, event_parameter_id)
-          VALUES (?, ?)
-      `,
-        [value, parameterId],
-      )
-    }
-
-    for (const [parameter, uuidId] of Object.entries(uuidParameters)) {
-      // TODO: shouldn't we add a fk check in the table event_parameter_uuid instead?
-      const uuid = await database.fetchOne(
-        'SELECT *  FROM uuid  WHERE id = ?',
-        [uuidId],
-      )
-      if (!uuid) {
-        await database.rollbackLastTransaction()
-        return Promise.reject(
-          new Error(
-            `Event cannot be saved because uuid ${uuidId} in uuidParameters does not exist.`,
-          ),
+      if (typeof value === 'string') {
+        await database.mutate(
+          `
+            INSERT INTO event_parameter_string (value, event_parameter_id)
+              VALUES (?, ?)
+          `,
+          [value, parameterId],
+        )
+      } else {
+        await database.mutate(
+          `
+            INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
+              VALUES (?, ?)
+          `,
+          [value, parameterId],
         )
       }
-
-      await database.mutate(
-        `
-        INSERT INTO event_parameter (log_id, name_id)
-          SELECT ?, id
-          FROM event_parameter_name
-          WHERE name = ?
-      `,
-        [eventId, parameter],
-      )
-
-      const parameterId = (
-        await database.fetchOne<{ id: number }>('SELECT LAST_INSERT_ID() as id')
-      ).id
-
-      await database.mutate(
-        `
-        INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
-          VALUES (?, ?)
-      `,
-        [uuidId, parameterId],
-      )
     }
 
     const event = await getEvent(eventId, database)
