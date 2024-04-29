@@ -1,22 +1,97 @@
 import {
+  type Pool,
+  type PoolConnection,
   type RowDataPacket,
-  type Connection,
   type ResultSetHeader,
 } from 'mysql2/promise'
 
 export class Database {
-  constructor(private connection: Connection) {}
+  private state: DatabaseState
+  private pool: Pool
+
+  constructor(pool: Pool) {
+    this.pool = pool
+    this.state = { type: 'OutsideOfTransaction' }
+  }
 
   public async beginTransaction() {
-    await this.connection.beginTransaction()
+    if (this.state.type === 'OutsideOfTransaction') {
+      const transaction = await this.pool.getConnection()
+      await transaction.beginTransaction()
+
+      this.state = { type: 'InsideTransaction', transaction }
+    } else {
+      const { transaction } = this.state
+      const newDepth =
+        this.state.type === 'InsideSavepoint' ? this.state.depth + 1 : 0
+
+      await transaction.query(`SAVEPOINT _savepoint_${newDepth}`)
+
+      this.state = { type: 'InsideSavepoint', transaction, depth: newDepth }
+    }
   }
 
-  public async commitTransaction() {
-    await this.connection.commit()
+  public async commitLastTransaction() {
+    if (this.state.type === 'OutsideOfTransaction') return
+
+    const { transaction } = this.state
+
+    if (this.state.type === 'InsideTransaction') {
+      await transaction.commit()
+      transaction.release()
+
+      this.state = { type: 'OutsideOfTransaction' }
+    } else {
+      const { depth } = this.state
+
+      await transaction.query(`RELEASE SAVEPOINT _savepoint_${depth}`)
+
+      this.state =
+        depth > 0
+          ? { type: 'InsideSavepoint', transaction, depth: depth - 1 }
+          : { type: 'InsideTransaction', transaction }
+    }
   }
 
-  public async rollbackTransaction() {
-    await this.connection.rollback()
+  public async rollbackLastTransaction() {
+    if (this.state.type === 'OutsideOfTransaction') return
+
+    const { transaction } = this.state
+
+    if (this.state.type === 'InsideTransaction') {
+      await this.commitAllTransactions()
+    } else {
+      const { depth } = this.state
+
+      await transaction.query(`ROLLBACK TO SAVEPOINT _savepoint_${depth}`)
+
+      this.state =
+        depth > 0
+          ? { type: 'InsideSavepoint', transaction, depth: depth - 1 }
+          : { type: 'InsideTransaction', transaction }
+    }
+  }
+
+  public async commitAllTransactions() {
+    if (this.state.type === 'OutsideOfTransaction') return
+
+    const { transaction } = this.state
+
+    await transaction.commit()
+    transaction.release()
+
+    this.state = { type: 'OutsideOfTransaction' }
+  }
+
+  public async rollbackAllTransactions() {
+    if (this.state.type === 'OutsideOfTransaction') return
+
+    const { transaction } = this.state
+
+    await transaction.rollback()
+    transaction.release()
+
+    this.state = { type: 'OutsideOfTransaction' }
   }
 
   public async fetchAll<T = unknown>(
@@ -46,8 +121,31 @@ export class Database {
     sql: string,
     params?: unknown[],
   ): Promise<T> {
-    const [rows] = await this.connection.execute<T>(sql, params)
+    if (this.state.type === 'OutsideOfTransaction') {
+      const [rows] = await this.pool.execute<T>(sql, params)
 
-    return rows
+      return rows
+    } else {
+      const [rows] = await this.state.transaction.execute<T>(sql, params)
+
+      return rows
+    }
   }
+}
+
+type DatabaseState = OutsideOfTransaction | InsideTransaction | InsideSavepoint
+
+interface OutsideOfTransaction {
+  type: 'OutsideOfTransaction'
+}
+
+interface InsideTransaction {
+  type: 'InsideTransaction'
+  transaction: PoolConnection
+}
+
+interface InsideSavepoint {
+  type: 'InsideSavepoint'
+  transaction: PoolConnection
+  depth: number
 }
