@@ -71,8 +71,8 @@ type AbstractSetLicenseEvent = AbstractEventType<
 
 interface AbstractEventType<
   Type extends EventType,
-  UuidParameters,
-  StringParameters,
+  UuidParameters extends Record<string, number>,
+  StringParameters extends Record<string, string>,
 > {
   id: number
   type: Type
