@@ -77,7 +77,7 @@ interface AbstractEventType<
   id: number
   type: Type
   actorId: number
-  date: string
+  date: Date
   objectId: number
   instance: Instance
   uuidParameters: UuidParameters
@@ -85,7 +85,10 @@ interface AbstractEventType<
 }
 
 export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
-  const base = R.pick(['id', 'date', 'actorId', 'instance', 'objectId'], event)
+  const base = {
+    ...R.pick(['id', 'actorId', 'instance', 'objectId'], event),
+    date: event.date.toISOString(),
+  }
 
   if (event.type === EventType.CreateComment) {
     return {
