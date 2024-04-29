@@ -11,61 +11,59 @@ import { Instance } from '~/types'
 
 describe('createEvent', () => {
   const basePayload = {
+    type: EventType.CheckoutRevision,
     actorId: user.id,
-    eventType: EventType.CheckoutRevision,
-    instance_id: 1,
+    instance: Instance.De,
     objectId: article.id,
-    stringParameters: {},
-    uuidParameters: {},
+    parameters: {},
   }
 
   test('fails if actor does not exist', async () => {
     await expect(
-      createEvent({ ...basePayload, actorId: 5 }, global.database),
+      createEvent({ ...basePayload, actorId: 5 }, getContext()),
     ).rejects.toThrow()
   })
 
   test('fails if object does not exist', async () => {
     await expect(
-      createEvent({ ...basePayload, objectId: 0 }, global.database),
+      createEvent({ ...basePayload, objectId: 0 }, getContext()),
     ).rejects.toThrow()
   })
 
-  test('fails if name from stringParameters is invalid', async () => {
-    await expect(
-      createEvent(
-        { ...basePayload, stringParameters: { bla: 'approved' } },
-        global.database,
-      ),
-    ).rejects.toThrow()
-  })
-
-  test('fails if name from uuidParameters is invalid and makes sure rolllback works', async () => {
+  test('fails if name from parameters is invalid', async () => {
     const initialEventsNumber = await getEventsNumber()
+
+    await global.database.mutate(
+      'delete from event_parameter_name where name = "to"',
+    )
+
     await expect(
       createEvent(
-        { ...basePayload, uuidParameters: { bla: article.id } },
-        global.database,
+        { ...basePayload, parameters: { to: 'approved' } },
+        getContext(),
       ),
     ).rejects.toThrow()
+
     const finalEventsNumber = await getEventsNumber()
     expect(finalEventsNumber).toEqual(initialEventsNumber)
   })
 
-  test('fails if uuid from uuidParameter does not exist', async () => {
+  test('fails if uuid number in parameters does not exist', async () => {
     await expect(
       createEvent(
-        { ...basePayload, uuidParameters: { object: 40000 } },
-        global.database,
+        { ...basePayload, parameters: { object: 40000 } },
+        getContext(),
       ),
     ).rejects.toThrow()
   })
 
   test('creates event successfully with right payload', async () => {
+    // TODO: After removing getEvent() this needs to be rewritten
+
     const initialEventsNumber = await getEventsNumber()
 
-    const event = await createEvent(basePayload, database)
-    expect(event.__typename).toBe(basePayload.eventType)
+    const event = await createEvent(basePayload, getContext())
+    expect(event.type).toBe(basePayload.type)
     expect(event.actorId).toBe(basePayload.actorId)
     expect(event.objectId).toBe(basePayload.objectId)
     expect(event.instance).toBe(Instance.De)
@@ -89,4 +87,8 @@ async function getEventsNumber() {
       'SELECT count(*) AS n FROM event_log',
     )
   ).n
+}
+
+function getContext() {
+  return { database: global.database }
 }
