@@ -74,4 +74,53 @@ describe('Authorization:', () => {
   test('unauthorized users get error', async () => {
     await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
   })
+
+  test('status is actually changed', async function () {
+    const threadQuery = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query (
+            $first: Int
+            $after: String
+            $instance: Instance
+            $subjectId: String
+            $status: CommentStatus
+          ) {
+            thread {
+              allThreads(
+                first: $first
+                after: $after
+                instance: $instance
+                subjectId: $subjectId
+                status: $status
+              ) {
+                nodes {
+                  id,
+                  status
+                }
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ first: 1 })
+
+    await threadQuery.shouldReturnData({
+      thread: { allThreads: { nodes: [{ id:"dDM1MTYz", status: 'noStatus' }] } },
+    })
+
+    await mutation
+      .withContext({
+        userId: moderator.id,
+      })
+      .withInput({ id: "dDM1MTYz", status: 'open' })
+      .shouldReturnData({
+        thread: { setThreadStatus: { success: true } },
+      })
+
+
+    await threadQuery.shouldReturnData({
+      thread: { allThreads: { nodes: [{ id:"dDM1MTYz", status: 'done' }] } },
+    })
+  })
 })
