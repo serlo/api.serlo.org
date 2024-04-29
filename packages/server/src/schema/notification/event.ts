@@ -34,6 +34,7 @@ export type AbstractEvent =
   | AbstractSetLicenseEvent
   | AbstractCreateEntityLinkEvent
   | AbstractRemoveEntityLinkEvent
+  | AbstractCreateEntityRevisionEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -41,6 +42,7 @@ type ConcreteEvent =
   | Model<'SetLicenseNotificationEvent'>
   | Model<'CreateEntityLinkNotificationEvent'>
   | Model<'RemoveEntityLinkNotificationEvent'>
+  | Model<'CreateEntityRevisionNotificationEvent'>
 type AbstractEventPayload =
   | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
   | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
@@ -48,6 +50,7 @@ type AbstractEventPayload =
   | Omit<AbstractSetLicenseEvent, 'id' | 'date'>
   | Omit<AbstractCreateEntityLinkEvent, 'id' | 'date'>
   | Omit<AbstractRemoveEntityLinkEvent, 'id' | 'date'>
+  | Omit<AbstractCreateEntityRevisionEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -55,6 +58,10 @@ type ConcreteEventPayload =
   | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'RemoveEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'CreateEntityRevisionNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
 
 type AbstractCreateCommentEvent = AbstractEventType<
   EventType.CreateComment,
@@ -86,6 +93,11 @@ type AbstractRemoveEntityLinkEvent = AbstractEventType<
   { parent: number },
   Record<string, never>
 >
+type AbstractCreateEntityRevisionEvent = AbstractEventType<
+  EventType.CreateEntityRevision,
+  { repository: number },
+  Record<string, never>
+>
 
 interface AbstractEventType<
   Type extends EventType,
@@ -112,14 +124,14 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
     return {
       ...base,
       __typename: NotificationEventType.CreateComment,
-      threadId: event.uuidParameters['discussion'],
+      threadId: event.uuidParameters.discussion,
       commentId: event.objectId,
     }
   } else if (event.type === EventType.CreateThread) {
     return {
       ...base,
       __typename: NotificationEventType.CreateThread,
-      objectId: event.uuidParameters['on'],
+      objectId: event.uuidParameters.on,
       threadId: event.objectId,
     }
   } else if (event.type === EventType.CreateEntity) {
@@ -145,7 +157,14 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
           ? NotificationEventType.CreateEntityLink
           : NotificationEventType.RemoveEntityLink,
       childId: event.objectId,
-      parentId: event.uuidParameters['parent'],
+      parentId: event.uuidParameters.parent,
+    }
+  } else if (event.type === EventType.CreateEntityRevision) {
+    return {
+      ...base,
+      __typename: NotificationEventType.CreateEntityRevision,
+      entityId: event.objectId,
+      entityRevisionId: event.uuidParameters.repository,
     }
   }
 
@@ -196,6 +215,13 @@ function toAbstractEventPayload(
           : EventType.RemoveEntityLink,
       objectId: event.childId,
       uuidParameters: { parent: event.parentId },
+    }
+  } else if (event.__typename === NotificationEventType.CreateEntityRevision) {
+    return {
+      ...base,
+      type: EventType.CreateEntityRevision,
+      objectId: event.entityRevisionId,
+      uuidParameters: { repository: event.entityId },
     }
   }
 
