@@ -69,10 +69,8 @@ describe('createEvent', () => {
         instance.subdomain as instance,
         event_log.date as date,
         event_log.uuid_id as objectId,
-        JSON_OBJECTAGG(
-          event_parameter_name.name,
-          COALESCE(event_parameter_uuid.uuid_id, event_parameter_string.value)
-        ) as parameters
+        JSON_OBJECTAGG(event_parameter_name.name, event_parameter_uuid.uuid_id) as uuidParameters,
+        JSON_OBJECTAGG(event_parameter_name.name, event_parameter_string.value) as stringParameters
       from event_log
       join event on event.id = event_log.event_id
       join instance on event_log.instance_id = instance.id
@@ -85,14 +83,18 @@ describe('createEvent', () => {
       limit 1
     `)
 
-    console.log(lastAbstractEvent)
-
     const event = toConcreteEvent(lastAbstractEvent)
 
-    expect(event.__typename).toBe(basePayload.__typename)
-    expect(event.actorId).toBe(basePayload.actorId)
-    expect(event.objectId).toBe(basePayload.commentId)
-    expect(event.instance).toBe(Instance.De)
+    expect(event).toEqual({
+      id: expect.any(Number) as number,
+      date: expect.any(Date) as Date,
+      actorId: basePayload.actorId,
+      instance: basePayload.instance,
+      objectId: basePayload.commentId,
+      __typename: basePayload.__typename,
+      threadId: basePayload.threadId,
+      commentId: basePayload.commentId,
+    })
 
     expect(
       await database.fetchAll(
