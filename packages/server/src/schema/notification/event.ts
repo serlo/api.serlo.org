@@ -28,18 +28,18 @@ export enum EventType {
 }
 
 export type AbstractEvent =
-  | AbstractCreateCommentEvent
-  | AbstractCreateThreadEvent
-  | AbstractCreateEntityEvent
-  | AbstractSetLicenseEvent
-  | AbstractCreateEntityLinkEvent
-  | AbstractRemoveEntityLinkEvent
-  | AbstractCreateEntityRevisionEvent
-  | AbstractCheckoutRevisionEvent
-  | AbstractRejectRevisionEvent
-  | AbstractCreateTaxonomyTermEvent
-  | AbstractSetTaxonomyTermEvent
-  | AbstractSetTaxonomyParentEvent
+  | CreateCommentAbstractEvent
+  | CreateThreadAbstractEvent
+  | CreateEntityAbstractEvent
+  | SetLicenseAbstractEvent
+  | CreateEntityLinkAbstractEvent
+  | RemoveEntityLinkAbstractEvent
+  | CreateEntityRevisionAbstractEvent
+  | CheckoutRevisionAbstractEvent
+  | RejectRevisionAbstractEvent
+  | CreateTaxonomyTermAbstractEvent
+  | SetTaxonomyTermAbstractEvent
+  | SetTaxonomyParentAbstractEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -54,18 +54,18 @@ type ConcreteEvent =
   | Model<'SetTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyParentNotificationEvent'>
 type AbstractEventPayload =
-  | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
-  | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
-  | Omit<AbstractCreateEntityEvent, 'id' | 'date'>
-  | Omit<AbstractSetLicenseEvent, 'id' | 'date'>
-  | Omit<AbstractCreateEntityLinkEvent, 'id' | 'date'>
-  | Omit<AbstractRemoveEntityLinkEvent, 'id' | 'date'>
-  | Omit<AbstractCreateEntityRevisionEvent, 'id' | 'date'>
-  | Omit<AbstractCheckoutRevisionEvent, 'id' | 'date'>
-  | Omit<AbstractRejectRevisionEvent, 'id' | 'date'>
-  | Omit<AbstractCreateTaxonomyTermEvent, 'id' | 'date'>
-  | Omit<AbstractSetTaxonomyTermEvent, 'id' | 'date'>
-  | Omit<AbstractSetTaxonomyParentEvent, 'id' | 'date'>
+  | Omit<CreateCommentAbstractEvent, 'id' | 'date'>
+  | Omit<CreateThreadAbstractEvent, 'id' | 'date'>
+  | Omit<CreateEntityAbstractEvent, 'id' | 'date'>
+  | Omit<SetLicenseAbstractEvent, 'id' | 'date'>
+  | Omit<CreateEntityLinkAbstractEvent, 'id' | 'date'>
+  | Omit<RemoveEntityLinkAbstractEvent, 'id' | 'date'>
+  | Omit<CreateEntityRevisionAbstractEvent, 'id' | 'date'>
+  | Omit<CheckoutRevisionAbstractEvent, 'id' | 'date'>
+  | Omit<RejectRevisionAbstractEvent, 'id' | 'date'>
+  | Omit<CreateTaxonomyTermAbstractEvent, 'id' | 'date'>
+  | Omit<SetTaxonomyTermAbstractEvent, 'id' | 'date'>
+  | Omit<SetTaxonomyParentAbstractEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -89,62 +89,62 @@ type ConcreteEventPayload =
       'id' | 'date' | 'objectId'
     >
 
-type AbstractCreateCommentEvent = AbstractEventType<
+type CreateCommentAbstractEvent = AbstractEventType<
   EventType.CreateComment,
   { discussion: number },
   Record<string, never>
 >
-type AbstractCreateThreadEvent = AbstractEventType<
+type CreateThreadAbstractEvent = AbstractEventType<
   EventType.CreateThread,
   { on: number },
   Record<string, never>
 >
-type AbstractCreateEntityEvent = AbstractEventType<
+type CreateEntityAbstractEvent = AbstractEventType<
   EventType.CreateEntity,
   Record<string, never>,
   Record<string, never>
 >
-type AbstractSetLicenseEvent = AbstractEventType<
+type SetLicenseAbstractEvent = AbstractEventType<
   EventType.SetLicense,
   Record<string, never>,
   Record<string, never>
 >
-type AbstractCreateEntityLinkEvent = AbstractEventType<
+type CreateEntityLinkAbstractEvent = AbstractEventType<
   EventType.CreateEntityLink,
   { parent: number },
   Record<string, never>
 >
-type AbstractRemoveEntityLinkEvent = AbstractEventType<
+type RemoveEntityLinkAbstractEvent = AbstractEventType<
   EventType.RemoveEntityLink,
   { parent: number },
   Record<string, never>
 >
-type AbstractCreateEntityRevisionEvent = AbstractEventType<
+type CreateEntityRevisionAbstractEvent = AbstractEventType<
   EventType.CreateEntityRevision,
   { repository: number },
   Record<string, never>
 >
-type AbstractCheckoutRevisionEvent = AbstractEventType<
+type CheckoutRevisionAbstractEvent = AbstractEventType<
   EventType.CheckoutRevision,
   { repository: number },
   { reason: string }
 >
-type AbstractRejectRevisionEvent = AbstractEventType<
+type RejectRevisionAbstractEvent = AbstractEventType<
   EventType.RejectRevision,
   { repository: number },
   { reason: string }
 >
-type AbstractCreateTaxonomyTermEvent = AbstractEventType<
+type CreateTaxonomyTermAbstractEvent = AbstractEventType<
   EventType.CreateTaxonomyTerm,
   Record<string, never>,
   Record<string, never>
 >
-type AbstractSetTaxonomyTermEvent = AbstractEventType<
+type SetTaxonomyTermAbstractEvent = AbstractEventType<
   EventType.SetTaxonomyTerm,
   Record<string, never>,
   Record<string, never>
 >
-type AbstractSetTaxonomyParentEvent = AbstractEventType<
+type SetTaxonomyParentAbstractEvent = AbstractEventType<
   EventType.SetTaxonomyParent,
   { from: number | null; to: number | null },
   Record<string, never>
