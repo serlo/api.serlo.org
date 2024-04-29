@@ -32,21 +32,29 @@ export type AbstractEvent =
   | AbstractCreateThreadEvent
   | AbstractCreateEntityEvent
   | AbstractSetLicenseEvent
+  | AbstractCreateEntityLinkEvent
+  | AbstractRemoveEntityLinkEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
   | Model<'CreateEntityNotificationEvent'>
   | Model<'SetLicenseNotificationEvent'>
+  | Model<'CreateEntityLinkNotificationEvent'>
+  | Model<'RemoveEntityLinkNotificationEvent'>
 type AbstractEventPayload =
   | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
   | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
   | Omit<AbstractCreateEntityEvent, 'id' | 'date'>
   | Omit<AbstractSetLicenseEvent, 'id' | 'date'>
+  | Omit<AbstractCreateEntityLinkEvent, 'id' | 'date'>
+  | Omit<AbstractRemoveEntityLinkEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
   | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'CreateEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'RemoveEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
 
 type AbstractCreateCommentEvent = AbstractEventType<
   EventType.CreateComment,
@@ -66,6 +74,16 @@ type AbstractCreateEntityEvent = AbstractEventType<
 type AbstractSetLicenseEvent = AbstractEventType<
   EventType.SetLicense,
   Record<string, never>,
+  Record<string, never>
+>
+type AbstractCreateEntityLinkEvent = AbstractEventType<
+  EventType.CreateEntityLink,
+  { parent: number },
+  Record<string, never>
+>
+type AbstractRemoveEntityLinkEvent = AbstractEventType<
+  EventType.RemoveEntityLink,
+  { parent: number },
   Record<string, never>
 >
 
@@ -116,6 +134,19 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
       __typename: NotificationEventType.SetLicense,
       repositoryId: event.objectId,
     }
+  } else if (
+    event.type === EventType.CreateEntityLink ||
+    event.type === EventType.RemoveEntityLink
+  ) {
+    return {
+      ...base,
+      __typename:
+        event.type === EventType.CreateEntityLink
+          ? NotificationEventType.CreateEntityLink
+          : NotificationEventType.RemoveEntityLink,
+      childId: event.objectId,
+      parentId: event.uuidParameters['parent'],
+    }
   }
 
   // TODO
@@ -152,6 +183,19 @@ function toAbstractEventPayload(
       ...base,
       type: EventType.CreateEntity,
       objectId: event.repositoryId,
+    }
+  } else if (
+    event.__typename === NotificationEventType.CreateEntityLink ||
+    event.__typename === NotificationEventType.RemoveEntityLink
+  ) {
+    return {
+      ...base,
+      type:
+        event.__typename === NotificationEventType.CreateEntityLink
+          ? EventType.CreateEntityLink
+          : EventType.RemoveEntityLink,
+      objectId: event.childId,
+      uuidParameters: { parent: event.parentId },
     }
   }
 
