@@ -40,6 +40,8 @@ export type AbstractEvent =
   | CreateTaxonomyTermAbstractEvent
   | SetTaxonomyTermAbstractEvent
   | SetTaxonomyParentAbstractEvent
+  | TrashUuidAbstractEvent
+  | RestoreUuidAbstractEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -53,6 +55,7 @@ type ConcreteEvent =
   | Model<'CreateTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyParentNotificationEvent'>
+  | Model<'SetUuidStateNotificationEvent'>
 type AbstractEventPayload =
   | Omit<CreateCommentAbstractEvent, 'id' | 'date'>
   | Omit<CreateThreadAbstractEvent, 'id' | 'date'>
@@ -66,6 +69,8 @@ type AbstractEventPayload =
   | Omit<CreateTaxonomyTermAbstractEvent, 'id' | 'date'>
   | Omit<SetTaxonomyTermAbstractEvent, 'id' | 'date'>
   | Omit<SetTaxonomyParentAbstractEvent, 'id' | 'date'>
+  | Omit<TrashUuidAbstractEvent, 'id' | 'date'>
+  | Omit<RestoreUuidAbstractEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -88,6 +93,7 @@ type ConcreteEventPayload =
       Model<'SetTaxonomyParentNotificationEvent'>,
       'id' | 'date' | 'objectId'
     >
+  | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
 type CreateCommentAbstractEvent = AbstractEventType<
   EventType.CreateComment,
@@ -147,6 +153,16 @@ type SetTaxonomyTermAbstractEvent = AbstractEventType<
 type SetTaxonomyParentAbstractEvent = AbstractEventType<
   EventType.SetTaxonomyParent,
   { from: number | null; to: number | null },
+  Record<string, never>
+>
+type TrashUuidAbstractEvent = AbstractEventType<
+  EventType.TrashUuid,
+  Record<string, never>,
+  Record<string, never>
+>
+type RestoreUuidAbstractEvent = AbstractEventType<
+  EventType.RestoreUuid,
+  Record<string, never>,
   Record<string, never>
 >
 
@@ -251,10 +267,13 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
       previousParentId: event.uuidParameters.from,
       parentId: event.uuidParameters.to,
     }
+  } else {
+    return {
+      ...base,
+      __typename: NotificationEventType.SetUuidState,
+      trashed: event.type === EventType.TrashUuid,
+    }
   }
-
-  // TODO
-  throw new Error()
 }
 
 function toAbstractEventPayload(
@@ -341,9 +360,13 @@ function toAbstractEventPayload(
       objectId: event.childId,
       uuidParameters: { from: event.previousParentId, to: event.parentId },
     }
+  } else {
+    return {
+      ...base,
+      type: event.trashed ? EventType.TrashUuid : EventType.RestoreUuid,
+      objectId: event.objectId,
+    }
   }
-
-  throw new Error()
 }
 
 export async function createEvent(
