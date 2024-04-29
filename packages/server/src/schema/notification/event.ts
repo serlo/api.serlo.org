@@ -38,6 +38,8 @@ export type AbstractEvent =
   | CreateEntityRevisionAbstractEvent
   | CheckoutRevisionAbstractEvent
   | RejectRevisionAbstractEvent
+  | CreateTaxonomyLinkAbstractEvent
+  | RemoveTaxonomyLinkAbstractEvent
   | CreateTaxonomyTermAbstractEvent
   | SetTaxonomyTermAbstractEvent
   | SetTaxonomyParentAbstractEvent
@@ -54,6 +56,8 @@ type ConcreteEvent =
   | Model<'CreateEntityRevisionNotificationEvent'>
   | Model<'CheckoutRevisionNotificationEvent'>
   | Model<'RejectRevisionNotificationEvent'>
+  | Model<'CreateTaxonomyLinkNotificationEvent'>
+  | Model<'RemoveTaxonomyLinkNotificationEvent'>
   | Model<'CreateTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyParentNotificationEvent'>
@@ -70,6 +74,8 @@ type AbstractEventPayload =
   | Omit<CreateEntityRevisionAbstractEvent, 'id' | 'date'>
   | Omit<CheckoutRevisionAbstractEvent, 'id' | 'date'>
   | Omit<RejectRevisionAbstractEvent, 'id' | 'date'>
+  | Omit<CreateTaxonomyLinkAbstractEvent, 'id' | 'date'>
+  | Omit<RemoveTaxonomyLinkAbstractEvent, 'id' | 'date'>
   | Omit<CreateTaxonomyTermAbstractEvent, 'id' | 'date'>
   | Omit<SetTaxonomyTermAbstractEvent, 'id' | 'date'>
   | Omit<SetTaxonomyParentAbstractEvent, 'id' | 'date'>
@@ -89,6 +95,14 @@ type ConcreteEventPayload =
     >
   | Omit<Model<'CheckoutRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'RejectRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'CreateTaxonomyLinkNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<
+      Model<'RemoveTaxonomyLinkNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
   | Omit<
       Model<'CreateTaxonomyTermNotificationEvent'>,
       'id' | 'date' | 'objectId'
@@ -154,6 +168,16 @@ type RejectRevisionAbstractEvent = AbstractEventType<
   EventType.RejectRevision,
   { repository: number },
   { reason: string }
+>
+type CreateTaxonomyLinkAbstractEvent = AbstractEventType<
+  EventType.CreateTaxonomyLink,
+  { object: number },
+  Record<string, never>
+>
+type RemoveTaxonomyLinkAbstractEvent = AbstractEventType<
+  EventType.RemoveTaxonomyLink,
+  { object: number },
+  Record<string, never>
 >
 type CreateTaxonomyTermAbstractEvent = AbstractEventType<
   EventType.CreateTaxonomyTerm,
@@ -273,6 +297,19 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
       reason: event.stringParameters.reason,
     }
   } else if (
+    event.type === EventType.CreateTaxonomyLink ||
+    event.type === EventType.RemoveTaxonomyLink
+  ) {
+    return {
+      ...base,
+      __typename:
+        event.type === EventType.CreateTaxonomyLink
+          ? NotificationEventType.CreateTaxonomyLink
+          : NotificationEventType.RemoveTaxonomyLink,
+      parentId: event.objectId,
+      childId: event.uuidParameters.object,
+    }
+  } else if (
     event.type === EventType.CreateTaxonomyTerm ||
     event.type === EventType.SetTaxonomyTerm
   ) {
@@ -371,6 +408,19 @@ function toAbstractEventPayload(
       objectId: event.revisionId,
       uuidParameters: { repository: event.repositoryId },
       stringParameters: { reason: event.reason },
+    }
+  } else if (
+    event.__typename === NotificationEventType.CreateTaxonomyLink ||
+    event.__typename === NotificationEventType.RemoveTaxonomyLink
+  ) {
+    return {
+      ...base,
+      type:
+        event.__typename === NotificationEventType.CreateTaxonomyLink
+          ? EventType.CreateTaxonomyLink
+          : EventType.RemoveTaxonomyLink,
+      objectId: event.parentId,
+      uuidParameters: { object: event.childId },
     }
   } else if (
     event.__typename === NotificationEventType.CreateTaxonomyTerm ||
