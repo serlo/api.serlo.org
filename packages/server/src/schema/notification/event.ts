@@ -6,9 +6,8 @@ import { NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export enum EventType {
-  // TODO: I cannot map the following type to an API event
-  // ArchiveThread = 'discussion/comment/archive',
-  // RestoreThread = 'discussion/restore',
+  ArchiveThread = 'discussion/comment/archive',
+  RestoreThread = 'discussion/restore',
   CreateComment = 'discussion/comment/create',
   CreateThread = 'discussion/create',
   CreateEntity = 'entity/create',
@@ -28,6 +27,8 @@ export enum EventType {
 }
 
 export type AbstractEvent =
+  | ArchiveThreadAbstractEvent
+  | RestoreThreadAbstractEvent
   | CreateCommentAbstractEvent
   | CreateThreadAbstractEvent
   | CreateEntityAbstractEvent
@@ -43,6 +44,7 @@ export type AbstractEvent =
   | TrashUuidAbstractEvent
   | RestoreUuidAbstractEvent
 type ConcreteEvent =
+  | Model<'SetThreadStateNotificationEvent'>
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
   | Model<'CreateEntityNotificationEvent'>
@@ -57,6 +59,8 @@ type ConcreteEvent =
   | Model<'SetTaxonomyParentNotificationEvent'>
   | Model<'SetUuidStateNotificationEvent'>
 type AbstractEventPayload =
+  | Omit<ArchiveThreadAbstractEvent, 'id' | 'date'>
+  | Omit<RestoreThreadAbstractEvent, 'id' | 'date'>
   | Omit<CreateCommentAbstractEvent, 'id' | 'date'>
   | Omit<CreateThreadAbstractEvent, 'id' | 'date'>
   | Omit<CreateEntityAbstractEvent, 'id' | 'date'>
@@ -72,6 +76,7 @@ type AbstractEventPayload =
   | Omit<TrashUuidAbstractEvent, 'id' | 'date'>
   | Omit<RestoreUuidAbstractEvent, 'id' | 'date'>
 type ConcreteEventPayload =
+  | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
   | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
@@ -95,6 +100,16 @@ type ConcreteEventPayload =
     >
   | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
+type ArchiveThreadAbstractEvent = AbstractEventType<
+  EventType.ArchiveThread,
+  Record<string, never>,
+  Record<string, never>
+>
+type RestoreThreadAbstractEvent = AbstractEventType<
+  EventType.RestoreThread,
+  Record<string, never>,
+  Record<string, never>
+>
 type CreateCommentAbstractEvent = AbstractEventType<
   EventType.CreateComment,
   { discussion: number },
@@ -187,7 +202,17 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
     date: event.date.toISOString(),
   }
 
-  if (event.type === EventType.CreateComment) {
+  if (
+    event.type === EventType.ArchiveThread ||
+    event.type === EventType.RestoreThread
+  ) {
+    return {
+      ...base,
+      __typename: NotificationEventType.SetThreadState,
+      threadId: event.objectId,
+      archived: event.type === EventType.ArchiveThread,
+    }
+  } else if (event.type === EventType.CreateComment) {
     return {
       ...base,
       __typename: NotificationEventType.CreateComment,
@@ -285,7 +310,13 @@ function toAbstractEventPayload(
     stringParameters: {},
   }
 
-  if (event.__typename === NotificationEventType.CreateComment) {
+  if (event.__typename === NotificationEventType.SetThreadState) {
+    return {
+      ...base,
+      type: event.archived ? EventType.ArchiveThread : EventType.RestoreThread,
+      objectId: event.threadId,
+    }
+  } else if (event.__typename === NotificationEventType.CreateComment) {
     return {
       ...base,
       type: EventType.CreateComment,
