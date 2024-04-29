@@ -1,3 +1,5 @@
+import * as R from 'ramda'
+
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
 import { NotificationEventType } from '~/model/decoder'
@@ -48,55 +50,66 @@ type ConcreteEventPayload =
 
 type AbstractCreateCommentEvent = AbstractEventType<
   EventType.CreateComment,
-  { discussion: number }
+  { discussion: number },
+  Record<string, never>
 >
 type AbstractCreateThreadEvent = AbstractEventType<
   EventType.CreateThread,
-  { on: number }
+  { on: number },
+  Record<string, never>
 >
 type AbstractCreateEntityEvent = AbstractEventType<
   EventType.CreateEntity,
+  Record<string, never>,
   Record<string, never>
 >
 type AbstractSetLicenseEvent = AbstractEventType<
   EventType.SetLicense,
+  Record<string, never>,
   Record<string, never>
 >
 
-interface AbstractEventType<T extends EventType, P> {
+interface AbstractEventType<
+  Type extends EventType,
+  UuidParameters,
+  StringParameters,
+> {
   id: number
-  type: T
+  type: Type
   actorId: number
   date: string
   objectId: number
   instance: Instance
-  parameters: P
+  uuidParameters: UuidParameters
+  stringParameters: StringParameters
 }
 
 export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
+  const base = R.pick(['id', 'date', 'actorId', 'instance', 'objectId'], event)
+
   if (event.type === EventType.CreateComment) {
     return {
-      ...event,
+      ...base,
       __typename: NotificationEventType.CreateComment,
-      threadId: event.parameters['discussion'],
+      threadId: event.uuidParameters['discussion'],
       commentId: event.objectId,
     }
   } else if (event.type === EventType.CreateThread) {
     return {
-      ...event,
+      ...base,
       __typename: NotificationEventType.CreateThread,
-      objectId: event.parameters['on'],
+      objectId: event.uuidParameters['on'],
       threadId: event.objectId,
     }
   } else if (event.type === EventType.CreateEntity) {
     return {
-      ...event,
+      ...base,
       __typename: NotificationEventType.CreateEntity,
       entityId: event.objectId,
     }
   } else if (event.type === EventType.SetLicense) {
     return {
-      ...event,
+      ...base,
       __typename: NotificationEventType.SetLicense,
       repositoryId: event.objectId,
     }
@@ -109,33 +122,33 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
 function toAbstractEventPayload(
   event: ConcreteEventPayload,
 ): AbstractEventPayload {
+  const base = {
+    ...R.pick(['actorId', 'instance'], event),
+    uuidParameters: {},
+    stringParameters: {},
+  }
+
   if (event.__typename === NotificationEventType.CreateComment) {
     return {
-      ...event,
+      ...base,
       type: EventType.CreateComment,
       objectId: event.commentId,
-      parameters: { discussion: event.threadId },
+      uuidParameters: { discussion: event.threadId },
     }
   } else if (event.__typename === NotificationEventType.CreateThread) {
     return {
-      ...event,
+      ...base,
       type: EventType.CreateThread,
       objectId: event.threadId,
-      parameters: { on: event.objectId },
+      uuidParameters: { on: event.objectId },
     }
   } else if (event.__typename === NotificationEventType.CreateEntity) {
-    return {
-      ...event,
-      type: EventType.CreateEntity,
-      objectId: event.entityId,
-      parameters: {},
-    }
+    return { ...base, type: EventType.CreateEntity, objectId: event.entityId }
   } else if (event.__typename === NotificationEventType.SetLicense) {
     return {
-      ...event,
+      ...base,
       type: EventType.CreateEntity,
       objectId: event.repositoryId,
-      parameters: {},
     }
   }
 
@@ -147,7 +160,7 @@ export async function createEvent(
   { database }: Pick<Context, 'database'>,
 ) {
   const abstractEventPayload = toAbstractEventPayload(payload)
-  const { type, actorId, objectId, instance, parameters } = abstractEventPayload
+  const { type, actorId, objectId, instance } = abstractEventPayload
 
   try {
     await database.beginTransaction()
@@ -161,6 +174,9 @@ export async function createEvent(
       `,
       [actorId, objectId, type, instance],
     )
+
+    const { stringParameters, uuidParameters } = abstractEventPayload
+    const parameters = { ...stringParameters, ...uuidParameters }
 
     for (const [parameter, value] of Object.entries(parameters)) {
       const { insertId: parameterId } = await database.mutate(
@@ -209,8 +225,7 @@ async function createNotifications(
 ) {
   const { objectId, actorId } = event
 
-  const uuidParameters = Object.values(event.parameters).filter(isNumber)
-  const objectIds = [objectId, ...uuidParameters]
+  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
   const subscribers = []
 
   for (const objectId of objectIds) {
@@ -251,8 +266,4 @@ async function createNotifications(
       [event.id],
     )
   }
-}
-
-function isNumber(x: unknown): x is number {
-  return typeof x === 'number'
 }
