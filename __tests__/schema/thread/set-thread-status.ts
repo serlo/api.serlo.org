@@ -115,7 +115,7 @@ describe('Authorization:', () => {
       .withContext({
         userId: moderator.id,
       })
-      .withInput({ id: 'dDM1MTYz', status: 'open' })
+      .withInput({ id: 'dDM1MTYz', status: 'done' })
       .shouldReturnData({
         thread: { setThreadStatus: { success: true } },
       })
