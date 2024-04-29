@@ -38,7 +38,8 @@ export type AbstractEvent =
   | AbstractCheckoutRevisionEvent
   | AbstractRejectRevisionEvent
   | AbstractCreateTaxonomyTermEvent
-  | AbstractSetTaxonomyTerm
+  | AbstractSetTaxonomyTermEvent
+  | AbstractSetTaxonomyParentEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -51,6 +52,7 @@ type ConcreteEvent =
   | Model<'RejectRevisionNotificationEvent'>
   | Model<'CreateTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyTermNotificationEvent'>
+  | Model<'SetTaxonomyParentNotificationEvent'>
 type AbstractEventPayload =
   | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
   | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
@@ -62,7 +64,8 @@ type AbstractEventPayload =
   | Omit<AbstractCheckoutRevisionEvent, 'id' | 'date'>
   | Omit<AbstractRejectRevisionEvent, 'id' | 'date'>
   | Omit<AbstractCreateTaxonomyTermEvent, 'id' | 'date'>
-  | Omit<AbstractSetTaxonomyTerm, 'id' | 'date'>
+  | Omit<AbstractSetTaxonomyTermEvent, 'id' | 'date'>
+  | Omit<AbstractSetTaxonomyParentEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -81,6 +84,10 @@ type ConcreteEventPayload =
       'id' | 'date' | 'objectId'
     >
   | Omit<Model<'SetTaxonomyTermNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'SetTaxonomyParentNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
 
 type AbstractCreateCommentEvent = AbstractEventType<
   EventType.CreateComment,
@@ -132,15 +139,20 @@ type AbstractCreateTaxonomyTermEvent = AbstractEventType<
   Record<string, never>,
   Record<string, never>
 >
-type AbstractSetTaxonomyTerm = AbstractEventType<
+type AbstractSetTaxonomyTermEvent = AbstractEventType<
   EventType.SetTaxonomyTerm,
   Record<string, never>,
+  Record<string, never>
+>
+type AbstractSetTaxonomyParentEvent = AbstractEventType<
+  EventType.SetTaxonomyParent,
+  { from: number | null; to: number | null },
   Record<string, never>
 >
 
 interface AbstractEventType<
   Type extends EventType,
-  UuidParameters extends Record<string, number>,
+  UuidParameters extends Record<string, number | null>,
   StringParameters extends Record<string, string>,
 > {
   id: number
@@ -231,6 +243,14 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
           : NotificationEventType.SetTaxonomyTerm,
       taxonomyTermId: event.objectId,
     }
+  } else if (event.type === EventType.SetTaxonomyParent) {
+    return {
+      ...base,
+      __typename: NotificationEventType.SetTaxonomyParent,
+      childId: event.objectId,
+      previousParentId: event.uuidParameters.from,
+      parentId: event.uuidParameters.to,
+    }
   }
 
   // TODO
@@ -313,6 +333,13 @@ function toAbstractEventPayload(
           ? EventType.CreateTaxonomyTerm
           : EventType.SetTaxonomyTerm,
       objectId: event.taxonomyTermId,
+    }
+  } else if (event.__typename === NotificationEventType.SetTaxonomyParent) {
+    return {
+      ...base,
+      type: EventType.SetTaxonomyParent,
+      objectId: event.childId,
+      uuidParameters: { from: event.previousParentId, to: event.parentId },
     }
   }
 
