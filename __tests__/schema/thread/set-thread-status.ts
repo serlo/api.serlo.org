@@ -95,7 +95,7 @@ describe('Authorization:', () => {
                 status: $status
               ) {
                 nodes {
-                  id,
+                  id
                   status
                 }
               }
@@ -106,21 +106,22 @@ describe('Authorization:', () => {
       .withVariables({ first: 1 })
 
     await threadQuery.shouldReturnData({
-      thread: { allThreads: { nodes: [{ id:"dDM1MTYz", status: 'noStatus' }] } },
+      thread: {
+        allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'noStatus' }] },
+      },
     })
 
     await mutation
       .withContext({
         userId: moderator.id,
       })
-      .withInput({ id: "dDM1MTYz", status: 'open' })
+      .withInput({ id: 'dDM1MTYz', status: 'open' })
       .shouldReturnData({
         thread: { setThreadStatus: { success: true } },
       })
 
-
     await threadQuery.shouldReturnData({
-      thread: { allThreads: { nodes: [{ id:"dDM1MTYz", status: 'done' }] } },
+      thread: { allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'done' }] } },
     })
   })
 })
