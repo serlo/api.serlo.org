@@ -295,7 +295,7 @@ export const resolvers: Resolvers = {
         `
         UPDATE comment
         SET comment_status_id = (SELECT id from comment_status where name = ?)
-        WHERE comment.id IN (${ids.join('.')})
+        WHERE comment.id IN (${ids.join(',')})
         `,
         [status == CommentStatus.NoStatus ? 'no_status' : status],
       )
