@@ -5,18 +5,23 @@
  * It will be better to use the createEvent function in a real
  * world test case, and then remove this file.
  */
-import { article, user } from '../../__fixtures__'
-import { EventType, createEvent } from '~/schema/notification/event'
+import { article, comment, user } from '../../__fixtures__'
+import { NotificationEventType } from '~/model/decoder'
+import {
+  createEvent,
+  toConcreteEvent,
+  AbstractEvent,
+} from '~/schema/notification/event'
 import { Instance } from '~/types'
 
 describe('createEvent', () => {
   const basePayload = {
-    type: EventType.CheckoutRevision,
+    __typename: NotificationEventType.CreateComment,
     actorId: user.id,
     instance: Instance.De,
-    objectId: article.id,
-    parameters: {},
-  }
+    threadId: article.id,
+    commentId: comment.id,
+  } as const
 
   test('fails if actor does not exist', async () => {
     await expect(
@@ -26,7 +31,7 @@ describe('createEvent', () => {
 
   test('fails if object does not exist', async () => {
     await expect(
-      createEvent({ ...basePayload, objectId: 0 }, getContext()),
+      createEvent({ ...basePayload, threadId: 0 }, getContext()),
     ).rejects.toThrow()
   })
 
@@ -34,15 +39,10 @@ describe('createEvent', () => {
     const initialEventsNumber = await getEventsNumber()
 
     await global.database.mutate(
-      'delete from event_parameter_name where name = "to"',
+      'delete from event_parameter_name where name = "discussion"',
     )
 
-    await expect(
-      createEvent(
-        { ...basePayload, parameters: { to: 'approved' } },
-        getContext(),
-      ),
-    ).rejects.toThrow()
+    await expect(createEvent(basePayload, getContext())).rejects.toThrow()
 
     const finalEventsNumber = await getEventsNumber()
     expect(finalEventsNumber).toEqual(initialEventsNumber)
@@ -50,10 +50,7 @@ describe('createEvent', () => {
 
   test('fails if uuid number in parameters does not exist', async () => {
     await expect(
-      createEvent(
-        { ...basePayload, parameters: { object: 40000 } },
-        getContext(),
-      ),
+      createEvent({ ...basePayload, threadId: 40000 }, getContext()),
     ).rejects.toThrow()
   })
 
@@ -62,10 +59,39 @@ describe('createEvent', () => {
 
     const initialEventsNumber = await getEventsNumber()
 
-    const event = await createEvent(basePayload, getContext())
-    expect(event.type).toBe(basePayload.type)
+    await createEvent(basePayload, getContext())
+
+    const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
+      select
+        event_log.id as id,
+        event.name as type,
+        event_log.actor_id as actorId,
+        instance.subdomain as instance,
+        event_log.date as date,
+        event_log.uuid_id as objectId,
+        JSON_OBJECTAGG(
+          event_parameter_name.name,
+          COALESCE(event_parameter_uuid.uuid_id, event_parameter_string.value)
+        ) as parameters
+      from event_log
+      join event on event.id = event_log.event_id
+      join instance on event_log.instance_id = instance.id
+      join event_parameter on event_parameter.log_id = event_log.id
+      join event_parameter_name on event_parameter.name_id = event_parameter_name.id
+      left join event_parameter_string on event_parameter_string.event_parameter_id = event_parameter.id
+      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
+      group by event_log.id
+      order by id desc
+      limit 1
+    `)
+
+    console.log(lastAbstractEvent)
+
+    const event = toConcreteEvent(lastAbstractEvent)
+
+    expect(event.__typename).toBe(basePayload.__typename)
     expect(event.actorId).toBe(basePayload.actorId)
-    expect(event.objectId).toBe(basePayload.objectId)
+    expect(event.objectId).toBe(basePayload.commentId)
     expect(event.instance).toBe(Instance.De)
 
     expect(

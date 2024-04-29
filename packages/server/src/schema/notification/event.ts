@@ -1,9 +1,12 @@
 import { Context } from '~/context'
+import { Model } from '~/internals/graphql'
+import { NotificationEventType } from '~/model/decoder'
 import { Instance } from '~/types'
 
 export enum EventType {
-  ArchiveThread = 'discussion/comment/archive',
-  RestoreThread = 'discussion/restore',
+  // TODO: I cannot map the following type to an API event
+  // ArchiveThread = 'discussion/comment/archive',
+  // RestoreThread = 'discussion/restore',
   CreateComment = 'discussion/comment/create',
   CreateThread = 'discussion/create',
   CreateEntity = 'entity/create',
@@ -22,31 +25,129 @@ export enum EventType {
   TrashUuid = 'uuid/trash',
 }
 
-interface EventParameter {
-  object?: string | number
-  repository?: string | number
-  parent?: string | number
-  on?: string | number
-  discussion?: string | number
-  reason?: string | number
-  from?: string | number
-  to?: string | number
-}
+export type AbstractEvent =
+  | AbstractCreateCommentEvent
+  | AbstractCreateThreadEvent
+  | AbstractCreateEntityEvent
+  | AbstractSetLicenseEvent
+type ConcreteEvent =
+  | Model<'CreateCommentNotificationEvent'>
+  | Model<'CreateThreadNotificationEvent'>
+  | Model<'CreateEntityNotificationEvent'>
+  | Model<'SetLicenseNotificationEvent'>
+type AbstractEventPayload =
+  | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
+  | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
+  | Omit<AbstractCreateEntityEvent, 'id' | 'date'>
+  | Omit<AbstractSetLicenseEvent, 'id' | 'date'>
+type ConcreteEventPayload =
+  | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
+  | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
 
-interface AbstractEvent {
+type AbstractCreateCommentEvent = AbstractEventType<
+  EventType.CreateComment,
+  { discussion: number }
+>
+type AbstractCreateThreadEvent = AbstractEventType<
+  EventType.CreateThread,
+  { on: number }
+>
+type AbstractCreateEntityEvent = AbstractEventType<
+  EventType.CreateEntity,
+  Record<string, never>
+>
+type AbstractSetLicenseEvent = AbstractEventType<
+  EventType.SetLicense,
+  Record<string, never>
+>
+
+interface AbstractEventType<T extends EventType, P> {
   id: number
-  type: EventType
+  type: T
   actorId: number
+  date: string
   objectId: number
   instance: Instance
-  parameters: EventParameter
+  parameters: P
+}
+
+export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
+  if (event.type === EventType.CreateComment) {
+    return {
+      ...event,
+      __typename: NotificationEventType.CreateComment,
+      threadId: event.parameters['discussion'],
+      commentId: event.objectId,
+    }
+  } else if (event.type === EventType.CreateThread) {
+    return {
+      ...event,
+      __typename: NotificationEventType.CreateThread,
+      objectId: event.parameters['on'],
+      threadId: event.objectId,
+    }
+  } else if (event.type === EventType.CreateEntity) {
+    return {
+      ...event,
+      __typename: NotificationEventType.CreateEntity,
+      entityId: event.objectId,
+    }
+  } else if (event.type === EventType.SetLicense) {
+    return {
+      ...event,
+      __typename: NotificationEventType.SetLicense,
+      repositoryId: event.objectId,
+    }
+  }
+
+  // TODO
+  throw new Error()
+}
+
+function toAbstractEventPayload(
+  event: ConcreteEventPayload,
+): AbstractEventPayload {
+  if (event.__typename === NotificationEventType.CreateComment) {
+    return {
+      ...event,
+      type: EventType.CreateComment,
+      objectId: event.commentId,
+      parameters: { discussion: event.threadId },
+    }
+  } else if (event.__typename === NotificationEventType.CreateThread) {
+    return {
+      ...event,
+      type: EventType.CreateThread,
+      objectId: event.threadId,
+      parameters: { on: event.objectId },
+    }
+  } else if (event.__typename === NotificationEventType.CreateEntity) {
+    return {
+      ...event,
+      type: EventType.CreateEntity,
+      objectId: event.entityId,
+      parameters: {},
+    }
+  } else if (event.__typename === NotificationEventType.SetLicense) {
+    return {
+      ...event,
+      type: EventType.CreateEntity,
+      objectId: event.repositoryId,
+      parameters: {},
+    }
+  }
+
+  throw new Error()
 }
 
 export async function createEvent(
-  payload: Omit<AbstractEvent, 'id'>,
+  payload: ConcreteEventPayload,
   { database }: Pick<Context, 'database'>,
 ) {
-  const { type, actorId, objectId, instance, parameters } = payload
+  const abstractEventPayload = toAbstractEventPayload(payload)
+  const { type, actorId, objectId, instance, parameters } = abstractEventPayload
 
   try {
     await database.beginTransaction()
@@ -91,13 +192,11 @@ export async function createEvent(
       }
     }
 
-    const event = { ...payload, id: eventId }
+    const event = { ...abstractEventPayload, id: eventId }
 
     await createNotifications(event, { database })
 
     await database.commitLastTransaction()
-
-    return event
   } catch (error) {
     await database.rollbackLastTransaction()
     return Promise.reject(error)
@@ -105,7 +204,7 @@ export async function createEvent(
 }
 
 async function createNotifications(
-  event: AbstractEvent,
+  event: Omit<AbstractEvent, 'date'>,
   { database }: Pick<Context, 'database'>,
 ) {
   const { objectId, actorId } = event
