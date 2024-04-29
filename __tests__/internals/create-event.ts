@@ -14,54 +14,51 @@ import {
 } from '~/schema/notification/event'
 import { Instance } from '~/types'
 
-describe('createEvent', () => {
-  const basePayload = {
-    __typename: NotificationEventType.CreateComment,
-    actorId: user.id,
-    instance: Instance.De,
-    threadId: article.id,
-    commentId: comment.id,
-  } as const
+const basePayload = {
+  __typename: NotificationEventType.CreateComment,
+  actorId: user.id,
+  instance: Instance.De,
+  threadId: article.id,
+  commentId: comment.id,
+} as const
 
-  test('fails if actor does not exist', async () => {
-    await expect(
-      createEvent({ ...basePayload, actorId: 5 }, getContext()),
-    ).rejects.toThrow()
-  })
+test('fails if actor does not exist', async () => {
+  await expect(
+    createEvent({ ...basePayload, actorId: 5 }, getContext()),
+  ).rejects.toThrow()
+})
 
-  test('fails if object does not exist', async () => {
-    await expect(
-      createEvent({ ...basePayload, threadId: 0 }, getContext()),
-    ).rejects.toThrow()
-  })
+test('fails if object does not exist', async () => {
+  await expect(
+    createEvent({ ...basePayload, threadId: 0 }, getContext()),
+  ).rejects.toThrow()
+})
 
-  test('fails if name from parameters is invalid', async () => {
-    const initialEventsNumber = await getEventsNumber()
+test('fails if name from parameters is invalid', async () => {
+  const initialEventsNumber = await getEventsNumber()
 
-    await global.database.mutate(
-      'delete from event_parameter_name where name = "discussion"',
-    )
+  await global.database.mutate(
+    'delete from event_parameter_name where name = "discussion"',
+  )
 
-    await expect(createEvent(basePayload, getContext())).rejects.toThrow()
+  await expect(createEvent(basePayload, getContext())).rejects.toThrow()
 
-    const finalEventsNumber = await getEventsNumber()
-    expect(finalEventsNumber).toEqual(initialEventsNumber)
-  })
+  const finalEventsNumber = await getEventsNumber()
+  expect(finalEventsNumber).toEqual(initialEventsNumber)
+})
 
-  test('fails if uuid number in parameters does not exist', async () => {
-    await expect(
-      createEvent({ ...basePayload, threadId: 40000 }, getContext()),
-    ).rejects.toThrow()
-  })
+test('fails if uuid number in parameters does not exist', async () => {
+  await expect(
+    createEvent({ ...basePayload, threadId: 40000 }, getContext()),
+  ).rejects.toThrow()
+})
 
-  test('creates event successfully with right payload', async () => {
-    // TODO: After removing getEvent() this needs to be rewritten
+test('creates event successfully with right payload', async () => {
+  const initialEventsNumber = await getEventsNumber()
 
-    const initialEventsNumber = await getEventsNumber()
+  await createEvent(basePayload, getContext())
 
-    await createEvent(basePayload, getContext())
-
-    const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
+  const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
       select
         event_log.id as id,
         event.name as type,
@@ -83,30 +80,29 @@ describe('createEvent', () => {
       limit 1
     `)
 
-    const event = toConcreteEvent(lastAbstractEvent)
+  const event = toConcreteEvent(lastAbstractEvent)
 
-    expect(event).toEqual({
-      id: expect.any(Number) as number,
-      date: expect.any(String) as string,
-      actorId: basePayload.actorId,
-      instance: basePayload.instance,
-      objectId: basePayload.commentId,
-      __typename: basePayload.__typename,
-      threadId: basePayload.threadId,
-      commentId: basePayload.commentId,
-    })
-
-    expect(
-      await database.fetchAll(
-        'select * from notification_event where event_log_id = ?',
-        [event.id],
-      ),
-    ).not.toHaveLength(0)
-    // TODO: be sure the notifications are set to right users and objects
-
-    const finalEventsNumber = await getEventsNumber()
-    expect(finalEventsNumber).not.toEqual(initialEventsNumber)
+  expect(event).toEqual({
+    id: expect.any(Number) as number,
+    date: expect.any(String) as string,
+    actorId: basePayload.actorId,
+    instance: basePayload.instance,
+    objectId: basePayload.commentId,
+    __typename: basePayload.__typename,
+    threadId: basePayload.threadId,
+    commentId: basePayload.commentId,
   })
+
+  expect(
+    await database.fetchAll(
+      'select * from notification_event where event_log_id = ?',
+      [event.id],
+    ),
+  ).not.toHaveLength(0)
+  // TODO: be sure the notifications are set to right users and objects
+
+  const finalEventsNumber = await getEventsNumber()
+  expect(finalEventsNumber).not.toEqual(initialEventsNumber)
 })
 
 async function getEventsNumber() {
