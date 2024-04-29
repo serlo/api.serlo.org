@@ -87,7 +87,7 @@ describe('createEvent', () => {
 
     expect(event).toEqual({
       id: expect.any(Number) as number,
-      date: expect.any(Date) as Date,
+      date: expect.any(String) as string,
       actorId: basePayload.actorId,
       instance: basePayload.instance,
       objectId: basePayload.commentId,
