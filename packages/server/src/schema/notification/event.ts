@@ -35,6 +35,8 @@ export type AbstractEvent =
   | AbstractCreateEntityLinkEvent
   | AbstractRemoveEntityLinkEvent
   | AbstractCreateEntityRevisionEvent
+  | AbstractCheckoutRevisionEvent
+  | AbstractRejectRevisionEvent
 type ConcreteEvent =
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -43,6 +45,8 @@ type ConcreteEvent =
   | Model<'CreateEntityLinkNotificationEvent'>
   | Model<'RemoveEntityLinkNotificationEvent'>
   | Model<'CreateEntityRevisionNotificationEvent'>
+  | Model<'CheckoutRevisionNotificationEvent'>
+  | Model<'RejectRevisionNotificationEvent'>
 type AbstractEventPayload =
   | Omit<AbstractCreateCommentEvent, 'id' | 'date'>
   | Omit<AbstractCreateThreadEvent, 'id' | 'date'>
@@ -51,6 +55,8 @@ type AbstractEventPayload =
   | Omit<AbstractCreateEntityLinkEvent, 'id' | 'date'>
   | Omit<AbstractRemoveEntityLinkEvent, 'id' | 'date'>
   | Omit<AbstractCreateEntityRevisionEvent, 'id' | 'date'>
+  | Omit<AbstractCheckoutRevisionEvent, 'id' | 'date'>
+  | Omit<AbstractRejectRevisionEvent, 'id' | 'date'>
 type ConcreteEventPayload =
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -62,6 +68,8 @@ type ConcreteEventPayload =
       Model<'CreateEntityRevisionNotificationEvent'>,
       'id' | 'date' | 'objectId'
     >
+  | Omit<Model<'CheckoutRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'RejectRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
 
 type AbstractCreateCommentEvent = AbstractEventType<
   EventType.CreateComment,
@@ -97,6 +105,16 @@ type AbstractCreateEntityRevisionEvent = AbstractEventType<
   EventType.CreateEntityRevision,
   { repository: number },
   Record<string, never>
+>
+type AbstractCheckoutRevisionEvent = AbstractEventType<
+  EventType.CheckoutRevision,
+  { repository: number },
+  { reason: string }
+>
+type AbstractRejectRevisionEvent = AbstractEventType<
+  EventType.RejectRevision,
+  { repository: number },
+  { reason: string }
 >
 
 interface AbstractEventType<
@@ -166,6 +184,20 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
       entityId: event.objectId,
       entityRevisionId: event.uuidParameters.repository,
     }
+  } else if (
+    event.type === EventType.CheckoutRevision ||
+    event.type === EventType.RejectRevision
+  ) {
+    return {
+      ...base,
+      __typename:
+        event.type === EventType.CheckoutRevision
+          ? NotificationEventType.CheckoutRevision
+          : NotificationEventType.RejectRevision,
+      repositoryId: event.uuidParameters.repository,
+      revisionId: event.objectId,
+      reason: event.stringParameters.reason,
+    }
   }
 
   // TODO
@@ -222,6 +254,20 @@ function toAbstractEventPayload(
       type: EventType.CreateEntityRevision,
       objectId: event.entityRevisionId,
       uuidParameters: { repository: event.entityId },
+    }
+  } else if (
+    event.__typename === NotificationEventType.CheckoutRevision ||
+    event.__typename === NotificationEventType.RejectRevision
+  ) {
+    return {
+      ...base,
+      type:
+        event.__typename === NotificationEventType.CheckoutRevision
+          ? EventType.CheckoutRevision
+          : EventType.RejectRevision,
+      objectId: event.revisionId,
+      uuidParameters: { repository: event.repositoryId },
+      stringParameters: { reason: event.reason },
     }
   }
 
