@@ -29,7 +29,8 @@ beforeEach(() => {
   givenThreads({ uuid: article, threads: [[comment]] })
 })
 
-test('thread gets created, cache mutated as expected', async () => {
+// TODO: Enable once the mutation is migrated into the API
+test.skip('thread gets created, cache mutated as expected', async () => {
   const queryComments = new Client()
     .prepareQuery({
       query: gql`

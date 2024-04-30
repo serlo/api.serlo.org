@@ -42,7 +42,8 @@ test('setting multiple ids', async () => {
     .shouldReturnData({ thread: { setThreadArchived: { success: true } } })
 })
 
-test('cache gets updated as expected', async () => {
+// TODO: Renable once the mutation was moved into the Api
+test.skip('cache gets updated as expected', async () => {
   given('ThreadSetThreadArchivedMutation')
     .withPayload({ userId: user.id, ids: [comment1.id], archived: true })
     .returns(undefined)

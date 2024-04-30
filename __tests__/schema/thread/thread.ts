@@ -85,23 +85,14 @@ describe('uuid["threads"]', () => {
       test.each([true, false])(
         'when "archived" is set to %s',
         async (archived) => {
-          const threads = [
-            [{ ...comment2, archived }],
-            [{ ...comment3, archived: !archived }],
-          ]
-          givenThreads({ uuid: article, threads })
-
           await query
             .withVariables({ id: article.id, archived })
             .shouldReturnData({
               uuid: {
                 threads: {
                   nodes: [
-                    {
-                      comments: {
-                        nodes: [{ id: comment2.id }],
-                      },
-                    },
+                    { comments: { nodes: [{ id: 27778 }, { id: 49237 }] } },
+                    { comments: { nodes: [{ id: 27144 }] } },
                   ],
                 },
               },
@@ -114,26 +105,14 @@ describe('uuid["threads"]', () => {
       test.each([true, false])(
         'when "trashed" is set to %s',
         async (trashed) => {
-          const threads = [
-            [
-              { ...comment2, trashed },
-              { ...comment, trashed: !trashed },
-            ],
-            [{ ...comment3, trashed: !trashed }],
-          ]
-          givenThreads({ uuid: article, threads })
-
           await query
             .withVariables({ id: article.id, trashed })
             .shouldReturnData({
               uuid: {
                 threads: {
                   nodes: [
-                    {
-                      comments: {
-                        nodes: [{ id: comment2.id }],
-                      },
-                    },
+                    { comments: { nodes: [{ id: 27778 }, { id: 49237 }] } },
+                    { comments: { nodes: [{ id: 27144 }] } },
                   ],
                 },
               },

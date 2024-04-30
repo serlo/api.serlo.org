@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { user as admin, user2 as regularUser } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
+import { HttpResponse } from 'msw'
 
 let client: Client
 let mutation: Query
@@ -144,7 +145,10 @@ describe('add scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  given('UserAddRoleMutation').returns({ success: true })
+  given('UserAddRoleMutation').isDefinedBy(() => {
+    given('UuidQuery').for({ ...regularUser, roles: ['login', globalRole] })
+    return HttpResponse.json({ success: true })
+  })
 
   await uuidQuery.shouldReturnData({
     uuid: {
