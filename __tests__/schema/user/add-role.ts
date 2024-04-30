@@ -1,10 +1,10 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { user as admin, user2 as regularUser } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
-import { HttpResponse } from 'msw'
 
 let client: Client
 let mutation: Query
