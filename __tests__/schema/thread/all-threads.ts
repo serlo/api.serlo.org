@@ -22,22 +22,22 @@ function getThreadData(comment: Model<'Comment'>) {
 const comment = {
   ...baseComment,
   id: 35163,
-  date: '2015-02-21T13:13:24+01:00',
+  date: '2015-02-21T13:13:24.000Z',
 }
 const comment1 = {
   ...baseComment,
   id: 35090,
-  date: '2015-02-19T16:47:16+01:00',
+  date: '2015-02-19T16:47:16.000Z',
 }
 const comment2 = {
   ...baseComment,
   id: 26976,
-  date: '2014-08-05T07:36:24+02:00',
+  date: '2014-08-05T07:36:24.000Z',
 }
 const comment3 = {
   ...baseComment,
   id: 34793,
-  date: '2015-02-16T17:29:30+01:00',
+  date: '2015-02-16T17:29:30.000Z',
 }
 
 describe('allThreads', () => {
