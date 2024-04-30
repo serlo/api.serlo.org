@@ -1,6 +1,5 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 
 import { user as admin } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
