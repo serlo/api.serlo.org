@@ -279,8 +279,8 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
     return {
       ...base,
       __typename: NotificationEventType.CreateEntityRevision,
-      entityId: event.objectId,
-      entityRevisionId: event.uuidParameters.repository,
+      entityId: event.uuidParameters.repository,
+      entityRevisionId: event.objectId,
     }
   } else if (
     event.type === EventType.CheckoutRevision ||
@@ -372,7 +372,7 @@ function toAbstractEventPayload(
   } else if (event.__typename === NotificationEventType.SetLicense) {
     return {
       ...base,
-      type: EventType.CreateEntity,
+      type: EventType.SetLicense,
       objectId: event.repositoryId,
     }
   } else if (
