@@ -27,7 +27,7 @@ export enum EventType {
 }
 
 export async function createEvent(
-  payload: PayloadForNewConcreteEvent,
+  payload: PayloadForNewEvent,
   { database }: Pick<Context, 'database'>,
 ) {
   const abstractEventPayload = toDatabaseRepresentation(payload)
@@ -260,7 +260,7 @@ export function toGraphQLModel(
 }
 
 function toDatabaseRepresentation(
-  event: PayloadForNewConcreteEvent,
+  event: PayloadForNewEvent,
 ): PayloadForNewAbstractEvent {
   const base = {
     ...R.pick(['actorId', 'instance'], event),
@@ -399,7 +399,7 @@ type GraphQLEventModels =
   | Model<'SetTaxonomyParentNotificationEvent'>
   | Model<'SetUuidStateNotificationEvent'>
 
-type PayloadForNewConcreteEvent =
+type PayloadForNewEvent =
   | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
