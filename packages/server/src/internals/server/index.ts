@@ -10,6 +10,7 @@ import { createCache, createEmptyCache } from '~/cache'
 import { createAuthServices, AuthServices } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
+import { Database } from '~/database'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 import { Timer, createTimer } from '~/timer'
@@ -25,9 +26,13 @@ export async function start() {
     process.env.CACHE_TYPE === 'empty'
       ? createEmptyCache()
       : createCache({ timer })
-  const swrQueue = createSwrQueue({ cache, timer })
-  const authServices = createAuthServices()
   const pool = createPool(process.env.MYSQL_URI)
+  const swrQueue = createSwrQueue({
+    cache,
+    timer,
+    database: new Database(pool),
+  })
+  const authServices = createAuthServices()
   await initializeServer({ cache, swrQueue, authServices, pool, timer })
 }
 

@@ -16,19 +16,14 @@ export function assertUserIsAuthenticated(
 }
 
 export async function assertUserIsAuthorized({
-  userId,
   message,
-  dataSources,
+  context,
   ...guardRequest
 }: {
-  userId: number | null
   message: string
-  dataSources: Context['dataSources']
+  context: Context
 } & GuardRequest): Promise<void> {
-  const authorizationPayload = await fetchAuthorizationPayload({
-    userId,
-    dataSources,
-  })
+  const authorizationPayload = await fetchAuthorizationPayload(context)
   const guards = fromGuardRequest(guardRequest)
   guards.forEach((guard) => {
     if (!guard(authorizationPayload)) {

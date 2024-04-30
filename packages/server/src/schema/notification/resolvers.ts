@@ -75,7 +75,8 @@ export const resolvers: Resolvers = {
     notification: createNamespace(),
   },
   NotificationMutation: {
-    async setState(_parent, payload, { dataSources, userId }) {
+    async setState(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { id, unread } = payload.input
       const ids = id
 
@@ -94,17 +95,14 @@ export const resolvers: Resolvers = {
       })
 
       const scopes = await Promise.all(
-        eventIds.map((id) =>
-          fetchScopeOfNotificationEvent({ id, dataSources }),
-        ),
+        eventIds.map((id) => fetchScopeOfNotificationEvent({ id }, context)),
       )
 
       await assertUserIsAuthorized({
-        userId,
         guards: scopes.map((scope) => auth.Notification.setState(scope)),
         message:
           'You are not allowed to set the state of the provided notification(s).',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.setNotificationState({
