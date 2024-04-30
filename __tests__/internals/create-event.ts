@@ -31,8 +31,8 @@ import {
 import { NotificationEventType } from '~/model/decoder'
 import {
   createEvent,
-  toConcreteEvent,
-  AbstractEvent,
+  toGraphQLModel,
+  DatabaseEventRepresentation,
 } from '~/schema/notification/event'
 import { Instance } from '~/types'
 
@@ -133,7 +133,8 @@ test('fails if uuid number in parameters does not exist', async () => {
 })
 
 async function getLastEvent() {
-  const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
+  const lastAbstractEvent =
+    await database.fetchOne<DatabaseEventRepresentation>(`
       select
         event_log.id as id,
         event.name as type,
@@ -161,7 +162,7 @@ async function getLastEvent() {
       limit 1
     `)
 
-  return toConcreteEvent(lastAbstractEvent)
+  return toGraphQLModel(lastAbstractEvent)
 }
 
 async function getEventsNumber() {

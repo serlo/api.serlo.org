@@ -26,7 +26,7 @@ export enum EventType {
   TrashUuid = 'uuid/trash',
 }
 
-export type AbstractEvent =
+export type DatabaseEventRepresentation =
   | ArchiveThreadAbstractEvent
   | RestoreThreadAbstractEvent
   | CreateCommentAbstractEvent
@@ -45,7 +45,7 @@ export type AbstractEvent =
   | SetTaxonomyParentAbstractEvent
   | TrashUuidAbstractEvent
   | RestoreUuidAbstractEvent
-type ConcreteEvent =
+type GraphQLEventModels =
   | Model<'SetThreadStateNotificationEvent'>
   | Model<'CreateCommentNotificationEvent'>
   | Model<'CreateThreadNotificationEvent'>
@@ -62,7 +62,7 @@ type ConcreteEvent =
   | Model<'SetTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyParentNotificationEvent'>
   | Model<'SetUuidStateNotificationEvent'>
-type AbstractEventPayload =
+type PayloadForNewAbstractEvent =
   | Omit<ArchiveThreadAbstractEvent, 'id' | 'date'>
   | Omit<RestoreThreadAbstractEvent, 'id' | 'date'>
   | Omit<CreateCommentAbstractEvent, 'id' | 'date'>
@@ -81,7 +81,7 @@ type AbstractEventPayload =
   | Omit<SetTaxonomyParentAbstractEvent, 'id' | 'date'>
   | Omit<TrashUuidAbstractEvent, 'id' | 'date'>
   | Omit<RestoreUuidAbstractEvent, 'id' | 'date'>
-type ConcreteEventPayload =
+type PayloadForNewConcreteEvent =
   | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
@@ -114,98 +114,98 @@ type ConcreteEventPayload =
     >
   | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
-type ArchiveThreadAbstractEvent = AbstractEventType<
+type ArchiveThreadAbstractEvent = DatabaseEventRepresentationType<
   EventType.ArchiveThread,
   Record<string, never>,
   Record<string, never>
 >
-type RestoreThreadAbstractEvent = AbstractEventType<
+type RestoreThreadAbstractEvent = DatabaseEventRepresentationType<
   EventType.RestoreThread,
   Record<string, never>,
   Record<string, never>
 >
-type CreateCommentAbstractEvent = AbstractEventType<
+type CreateCommentAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateComment,
   { discussion: number },
   Record<string, never>
 >
-type CreateThreadAbstractEvent = AbstractEventType<
+type CreateThreadAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateThread,
   { on: number },
   Record<string, never>
 >
-type CreateEntityAbstractEvent = AbstractEventType<
+type CreateEntityAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateEntity,
   Record<string, never>,
   Record<string, never>
 >
-type SetLicenseAbstractEvent = AbstractEventType<
+type SetLicenseAbstractEvent = DatabaseEventRepresentationType<
   EventType.SetLicense,
   Record<string, never>,
   Record<string, never>
 >
-type CreateEntityLinkAbstractEvent = AbstractEventType<
+type CreateEntityLinkAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateEntityLink,
   { parent: number },
   Record<string, never>
 >
-type RemoveEntityLinkAbstractEvent = AbstractEventType<
+type RemoveEntityLinkAbstractEvent = DatabaseEventRepresentationType<
   EventType.RemoveEntityLink,
   { parent: number },
   Record<string, never>
 >
-type CreateEntityRevisionAbstractEvent = AbstractEventType<
+type CreateEntityRevisionAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateEntityRevision,
   { repository: number },
   Record<string, never>
 >
-type CheckoutRevisionAbstractEvent = AbstractEventType<
+type CheckoutRevisionAbstractEvent = DatabaseEventRepresentationType<
   EventType.CheckoutRevision,
   { repository: number },
   { reason: string }
 >
-type RejectRevisionAbstractEvent = AbstractEventType<
+type RejectRevisionAbstractEvent = DatabaseEventRepresentationType<
   EventType.RejectRevision,
   { repository: number },
   { reason: string }
 >
-type CreateTaxonomyLinkAbstractEvent = AbstractEventType<
+type CreateTaxonomyLinkAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateTaxonomyLink,
   { object: number },
   Record<string, never>
 >
-type RemoveTaxonomyLinkAbstractEvent = AbstractEventType<
+type RemoveTaxonomyLinkAbstractEvent = DatabaseEventRepresentationType<
   EventType.RemoveTaxonomyLink,
   { object: number },
   Record<string, never>
 >
-type CreateTaxonomyTermAbstractEvent = AbstractEventType<
+type CreateTaxonomyTermAbstractEvent = DatabaseEventRepresentationType<
   EventType.CreateTaxonomyTerm,
   Record<string, never>,
   Record<string, never>
 >
-type SetTaxonomyTermAbstractEvent = AbstractEventType<
+type SetTaxonomyTermAbstractEvent = DatabaseEventRepresentationType<
   EventType.SetTaxonomyTerm,
   Record<string, never>,
   Record<string, never>
 >
-type SetTaxonomyParentAbstractEvent = AbstractEventType<
+type SetTaxonomyParentAbstractEvent = DatabaseEventRepresentationType<
   EventType.SetTaxonomyParent,
   { from: number | null; to: number | null },
   Record<string, never>
 >
-type TrashUuidAbstractEvent = AbstractEventType<
+type TrashUuidAbstractEvent = DatabaseEventRepresentationType<
   EventType.TrashUuid,
   Record<string, never>,
   Record<string, never>
 >
-type RestoreUuidAbstractEvent = AbstractEventType<
+type RestoreUuidAbstractEvent = DatabaseEventRepresentationType<
   EventType.RestoreUuid,
   Record<string, never>,
   Record<string, never>
 >
 
-interface AbstractEventType<
+interface DatabaseEventRepresentationType<
   Type extends EventType,
   UuidParameters extends Record<string, number | null>,
   StringParameters extends Record<string, string>,
@@ -220,7 +220,9 @@ interface AbstractEventType<
   stringParameters: StringParameters
 }
 
-export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
+export function toGraphQLModel(
+  event: DatabaseEventRepresentation,
+): GraphQLEventModels {
   const base = {
     ...R.pick(['id', 'actorId', 'instance', 'objectId'], event),
     date: event.date.toISOString(),
@@ -338,9 +340,9 @@ export function toConcreteEvent(event: AbstractEvent): ConcreteEvent {
   }
 }
 
-function toAbstractEventPayload(
-  event: ConcreteEventPayload,
-): AbstractEventPayload {
+function toDatabaseRepresentation(
+  event: PayloadForNewConcreteEvent,
+): PayloadForNewAbstractEvent {
   const base = {
     ...R.pick(['actorId', 'instance'], event),
     uuidParameters: {},
@@ -451,10 +453,10 @@ function toAbstractEventPayload(
 }
 
 export async function createEvent(
-  payload: ConcreteEventPayload,
+  payload: PayloadForNewConcreteEvent,
   { database }: Pick<Context, 'database'>,
 ) {
-  const abstractEventPayload = toAbstractEventPayload(payload)
+  const abstractEventPayload = toDatabaseRepresentation(payload)
   const { type, actorId, objectId, instance } = abstractEventPayload
 
   try {
@@ -515,7 +517,7 @@ export async function createEvent(
 }
 
 async function createNotifications(
-  event: Omit<AbstractEvent, 'date'>,
+  event: Omit<DatabaseEventRepresentation, 'date'>,
   { database }: Pick<Context, 'database'>,
 ) {
   const { objectId, actorId } = event
