@@ -3,7 +3,6 @@ import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import {
-  article,
   checkoutRevisionNotificationEvent,
   createCommentNotificationEvent,
   createEntityLinkNotificationEvent,
@@ -339,92 +338,6 @@ describe('query endpoint "events"', () => {
       })
       .shouldFailWithError('BAD_USER_INPUT')
   })
-})
-
-test('User.eventsByUser returns events of this user', async () => {
-  const events = assignSequentialIds(
-    R.concat(
-      allEvents.map((event) => {
-        return { ...event, actorId: user.id }
-      }),
-      allEvents.map((event) => {
-        return { ...event, actorId: 23 }
-      }),
-    ),
-  )
-  setupEvents(events)
-  given('UuidQuery').for(user)
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query userEvents($id: Int) {
-          uuid(id: $id) {
-            ... on User {
-              eventsByUser {
-                nodes {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: user.id })
-    .shouldReturnData({
-      uuid: {
-        eventsByUser: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
-        },
-      },
-    })
-})
-
-test('AbstractEntity.events returns events for this entity', async () => {
-  const events = assignSequentialIds(
-    R.concat(
-      allEvents.map((event) => {
-        return { ...event, objectId: article.id }
-      }),
-      allEvents.map((event) => {
-        return { ...event, objectId: 23 }
-      }),
-    ),
-  )
-  setupEvents(events)
-  given('UuidQuery').for(article)
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query articleEvents($id: Int) {
-          uuid(id: $id) {
-            ... on Article {
-              events {
-                nodes {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-    .shouldReturnData({
-      uuid: {
-        events: {
-          nodes: R.reverse(
-            events.slice(0, events.length / 2).map(getTypenameAndId),
-          ),
-        },
-      },
-    })
 })
 
 function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {

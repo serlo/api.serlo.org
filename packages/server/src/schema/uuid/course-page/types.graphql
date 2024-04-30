@@ -7,13 +7,6 @@ type CoursePage implements AbstractUuid & AbstractRepository & AbstractEntity & 
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
   title: String!
@@ -39,13 +32,6 @@ type CoursePageRevision implements AbstractUuid & AbstractRevision & AbstractEnt
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: CoursePage!
   title: String!

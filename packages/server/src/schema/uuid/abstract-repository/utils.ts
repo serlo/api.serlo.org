@@ -26,7 +26,7 @@ export function createRepositoryResolvers<
   revisionDecoder: t.Type<Revision, unknown>
 }): Pick<
   AbstractRepositoryResolvers,
-  'alias' | 'threads' | 'licenseId' | 'events' | 'title'
+  'alias' | 'threads' | 'licenseId' | 'title'
 > & {
   currentRevision: ResolverFn<Revision | null, Repository, Context, unknown>
   revisions: ResolverFn<
@@ -93,7 +93,7 @@ export function createRevisionResolvers<
   repositoryDecoder: t.Type<Repository, unknown>
 }): Pick<
   AbstractRevisionResolvers,
-  'alias' | 'threads' | 'author' | 'events' | 'title'
+  'alias' | 'threads' | 'author' | 'title'
 > & {
   repository: ResolverFn<Repository, Revision, Context, unknown>
 } {
