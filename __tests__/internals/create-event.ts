@@ -74,35 +74,7 @@ describe('creates event successfully with right payload', () => {
 
     await createEvent(event, getContext())
 
-    const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
-      select
-        event_log.id as id,
-        event.name as type,
-        event_log.actor_id as actorId,
-        instance.subdomain as instance,
-        event_log.date as date,
-        event_log.uuid_id as objectId,
-        JSON_OBJECTAGG(
-          COALESCE(event_parameter_name.name, "__unused"),
-          event_parameter_uuid.uuid_id
-        ) as uuidParameters,
-        JSON_OBJECTAGG(
-          COALESCE(event_parameter_name.name, "__unused"),
-          event_parameter_string.value
-        ) as stringParameters
-      from event_log
-      join event on event.id = event_log.event_id
-      join instance on event_log.instance_id = instance.id
-      left join event_parameter on event_parameter.log_id = event_log.id
-      left join event_parameter_name on event_parameter.name_id = event_parameter_name.id
-      left join event_parameter_string on event_parameter_string.event_parameter_id = event_parameter.id
-      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
-      group by event_log.id
-      order by id desc
-      limit 1
-    `)
-
-    const lastEvent = toConcreteEvent(lastAbstractEvent)
+    const lastEvent = await getLastEvent()
 
     expect(lastEvent).toEqual({
       id: expect.any(Number) as number,
@@ -110,19 +82,23 @@ describe('creates event successfully with right payload', () => {
       ...R.omit(['id', 'date'], event),
     })
 
-    /*
-    expect(
-      await database.fetchAll(
-        'select * from notification_event where event_log_id = ?',
-        [event.id],
-      ),
-    ).not.toHaveLength(0)
-    // TODO: be sure the notifications are set to right users and objects
-    */
-
     const finalEventsNumber = await getEventsNumber()
-    expect(finalEventsNumber).not.toEqual(initialEventsNumber)
+    expect(finalEventsNumber).toEqual(initialEventsNumber + 1)
   })
+})
+
+test('adds a notification', async () => {
+  await createEvent(checkoutRevisionNotificationEvent, getContext())
+
+  const lastEvent = await getLastEvent()
+
+  expect(
+    await database.fetchAll(
+      'select * from notification_event where event_log_id = ?',
+      [lastEvent.id],
+    ),
+  ).not.toHaveLength(0)
+  // TODO: be sure the notifications are set to right users and objects
 })
 
 test('fails if actor does not exist', async () => {
@@ -155,6 +131,38 @@ test('fails if uuid number in parameters does not exist', async () => {
     createEvent({ ...basePayload, threadId: 40000 }, getContext()),
   ).rejects.toThrow()
 })
+
+async function getLastEvent() {
+  const lastAbstractEvent = await database.fetchOne<AbstractEvent>(`
+      select
+        event_log.id as id,
+        event.name as type,
+        event_log.actor_id as actorId,
+        instance.subdomain as instance,
+        event_log.date as date,
+        event_log.uuid_id as objectId,
+        JSON_OBJECTAGG(
+          COALESCE(event_parameter_name.name, "__unused"),
+          event_parameter_uuid.uuid_id
+        ) as uuidParameters,
+        JSON_OBJECTAGG(
+          COALESCE(event_parameter_name.name, "__unused"),
+          event_parameter_string.value
+        ) as stringParameters
+      from event_log
+      join event on event.id = event_log.event_id
+      join instance on event_log.instance_id = instance.id
+      left join event_parameter on event_parameter.log_id = event_log.id
+      left join event_parameter_name on event_parameter.name_id = event_parameter_name.id
+      left join event_parameter_string on event_parameter_string.event_parameter_id = event_parameter.id
+      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
+      group by event_log.id
+      order by id desc
+      limit 1
+    `)
+
+  return toConcreteEvent(lastAbstractEvent)
+}
 
 async function getEventsNumber() {
   return (
