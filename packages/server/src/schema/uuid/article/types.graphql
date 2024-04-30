@@ -7,13 +7,6 @@ type Article implements AbstractUuid & AbstractRepository & AbstractEntity & Abs
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   instance: Instance!
   alias: String!
   title: String!
@@ -39,13 +32,6 @@ type ArticleRevision implements AbstractUuid & AbstractRevision & AbstractEntity
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   date: DateTime!
   repository: Article!
   title: String!
