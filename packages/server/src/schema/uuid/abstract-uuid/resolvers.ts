@@ -35,11 +35,11 @@ export const UuidResolver = createCachedResolver<
   staleAfter: { days: 1 },
   maxAge: { days: 7 },
   getKey: ({ id }) => {
-    return `uuid/${id}`
+    return `de.serlo.org/api/uuid/${id}`
   },
   getPayload: (key) => {
-    if (!key.startsWith('uuid/')) return O.none
-    const id = parseInt(key.replace('uuid/', ''), 10)
+    if (!key.startsWith('de.serlo.org/api/uuid/')) return O.none
+    const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
     return O.some({ id })
   },
   getCurrentValue: resolveUuidFromDatabase,
