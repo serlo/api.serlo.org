@@ -26,173 +26,117 @@ export enum EventType {
   TrashUuid = 'uuid/trash',
 }
 
-export type DatabaseEventRepresentation =
-  DatabaseEventRepresentations[keyof DatabaseEventRepresentations]
+export async function createEvent(
+  payload: PayloadForNewConcreteEvent,
+  { database }: Pick<Context, 'database'>,
+) {
+  const abstractEventPayload = toDatabaseRepresentation(payload)
+  const { type, actorId, objectId, instance } = abstractEventPayload
 
-type PayloadForNewAbstractEvent = {
-  [P in keyof DatabaseEventRepresentations]: Omit<
-    DatabaseEventRepresentations[P],
-    'id' | 'date'
-  >
-}[keyof DatabaseEventRepresentations]
+  try {
+    await database.beginTransaction()
 
-type GraphQLEventModels =
-  | Model<'SetThreadStateNotificationEvent'>
-  | Model<'CreateCommentNotificationEvent'>
-  | Model<'CreateThreadNotificationEvent'>
-  | Model<'CreateEntityNotificationEvent'>
-  | Model<'SetLicenseNotificationEvent'>
-  | Model<'CreateEntityLinkNotificationEvent'>
-  | Model<'RemoveEntityLinkNotificationEvent'>
-  | Model<'CreateEntityRevisionNotificationEvent'>
-  | Model<'CheckoutRevisionNotificationEvent'>
-  | Model<'RejectRevisionNotificationEvent'>
-  | Model<'CreateTaxonomyLinkNotificationEvent'>
-  | Model<'RemoveTaxonomyLinkNotificationEvent'>
-  | Model<'CreateTaxonomyTermNotificationEvent'>
-  | Model<'SetTaxonomyTermNotificationEvent'>
-  | Model<'SetTaxonomyParentNotificationEvent'>
-  | Model<'SetUuidStateNotificationEvent'>
+    const { insertId: eventId } = await database.mutate(
+      `
+      INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
+        SELECT ?, event.id, ?, instance.id
+        FROM event, instance
+        WHERE event.name = ? and instance.subdomain = ?
+      `,
+      [actorId, objectId, type, instance],
+    )
 
-type PayloadForNewConcreteEvent =
-  | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
-  | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'CreateEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'RemoveEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<
-      Model<'CreateEntityRevisionNotificationEvent'>,
-      'id' | 'date' | 'objectId'
-    >
-  | Omit<Model<'CheckoutRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'RejectRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<
-      Model<'CreateTaxonomyLinkNotificationEvent'>,
-      'id' | 'date' | 'objectId'
-    >
-  | Omit<
-      Model<'RemoveTaxonomyLinkNotificationEvent'>,
-      'id' | 'date' | 'objectId'
-    >
-  | Omit<
-      Model<'CreateTaxonomyTermNotificationEvent'>,
-      'id' | 'date' | 'objectId'
-    >
-  | Omit<Model<'SetTaxonomyTermNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<
-      Model<'SetTaxonomyParentNotificationEvent'>,
-      'id' | 'date' | 'objectId'
-    >
-  | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
+    const { stringParameters, uuidParameters } = abstractEventPayload
+    const parameters = { ...stringParameters, ...uuidParameters }
 
-interface DatabaseEventRepresentations {
-  ArchiveThread: DatabaseEventRepresentationType<
-    EventType.ArchiveThread,
-    Record<string, never>,
-    Record<string, never>
-  >
-  RestoreThread: DatabaseEventRepresentationType<
-    EventType.RestoreThread,
-    Record<string, never>,
-    Record<string, never>
-  >
-  CreateComment: DatabaseEventRepresentationType<
-    EventType.CreateComment,
-    { discussion: number },
-    Record<string, never>
-  >
-  CreateThread: DatabaseEventRepresentationType<
-    EventType.CreateThread,
-    { on: number },
-    Record<string, never>
-  >
-  CreateEntity: DatabaseEventRepresentationType<
-    EventType.CreateEntity,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetLicense: DatabaseEventRepresentationType<
-    EventType.SetLicense,
-    Record<string, never>,
-    Record<string, never>
-  >
-  CreateEntityLink: DatabaseEventRepresentationType<
-    EventType.CreateEntityLink,
-    { parent: number },
-    Record<string, never>
-  >
-  RemoveEntityLink: DatabaseEventRepresentationType<
-    EventType.RemoveEntityLink,
-    { parent: number },
-    Record<string, never>
-  >
-  CreateEntityRevision: DatabaseEventRepresentationType<
-    EventType.CreateEntityRevision,
-    { repository: number },
-    Record<string, never>
-  >
-  CheckoutRevision: DatabaseEventRepresentationType<
-    EventType.CheckoutRevision,
-    { repository: number },
-    { reason: string }
-  >
-  RejectRevision: DatabaseEventRepresentationType<
-    EventType.RejectRevision,
-    { repository: number },
-    { reason: string }
-  >
-  CreateTaxonomyLink: DatabaseEventRepresentationType<
-    EventType.CreateTaxonomyLink,
-    { object: number },
-    Record<string, never>
-  >
-  RemoveTaxonomyLink: DatabaseEventRepresentationType<
-    EventType.RemoveTaxonomyLink,
-    { object: number },
-    Record<string, never>
-  >
-  CreateTaxonomyTerm: DatabaseEventRepresentationType<
-    EventType.CreateTaxonomyTerm,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetTaxonomyTerm: DatabaseEventRepresentationType<
-    EventType.SetTaxonomyTerm,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetTaxonomyParent: DatabaseEventRepresentationType<
-    EventType.SetTaxonomyParent,
-    { from: number | null; to: number | null },
-    Record<string, never>
-  >
-  TrashUuid: DatabaseEventRepresentationType<
-    EventType.TrashUuid,
-    Record<string, never>,
-    Record<string, never>
-  >
-  RestoreUuid: DatabaseEventRepresentationType<
-    EventType.RestoreUuid,
-    Record<string, never>,
-    Record<string, never>
-  >
+    for (const [parameter, value] of Object.entries(parameters)) {
+      const { insertId: parameterId } = await database.mutate(
+        `
+          INSERT INTO event_parameter (log_id, name_id)
+            SELECT ?, id
+            FROM event_parameter_name
+            WHERE name = ?
+        `,
+        [eventId, parameter],
+      )
+
+      if (typeof value === 'string') {
+        await database.mutate(
+          `
+            INSERT INTO event_parameter_string (value, event_parameter_id)
+              VALUES (?, ?)
+          `,
+          [value, parameterId],
+        )
+      } else {
+        await database.mutate(
+          `
+            INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
+              VALUES (?, ?)
+          `,
+          [value, parameterId],
+        )
+      }
+    }
+
+    const event = { ...abstractEventPayload, id: eventId }
+
+    await createNotifications(event, { database })
+
+    await database.commitLastTransaction()
+  } catch (error) {
+    await database.rollbackLastTransaction()
+    return Promise.reject(error)
+  }
 }
 
-interface DatabaseEventRepresentationType<
-  Type extends EventType,
-  UuidParameters extends Record<string, number | null>,
-  StringParameters extends Record<string, string>,
-> {
-  id: number
-  type: Type
-  actorId: number
-  date: Date
-  objectId: number
-  instance: Instance
-  uuidParameters: UuidParameters
-  stringParameters: StringParameters
+async function createNotifications(
+  event: Omit<DatabaseEventRepresentation, 'date'>,
+  { database }: Pick<Context, 'database'>,
+) {
+  const { objectId, actorId } = event
+
+  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
+  const subscribers = []
+
+  for (const objectId of objectIds) {
+    const subscriptions = await database.fetchAll<{
+      uuid_id: number
+      user_id: number
+      notify_mailman: boolean
+    }>(
+      `
+        SELECT uuid_id, user_id, notify_mailman
+          FROM subscription WHERE uuid_id = ? AND user_id != ?
+      `,
+      [objectId, actorId],
+    )
+
+    for (const subscription of subscriptions) {
+      subscribers.push({
+        userId: subscription.user_id,
+        sendEmail: subscription.notify_mailman,
+      })
+    }
+  }
+
+  for (const subscriber of subscribers) {
+    await database.mutate(
+      `
+        INSERT INTO notification (user_id, email)
+          VALUES (?, ?)
+      `,
+      [subscriber.userId, subscriber.sendEmail],
+    )
+
+    await database.mutate(
+      `
+        INSERT INTO notification_event (notification_id, event_log_id)
+          SELECT LAST_INSERT_ID(), ?
+      `,
+      [event.id],
+    )
+  }
 }
 
 export function toGraphQLModel(
@@ -427,115 +371,171 @@ function toDatabaseRepresentation(
   }
 }
 
-export async function createEvent(
-  payload: PayloadForNewConcreteEvent,
-  { database }: Pick<Context, 'database'>,
-) {
-  const abstractEventPayload = toDatabaseRepresentation(payload)
-  const { type, actorId, objectId, instance } = abstractEventPayload
+export type DatabaseEventRepresentation =
+  DatabaseEventRepresentations[keyof DatabaseEventRepresentations]
 
-  try {
-    await database.beginTransaction()
+type PayloadForNewAbstractEvent = {
+  [P in keyof DatabaseEventRepresentations]: Omit<
+    DatabaseEventRepresentations[P],
+    'id' | 'date'
+  >
+}[keyof DatabaseEventRepresentations]
 
-    const { insertId: eventId } = await database.mutate(
-      `
-      INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
-        SELECT ?, event.id, ?, instance.id
-        FROM event, instance
-        WHERE event.name = ? and instance.subdomain = ?
-      `,
-      [actorId, objectId, type, instance],
-    )
+type GraphQLEventModels =
+  | Model<'SetThreadStateNotificationEvent'>
+  | Model<'CreateCommentNotificationEvent'>
+  | Model<'CreateThreadNotificationEvent'>
+  | Model<'CreateEntityNotificationEvent'>
+  | Model<'SetLicenseNotificationEvent'>
+  | Model<'CreateEntityLinkNotificationEvent'>
+  | Model<'RemoveEntityLinkNotificationEvent'>
+  | Model<'CreateEntityRevisionNotificationEvent'>
+  | Model<'CheckoutRevisionNotificationEvent'>
+  | Model<'RejectRevisionNotificationEvent'>
+  | Model<'CreateTaxonomyLinkNotificationEvent'>
+  | Model<'RemoveTaxonomyLinkNotificationEvent'>
+  | Model<'CreateTaxonomyTermNotificationEvent'>
+  | Model<'SetTaxonomyTermNotificationEvent'>
+  | Model<'SetTaxonomyParentNotificationEvent'>
+  | Model<'SetUuidStateNotificationEvent'>
 
-    const { stringParameters, uuidParameters } = abstractEventPayload
-    const parameters = { ...stringParameters, ...uuidParameters }
+type PayloadForNewConcreteEvent =
+  | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'CreateThreadNotificationEvent'>, 'id' | 'date'>
+  | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'CreateEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'RemoveEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'CreateEntityRevisionNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<Model<'CheckoutRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<Model<'RejectRevisionNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'CreateTaxonomyLinkNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<
+      Model<'RemoveTaxonomyLinkNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<
+      Model<'CreateTaxonomyTermNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<Model<'SetTaxonomyTermNotificationEvent'>, 'id' | 'date' | 'objectId'>
+  | Omit<
+      Model<'SetTaxonomyParentNotificationEvent'>,
+      'id' | 'date' | 'objectId'
+    >
+  | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
-    for (const [parameter, value] of Object.entries(parameters)) {
-      const { insertId: parameterId } = await database.mutate(
-        `
-          INSERT INTO event_parameter (log_id, name_id)
-            SELECT ?, id
-            FROM event_parameter_name
-            WHERE name = ?
-        `,
-        [eventId, parameter],
-      )
-
-      if (typeof value === 'string') {
-        await database.mutate(
-          `
-            INSERT INTO event_parameter_string (value, event_parameter_id)
-              VALUES (?, ?)
-          `,
-          [value, parameterId],
-        )
-      } else {
-        await database.mutate(
-          `
-            INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
-              VALUES (?, ?)
-          `,
-          [value, parameterId],
-        )
-      }
-    }
-
-    const event = { ...abstractEventPayload, id: eventId }
-
-    await createNotifications(event, { database })
-
-    await database.commitLastTransaction()
-  } catch (error) {
-    await database.rollbackLastTransaction()
-    return Promise.reject(error)
-  }
+interface DatabaseEventRepresentations {
+  ArchiveThread: DatabaseEventRepresentationType<
+    EventType.ArchiveThread,
+    Record<string, never>,
+    Record<string, never>
+  >
+  RestoreThread: DatabaseEventRepresentationType<
+    EventType.RestoreThread,
+    Record<string, never>,
+    Record<string, never>
+  >
+  CreateComment: DatabaseEventRepresentationType<
+    EventType.CreateComment,
+    { discussion: number },
+    Record<string, never>
+  >
+  CreateThread: DatabaseEventRepresentationType<
+    EventType.CreateThread,
+    { on: number },
+    Record<string, never>
+  >
+  CreateEntity: DatabaseEventRepresentationType<
+    EventType.CreateEntity,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetLicense: DatabaseEventRepresentationType<
+    EventType.SetLicense,
+    Record<string, never>,
+    Record<string, never>
+  >
+  CreateEntityLink: DatabaseEventRepresentationType<
+    EventType.CreateEntityLink,
+    { parent: number },
+    Record<string, never>
+  >
+  RemoveEntityLink: DatabaseEventRepresentationType<
+    EventType.RemoveEntityLink,
+    { parent: number },
+    Record<string, never>
+  >
+  CreateEntityRevision: DatabaseEventRepresentationType<
+    EventType.CreateEntityRevision,
+    { repository: number },
+    Record<string, never>
+  >
+  CheckoutRevision: DatabaseEventRepresentationType<
+    EventType.CheckoutRevision,
+    { repository: number },
+    { reason: string }
+  >
+  RejectRevision: DatabaseEventRepresentationType<
+    EventType.RejectRevision,
+    { repository: number },
+    { reason: string }
+  >
+  CreateTaxonomyLink: DatabaseEventRepresentationType<
+    EventType.CreateTaxonomyLink,
+    { object: number },
+    Record<string, never>
+  >
+  RemoveTaxonomyLink: DatabaseEventRepresentationType<
+    EventType.RemoveTaxonomyLink,
+    { object: number },
+    Record<string, never>
+  >
+  CreateTaxonomyTerm: DatabaseEventRepresentationType<
+    EventType.CreateTaxonomyTerm,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetTaxonomyTerm: DatabaseEventRepresentationType<
+    EventType.SetTaxonomyTerm,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetTaxonomyParent: DatabaseEventRepresentationType<
+    EventType.SetTaxonomyParent,
+    { from: number | null; to: number | null },
+    Record<string, never>
+  >
+  TrashUuid: DatabaseEventRepresentationType<
+    EventType.TrashUuid,
+    Record<string, never>,
+    Record<string, never>
+  >
+  RestoreUuid: DatabaseEventRepresentationType<
+    EventType.RestoreUuid,
+    Record<string, never>,
+    Record<string, never>
+  >
 }
 
-async function createNotifications(
-  event: Omit<DatabaseEventRepresentation, 'date'>,
-  { database }: Pick<Context, 'database'>,
-) {
-  const { objectId, actorId } = event
-
-  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
-  const subscribers = []
-
-  for (const objectId of objectIds) {
-    const subscriptions = await database.fetchAll<{
-      uuid_id: number
-      user_id: number
-      notify_mailman: boolean
-    }>(
-      `
-        SELECT uuid_id, user_id, notify_mailman
-          FROM subscription WHERE uuid_id = ? AND user_id != ?
-      `,
-      [objectId, actorId],
-    )
-
-    for (const subscription of subscriptions) {
-      subscribers.push({
-        userId: subscription.user_id,
-        sendEmail: subscription.notify_mailman,
-      })
-    }
-  }
-
-  for (const subscriber of subscribers) {
-    await database.mutate(
-      `
-        INSERT INTO notification (user_id, email)
-          VALUES (?, ?)
-      `,
-      [subscriber.userId, subscriber.sendEmail],
-    )
-
-    await database.mutate(
-      `
-        INSERT INTO notification_event (notification_id, event_log_id)
-          SELECT LAST_INSERT_ID(), ?
-      `,
-      [event.id],
-    )
-  }
+interface DatabaseEventRepresentationType<
+  Type extends EventType,
+  UuidParameters extends Record<string, number | null>,
+  StringParameters extends Record<string, string>,
+> {
+  id: number
+  type: Type
+  actorId: number
+  date: Date
+  objectId: number
+  instance: Instance
+  uuidParameters: UuidParameters
+  stringParameters: StringParameters
 }
