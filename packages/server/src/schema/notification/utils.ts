@@ -1,5 +1,6 @@
 import * as R from 'ramda'
 
+import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { NotificationEventType, UserDecoder } from '~/model/decoder'
 import { AbstractNotificationEventResolvers } from '~/types'
 
@@ -16,11 +17,12 @@ export function createNotificationEventResolvers(): Pick<
   'actor'
 > {
   return {
-    async actor(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: notificationEvent.actorId,
-        decoder: UserDecoder,
-      })
+    async actor(event, _args, context) {
+      return await UuidResolver.resolveWithDecoder(
+        UserDecoder,
+        { id: event.actorId },
+        context,
+      )
     },
   }
 }

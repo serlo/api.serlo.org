@@ -4,12 +4,9 @@ import * as t from 'io-ts'
 import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import {
-  DiscriminatorType,
   EntityDecoder,
   EntityRevisionDecoder,
-  PageDecoder,
   PageRevisionDecoder,
-  UserDecoder,
 } from './decoder'
 import { Context } from '~/context'
 import {
@@ -17,64 +14,28 @@ import {
   createLegacyQuery,
   createRequest,
 } from '~/internals/data-source-helper'
-import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
 import { isSupportedNotificationEvent } from '~/schema/notification/utils'
+import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
 
 export function createSerloModel({
   context,
 }: {
-  context: Pick<Context, 'cache' | 'swrQueue'>
+  context: Pick<Context, 'cache' | 'swrQueue' | 'database' | 'timer'>
 }) {
-  const getUuid = createLegacyQuery(
-    {
-      type: 'UuidQuery',
-      decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
-      enableSwr: true,
-      getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        return await DatabaseLayer.makeRequest('UuidQuery', payload)
-      },
-      staleAfter: { days: 1 },
-      maxAge: { days: 7 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/uuid/${id}`
-      },
-      getPayload: (key) => {
-        if (!key.startsWith('de.serlo.org/api/uuid/')) return O.none
-        const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
-        return O.some({ id })
-      },
-      examplePayload: { id: 1 },
-    },
-    context,
-  )
-
-  async function getUuidWithCustomDecoder<
-    S extends Model<'AbstractUuid'> | null,
-  >({ id, decoder }: { id: number; decoder: t.Type<S, unknown> }): Promise<S> {
-    return getUuid._querySpec.queryWithDecoder({ id }, decoder)
-  }
-
   const setUuidState = createMutation({
     type: 'UuidSetStateMutation',
     decoder: DatabaseLayer.getDecoderFor('UuidSetStateMutation'),
     mutate(payload: DatabaseLayer.Payload<'UuidSetStateMutation'>) {
       return DatabaseLayer.makeRequest('UuidSetStateMutation', payload)
     },
-    async updateCache({ ids, trashed }) {
-      await getUuid._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { id }
-        }),
-        getValue(current) {
-          if (!current || current.trashed === trashed) {
-            return
-          }
-          return { ...current, trashed }
-        },
-      })
+    async updateCache({ ids }) {
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
+      )
     },
   })
 
@@ -144,11 +105,10 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('UserDeleteBotsMutation', payload)
     },
     async updateCache({ botIds }) {
-      await getUuid._querySpec.removeCache({
-        payloads: botIds.map((id) => {
-          return { id }
-        }),
-      })
+      await UuidResolver.removeCacheEntries(
+        botIds.map((id) => ({ id })),
+        context,
+      )
     },
   })
 
@@ -165,7 +125,7 @@ export function createSerloModel({
     },
     async updateCache({ userId }, { success }) {
       if (success) {
-        await getUuid._querySpec.removeCache({ payload: { id: userId } })
+        await UuidResolver.removeCacheEntry({ id: userId }, context)
       }
     },
   })
@@ -254,10 +214,11 @@ export function createSerloModel({
       const result: Record<string, number[] | null> = {}
 
       for (const entityId of unrevisedEntityIds) {
-        const entity = await getUuidWithCustomDecoder({
-          id: entityId,
-          decoder: EntityDecoder,
-        })
+        const entity = await UuidResolver.resolveWithDecoder(
+          EntityDecoder,
+          { id: entityId },
+          context,
+        )
         const key = entity.canonicalSubjectId?.toString() ?? '__no_subject'
 
         result[key] ??= []
@@ -471,10 +432,7 @@ export function createSerloModel({
     },
     updateCache: async (payload, value) => {
       if (value !== null) {
-        await getUuid._querySpec.setCache({
-          payload: { id: value.id },
-          value,
-        })
+        await UuidResolver.removeCacheEntry({ id: value.id }, context)
         await getThreadIds._querySpec.setCache({
           payload: { id: payload.objectId },
           getValue(current) {
@@ -497,19 +455,8 @@ export function createSerloModel({
     },
     async updateCache(payload, value) {
       if (value !== null) {
-        await getUuid._querySpec.setCache({
-          payload: { id: value.id },
-          value,
-        })
-        await getUuid._querySpec.setCache({
-          payload: { id: payload.threadId },
-          getValue(current) {
-            if (!current || current.__typename !== DiscriminatorType.Comment)
-              return
-            current.childrenIds.push(value.id) // new comment on last pos in thread
-            return current
-          },
-        })
+        await UuidResolver.removeCacheEntry({ id: value.id }, context)
+        await UuidResolver.removeCacheEntry({ id: payload.threadId }, context)
       }
     },
   })
@@ -525,20 +472,11 @@ export function createSerloModel({
         payload,
       )
     },
-    async updateCache({ ids, archived }) {
-      await getUuid._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { id }
-        }),
-        getValue(current) {
-          if (!current || current.__typename !== DiscriminatorType.Comment)
-            return
-          return {
-            ...current,
-            archived: ids.includes(current.id) ? archived : current.archived,
-          }
-        },
-      })
+    async updateCache({ ids }) {
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
+      )
     },
   })
 
@@ -550,17 +488,11 @@ export function createSerloModel({
     ) {
       return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
     },
-    async updateCache({ ids, status }) {
-      await getUuid._querySpec.setCache({
-        payloads: ids.map((id) => {
-          return { id }
-        }),
-        getValue(current) {
-          if (!current || current.__typename !== DiscriminatorType.Comment)
-            return
-          return { ...current, status }
-        },
-      })
+    async updateCache({ ids }) {
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
+      )
     },
   })
 
@@ -574,12 +506,10 @@ export function createSerloModel({
       if (newEntity) {
         const { parentId, taxonomyTermId } = input
         if (parentId) {
-          await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+          await UuidResolver.removeCacheEntry({ id: parentId }, context)
         }
         if (taxonomyTermId) {
-          await getUuid._querySpec.removeCache({
-            payload: { id: taxonomyTermId },
-          })
+          await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
         }
 
         await getUnrevisedEntities._querySpec.setCache({
@@ -632,9 +562,7 @@ export function createSerloModel({
     },
     updateCache: async ({ input, userId }, { success }) => {
       if (success) {
-        await getUuid._querySpec.removeCache({
-          payload: { id: input.entityId },
-        })
+        await UuidResolver.removeCacheEntry({ id: input.entityId }, context)
 
         await getUnrevisedEntities._querySpec.setCache({
           payload: undefined,
@@ -698,30 +626,17 @@ export function createSerloModel({
       )
     },
     async updateCache({ revisionId }) {
-      const revision = await getUuidWithCustomDecoder({
-        id: revisionId,
-        decoder: EntityRevisionDecoder,
-      })
+      const revision = await UuidResolver.resolveWithDecoder(
+        EntityRevisionDecoder,
+        { id: revisionId },
+        context,
+      )
 
-      await getUuid._querySpec.setCache({
-        payload: { id: revision.repositoryId },
-        getValue(current) {
-          if (!EntityDecoder.is(current)) return
-
-          current.currentRevisionId = revisionId
-
-          return current
-        },
-      })
-
-      await getUuid._querySpec.setCache({
-        payload: { id: revisionId },
-        getValue(current) {
-          if (!EntityRevisionDecoder.is(current)) return
-
-          return { ...current, trashed: false }
-        },
-      })
+      await UuidResolver.removeCacheEntry(
+        { id: revision.repositoryId },
+        context,
+      )
+      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
 
       await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
@@ -743,7 +658,7 @@ export function createSerloModel({
     },
     updateCache: async ({ pageId }, { success }) => {
       if (success) {
-        await getUuid._querySpec.removeCache({ payload: { id: pageId } })
+        await UuidResolver.removeCacheEntry({ id: pageId }, context)
       }
     },
   })
@@ -755,30 +670,17 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
-      const revision = await getUuidWithCustomDecoder({
-        id: revisionId,
-        decoder: PageRevisionDecoder,
-      })
+      const revision = await UuidResolver.resolveWithDecoder(
+        PageRevisionDecoder,
+        { id: revisionId },
+        context,
+      )
 
-      await getUuid._querySpec.setCache({
-        payload: { id: revision.repositoryId },
-        getValue(current) {
-          if (!PageDecoder.is(current)) return
-
-          current.currentRevisionId = revisionId
-
-          return current
-        },
-      })
-
-      await getUuid._querySpec.setCache({
-        payload: { id: revisionId },
-        getValue(current) {
-          if (!PageRevisionDecoder.is(current)) return
-
-          return { ...current, trashed: false }
-        },
-      })
+      await UuidResolver.removeCacheEntry(
+        { id: revision.repositoryId },
+        context,
+      )
+      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
     },
   })
 
@@ -789,14 +691,7 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
     },
     async updateCache({ revisionId }) {
-      await getUuid._querySpec.setCache({
-        payload: { id: revisionId },
-        getValue(current) {
-          if (!EntityRevisionDecoder.is(current)) return
-
-          return { ...current, trashed: true }
-        },
-      })
+      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
 
       await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
@@ -825,12 +720,8 @@ export function createSerloModel({
     },
     async updateCache({ taxonomyTermId, entityIds }, { success }) {
       if (success) {
-        await Promise.all(
-          [...entityIds, taxonomyTermId].map(
-            async (id) =>
-              await getUuid._querySpec.removeCache({ payload: { id } }),
-          ),
-        )
+        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
+        await UuidResolver.removeCacheEntries(payloads, context)
       }
     },
   })
@@ -848,12 +739,8 @@ export function createSerloModel({
     },
     async updateCache({ taxonomyTermId, entityIds }, { success }) {
       if (success) {
-        await Promise.all(
-          [...entityIds, taxonomyTermId].map(
-            async (id) =>
-              await getUuid._querySpec.removeCache({ payload: { id } }),
-          ),
-        )
+        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
+        await UuidResolver.removeCacheEntries(payloads, context)
       }
     },
   })
@@ -866,7 +753,7 @@ export function createSerloModel({
     },
     async updateCache({ parentId }) {
       if (parentId) {
-        await getUuid._querySpec.removeCache({ payload: { id: parentId } })
+        await UuidResolver.removeCacheEntry({ id: parentId }, context)
       }
     },
   })
@@ -880,7 +767,7 @@ export function createSerloModel({
 
     async updateCache({ entityId }, { success }) {
       if (success) {
-        await getUuid._querySpec.removeCache({ payload: { id: entityId } })
+        await UuidResolver.removeCacheEntry({ id: entityId }, context)
       }
     },
   })
@@ -892,16 +779,9 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
     },
 
-    async updateCache({ childrenIds, taxonomyTermId }, { success }) {
+    async updateCache({ taxonomyTermId }, { success }) {
       if (success) {
-        await getUuid._querySpec.setCache({
-          payload: { id: taxonomyTermId },
-          getValue(current) {
-            if (!current) return
-
-            return { ...current, childrenIds }
-          },
-        })
+        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
       }
     },
   })
@@ -912,15 +792,9 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
       return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
     },
-    async updateCache({ entityId, licenseId }, { success }) {
+    async updateCache({ entityId }, { success }) {
       if (success) {
-        await getUuid._querySpec.setCache({
-          payload: { id: entityId },
-          getValue(current) {
-            if (!current) return
-            return { ...current, licenseId }
-          },
-        })
+        await UuidResolver.removeCacheEntry({ id: entityId }, context)
       }
     },
   })
@@ -948,7 +822,7 @@ export function createSerloModel({
     },
     async updateCache({ id }, { success }) {
       if (success) {
-        await getUuid._querySpec.removeCache({ payload: { id } })
+        await UuidResolver.removeCacheEntry({ id }, context)
       }
     },
   })
@@ -959,26 +833,14 @@ export function createSerloModel({
     mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
       return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
     },
-    async updateCache({ username, roleName }, { success }) {
+    async updateCache({ username }, { success }) {
       if (success) {
         const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
           instance: Instance.De,
           path: `user/profile/${username}`,
         })) as { id: number }
 
-        await getUuid._querySpec.setCache({
-          payload: { id: alias.id },
-          getValue(current) {
-            if (!current) return
-            if (!UserDecoder.is(current)) return
-
-            if (current.roles.includes(roleName)) return current
-
-            current.roles.push(roleName)
-
-            return current
-          },
-        })
+        await UuidResolver.removeCacheEntry({ id: alias.id }, context)
       }
     },
   })
@@ -1021,8 +883,6 @@ export function createSerloModel({
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
     getUsersByRole,
-    getUuid,
-    getUuidWithCustomDecoder,
     linkEntitiesToTaxonomy,
     getPages,
     rejectEntityRevision,

@@ -43,7 +43,13 @@ export async function applyGraphQLMiddleware({
   timer: Timer
 }) {
   const graphQLPath = '/graphql'
-  const environment = { cache, swrQueue, authServices }
+  const environment = {
+    cache,
+    swrQueue,
+    authServices,
+    database: new Database(pool),
+    timer,
+  }
   const server = new ApolloServer<Context>(getGraphQLOptions())
   const createPlayground = defaultImport(createPlayground_)
   await server.start()

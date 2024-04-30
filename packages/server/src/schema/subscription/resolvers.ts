@@ -1,5 +1,6 @@
 import * as auth from '@serlo/authorization'
 
+import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -12,11 +13,12 @@ import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
   SubscriptionInfo: {
-    async object(parent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: parent.objectId,
-        decoder: UuidDecoder,
-      })
+    async object(parent, _args, context) {
+      return UuidResolver.resolveWithDecoder(
+        UuidDecoder,
+        { id: parent.objectId },
+        context,
+      )
     },
   },
   Query: {
@@ -50,20 +52,20 @@ export const resolvers: Resolvers = {
     },
   },
   SubscriptionMutation: {
-    async set(_parent, payload, { dataSources, userId }) {
+    async set(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { subscribe, sendEmail } = payload.input
       const ids = payload.input.id
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
+        ids.map((id) => fetchScopeOfUuid({ id }, context)),
       )
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guards: scopes.map((scope) => auth.Subscription.set(scope)),
         message: 'You are not allowed to subscribe to this object.',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.setSubscription({

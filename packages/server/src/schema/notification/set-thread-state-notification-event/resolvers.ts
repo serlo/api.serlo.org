@@ -5,8 +5,8 @@ import { Resolvers } from '~/types'
 export const resolvers: Resolvers = {
   SetThreadStateNotificationEvent: {
     ...createNotificationEventResolvers(),
-    thread(notificationEvent, _args, { dataSources }) {
-      return resolveThread(notificationEvent.threadId, dataSources)
+    thread(notificationEvent, _args, context) {
+      return resolveThread(notificationEvent.threadId, context)
     },
   },
 }

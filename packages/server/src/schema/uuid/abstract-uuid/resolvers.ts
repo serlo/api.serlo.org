@@ -13,6 +13,7 @@ import {
   createNamespace,
   Model,
 } from '~/internals/graphql'
+import { DatabaseLayer } from '~/model'
 import {
   UuidDecoder,
   DiscriminatorType,
@@ -63,18 +64,19 @@ export const resolvers: Resolvers = {
 
       if (uuid != null) return uuid
 
-      const uuidFromDatabaseLayer = await dataSources.model.serlo.getUuid({
+      const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', {
         id,
       })
 
-      return uuidFromDatabaseLayer
+      return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
     },
   },
   Mutation: {
     uuid: createNamespace(),
   },
   UuidMutation: {
-    async setState(_parent, payload, { dataSources, userId }) {
+    async setState(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { id, trashed } = payload.input
       const ids = id
 
@@ -82,8 +84,8 @@ export const resolvers: Resolvers = {
         ids.map(async (id): Promise<auth.AuthorizationGuard | null> => {
           // TODO: this is not optimized since it fetches the object twice and sequentially.
           // change up fetchScopeOfUuid to return { scope, object } instead
-          const scope = await fetchScopeOfUuid({ id, dataSources })
-          const object = await dataSources.model.serlo.getUuid({ id })
+          const scope = await fetchScopeOfUuid({ id }, context)
+          const object = await UuidResolver.resolve({ id }, context)
           if (object === null) {
             return null
           } else {
@@ -115,11 +117,10 @@ export const resolvers: Resolvers = {
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guards: guards.filter(isDefined),
         message:
           'You are not allowed to set the state of the provided UUID(s).',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
