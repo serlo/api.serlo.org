@@ -62,13 +62,14 @@ export const resolvers: Resolvers = {
 
       const uuid = await UuidResolver.resolve({ id }, context)
 
-      if (uuid != null) return uuid
+      if (
+        payload.alias != null &&
+        payload.alias.path.startsWith('/user/profile/') &&
+        uuid?.__typename !== DiscriminatorType.User
+      )
+        return null
 
-      const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', {
-        id,
-      })
-
-      return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
+      return uuid
     },
   },
   Mutation: {
@@ -194,7 +195,9 @@ async function resolveUuidFromDatabase(
     }
   }
 
-  return null
+  const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
+
+  return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
 }
 
 async function resolveIdFromPayload(

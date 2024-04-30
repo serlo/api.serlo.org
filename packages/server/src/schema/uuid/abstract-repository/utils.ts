@@ -43,7 +43,7 @@ export function createRepositoryResolvers<
       if (!entity.currentRevisionId) return null
       return await UuidResolver.resolveWithDecoder(
         revisionDecoder,
-        { id: entity.id },
+        { id: entity.currentRevisionId },
         context,
       )
     },

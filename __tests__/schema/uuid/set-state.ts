@@ -39,7 +39,7 @@ beforeEach(() => {
         const uuid = uuids.find((x) => x.id === id)
 
         if (uuid != null) {
-          article.trashed = trashed
+          given('UuidQuery').for({ ...article, trashed })
         } else {
           return new HttpResponse(null, {
             status: 500,
@@ -79,6 +79,7 @@ describe('infrastructural testing', () => {
       .withVariables({ id: article.id })
 
     await uuidQuery.shouldReturnData({ uuid: { trashed: false } })
+
     await mutation.withInput({ id: [article.id], trashed: true }).execute()
 
     await uuidQuery.shouldReturnData({ uuid: { trashed: true } })

@@ -11,7 +11,7 @@ export const resolvers: Resolvers = {
       return UuidResolver.resolveWithDecoder(RepositoryDecoder, { id }, context)
     },
     async revision(event, _args, context) {
-      const id = event.repositoryId
+      const id = event.revisionId
       return UuidResolver.resolveWithDecoder(RevisionDecoder, { id }, context)
     },
   },

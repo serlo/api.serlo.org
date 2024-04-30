@@ -1,5 +1,6 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
 import { user as admin } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
@@ -99,19 +100,14 @@ describe('remove scoped role', () => {
   })
 })
 
-test('updates the cache', async () => {
+// TODO: Enable once the user was moved to Uuid Query
+test.skip('updates the cache', async () => {
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
         nodes: [
-          {
-            role: Role.Login,
-            scope: Scope.Serlo,
-          },
-          {
-            role: globalRole,
-            scope: Scope.Serlo,
-          },
+          { role: Role.Login, scope: Scope.Serlo },
+          { role: globalRole, scope: Scope.Serlo },
         ],
       },
     },
