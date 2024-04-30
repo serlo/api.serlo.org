@@ -20,7 +20,6 @@ import {
 import { Model } from '~/internals/graphql'
 import { isInstance } from '~/schema/instance/utils'
 import { isSupportedNotificationEvent } from '~/schema/notification/utils'
-import { isSupportedUuid } from '~/schema/uuid/abstract-uuid/utils'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
 
@@ -35,8 +34,7 @@ export function createSerloModel({
       decoder: DatabaseLayer.getDecoderFor('UuidQuery'),
       enableSwr: true,
       getCurrentValue: async (payload: DatabaseLayer.Payload<'UuidQuery'>) => {
-        const uuid = await DatabaseLayer.makeRequest('UuidQuery', payload)
-        return isSupportedUuid(uuid) ? uuid : null
+        return await DatabaseLayer.makeRequest('UuidQuery', payload)
       },
       staleAfter: { days: 1 },
       maxAge: { days: 7 },

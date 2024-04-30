@@ -3,35 +3,10 @@ import * as R from 'ramda'
 
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  UuidDecoder,
-} from '~/model/decoder'
+import { DiscriminatorType, EntityType, UuidDecoder } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 import { AbstractUuidResolvers } from '~/types'
-
-const validTypes = [
-  ...Object.values(DiscriminatorType),
-  ...Object.values(EntityType),
-  ...Object.values(EntityRevisionType),
-]
-
-export function isSupportedUuid(
-  value: unknown,
-): value is { __typename: (typeof validTypes)[number] } {
-  return (
-    R.has('__typename', value) &&
-    typeof value.__typename === 'string' &&
-    isSupportedUuidType(value.__typename)
-  )
-}
-
-function isSupportedUuidType(name: string) {
-  return R.includes(name, validTypes)
-}
 
 export function createUuidResolvers(): Pick<
   AbstractUuidResolvers,
