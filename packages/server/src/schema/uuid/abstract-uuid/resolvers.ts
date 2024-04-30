@@ -67,7 +67,7 @@ export const resolvers: Resolvers = {
         id,
       })
 
-      return checkUuid(payload, uuidFromDatabaseLayer)
+      return uuidFromDatabaseLayer
     },
   },
   Mutation: {
@@ -240,19 +240,4 @@ async function resolveIdFromAlias(
   if (customId) return customId
 
   return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
-}
-
-function checkUuid(payload: QueryUuidArgs, uuid: Model<'AbstractUuid'> | null) {
-  if (uuid !== null) {
-    if (payload.alias != null) {
-      if (
-        payload.alias.path.startsWith('/user/profile/') &&
-        uuid.__typename !== DiscriminatorType.User
-      ) {
-        return null
-      }
-    }
-  }
-
-  return uuid
 }
