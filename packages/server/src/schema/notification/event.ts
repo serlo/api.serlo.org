@@ -27,24 +27,15 @@ export enum EventType {
 }
 
 export type DatabaseEventRepresentation =
-  | ArchiveThreadAbstractEvent
-  | RestoreThreadAbstractEvent
-  | CreateCommentAbstractEvent
-  | CreateThreadAbstractEvent
-  | CreateEntityAbstractEvent
-  | SetLicenseAbstractEvent
-  | CreateEntityLinkAbstractEvent
-  | RemoveEntityLinkAbstractEvent
-  | CreateEntityRevisionAbstractEvent
-  | CheckoutRevisionAbstractEvent
-  | RejectRevisionAbstractEvent
-  | CreateTaxonomyLinkAbstractEvent
-  | RemoveTaxonomyLinkAbstractEvent
-  | CreateTaxonomyTermAbstractEvent
-  | SetTaxonomyTermAbstractEvent
-  | SetTaxonomyParentAbstractEvent
-  | TrashUuidAbstractEvent
-  | RestoreUuidAbstractEvent
+  DatabaseEventRepresentations[keyof DatabaseEventRepresentations]
+
+type PayloadForNewAbstractEvent = {
+  [P in keyof DatabaseEventRepresentations]: Omit<
+    DatabaseEventRepresentations[P],
+    'id' | 'date'
+  >
+}[keyof DatabaseEventRepresentations]
+
 type GraphQLEventModels =
   | Model<'SetThreadStateNotificationEvent'>
   | Model<'CreateCommentNotificationEvent'>
@@ -62,25 +53,7 @@ type GraphQLEventModels =
   | Model<'SetTaxonomyTermNotificationEvent'>
   | Model<'SetTaxonomyParentNotificationEvent'>
   | Model<'SetUuidStateNotificationEvent'>
-type PayloadForNewAbstractEvent =
-  | Omit<ArchiveThreadAbstractEvent, 'id' | 'date'>
-  | Omit<RestoreThreadAbstractEvent, 'id' | 'date'>
-  | Omit<CreateCommentAbstractEvent, 'id' | 'date'>
-  | Omit<CreateThreadAbstractEvent, 'id' | 'date'>
-  | Omit<CreateEntityAbstractEvent, 'id' | 'date'>
-  | Omit<SetLicenseAbstractEvent, 'id' | 'date'>
-  | Omit<CreateEntityLinkAbstractEvent, 'id' | 'date'>
-  | Omit<RemoveEntityLinkAbstractEvent, 'id' | 'date'>
-  | Omit<CreateEntityRevisionAbstractEvent, 'id' | 'date'>
-  | Omit<CheckoutRevisionAbstractEvent, 'id' | 'date'>
-  | Omit<RejectRevisionAbstractEvent, 'id' | 'date'>
-  | Omit<CreateTaxonomyLinkAbstractEvent, 'id' | 'date'>
-  | Omit<RemoveTaxonomyLinkAbstractEvent, 'id' | 'date'>
-  | Omit<CreateTaxonomyTermAbstractEvent, 'id' | 'date'>
-  | Omit<SetTaxonomyTermAbstractEvent, 'id' | 'date'>
-  | Omit<SetTaxonomyParentAbstractEvent, 'id' | 'date'>
-  | Omit<TrashUuidAbstractEvent, 'id' | 'date'>
-  | Omit<RestoreUuidAbstractEvent, 'id' | 'date'>
+
 type PayloadForNewConcreteEvent =
   | Omit<Model<'SetThreadStateNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateCommentNotificationEvent'>, 'id' | 'date' | 'objectId'>
@@ -114,96 +87,98 @@ type PayloadForNewConcreteEvent =
     >
   | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
-type ArchiveThreadAbstractEvent = DatabaseEventRepresentationType<
-  EventType.ArchiveThread,
-  Record<string, never>,
-  Record<string, never>
->
-type RestoreThreadAbstractEvent = DatabaseEventRepresentationType<
-  EventType.RestoreThread,
-  Record<string, never>,
-  Record<string, never>
->
-type CreateCommentAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateComment,
-  { discussion: number },
-  Record<string, never>
->
-type CreateThreadAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateThread,
-  { on: number },
-  Record<string, never>
->
-type CreateEntityAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateEntity,
-  Record<string, never>,
-  Record<string, never>
->
-type SetLicenseAbstractEvent = DatabaseEventRepresentationType<
-  EventType.SetLicense,
-  Record<string, never>,
-  Record<string, never>
->
-type CreateEntityLinkAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateEntityLink,
-  { parent: number },
-  Record<string, never>
->
-type RemoveEntityLinkAbstractEvent = DatabaseEventRepresentationType<
-  EventType.RemoveEntityLink,
-  { parent: number },
-  Record<string, never>
->
-type CreateEntityRevisionAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateEntityRevision,
-  { repository: number },
-  Record<string, never>
->
-type CheckoutRevisionAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CheckoutRevision,
-  { repository: number },
-  { reason: string }
->
-type RejectRevisionAbstractEvent = DatabaseEventRepresentationType<
-  EventType.RejectRevision,
-  { repository: number },
-  { reason: string }
->
-type CreateTaxonomyLinkAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateTaxonomyLink,
-  { object: number },
-  Record<string, never>
->
-type RemoveTaxonomyLinkAbstractEvent = DatabaseEventRepresentationType<
-  EventType.RemoveTaxonomyLink,
-  { object: number },
-  Record<string, never>
->
-type CreateTaxonomyTermAbstractEvent = DatabaseEventRepresentationType<
-  EventType.CreateTaxonomyTerm,
-  Record<string, never>,
-  Record<string, never>
->
-type SetTaxonomyTermAbstractEvent = DatabaseEventRepresentationType<
-  EventType.SetTaxonomyTerm,
-  Record<string, never>,
-  Record<string, never>
->
-type SetTaxonomyParentAbstractEvent = DatabaseEventRepresentationType<
-  EventType.SetTaxonomyParent,
-  { from: number | null; to: number | null },
-  Record<string, never>
->
-type TrashUuidAbstractEvent = DatabaseEventRepresentationType<
-  EventType.TrashUuid,
-  Record<string, never>,
-  Record<string, never>
->
-type RestoreUuidAbstractEvent = DatabaseEventRepresentationType<
-  EventType.RestoreUuid,
-  Record<string, never>,
-  Record<string, never>
->
+interface DatabaseEventRepresentations {
+  ArchiveThread: DatabaseEventRepresentationType<
+    EventType.ArchiveThread,
+    Record<string, never>,
+    Record<string, never>
+  >
+  RestoreThread: DatabaseEventRepresentationType<
+    EventType.RestoreThread,
+    Record<string, never>,
+    Record<string, never>
+  >
+  CreateComment: DatabaseEventRepresentationType<
+    EventType.CreateComment,
+    { discussion: number },
+    Record<string, never>
+  >
+  CreateThread: DatabaseEventRepresentationType<
+    EventType.CreateThread,
+    { on: number },
+    Record<string, never>
+  >
+  CreateEntity: DatabaseEventRepresentationType<
+    EventType.CreateEntity,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetLicense: DatabaseEventRepresentationType<
+    EventType.SetLicense,
+    Record<string, never>,
+    Record<string, never>
+  >
+  CreateEntityLink: DatabaseEventRepresentationType<
+    EventType.CreateEntityLink,
+    { parent: number },
+    Record<string, never>
+  >
+  RemoveEntityLink: DatabaseEventRepresentationType<
+    EventType.RemoveEntityLink,
+    { parent: number },
+    Record<string, never>
+  >
+  CreateEntityRevision: DatabaseEventRepresentationType<
+    EventType.CreateEntityRevision,
+    { repository: number },
+    Record<string, never>
+  >
+  CheckoutRevision: DatabaseEventRepresentationType<
+    EventType.CheckoutRevision,
+    { repository: number },
+    { reason: string }
+  >
+  RejectRevision: DatabaseEventRepresentationType<
+    EventType.RejectRevision,
+    { repository: number },
+    { reason: string }
+  >
+  CreateTaxonomyLink: DatabaseEventRepresentationType<
+    EventType.CreateTaxonomyLink,
+    { object: number },
+    Record<string, never>
+  >
+  RemoveTaxonomyLink: DatabaseEventRepresentationType<
+    EventType.RemoveTaxonomyLink,
+    { object: number },
+    Record<string, never>
+  >
+  CreateTaxonomyTerm: DatabaseEventRepresentationType<
+    EventType.CreateTaxonomyTerm,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetTaxonomyTerm: DatabaseEventRepresentationType<
+    EventType.SetTaxonomyTerm,
+    Record<string, never>,
+    Record<string, never>
+  >
+  SetTaxonomyParent: DatabaseEventRepresentationType<
+    EventType.SetTaxonomyParent,
+    { from: number | null; to: number | null },
+    Record<string, never>
+  >
+  TrashUuid: DatabaseEventRepresentationType<
+    EventType.TrashUuid,
+    Record<string, never>,
+    Record<string, never>
+  >
+  RestoreUuid: DatabaseEventRepresentationType<
+    EventType.RestoreUuid,
+    Record<string, never>,
+    Record<string, never>
+  >
+}
 
 interface DatabaseEventRepresentationType<
   Type extends EventType,
