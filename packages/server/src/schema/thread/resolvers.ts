@@ -304,6 +304,9 @@ export const resolvers: Resolvers = {
         UuidResolver.removeCache({ id }, context),
       )
       await Promise.all(promises)
+      await context.dataSources.model.serlo.getUuid._querySpec.removeCache({
+        payloads: ids.map((id) => ({ id })),
+      })
 
       return { success: true, query: {} }
     },
