@@ -328,14 +328,6 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
-  ThreadSetThreadStatusMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      status: CommentStatusDecoder,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
   ThreadsQuery: {
     payload: t.type({ id: t.number }),
     response: t.type({ firstCommentIds: t.array(t.number) }),
