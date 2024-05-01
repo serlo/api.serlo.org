@@ -1,37 +1,13 @@
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { UuidResolver } from './resolvers'
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  UuidDecoder,
-} from '~/model/decoder'
+import { DiscriminatorType, EntityType, UuidDecoder } from '~/model/decoder'
 import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 import { AbstractUuidResolvers } from '~/types'
-
-const validTypes = [
-  ...Object.values(DiscriminatorType),
-  ...Object.values(EntityType),
-  ...Object.values(EntityRevisionType),
-]
-
-export function isSupportedUuid(
-  value: unknown,
-): value is { __typename: (typeof validTypes)[number] } {
-  return (
-    R.has('__typename', value) &&
-    typeof value.__typename === 'string' &&
-    isSupportedUuidType(value.__typename)
-  )
-}
-
-function isSupportedUuidType(name: string) {
-  return R.includes(name, validTypes)
-}
 
 export function createUuidResolvers(): Pick<
   AbstractUuidResolvers,
@@ -39,8 +15,8 @@ export function createUuidResolvers(): Pick<
 > {
   return {
     ...createAliasResolvers(),
-    title(uuid, _, { dataSources }) {
-      return getTitle(uuid, dataSources)
+    title(uuid, _, context) {
+      return getTitle(uuid, context)
     },
     events(uuid, payload, { dataSources }) {
       return resolveEvents({
@@ -53,7 +29,7 @@ export function createUuidResolvers(): Pick<
 
 async function getTitle(
   uuid: Model<'AbstractUuid'>,
-  dataSources: Context['dataSources'],
+  context: Context,
 ): Promise<string> {
   if (uuid.__typename === DiscriminatorType.User) return uuid.username
   if (uuid.__typename === DiscriminatorType.TaxonomyTerm) return uuid.name
@@ -70,7 +46,7 @@ async function getTitle(
     const revisionId = uuid.currentRevisionId ?? R.head(uuid.revisionIds)
 
     if (revisionId) {
-      const revision = await dataSources.model.serlo.getUuid({ id: revisionId })
+      const revision = await UuidResolver.resolve({ id: revisionId }, context)
 
       if (t.type({ title: t.string }).is(revision)) {
         return revision.title
@@ -81,11 +57,12 @@ async function getTitle(
   const parentId = getParentId(uuid)
 
   if (parentId) {
-    const parentUuid = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: parentId,
-      decoder: UuidDecoder,
-    })
-    return getTitle(parentUuid, dataSources)
+    const parentUuid = await UuidResolver.resolveWithDecoder(
+      UuidDecoder,
+      { id: parentId },
+      context,
+    )
+    return getTitle(parentUuid, context)
   }
 
   return uuid.id.toString()

@@ -2,6 +2,7 @@ import { array as A, function as F, number as N, ord } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
 import { UserDecoder } from '~/model/decoder'
@@ -38,14 +39,15 @@ export function createRepositoryResolvers<
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async currentRevision(entity, _args, { dataSources }) {
+    async currentRevision(entity, _args, context) {
       if (!entity.currentRevisionId) return null
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entity.currentRevisionId,
-        decoder: revisionDecoder,
-      })
+      return await UuidResolver.resolveWithDecoder(
+        revisionDecoder,
+        { id: entity.currentRevisionId },
+        context,
+      )
     },
-    async revisions(entity, cursorPayload, { dataSources }) {
+    async revisions(entity, cursorPayload, context) {
       const revisions = F.pipe(
         await Promise.all(
           F.pipe(
@@ -59,12 +61,9 @@ export function createRepositoryResolvers<
                 revisionId > entity.currentRevisionId
               return cursorPayload.unrevised ? isUnrevised : !isUnrevised
             }),
-            A.map(async (id) => {
-              return await dataSources.model.serlo.getUuidWithCustomDecoder({
-                id,
-                decoder: revisionDecoder,
-              })
-            }),
+            A.map((id) =>
+              UuidResolver.resolveWithDecoder(revisionDecoder, { id }, context),
+            ),
           ),
         ),
         A.filter(
@@ -101,17 +100,19 @@ export function createRevisionResolvers<
   return {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async author(entityRevision, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityRevision.authorId,
-        decoder: UserDecoder,
-      })
+    author(entityRevision, _args, context) {
+      return UuidResolver.resolveWithDecoder(
+        UserDecoder,
+        { id: entityRevision.authorId },
+        context,
+      )
     },
-    repository: async (entityRevision, _args, { dataSources }) => {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityRevision.repositoryId,
-        decoder: repositoryDecoder,
-      })
+    repository: async (entityRevision, _args, context) => {
+      return UuidResolver.resolveWithDecoder(
+        repositoryDecoder,
+        { id: entityRevision.repositoryId },
+        context,
+      )
     },
   }
 }

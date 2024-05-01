@@ -1,21 +1,18 @@
 import { createNotificationEventResolvers } from '../utils'
 import { EntityDecoder } from '~/model/decoder'
+import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
   RemoveEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
-    async parent(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: notificationEvent.parentId,
-        decoder: EntityDecoder,
-      })
+    async parent(event, _args, context) {
+      const id = event.parentId
+      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
     },
-    async child(notificationEvent, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: notificationEvent.childId,
-        decoder: EntityDecoder,
-      })
+    async child(event, _args, context) {
+      const id = event.childId
+      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
     },
   },
 }
