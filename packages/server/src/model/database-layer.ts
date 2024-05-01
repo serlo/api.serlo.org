@@ -3,7 +3,6 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
-  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
