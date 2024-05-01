@@ -274,7 +274,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
-      const { database, dataSources, userId } = context
+      const { database, userId } = context
 
       assertUserIsAuthenticated(userId)
 
@@ -294,10 +294,10 @@ export const resolvers: Resolvers = {
         [status, ids.join(',')],
       )
 
-      const promises = ids.map((id) =>
-        UuidResolver.removeCache({ id }, context),
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
       )
-      await Promise.all(promises)
 
       return { success: true, query: {} }
     },
