@@ -52,23 +52,15 @@ describe('Authorization:', () => {
   })
 
   test('commentators are allowed to change thread status', async () => {
-    await mutation
-      .withContext({
-        userId: commentator.id,
-      })
-      .shouldReturnData({
-        thread: { setThreadStatus: { success: true } },
-      })
+    await mutation.withContext({ userId: commentator.id }).shouldReturnData({
+      thread: { setThreadStatus: { success: true } },
+    })
   })
 
   test('moderators are allowed to change thread status', async () => {
-    await mutation
-      .withContext({
-        userId: moderator.id,
-      })
-      .shouldReturnData({
-        thread: { setThreadStatus: { success: true } },
-      })
+    await mutation.withContext({ userId: moderator.id }).shouldReturnData({
+      thread: { setThreadStatus: { success: true } },
+    })
   })
 
   test('unauthorized users get error', async () => {
@@ -112,9 +104,7 @@ describe('Authorization:', () => {
     })
 
     await mutation
-      .withContext({
-        userId: moderator.id,
-      })
+      .withContext({ userId: moderator.id })
       .withInput({ id: 'dDM1MTYz', status: 'done' })
       .shouldReturnData({
         thread: { setThreadStatus: { success: true } },
