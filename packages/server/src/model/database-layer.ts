@@ -128,22 +128,6 @@ export const spec = {
     response: NotificationEventDecoder,
     canBeNull: true,
   },
-  EventsQuery: {
-    payload: t.intersection([
-      t.type({ first: t.number }),
-      t.partial({
-        after: t.number,
-        actorId: t.number,
-        objectId: t.number,
-        instance: InstanceDecoder,
-      }),
-    ]),
-    response: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    canBeNull: false,
-  },
   NotificationSetStateMutation: {
     payload: t.type({
       ids: t.array(t.number),

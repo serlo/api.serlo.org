@@ -1,9 +1,10 @@
+import * as t from 'io-ts'
+import { date as DateDecoder } from 'io-ts-types'
 import * as R from 'ramda'
 
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
-import { NotificationEventType } from '~/model/decoder'
-import { Instance } from '~/types'
+import { InstanceDecoder, NotificationEventType } from '~/model/decoder'
 
 export enum EventType {
   ArchiveThread = 'discussion/comment/archive',
@@ -371,15 +372,18 @@ function toDatabaseRepresentation(
   }
 }
 
-export type DatabaseEventRepresentation =
-  DatabaseEventRepresentations[keyof DatabaseEventRepresentations]
+export type DatabaseEventRepresentation = {
+  [P in keyof typeof DatabaseEventRepresentations]: t.TypeOf<
+    (typeof DatabaseEventRepresentations)[P]
+  >
+}[keyof typeof DatabaseEventRepresentations]
 
 type PayloadForNewAbstractEvent = {
-  [P in keyof DatabaseEventRepresentations]: Omit<
-    DatabaseEventRepresentations[P],
+  [P in keyof typeof DatabaseEventRepresentations]: Omit<
+    t.TypeOf<(typeof DatabaseEventRepresentations)[P]>,
     'id' | 'date'
   >
-}[keyof DatabaseEventRepresentations]
+}[keyof typeof DatabaseEventRepresentations]
 
 type GraphQLEventModels =
   | Model<'SetThreadStateNotificationEvent'>
@@ -432,110 +436,145 @@ type PayloadForNewEvent =
     >
   | Omit<Model<'SetUuidStateNotificationEvent'>, 'id' | 'date'>
 
-interface DatabaseEventRepresentations {
-  ArchiveThread: DatabaseEventRepresentationType<
-    EventType.ArchiveThread,
-    Record<string, never>,
-    Record<string, never>
-  >
-  RestoreThread: DatabaseEventRepresentationType<
-    EventType.RestoreThread,
-    Record<string, never>,
-    Record<string, never>
-  >
-  CreateComment: DatabaseEventRepresentationType<
-    EventType.CreateComment,
-    { discussion: number },
-    Record<string, never>
-  >
-  CreateThread: DatabaseEventRepresentationType<
-    EventType.CreateThread,
-    { on: number },
-    Record<string, never>
-  >
-  CreateEntity: DatabaseEventRepresentationType<
-    EventType.CreateEntity,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetLicense: DatabaseEventRepresentationType<
-    EventType.SetLicense,
-    Record<string, never>,
-    Record<string, never>
-  >
-  CreateEntityLink: DatabaseEventRepresentationType<
-    EventType.CreateEntityLink,
-    { parent: number },
-    Record<string, never>
-  >
-  RemoveEntityLink: DatabaseEventRepresentationType<
-    EventType.RemoveEntityLink,
-    { parent: number },
-    Record<string, never>
-  >
-  CreateEntityRevision: DatabaseEventRepresentationType<
-    EventType.CreateEntityRevision,
-    { repository: number },
-    Record<string, never>
-  >
-  CheckoutRevision: DatabaseEventRepresentationType<
-    EventType.CheckoutRevision,
-    { repository: number },
-    { reason: string }
-  >
-  RejectRevision: DatabaseEventRepresentationType<
-    EventType.RejectRevision,
-    { repository: number },
-    { reason: string }
-  >
-  CreateTaxonomyLink: DatabaseEventRepresentationType<
-    EventType.CreateTaxonomyLink,
-    { object: number },
-    Record<string, never>
-  >
-  RemoveTaxonomyLink: DatabaseEventRepresentationType<
-    EventType.RemoveTaxonomyLink,
-    { object: number },
-    Record<string, never>
-  >
-  CreateTaxonomyTerm: DatabaseEventRepresentationType<
-    EventType.CreateTaxonomyTerm,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetTaxonomyTerm: DatabaseEventRepresentationType<
-    EventType.SetTaxonomyTerm,
-    Record<string, never>,
-    Record<string, never>
-  >
-  SetTaxonomyParent: DatabaseEventRepresentationType<
-    EventType.SetTaxonomyParent,
-    { from: number | null; to: number | null },
-    Record<string, never>
-  >
-  TrashUuid: DatabaseEventRepresentationType<
-    EventType.TrashUuid,
-    Record<string, never>,
-    Record<string, never>
-  >
-  RestoreUuid: DatabaseEventRepresentationType<
-    EventType.RestoreUuid,
-    Record<string, never>,
-    Record<string, never>
-  >
-}
+const DatabaseEventRepresentations = {
+  ArchiveThread: getDatabaseRepresentationDecoder({
+    type: EventType.ArchiveThread,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  RestoreThread: getDatabaseRepresentationDecoder({
+    type: EventType.RestoreThread,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  CreateComment: getDatabaseRepresentationDecoder({
+    type: EventType.CreateComment,
+    uuidParameters: t.type({ discussion: t.number }),
+    stringParameters: t.type({}),
+  }),
+  CreateThread: getDatabaseRepresentationDecoder({
+    type: EventType.CreateThread,
+    uuidParameters: t.type({ on: t.number }),
+    stringParameters: t.type({}),
+  }),
+  CreateEntity: getDatabaseRepresentationDecoder({
+    type: EventType.CreateEntity,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  SetLicense: getDatabaseRepresentationDecoder({
+    type: EventType.SetLicense,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  CreateEntityLink: getDatabaseRepresentationDecoder({
+    type: EventType.CreateEntityLink,
+    uuidParameters: t.type({ parent: t.number }),
+    stringParameters: t.type({}),
+  }),
+  RemoveEntityLink: getDatabaseRepresentationDecoder({
+    type: EventType.RemoveEntityLink,
+    uuidParameters: t.type({ parent: t.number }),
+    stringParameters: t.type({}),
+  }),
+  CreateEntityRevision: getDatabaseRepresentationDecoder({
+    type: EventType.CreateEntityRevision,
+    uuidParameters: t.type({ repository: t.number }),
+    stringParameters: t.type({}),
+  }),
+  CheckoutRevision: getDatabaseRepresentationDecoder({
+    type: EventType.CheckoutRevision,
+    uuidParameters: t.type({ repository: t.number }),
+    stringParameters: t.type({ reason: t.string }),
+  }),
+  RejectRevision: getDatabaseRepresentationDecoder({
+    type: EventType.RejectRevision,
+    uuidParameters: t.type({ repository: t.number }),
+    stringParameters: t.type({ reason: t.string }),
+  }),
+  CreateTaxonomyLink: getDatabaseRepresentationDecoder({
+    type: EventType.CreateTaxonomyLink,
+    uuidParameters: t.type({ object: t.number }),
+    stringParameters: t.type({}),
+  }),
+  RemoveTaxonomyLink: getDatabaseRepresentationDecoder({
+    type: EventType.RemoveTaxonomyLink,
+    uuidParameters: t.type({ object: t.number }),
+    stringParameters: t.type({}),
+  }),
+  CreateTaxonomyTerm: getDatabaseRepresentationDecoder({
+    type: EventType.CreateTaxonomyTerm,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  SetTaxonomyTerm: getDatabaseRepresentationDecoder({
+    type: EventType.SetTaxonomyTerm,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  SetTaxonomyParent: getDatabaseRepresentationDecoder({
+    type: EventType.SetTaxonomyParent,
+    uuidParameters: t.type({
+      from: t.union([t.number, t.null]),
+      to: t.union([t.number, t.null]),
+    }),
+    stringParameters: t.type({}),
+  }),
+  TrashUuid: getDatabaseRepresentationDecoder({
+    type: EventType.TrashUuid,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+  RestoreUuid: getDatabaseRepresentationDecoder({
+    type: EventType.RestoreUuid,
+    uuidParameters: t.type({}),
+    stringParameters: t.type({}),
+  }),
+} as const
 
-interface DatabaseEventRepresentationType<
+export const DatabaseEventRepresentation: t.Type<DatabaseEventRepresentation> =
+  t.union([
+    DatabaseEventRepresentations.ArchiveThread,
+    DatabaseEventRepresentations.CheckoutRevision,
+    DatabaseEventRepresentations.CreateComment,
+    DatabaseEventRepresentations.CreateEntity,
+    DatabaseEventRepresentations.CreateEntityLink,
+    DatabaseEventRepresentations.CreateEntityRevision,
+    DatabaseEventRepresentations.CreateTaxonomyTerm,
+    DatabaseEventRepresentations.CreateTaxonomyLink,
+    DatabaseEventRepresentations.CreateThread,
+    DatabaseEventRepresentations.RejectRevision,
+    DatabaseEventRepresentations.RemoveEntityLink,
+    DatabaseEventRepresentations.RemoveTaxonomyLink,
+    DatabaseEventRepresentations.RestoreThread,
+    DatabaseEventRepresentations.RestoreUuid,
+    DatabaseEventRepresentations.SetLicense,
+    DatabaseEventRepresentations.SetTaxonomyParent,
+    DatabaseEventRepresentations.SetTaxonomyTerm,
+    DatabaseEventRepresentations.TrashUuid,
+  ])
+
+function getDatabaseRepresentationDecoder<
   Type extends EventType,
   UuidParameters extends Record<string, number | null>,
   StringParameters extends Record<string, string>,
-> {
-  id: number
+>({
+  type,
+  uuidParameters,
+  stringParameters,
+}: {
   type: Type
-  actorId: number
-  date: Date
-  objectId: number
-  instance: Instance
-  uuidParameters: UuidParameters
-  stringParameters: StringParameters
+  uuidParameters: t.Type<UuidParameters>
+  stringParameters: t.Type<StringParameters>
+}) {
+  return t.type({
+    id: t.number,
+    type: t.literal(type),
+    actorId: t.number,
+    date: DateDecoder,
+    objectId: t.number,
+    instance: InstanceDecoder,
+    uuidParameters: uuidParameters,
+    stringParameters: stringParameters,
+  })
 }
