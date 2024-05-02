@@ -3,15 +3,6 @@ extend type Query {
 }
 
 type MetadataQuery {
-  entities(
-    first: Int
-    after: String
-    instance: Instance
-    modifiedAfter: String
-  ): ResourceMetadataConnection!
-    @deprecated(
-      reason: "Please use the `resources` field instead. This property will be deleted."
-    )
   resources(
     first: Int
     after: String

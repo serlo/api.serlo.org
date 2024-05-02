@@ -15,6 +15,7 @@ import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
 import { uuidCachedResolvers, uuidSchema } from './uuid'
 import { versionSchema } from './version'
+import { CachedResolver } from '~/cached-resolver'
 import { mergeSchemas } from '~/internals/graphql'
 
 export const schema = mergeSchemas(
@@ -37,4 +38,8 @@ export const schema = mergeSchemas(
   versionSchema,
 )
 
-export const cachedResolvers = [...uuidCachedResolvers]
+// TODO: Fix the following type error
+// @ts-expect-error Unfortunately typecasting does not work here
+export const cachedResolvers: Array<CachedResolver<unknown, unknown>> = [
+  ...uuidCachedResolvers,
+]

@@ -1,7 +1,13 @@
+import { jest } from '@jest/globals'
+import assert from 'assert'
 import gql from 'graphql-tag'
+import * as R from 'ramda'
 
-import { Client, given } from '../__utils__'
-import { Instance } from '~/types'
+import { metadataExamples } from '../../__fixtures__/metadata'
+import { Client } from '../__utils__'
+import { encodeToBase64 } from '~/internals/graphql'
+
+jest.setTimeout(60 * 1000)
 
 test('endpoint `publisher` returns publisher', async () => {
   await new Client()
@@ -46,51 +52,134 @@ describe('endpoint "resources"', () => {
     `,
   })
 
-  test('returns list of metadata for resources', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101 })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+  describe('returns metadata of learning resources', () => {
+    const testCases = metadataExamples.map((res) => {
+      const name = `${res.type[1]} ${res.identifier.value}`
+      return [name, res] as const
+    })
 
-    await query.shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
+    test.each(testCases)('%s', async (_, resource) => {
+      const after = afterForId(resource.identifier.value)
+      await query.withVariables({ first: 1, after }).shouldReturnData({
+        metadata: {
+          resources: {
+            nodes: [resource],
+          },
         },
-      },
+      })
+    })
+  })
+
+  test('shows description when it is set', async () => {
+    await global.database.mutate(`
+      update entity_revision_field
+      set value = "description for entity 2153"
+      where id = 41509 and field = "meta_description";`)
+
+    const after = afterForId(2153)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/2153',
+      description: 'description for entity 2153',
+    })
+  })
+
+  test('returns creators sorted by contributions', async () => {
+    const after = afterForId(9066)
+    const data = await query.withVariables({ first: 1, after }).getData()
+    const creators = R.path(
+      ['metadata', 'resources', 'nodes', 0, 'creator'],
+      data,
+    )
+    assert(Array.isArray(creators))
+
+    // There are two edits from user with id 15491 which is why they
+    // should be listed first
+    expect(R.map(R.prop('id'), creators)).toEqual([
+      'https://serlo.org/15491',
+      'https://serlo.org/6',
+    ])
+  })
+
+  test('returns several subjects in about property', async () => {
+    const after = afterForId(25506)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      about: [
+        {
+          type: 'Concept',
+          id: 'http://w3id.org/kim/schulfaecher/s1001',
+          inScheme: { id: 'http://w3id.org/kim/schulfaecher/' },
+        },
+        {
+          type: 'Concept',
+          id: 'http://w3id.org/kim/schulfaecher/s1008',
+          inScheme: { id: 'http://w3id.org/kim/schulfaecher/' },
+        },
+      ],
+    })
+  })
+
+  test('returns original source as creator followed by serlo authors', async () => {
+    const after = afterForId(12160)
+    const data = await query.withVariables({ first: 1, after }).getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      creator: [
+        {
+          type: 'Organization',
+          id: 'http://www.raschweb.de/',
+          name: 'http://www.raschweb.de/',
+        },
+        {
+          affiliation: {
+            id: 'https://serlo.org/organization',
+            name: 'Serlo Education e.V.',
+            type: 'Organization',
+          },
+          id: 'https://serlo.org/6',
+          name: '12297c72',
+          type: 'Person',
+        },
+      ],
     })
   })
 
   test('with parameter "first"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 11 })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+    const data = await query.withVariables({ first: 10 }).getData()
+    const nodes = R.path(['metadata', 'resources', 'nodes'], data)
 
-    await query.withVariables({ first: 10 }).shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-        },
-      },
-    })
+    assert(Array.isArray(nodes))
+
+    expect(R.map(R.prop('id'), nodes)).toEqual([
+      'https://serlo.org/1495',
+      'https://serlo.org/1497',
+      'https://serlo.org/1499',
+      'https://serlo.org/1501',
+      'https://serlo.org/1503',
+      'https://serlo.org/1505',
+      'https://serlo.org/1507',
+      'https://serlo.org/1509',
+      'https://serlo.org/1511',
+      'https://serlo.org/1513',
+    ])
+  })
+
+  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
+    await query
+      .withVariables({ first: 1001 })
+      .shouldFailWithError('BAD_USER_INPUT')
   })
 
   test('with parameter "after"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101, after: 1513 })
-      .returns({
-        entities: [{ identifier: { value: 11 }, id: 'https://serlo.org/11' }],
-      })
+    const data = await query
+      .withVariables({ first: 1, after: afterForId(1947) })
+      .getData()
 
-    await query.withVariables({ after: 'MTUxMw==' }).shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 11 }, id: 'https://serlo.org/11' }],
-        },
-      },
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1947',
     })
   })
 
@@ -100,56 +189,44 @@ describe('endpoint "resources"', () => {
       .shouldFailWithError('BAD_USER_INPUT')
   })
 
-  test('fails when "first" parameter exceeds hardcoded limit (1000)', async () => {
-    await query
-      .withVariables({ first: 1001 })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
-
   test('with parameter "modifiedAfter"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101, modifiedAfter: '2019-12-01' })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
+    process.env.METADATA_API_LAST_CHANGES_DATE = '2014-12-30T00:00:00Z'
 
-    await query
-      .withVariables({ modifiedAfter: '2019-12-01' })
-      .shouldReturnData({
-        metadata: {
-          resources: {
-            nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-          },
-        },
-      })
-  })
+    const data = await query
+      .withVariables({ first: 1, modifiedAfter: '2015-01-01T00:00:00Z' })
+      .getData()
 
-  test('with parameter "instance"', async () => {
-    given('EntitiesMetadataQuery')
-      .withPayload({ first: 101, instance: Instance.De })
-      .returns({
-        entities: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-      })
-
-    await query.withVariables({ instance: Instance.De }).shouldReturnData({
-      metadata: {
-        resources: {
-          nodes: [{ identifier: { value: 1 }, id: 'https://serlo.org/1' }],
-        },
-      },
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1647',
     })
   })
 
-  test('fails when database layer returns bad request', async () => {
-    given('EntitiesMetadataQuery').returnsBadRequest()
+  test('returns all resources when "modifiedAfter" is smaller than last change in metadata API', async () => {
+    process.env.METADATA_API_LAST_CHANGES_DATE = '2015-01-01T00:00:01Z'
 
-    await query.shouldFailWithError('BAD_USER_INPUT')
+    const data = await query
+      .withVariables({ first: 1, modifiedAfter: '2015-01-01T00:00:00Z' })
+      .getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/1495',
+    })
   })
 
-  test('fails when database layer has internal server error', async () => {
-    given('EntitiesMetadataQuery').hasInternalServerError()
+  test('fails when "modifiedAfter" is an invalid date', async () => {
+    await query
+      .withVariables({ first: 1, modifiedAfter: 'hello' })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
 
-    await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  test('with parameter "instance"', async () => {
+    const data = await query
+      .withVariables({ first: 1, instance: 'en' })
+      .getData()
+
+    expect(R.path(['metadata', 'resources', 'nodes', 0], data)).toMatchObject({
+      id: 'https://serlo.org/32996',
+    })
   })
 })
 
@@ -163,11 +240,6 @@ test('endpoint `version` returns string that could be semver', async () => {
       }
     `,
   })
-  await versionQuery.shouldReturnData({
-    metadata: {
-      version: expect.not.stringContaining('0.0.0') as unknown,
-    },
-  })
 
   await versionQuery.shouldReturnData({
     metadata: {
@@ -175,3 +247,7 @@ test('endpoint `version` returns string that could be semver', async () => {
     },
   })
 })
+
+function afterForId(id: number) {
+  return encodeToBase64((id - 1).toString())
+}

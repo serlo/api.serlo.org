@@ -4,6 +4,8 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+import * as DatabaseLayer from '../../../model/database-layer'
+import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
 import {
   addContext,
@@ -32,6 +34,39 @@ import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
+
+export const activeUserIdsQuery = createCachedResolver<
+  Record<string, never>,
+  number[]
+>({
+  name: 'ActiveUserIdsQuery',
+  decoder: t.array(t.number),
+  enableSwr: true,
+  staleAfter: { hours: 3 },
+  maxAge: { days: 3 },
+  getKey: () => {
+    return 'user/active-user-ids'
+  },
+  getPayload: (key) => {
+    return key === 'user/active-user-ids' ? O.some({}) : O.none
+  },
+  async getCurrentValue(_args, { database, timer }) {
+    const rows = await database.fetchAll<{ id: number }>(
+      `
+        SELECT u.id
+        FROM user u
+        JOIN event_log e ON u.id = e.actor_id
+        WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+        GROUP BY u.id
+        HAVING count(e.event_id) > 10
+      `,
+      [new Date(timer.now()).toISOString()],
+    )
+
+    return rows.map((x) => x.id)
+  },
+  examplePayload: {},
+})
 
 export const resolvers: Resolvers = {
   Query: {
@@ -174,10 +209,9 @@ export const resolvers: Resolvers = {
         ? `https://community.serlo.org/direct/${user.username}`
         : null
     },
-    async isActiveAuthor(user, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getActiveAuthorIds()).includes(
-        user.id,
-      )
+    async isActiveAuthor(user, _args, context) {
+      const ids = await activeUserIdsQuery.resolve({}, context)
+      return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
       const ids = await activeDonorIDs(context)
@@ -407,7 +441,8 @@ export const resolvers: Resolvers = {
       return { success: result.success, query: {} }
     },
 
-    async removeRole(_parent, { input }, { dataSources, userId }) {
+    async removeRole(_parent, { input }, context) {
+      const { dataSources, userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -426,9 +461,35 @@ export const resolvers: Resolvers = {
         dataSources,
       })
 
-      await dataSources.model.serlo.removeRole({
-        username,
-        roleName: generateRole(role, instance),
+      const roleName = generateRole(role, instance)
+      await database.mutate(
+        `
+        DELETE role_user
+        FROM role_user
+        JOIN role ON role_user.role_id = role.id
+        JOIN user ON role_user.user_id = user.id
+        WHERE role.name = ? AND user.username = ?
+        `,
+        [roleName, username],
+      )
+
+      const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
+        instance: Instance.De,
+        path: `user/profile/${username}`,
+      })) as { id: number }
+
+      await dataSources.model.serlo.getUuid._querySpec.setCache({
+        payload: { id: alias.id },
+        getValue(current) {
+          if (!current) return
+          if (!UserDecoder.is(current)) return
+
+          if (!current.roles.includes(roleName)) return current
+          current.roles = current.roles.filter(
+            (currentRole) => currentRole !== roleName,
+          )
+          return current
+        },
       })
 
       return { success: true, query: {} }

@@ -6,6 +6,7 @@ import { Service } from './service'
 import { SwrQueue } from './swr-queue'
 import { type ModelDataSource } from '../internals/data-source'
 import { type Database } from '~/database'
+import { Timer } from '~/timer'
 
 export interface Context {
   authServices: AuthServices
@@ -18,4 +19,5 @@ export interface Context {
   cache: Cache
   swrQueue: SwrQueue
   service: Service
+  timer: Timer
 }

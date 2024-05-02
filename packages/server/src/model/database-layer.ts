@@ -18,11 +18,6 @@ import {
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  ActiveAuthorsQuery: {
-    payload: t.undefined,
-    response: t.array(t.number),
-    canBeNull: false,
-  },
   ActiveReviewersQuery: {
     payload: t.undefined,
     response: t.array(t.number),
@@ -59,27 +54,6 @@ export const spec = {
           id: t.number,
           dateOfDeletion: t.string,
         }),
-      ),
-    }),
-    canBeNull: false,
-  },
-  EntitiesMetadataQuery: {
-    payload: t.intersection([
-      t.type({
-        first: t.number,
-      }),
-      t.partial({
-        after: t.number,
-        instance: InstanceDecoder,
-        modifiedAfter: t.string,
-      }),
-    ]),
-    response: t.type({
-      entities: t.array(
-        t.intersection([
-          t.type({ identifier: t.type({ value: t.number }) }),
-          t.UnknownRecord,
-        ]),
       ),
     }),
     canBeNull: false,

@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { createPool, type Pool, type PoolConnection } from 'mysql2/promise'
+import { createPool, type Pool } from 'mysql2/promise'
 
 import {
   defaultSpreadsheetApi,
@@ -12,6 +12,7 @@ import {
 } from './__tests__/__utils__'
 import { createCache, createNamespacedCache } from '~/cache'
 import { type Cache } from '~/context/cache'
+import { Database } from '~/database'
 import { initializeSentry } from '~/internals/sentry'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 
@@ -26,7 +27,7 @@ beforeAll(() => {
   const server = setupServer()
   const kratos = new MockKratos()
 
-  global.database = createPool(process.env.MYSQL_URI)
+  global.pool = createPool(process.env.MYSQL_URI)
   global.server = server
   global.timer = timer
   global.kratos = kratos
@@ -48,6 +49,9 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
+  global.database = new Database(global.pool)
+  await global.database.beginTransaction()
+
   const baseCache = createCache({ timer: global.timer })
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
 
@@ -73,10 +77,8 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  if (global.transaction != null) {
-    await global.transaction.rollback()
-    global.transaction.release()
-  }
+  await global.database.rollbackAllTransactions()
+
   await flushSentry()
   global.server.resetHandlers()
   await global.cache.quit()
@@ -106,8 +108,8 @@ class MockTimer implements Timer {
     this.currentTime += timeToMilliseconds(time)
   }
 
-  public setCurrentTime(time: number) {
-    this.currentTime = time
+  public setCurrentDate(date: Date) {
+    this.currentTime = date.getTime()
   }
 }
 
@@ -125,6 +127,6 @@ declare global {
   var timer: MockTimer
   var sentryEvents: Event[]
   var kratos: MockKratos
-  var database: Pool
-  var transaction: PoolConnection
+  var pool: Pool
+  var database: Database
 }
