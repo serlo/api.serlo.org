@@ -294,7 +294,10 @@ export const resolvers: Resolvers = {
         [status == CommentStatus.NoStatus ? 'no_status' : status],
       )
 
-      UuidResolver.removeCacheEntries(ids.map(id => ({ id })), context)
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
+      )
 
       return { success: true, query: {} }
     },
