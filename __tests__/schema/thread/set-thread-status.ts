@@ -6,7 +6,6 @@ import {
   comment2,
   user,
   user2 as commentator,
-  comment,
 } from '../../../__fixtures__'
 import { given, Client } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -83,7 +82,6 @@ test('status is actually changed', async function () {
     .shouldReturnData({
       thread: { setThreadStatus: { success: true } },
     })
-  given('UuidQuery').for({ ...comment, id: 35163, status: 'done' })
 
   await threadQuery.shouldReturnData({
     thread: { allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'done' }] } },
