@@ -665,7 +665,7 @@ export const NotificationDecoder = t.exact(
     unread: t.boolean,
     email: t.boolean,
     emailSent: t.boolean,
-    eventId: t.number,
+    event: NotificationEventDecoder,
   }),
 )
 
