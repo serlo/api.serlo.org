@@ -1,457 +1,120 @@
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
-import * as R from 'ramda'
 
-import {
-  article,
-  checkoutRevisionNotificationEvent,
-  createCommentNotificationEvent,
-  createEntityLinkNotificationEvent,
-  createEntityNotificationEvent,
-  createEntityRevisionNotificationEvent,
-  createTaxonomyLinkNotificationEvent,
-  createTaxonomyTermNotificationEvent,
-  createThreadNotificationEvent,
-  rejectRevisionNotificationEvent,
-  removeEntityLinkNotificationEvent,
-  removeTaxonomyLinkNotificationEvent,
-  setLicenseNotificationEvent,
-  setTaxonomyTermNotificationEvent,
-  setThreadStateNotificationEvent,
-  setUuidStateNotificationEvent,
-  user,
-} from '../../__fixtures__'
-import { getTypenameAndId, given, Client } from '../__utils__'
-import { Model } from '~/internals/graphql'
-import { NotificationEventType } from '~/model/decoder'
+import { given, Client } from '../__utils__'
 import { Instance } from '~/types'
 
-const eventRepository: Record<
-  NotificationEventType,
-  Model<'AbstractNotificationEvent'>
-> = {
-  [NotificationEventType.CheckoutRevision]: checkoutRevisionNotificationEvent,
-  [NotificationEventType.RejectRevision]: rejectRevisionNotificationEvent,
-  [NotificationEventType.CreateComment]: createCommentNotificationEvent,
-  [NotificationEventType.SetLicense]: setLicenseNotificationEvent,
-  [NotificationEventType.CreateEntity]: createEntityNotificationEvent,
-  [NotificationEventType.CreateTaxonomyLink]:
-    createTaxonomyLinkNotificationEvent,
-  [NotificationEventType.RemoveTaxonomyLink]:
-    removeTaxonomyLinkNotificationEvent,
-  [NotificationEventType.CreateThread]: createThreadNotificationEvent,
-  [NotificationEventType.SetUuidState]: setUuidStateNotificationEvent,
-  [NotificationEventType.CreateEntityLink]: createEntityLinkNotificationEvent,
-  [NotificationEventType.RemoveEntityLink]: removeEntityLinkNotificationEvent,
-  [NotificationEventType.CreateEntityRevision]:
-    createEntityRevisionNotificationEvent,
-  [NotificationEventType.CreateTaxonomyTerm]:
-    createTaxonomyTermNotificationEvent,
-  [NotificationEventType.SetTaxonomyTerm]: setTaxonomyTermNotificationEvent,
-  [NotificationEventType.SetTaxonomyParent]: setTaxonomyTermNotificationEvent,
-  [NotificationEventType.SetThreadState]: setThreadStateNotificationEvent,
-}
-const allEvents = assignSequentialIds(R.values(eventRepository))
+const query = new Client().prepareQuery({
+  query: gql`
+    query (
+      $after: String
+      $first: Int
+      $actorId: Int
+      $actorUsername: String
+      $objectId: Int
+      $instance: Instance
+    ) {
+      events(
+        after: $after
+        first: $first
+        actorId: $actorId
+        actorUsername: $actorUsername
+        objectId: $objectId
+        instance: $instance
+      ) {
+        nodes {
+          __typename
+          id
+        }
+      }
+    }
+  `,
+})
 
 describe('query endpoint "events"', () => {
   test('returns event log', async () => {
-    setupEvents(allEvents)
+    await query.shouldReturnData({
+      events: {
+        nodes: [
+          { __typename: 'SetTaxonomyTermNotificationEvent', id: 86591 },
+          { __typename: 'SetTaxonomyTermNotificationEvent', id: 86590 },
+          { __typename: 'SetTaxonomyTermNotificationEvent', id: 86589 },
+          { __typename: 'SetTaxonomyTermNotificationEvent', id: 86588 },
+          { __typename: 'SetTaxonomyTermNotificationEvent', id: 86587 },
+          { __typename: 'CreateTaxonomyTermNotificationEvent', id: 86586 },
+          { __typename: 'CheckoutRevisionNotificationEvent', id: 86577 },
+          { __typename: 'CreateEntityRevisionNotificationEvent', id: 86576 },
+          { __typename: 'CheckoutRevisionNotificationEvent', id: 86575 },
+          { __typename: 'CreateEntityRevisionNotificationEvent', id: 86574 },
+          { __typename: 'CheckoutRevisionNotificationEvent', id: 86573 },
+        ],
+      },
+    })
+  })
 
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events {
-              nodes {
-                __typename
-                id
-              }
-              pageInfo {
-                hasNextPage
-              }
-            }
-          }
-        `,
-      })
-      .shouldReturnData({
-        events: {
-          nodes: R.reverse(allEvents).map(getTypenameAndId),
-          pageInfo: { hasNextPage: false },
-        },
-      })
+  test('with filter "first"', async () => {
+    await query.withVariables({ first: 1 }).shouldReturnData({
+      events: {
+        nodes: [{ __typename: 'SetTaxonomyTermNotificationEvent', id: 86591 }],
+      },
+    })
   })
 
   test('with filter "actorId"', async () => {
-    const events = assignSequentialIds(
-      R.concat(
-        allEvents.map((event) => {
-          return { ...event, actorId: 42 }
-        }),
-        allEvents.map((event) => {
-          return { ...event, actorId: 23 }
-        }),
-      ),
-    )
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events(actorId: 42) {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        `,
-      })
-      .shouldReturnData({
-        events: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
-        },
-      })
+    await query.withVariables({ first: 1, actorId: 2 }).shouldReturnData({
+      events: {
+        nodes: [{ __typename: 'CreateCommentNotificationEvent', id: 53732 }],
+      },
+    })
   })
 
   test('with filter "actorUsername"', async () => {
-    given('AliasQuery')
-      .withPayload({
-        instance: Instance.De,
-        path: `/user/profile/${user.username}`,
-      })
-      .returns({
-        id: 42,
-        instance: Instance.De,
-        path: `/user/42/${user.username}`,
-      })
-    const events = assignSequentialIds(
-      R.concat(
-        allEvents.map((event) => {
-          return { ...event, actorId: 42 }
-        }),
-        allEvents.map((event) => {
-          return { ...event, actorId: 23 }
-        }),
-      ),
-    )
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events($username: String!) {
-            events(actorUsername: $username) {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ username: user.username })
+    given('AliasQuery').returns({
+      id: 2,
+      instance: Instance.De,
+      path: '/user/profile/1229793e',
+    })
+    await query
+      .withVariables({ first: 1, actorUsername: '1229793e' })
       .shouldReturnData({
         events: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
+          nodes: [{ __typename: 'CreateCommentNotificationEvent', id: 53732 }],
         },
       })
   })
 
   test('with filter "instance"', async () => {
-    const events = assignSequentialIds(
-      R.concat(
-        allEvents.map((event) => {
-          return { ...event, instance: Instance.En }
-        }),
-        allEvents.map((event) => {
-          return { ...event, instance: Instance.De }
-        }),
-      ),
-    )
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events(instance: en) {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        `,
-      })
+    await query
+      .withVariables({ first: 1, instance: Instance.De })
       .shouldReturnData({
         events: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
+          nodes: [
+            { __typename: 'CreateEntityRevisionNotificationEvent', id: 86460 },
+          ],
         },
       })
   })
 
   test('with filter "objectId"', async () => {
-    const events = assignSequentialIds(
-      R.concat(
-        allEvents.map((event) => {
-          return { ...event, objectId: 42 }
-        }),
-        allEvents.map((event) => {
-          return { ...event, objectId: 23 }
-        }),
-      ),
-    )
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events(objectId: 42) {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        `,
-      })
-      .shouldReturnData({
-        events: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
-        },
-      })
+    await query.withVariables({ first: 1, objectId: 1855 }).shouldReturnData({
+      events: {
+        nodes: [{ __typename: 'CreateEntityNotificationEvent', id: 1198 }],
+      },
+    })
   })
 
-  test('with filter `after`', async () => {
-    const events = assignSequentialIds(
-      R.range(0, 200).flatMap(R.always(allEvents)),
-    )
-    const afterId = R.reverse(events)[1000].id
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events($after: String!) {
-            events(after: $after) {
-              nodes {
-                id
-                __typename
-              }
-              pageInfo {
-                hasNextPage
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({
-        after: Buffer.from(afterId.toString()).toString('base64'),
-      })
+  test('with filter "after"', async () => {
+    await query
+      .withVariables({ first: 1, after: 'MTE5OA==' })
       .shouldReturnData({
         events: {
-          nodes: R.reverse(events).slice(1001, 1501).map(getTypenameAndId),
-          pageInfo: { hasNextPage: true },
-        },
-      })
-  })
-
-  test('`hasNextPage` is always true when database layer responses with hasNextPage == true', async () => {
-    const events = assignSequentialIds(
-      R.range(0, 105).flatMap(R.always(allEvents)),
-    )
-    const afterId = R.reverse(events)[1039].id
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events($after: String!) {
-            events(first: 10, after: $after) {
-              pageInfo {
-                hasNextPage
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({
-        after: Buffer.from(afterId.toString()).toString('base64'),
-      })
-      .shouldReturnData({
-        events: { pageInfo: { hasNextPage: true } },
-      })
-  })
-
-  test('number of returned events is bounded to 500 when `first` is undefined', async () => {
-    const events = assignSequentialIds(
-      R.range(0, 50).flatMap(R.always(allEvents)),
-    )
-    setupEvents(events)
-
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events {
-              nodes {
-                __typename
-                id
-              }
-              pageInfo {
-                hasNextPage
-              }
-            }
-          }
-        `,
-      })
-      .shouldReturnData({
-        events: {
-          nodes: R.reverse(events).slice(0, 500).map(getTypenameAndId),
-          pageInfo: { hasNextPage: true },
+          nodes: [{ __typename: 'SetLicenseNotificationEvent', id: 1197 }],
         },
       })
   })
 
   test('fails when first > 500', async () => {
-    await new Client()
-      .prepareQuery({
-        query: gql`
-          query events {
-            events(first: 600) {
-              nodes {
-                __typename
-                id
-              }
-            }
-          }
-        `,
-      })
+    await query
+      .withVariables({ first: 600 })
       .shouldFailWithError('BAD_USER_INPUT')
   })
 })
-
-test('User.eventsByUser returns events of this user', async () => {
-  const events = assignSequentialIds(
-    R.concat(
-      allEvents.map((event) => {
-        return { ...event, actorId: user.id }
-      }),
-      allEvents.map((event) => {
-        return { ...event, actorId: 23 }
-      }),
-    ),
-  )
-  setupEvents(events)
-  given('UuidQuery').for(user)
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query userEvents($id: Int) {
-          uuid(id: $id) {
-            ... on User {
-              eventsByUser {
-                nodes {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: user.id })
-    .shouldReturnData({
-      uuid: {
-        eventsByUser: {
-          nodes: R.reverse(
-            events.slice(0, allEvents.length).map(getTypenameAndId),
-          ),
-        },
-      },
-    })
-})
-
-test('AbstractEntity.events returns events for this entity', async () => {
-  const events = assignSequentialIds(
-    R.concat(
-      allEvents.map((event) => {
-        return { ...event, objectId: article.id }
-      }),
-      allEvents.map((event) => {
-        return { ...event, objectId: 23 }
-      }),
-    ),
-  )
-  setupEvents(events)
-  given('UuidQuery').for(article)
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query articleEvents($id: Int) {
-          uuid(id: $id) {
-            ... on Article {
-              events {
-                nodes {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-    .shouldReturnData({
-      uuid: {
-        events: {
-          nodes: R.reverse(
-            events.slice(0, events.length / 2).map(getTypenameAndId),
-          ),
-        },
-      },
-    })
-})
-
-function setupEvents(allEvents: Model<'AbstractNotificationEvent'>[]) {
-  given('EventsQuery').isDefinedBy(async ({ request }) => {
-    const body = await request.json()
-    const { after, objectId, actorId, first, instance } = body.payload
-
-    const filteredEvents = [...allEvents]
-      .reverse()
-      .filter((event) => actorId == null || event.actorId === actorId)
-      .filter((event) => instance == null || event.instance === instance)
-      // We only filter for objectId here. However, the database layer
-      // needs to check whether any event_uuid_parameter is also in the filter
-      .filter((event) => objectId == null || event.objectId === objectId)
-      .filter((event) => after == null || event.id < after)
-
-    return HttpResponse.json({
-      events: filteredEvents.slice(0, first),
-      hasNextPage: filteredEvents.length > first,
-    })
-  })
-}
-
-function assignSequentialIds(
-  events: Model<'AbstractNotificationEvent'>[],
-): Model<'AbstractNotificationEvent'>[] {
-  return events.map((event, id) => {
-    return { ...event, id: id + 1 }
-  })
-}

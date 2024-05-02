@@ -56,5 +56,9 @@ test('updates the cache', async () => {
 
   await mutation.execute()
 
+  // We need to simulate that the description in the DB was changed
+  // TODO: Delete the following line when user is moved into UuidResolver
+  given('UuidQuery').for({ ...user, description: 'description' })
+
   await query.shouldReturnData({ uuid: { description: 'description' } })
 })

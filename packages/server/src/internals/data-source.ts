@@ -18,7 +18,12 @@ export class ModelDataSource extends RESTDataSource {
   public mailchimp: ReturnType<typeof createMailchimpModel>
   public kratos: ReturnType<typeof createKratosModel>
 
-  constructor(context: Pick<Context, 'swrQueue' | 'cache' | 'authServices'>) {
+  constructor(
+    context: Pick<
+      Context,
+      'swrQueue' | 'cache' | 'authServices' | 'timer' | 'database'
+    >,
+  ) {
     super()
 
     this.chat = createChatModel({ context })
