@@ -26,7 +26,6 @@
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json --excludePathsFromReport=packages/types/ --excludePathsFromReport=packages/server/src/types.ts --ignoreFiles=/dist/",
     "codegen": "lerna run --stream codegen",
-    "deploy:images": "lerna run --stream deploy:image",
     "deploy:images:staging": "lerna run --stream deploy:image:staging --",
     "deploy:images:production": "lerna run --stream deploy:image:production --",
     "docker:build": "run-s \"docker:build:*\"",
