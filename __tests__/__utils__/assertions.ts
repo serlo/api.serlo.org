@@ -113,10 +113,6 @@ export class Query<
     return this.withContext({ userId: null })
   }
 
-  forUser(userId: number) {
-    return this.withContext({ userId })
-  }
-
   execute() {
     return this.client.execute(this.query)
   }
