@@ -8,6 +8,7 @@ import { experimentSchema } from './experiment'
 import { instanceSchema } from './instance'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
+import { notificationsSchema } from './notifications'
 import { oauthSchema } from './oauth'
 import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
@@ -28,6 +29,7 @@ export const schema = mergeSchemas(
   defaultGraphQLDefinitionsSchema,
   mediaSchema,
   metadataSchema,
+  notificationsSchema,
   eventSchema,
   oauthSchema,
   rolesSchema,
