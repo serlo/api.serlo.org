@@ -10,9 +10,10 @@ import { createCache, createEmptyCache } from '~/cache'
 import { createAuthServices, AuthServices } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
+import { Database } from '~/database'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
-import { createTimer } from '~/timer'
+import { Timer, createTimer } from '~/timer'
 
 export { getGraphQLOptions } from './graphql-middleware'
 
@@ -25,10 +26,14 @@ export async function start() {
     process.env.CACHE_TYPE === 'empty'
       ? createEmptyCache()
       : createCache({ timer })
-  const swrQueue = createSwrQueue({ cache, timer })
-  const authServices = createAuthServices()
   const pool = createPool(process.env.MYSQL_URI)
-  await initializeServer({ cache, swrQueue, authServices, pool })
+  const swrQueue = createSwrQueue({
+    cache,
+    timer,
+    database: new Database(pool),
+  })
+  const authServices = createAuthServices()
+  await initializeServer({ cache, swrQueue, authServices, pool, timer })
 }
 
 async function initializeServer({
@@ -36,11 +41,13 @@ async function initializeServer({
   swrQueue,
   authServices,
   pool,
+  timer,
 }: {
   cache: Cache
   swrQueue: SwrQueue
   authServices: AuthServices
   pool: Pool
+  timer: Timer
 }) {
   const app = createApp()
   const healthPath = '/health'
@@ -51,6 +58,7 @@ async function initializeServer({
     swrQueue,
     authServices,
     pool,
+    timer,
   })
   const kratosPath = applyKratosMiddleware({
     app,

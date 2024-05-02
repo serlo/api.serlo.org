@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
-import { createPool, type Pool, type PoolConnection } from 'mysql2/promise'
+import { createPool, type Pool } from 'mysql2/promise'
 
 import {
   defaultSpreadsheetApi,
@@ -49,10 +49,8 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
-  global.transaction = await pool.getConnection()
-  await global.transaction.beginTransaction()
-
-  global.database = new Database(global.transaction)
+  global.database = new Database(global.pool)
+  await global.database.beginTransaction()
 
   const baseCache = createCache({ timer: global.timer })
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
@@ -79,8 +77,7 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  await global.transaction.rollback()
-  global.transaction.release()
+  await global.database.rollbackAllTransactions()
 
   await flushSentry()
   global.server.resetHandlers()
@@ -111,8 +108,8 @@ class MockTimer implements Timer {
     this.currentTime += timeToMilliseconds(time)
   }
 
-  public setCurrentTime(time: number) {
-    this.currentTime = time
+  public setCurrentDate(date: Date) {
+    this.currentTime = date.getTime()
   }
 }
 
@@ -131,6 +128,5 @@ declare global {
   var sentryEvents: Event[]
   var kratos: MockKratos
   var pool: Pool
-  var transaction: PoolConnection
   var database: Database
 }

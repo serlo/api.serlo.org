@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import * as mysql from 'mysql2/promise'
 
 import {
   article,
@@ -7,7 +6,6 @@ import {
   comment as baseComment,
 } from '../../../__fixtures__'
 import { Client, given } from '../../__utils__'
-import { Database } from '~/database'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -24,22 +22,22 @@ function getThreadData(comment: Model<'Comment'>) {
 const comment = {
   ...baseComment,
   id: 35163,
-  date: '2015-02-21T13:13:24+01:00',
+  date: '2015-02-21T13:13:24.000Z',
 }
 const comment1 = {
   ...baseComment,
   id: 35090,
-  date: '2015-02-19T16:47:16+01:00',
+  date: '2015-02-19T16:47:16.000Z',
 }
 const comment2 = {
   ...baseComment,
   id: 26976,
-  date: '2014-08-05T07:36:24+02:00',
+  date: '2014-08-05T07:36:24.000Z',
 }
 const comment3 = {
   ...baseComment,
   id: 34793,
-  date: '2015-02-16T17:29:30+01:00',
+  date: '2015-02-16T17:29:30.000Z',
 }
 
 describe('allThreads', () => {
@@ -116,8 +114,7 @@ describe('allThreads', () => {
 
   test('parameter "instance"', async () => {
     // temporary solution because all comments in dump are German
-    const database = new Database(mysql.createPool(process.env.MYSQL_URI))
-    await database.mutate(
+    await global.database.mutate(
       `UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`,
     )
 

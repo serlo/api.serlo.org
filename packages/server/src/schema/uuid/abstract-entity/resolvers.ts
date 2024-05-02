@@ -3,6 +3,7 @@ import { instanceToScope } from '@serlo/authorization'
 import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
@@ -33,7 +34,7 @@ export const resolvers: Resolvers = {
     },
   },
   EntityQuery: {
-    async deletedEntities(_parent, payload, { dataSources }) {
+    async deletedEntities(_parent, payload, context) {
       const LIMIT = 1000
       const { first = 100, after, instance } = payload
 
@@ -43,7 +44,7 @@ export const resolvers: Resolvers = {
       const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
 
       const { deletedEntities } =
-        await dataSources.model.serlo.getDeletedEntities({
+        await context.dataSources.model.serlo.getDeletedEntities({
           first: first + 1,
           after: deletedAfter,
           instance,
@@ -52,10 +53,11 @@ export const resolvers: Resolvers = {
       const nodes = await Promise.all(
         deletedEntities.map(async (node) => {
           return {
-            entity: await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id: node.id,
-              decoder: EntityDecoder,
-            }),
+            entity: await UuidResolver.resolveWithDecoder(
+              EntityDecoder,
+              { id: node.id },
+              context,
+            ),
             dateOfDeletion: node.dateOfDeletion,
           }
         }),
@@ -74,19 +76,19 @@ export const resolvers: Resolvers = {
   EntityMutation: {
     setAbstractEntity: createSetEntityResolver(),
 
-    async sort(_parent, { input }, { dataSources, userId }) {
+    async sort(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { entityId, childrenIds } = input
 
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityId,
-        decoder: CourseDecoder,
-      })
-
+      const entity = await UuidResolver.resolveWithDecoder(
+        CourseDecoder,
+        { id: entityId },
+        context,
+      )
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
+        context,
         message:
           'You are not allowed to sort children of entities in this instance.',
         guard: serloAuth.Entity.orderChildren(
@@ -105,21 +107,21 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
 
-    async updateLicense(_parent, { input }, { dataSources, userId }) {
+    async updateLicense(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { licenseId, entityId } = input
 
-      const entity = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: entityId,
-        decoder: EntityDecoder,
-      })
-
+      const entity = await UuidResolver.resolveWithDecoder(
+        EntityDecoder,
+        { id: entityId },
+        context,
+      )
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to set the license for this entity.',
         guard: serloAuth.Entity.updateLicense(instanceToScope(entity.instance)),
+        context,
       })
 
       await dataSources.model.serlo.setEntityLicense({
@@ -131,18 +133,15 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
 
-    async checkoutRevision(_parent, { input }, { dataSources, userId }) {
+    async checkoutRevision(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
-      const scope = await fetchScopeOfUuid({
-        id: input.revisionId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to check out the provided revision.',
         guard: serloAuth.Entity.checkoutRevision(scope),
+        context,
       })
 
       await dataSources.model.serlo.checkoutEntityRevision({
@@ -153,16 +152,13 @@ export const resolvers: Resolvers = {
 
       return { success: true, query: {} }
     },
-    async rejectRevision(_parent, { input }, { dataSources, userId }) {
+    async rejectRevision(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
-      const scope = await fetchScopeOfUuid({
-        id: input.revisionId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
+        context,
         message: 'You are not allowed to reject the provided revision.',
         guard: serloAuth.Entity.rejectRevision(scope),
       })

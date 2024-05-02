@@ -4,6 +4,7 @@ import {
   Scope,
 } from '@serlo/authorization'
 
+import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { Model } from '~/internals/graphql'
@@ -18,24 +19,21 @@ import { isInstance, isInstanceAware } from '~/schema/instance/utils'
 import { Role } from '~/types'
 import { isDefined } from '~/utils'
 
-export async function fetchAuthorizationPayload({
-  userId,
-  dataSources,
-}: {
-  userId: number | null
-  dataSources: Context['dataSources']
-}): Promise<AuthorizationPayload> {
+export async function fetchAuthorizationPayload(
+  context: Context,
+): Promise<AuthorizationPayload> {
   async function fetchRolesPayload(): Promise<RolesPayload> {
-    if (userId === null) {
+    if (context.userId === null) {
       return {
         [Scope.Serlo]: [Role.Guest],
       }
     }
 
-    const user = await dataSources.model.serlo.getUuidWithCustomDecoder({
-      id: userId,
-      decoder: UserDecoder,
-    })
+    const user = await UuidResolver.resolveWithDecoder(
+      UserDecoder,
+      { id: context.userId },
+      context,
+    )
 
     const rolesPayload: RolesPayload = {}
 
@@ -51,14 +49,16 @@ export async function fetchAuthorizationPayload({
   return resolveRolesPayload(rolesPayload)
 }
 
-export async function fetchScopeOfUuid({
-  id,
-  dataSources,
-}: {
-  id: number
-  dataSources: Context['dataSources']
-}): Promise<Scope> {
-  const object = await dataSources.model.serlo.getUuid({ id })
+export async function fetchScopeOfUuid(
+  {
+    id,
+  }: {
+    id: number
+  },
+  context: Context,
+): Promise<Scope> {
+  const object = await UuidResolver.resolve({ id }, context)
+
   if (object === null) throw new UserInputError('UUID does not exist.')
 
   // If the object has an instance, return the corresponding scope
@@ -68,31 +68,31 @@ export async function fetchScopeOfUuid({
 
   // Comments and Threads don't have an instance itself, but their object descendant has
   if (object.__typename === DiscriminatorType.Comment) {
-    return await fetchScopeOfUuid({ id: object.parentId, dataSources })
+    return await fetchScopeOfUuid({ id: object.parentId }, context)
   }
 
   if (EntityRevisionDecoder.is(object) || PageRevisionDecoder.is(object)) {
-    return await fetchScopeOfUuid({ id: object.repositoryId, dataSources })
+    return await fetchScopeOfUuid({ id: object.repositoryId }, context)
   }
 
   return Scope.Serlo
 }
 
-export async function fetchScopeOfNotificationEvent({
-  id,
-  dataSources,
-}: {
-  id: number
-  dataSources: Context['dataSources']
-}): Promise<Scope> {
-  const event = await dataSources.model.serlo.getNotificationEvent({ id })
+export async function fetchScopeOfNotificationEvent(
+  {
+    id,
+  }: {
+    id: number
+  },
+  context: Context,
+): Promise<Scope> {
+  const event = await context.dataSources.model.serlo.getNotificationEvent({
+    id,
+  })
   if (event === null)
     throw new UserInputError('Notification event does not exist.')
 
-  return await fetchScopeOfUuid({
-    id: event.objectId,
-    dataSources,
-  })
+  return await fetchScopeOfUuid({ id: event.objectId }, context)
 }
 
 export function resolveScopedRoles(user: Model<'User'>): Model<'ScopedRole'>[] {

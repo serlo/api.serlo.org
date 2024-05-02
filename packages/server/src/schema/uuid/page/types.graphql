@@ -7,13 +7,6 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   date: DateTime!
   instance: Instance!
   alias: String!
@@ -38,13 +31,6 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   date: DateTime!
   title: String!
   content: String!

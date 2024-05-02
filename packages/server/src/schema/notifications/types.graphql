@@ -1,0 +1,38 @@
+extend type Query {
+  notifications(
+    after: String
+    first: Int
+    emailSent: Boolean
+    email: Boolean
+    unread: Boolean
+    userId: Int
+  ): NotificationConnection!
+  notificationEvent(id: Int!): AbstractNotificationEvent
+}
+
+extend type Mutation {
+  notification: NotificationMutation!
+}
+
+type NotificationMutation {
+  setState(input: NotificationSetStateInput!): DefaultResponse
+}
+
+input NotificationSetStateInput {
+  id: [Int!]!
+  unread: Boolean!
+}
+
+type NotificationConnection {
+  nodes: [Notification!]!
+  totalCount: Int!
+  pageInfo: PageInfo!
+}
+
+type Notification {
+  id: Int!
+  unread: Boolean!
+  event: AbstractNotificationEvent
+  email: Boolean!
+  emailSent: Boolean!
+}

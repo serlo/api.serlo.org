@@ -1,5 +1,6 @@
 import * as R from 'ramda'
 
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import {
   CourseDecoder,
   CoursePageDecoder,
@@ -16,14 +17,11 @@ export const resolvers: Resolvers = {
   Course: {
     ...createRepositoryResolvers({ revisionDecoder: CourseRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
-    async pages(course, { trashed, hasCurrentRevision }, { dataSources }) {
+    async pages(course, { trashed, hasCurrentRevision }, context) {
       const pages = await Promise.all(
-        course.pageIds.map((id: number) => {
-          return dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: CoursePageDecoder,
-          })
-        }),
+        course.pageIds.map((id: number) =>
+          UuidResolver.resolveWithDecoder(CoursePageDecoder, { id }, context),
+        ),
       )
 
       return pages.filter((page) => {

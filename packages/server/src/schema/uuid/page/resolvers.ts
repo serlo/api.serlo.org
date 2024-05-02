@@ -1,6 +1,7 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
 
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import {
   assertStringIsNotEmpty,
   assertUserIsAuthenticated,
@@ -25,22 +26,19 @@ export const resolvers: Resolvers = {
   Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
-    async addRevision(_parent, { input }, { dataSources, userId }) {
+    async addRevision(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { pageId, content, title } = input
 
       assertStringIsNotEmpty({ content, title })
 
-      const scope = await fetchScopeOfUuid({
-        id: pageId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: pageId }, context)
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to add revision to this page.',
         guard: serloAuth.Uuid.create('PageRevision')(scope),
+        context,
       })
 
       const { success, revisionId } =
@@ -51,19 +49,16 @@ export const resolvers: Resolvers = {
 
       return { success, revisionId, query: {} }
     },
-    async checkoutRevision(_parent, { input }, { dataSources, userId }) {
+    async checkoutRevision(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
-      const scope = await fetchScopeOfUuid({
-        id: input.revisionId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to check out the provided revision.',
         guard: serloAuth.Page.checkoutRevision(scope),
+        context,
       })
 
       await dataSources.model.serlo.checkoutPageRevision({
@@ -74,7 +69,8 @@ export const resolvers: Resolvers = {
 
       return { success: true, query: {} }
     },
-    async create(_parent, { input }, { dataSources, userId }) {
+    async create(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { content, title, instance } = input
@@ -82,10 +78,9 @@ export const resolvers: Resolvers = {
       assertStringIsNotEmpty({ content, title })
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to create pages.',
         guard: serloAuth.Uuid.create('Page')(instanceToScope(instance)),
+        context,
       })
 
       const pagePayload = await dataSources.model.serlo.createPage({
@@ -101,17 +96,14 @@ export const resolvers: Resolvers = {
     },
   },
   PageQuery: {
-    async pages(_parent, payload, { dataSources }) {
-      const { pages } = await dataSources.model.serlo.getPages({
+    async pages(_parent, payload, context) {
+      const { pages } = await context.dataSources.model.serlo.getPages({
         instance: payload.instance,
       })
       return await Promise.all(
-        pages.map(async (id: number) => {
-          return await dataSources.model.serlo.getUuidWithCustomDecoder({
-            id: id,
-            decoder: PageDecoder,
-          })
-        }),
+        pages.map(async (id: number) =>
+          UuidResolver.resolveWithDecoder(PageDecoder, { id }, context),
+        ),
       )
     },
   },
