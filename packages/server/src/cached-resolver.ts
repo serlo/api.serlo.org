@@ -60,8 +60,13 @@ export function createCachedResolver<P, R>(
     async resolve(payload, context) {
       return this.resolveWithDecoder(spec.decoder, payload, context)
     },
-    async removeCache(payload, { cache }) {
+    async removeCacheEntry(payload, { cache }) {
       await cache.remove({ key: spec.getKey(payload) })
+    },
+    async removeCacheEntries(payloads, context) {
+      await Promise.all(
+        payloads.map((payload) => this.removeCacheEntry(payload, context)),
+      )
     },
     spec,
   }
@@ -86,15 +91,26 @@ interface ResolverSpec<Payload, Result> {
 export interface CachedResolver<Payload, Result> {
   __typename: 'CachedResolver'
 
-  resolve(payload: Payload, context: Context): Promise<Result>
+  resolve(
+    payload: Payload,
+    context: Pick<Context, 'database' | 'cache' | 'swrQueue' | 'timer'>,
+  ): Promise<Result>
 
   resolveWithDecoder<S extends Result>(
     customDecoder: t.Type<S, unknown>,
     payload: Payload,
-    context: Context,
+    context: Pick<Context, 'database' | 'cache' | 'swrQueue' | 'timer'>,
   ): Promise<S>
 
-  removeCache(payload: Payload, context: Context): Promise<void>
+  removeCacheEntry(
+    payload: Payload,
+    context: Pick<Context, 'cache'>,
+  ): Promise<void>
+
+  removeCacheEntries(
+    payloads: Payload[],
+    context: Pick<Context, 'cache'>,
+  ): Promise<void>
 
   spec: ResolverSpec<Payload, Result>
 }

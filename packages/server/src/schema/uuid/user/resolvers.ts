@@ -5,6 +5,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import * as DatabaseLayer from '../../../model/database-layer'
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
 import {
@@ -30,7 +31,6 @@ import {
 } from '~/schema/authorization/roles'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
@@ -73,7 +73,8 @@ export const resolvers: Resolvers = {
     user: createNamespace(),
   },
   UserQuery: {
-    async potentialSpamUsers(_parent, payload, { dataSources }) {
+    async potentialSpamUsers(_parent, payload, context) {
+      const { dataSources } = context
       const first = payload.first ?? 10
       const after = payload.after
         ? parseInt(Buffer.from(payload.after, 'base64').toString())
@@ -91,10 +92,7 @@ export const resolvers: Resolvers = {
       })
       const users = await Promise.all(
         userIds.map((id) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: UserDecoder,
-          }),
+          UuidResolver.resolveWithDecoder(UserDecoder, { id }, context),
         ),
       )
 
@@ -104,7 +102,8 @@ export const resolvers: Resolvers = {
         createCursor: (node) => node.id.toString(),
       })
     },
-    async usersByRole(_parent, payload, { dataSources, userId }) {
+    async usersByRole(_parent, payload, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { instance = null, role } = payload
@@ -117,10 +116,9 @@ export const resolvers: Resolvers = {
       }
 
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.getUsersByRole(scope),
         message: 'You are not allowed to search roles.',
-        dataSources,
+        context,
       })
 
       const first = payload.first ?? 100
@@ -139,10 +137,7 @@ export const resolvers: Resolvers = {
 
       const users = await Promise.all(
         usersByRole.map((id: number) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: UserDecoder,
-          }),
+          UuidResolver.resolveWithDecoder(UserDecoder, { id }, context),
         ),
       )
       const userConnection = resolveConnection({
@@ -157,7 +152,8 @@ export const resolvers: Resolvers = {
         inheritance: getRolesWithInheritance([role]),
       }
     },
-    async userByUsername(_parent, payload, { dataSources }) {
+    async userByUsername(_parent, payload, context) {
+      const { dataSources } = context
       if (!payload.username)
         throw new UserInputError('`username` is not provided')
 
@@ -165,28 +161,23 @@ export const resolvers: Resolvers = {
         path: `/user/profile/${payload.username}`,
         instance: Instance.De, // should not matter
       }
-      const uuid = (await dataSources.model.serlo.getAlias(alias))?.id
+      const id = (await dataSources.model.serlo.getAlias(alias))?.id
 
-      if (!uuid) return null
+      if (!id) return null
 
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: uuid,
-        decoder: t.union([UserDecoder, t.null]),
-      })
+      return await UuidResolver.resolveWithDecoder(
+        t.union([UserDecoder, t.null]),
+        { id },
+        context,
+      )
     },
   },
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    eventsByUser(user, payload, { dataSources }) {
-      return resolveEvents({
-        payload: { ...payload, actorId: user.id },
-        dataSources,
-      })
-    },
-    async motivation(user, _args, { dataSources }) {
+    async motivation(user, _args, context) {
       return F.pipe(
-        await dataSources.model.googleSpreadsheetApi.getValues({
+        await context.dataSources.model.googleSpreadsheetApi.getValues({
           spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
           range: 'Formularantworten!B:D',
         }),
@@ -230,17 +221,14 @@ export const resolvers: Resolvers = {
 
       return edits < 5
     },
-    async unrevisedEntities(user, payload, { dataSources }) {
+    async unrevisedEntities(user, payload, context) {
+      const { dataSources } = context
       const { unrevisedEntityIds } =
         await dataSources.model.serlo.getUnrevisedEntities()
       const unrevisedEntitiesAndRevisions = await Promise.all(
         unrevisedEntityIds.map((id) =>
-          dataSources.model.serlo
-            .getUuidWithCustomDecoder({
-              id,
-              decoder: EntityDecoder,
-            })
-            .then(async (unrevisedEntity) => {
+          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context).then(
+            async (unrevisedEntity) => {
               const unrevisedRevisionIds = unrevisedEntity.revisionIds.filter(
                 (revisionId) =>
                   unrevisedEntity.currentRevisionId === null ||
@@ -248,15 +236,17 @@ export const resolvers: Resolvers = {
               )
               const unrevisedRevisions = await Promise.all(
                 unrevisedRevisionIds.map((id) =>
-                  dataSources.model.serlo.getUuidWithCustomDecoder({
-                    id,
-                    decoder: RevisionDecoder,
-                  }),
+                  UuidResolver.resolveWithDecoder(
+                    RevisionDecoder,
+                    { id },
+                    context,
+                  ),
                 ),
               )
 
               return [unrevisedEntity, unrevisedRevisions] as const
-            }),
+            },
+          ),
         ),
       )
       const unrevisedEntitiesByUser = unrevisedEntitiesAndRevisions
@@ -305,7 +295,8 @@ export const resolvers: Resolvers = {
     user: createNamespace(),
   },
   UserMutation: {
-    async addRole(_parent, { input }, { dataSources, userId }) {
+    async addRole(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -318,10 +309,9 @@ export const resolvers: Resolvers = {
       }
 
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.addRole(scope),
         message: 'You are not allowed to add roles.',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.addRole({
@@ -332,22 +322,18 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
 
-    async deleteBots(
-      _parent,
-      { input },
-      { dataSources, userId, authServices },
-    ) {
+    async deleteBots(_parent, { input }, context) {
+      const { dataSources, userId, authServices } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.deleteBot(serloAuth.Scope.Serlo),
         message: 'You are not allowed to delete bots',
-        dataSources,
+        context,
       })
 
       const { botIds } = input
       const users = await Promise.all(
-        botIds.map((botId) => dataSources.model.serlo.getUuid({ id: botId })),
+        botIds.map((id) => UuidResolver.resolve({ id }, context)),
       )
 
       if (!t.array(UserDecoder).is(users))
@@ -411,21 +397,17 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
 
-    async deleteRegularUser(
-      _parent,
-      { input },
-      { dataSources, authServices, userId },
-    ) {
+    async deleteRegularUser(_parent, { input }, context) {
+      const { dataSources, authServices, userId } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.deleteRegularUser(serloAuth.Scope.Serlo),
         message: 'You are not allowed to delete users',
-        dataSources,
+        context,
       })
 
       const { id, username } = input
-      const user = await dataSources.model.serlo.getUuid({ id: input.id })
+      const user = await UuidResolver.resolve({ id: input.id }, context)
 
       if (!UserDecoder.is(user) || user.username !== username) {
         throw new UserInputError(
@@ -442,7 +424,7 @@ export const resolvers: Resolvers = {
     },
 
     async removeRole(_parent, { input }, context) {
-      const { dataSources, userId, database } = context
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -455,10 +437,9 @@ export const resolvers: Resolvers = {
       }
 
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.removeRole(scope),
         message: 'You are not allowed to remove roles.',
-        dataSources,
+        context,
       })
 
       const roleName = generateRole(role, instance)
@@ -478,25 +459,13 @@ export const resolvers: Resolvers = {
         path: `user/profile/${username}`,
       })) as { id: number }
 
-      await dataSources.model.serlo.getUuid._querySpec.setCache({
-        payload: { id: alias.id },
-        getValue(current) {
-          if (!current) return
-          if (!UserDecoder.is(current)) return
-
-          if (!current.roles.includes(roleName)) return current
-          current.roles = current.roles.filter(
-            (currentRole) => currentRole !== roleName,
-          )
-          return current
-        },
-      })
+      await UuidResolver.removeCacheEntry({ id: alias.id }, context)
 
       return { success: true, query: {} }
     },
 
     async setDescription(_parent, { input }, context) {
-      const { dataSources, userId, database } = context
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
       if (input.description.length >= 64 * 1024) {
         throw new UserInputError('description too long')
@@ -505,24 +474,17 @@ export const resolvers: Resolvers = {
         input.description,
         userId,
       ])
-      await dataSources.model.serlo.getUuid._querySpec.setCache({
-        payload: { id: userId },
-        getValue(current) {
-          if (!current) return
-
-          return { ...current, description: input.description }
-        },
-      })
+      await UuidResolver.removeCacheEntry({ id: userId }, context)
       return { success: true, query: {} }
     },
 
-    async setEmail(_parent, { input }, { dataSources, userId }) {
+    async setEmail(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guard: serloAuth.User.setEmail(serloAuth.Scope.Serlo),
         message: 'You are not allowed to change the E-mail address for a user',
-        dataSources,
+        context,
       })
 
       const result = await dataSources.model.serlo.setEmail(input)
@@ -532,9 +494,9 @@ export const resolvers: Resolvers = {
   },
 }
 
-async function activeDonorIDs({ dataSources }: Context) {
+async function activeDonorIDs(context: Context) {
   return F.pipe(
-    await dataSources.model.googleSpreadsheetApi.getValues({
+    await context.dataSources.model.googleSpreadsheetApi.getValues({
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
       range: 'Tabellenblatt1!A:A',
       majorDimension: MajorDimension.Columns,

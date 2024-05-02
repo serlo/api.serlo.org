@@ -1,6 +1,7 @@
 import * as serloAuth from '@serlo/authorization'
 
-import { ModelDataSource } from '~/internals/data-source'
+import { UuidResolver } from '../abstract-uuid/resolvers'
+import { Context } from '~/context'
 import {
   createNamespace,
   assertUserIsAuthenticated,
@@ -40,31 +41,32 @@ export const resolvers: Resolvers = {
   TaxonomyTerm: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async type(taxonomyTerm, _args, { dataSources }) {
+    async type(taxonomyTerm, _args, context) {
       if (!taxonomyTerm.parentId) return TaxonomyTermType.Root
-      const parent = await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: taxonomyTerm.parentId,
-        decoder: TaxonomyTermDecoder,
-      })
+      const parent = await UuidResolver.resolveWithDecoder(
+        TaxonomyTermDecoder,
+        { id: taxonomyTerm.parentId },
+        context,
+      )
       if (!parent.parentId) return TaxonomyTermType.Subject
       return typesMap[taxonomyTerm.type]
     },
-    async path(taxonomyTerm, _args, { dataSources }) {
-      return await getParentTerms(taxonomyTerm, [], dataSources.model.serlo)
+    async path(taxonomyTerm, _args, context) {
+      return await getParentTerms(taxonomyTerm, [], context)
     },
-    parent(taxonomyTerm, _args, { dataSources }) {
+    parent(taxonomyTerm, _args, context) {
       if (!taxonomyTerm.parentId) return null
-      return dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: taxonomyTerm.parentId,
-        decoder: TaxonomyTermDecoder,
-      })
+      return UuidResolver.resolveWithDecoder(
+        TaxonomyTermDecoder,
+        { id: taxonomyTerm.parentId },
+        context,
+      )
     },
-    async children(taxonomyTerm, cursorPayload, { dataSources }) {
+    async children(taxonomyTerm, cursorPayload, context) {
       const children = await Promise.all(
-        taxonomyTerm.childrenIds.map((id) => {
-          // TODO: Use getUuidWithCustomDecoder()
-          return dataSources.model.serlo.getUuid({ id })
-        }),
+        taxonomyTerm.childrenIds.map((id) =>
+          UuidResolver.resolve({ id }, context),
+        ),
       )
       return resolveConnection({
         nodes: children.filter(isDefined),
@@ -76,21 +78,18 @@ export const resolvers: Resolvers = {
     },
   },
   TaxonomyTermMutation: {
-    async create(_parent, { input }, { dataSources, userId }) {
+    async create(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { parentId, name, taxonomyType, description = undefined } = input
 
       assertStringIsNotEmpty({ name })
 
-      const scope = await fetchScopeOfUuid({
-        id: parentId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: parentId }, context)
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
+        context,
         message: 'You are not allowed create taxonomy terms.',
         guard: serloAuth.Uuid.create('TaxonomyTerm')(scope),
       })
@@ -112,21 +111,18 @@ export const resolvers: Resolvers = {
         query: {},
       }
     },
-    async createEntityLinks(_parent, { input }, { dataSources, userId }) {
+    async createEntityLinks(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({
-        id: taxonomyTermId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: taxonomyTermId }, context)
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message: 'You are not allowed to link entities to this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.change(scope),
+        context,
       })
 
       const { success } = await dataSources.model.serlo.linkEntitiesToTaxonomy({
@@ -137,22 +133,19 @@ export const resolvers: Resolvers = {
 
       return { success, query: {} }
     },
-    async deleteEntityLinks(_parent, { input }, { dataSources, userId }) {
+    async deleteEntityLinks(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({
-        id: taxonomyTermId,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id: taxonomyTermId }, context)
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message:
           'You are not allowed to unlink entities from this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.change(scope),
+        context,
       })
 
       const { success } =
@@ -164,25 +157,25 @@ export const resolvers: Resolvers = {
 
       return { success, query: {} }
     },
-    async sort(_parent, { input }, { dataSources, userId }) {
+    async sort(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { childrenIds, taxonomyTermId } = input
 
-      const taxonomyTerm =
-        await dataSources.model.serlo.getUuidWithCustomDecoder({
-          id: taxonomyTermId,
-          decoder: TaxonomyTermDecoder,
-        })
+      const taxonomyTerm = await UuidResolver.resolveWithDecoder(
+        TaxonomyTermDecoder,
+        { id: taxonomyTermId },
+        context,
+      )
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message:
           'You are not allowed to sort children of taxonomy terms in this instance.',
         guard: serloAuth.TaxonomyTerm.change(
           serloAuth.instanceToScope(taxonomyTerm.instance),
         ),
+        context,
       })
 
       // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
@@ -198,24 +191,21 @@ export const resolvers: Resolvers = {
 
       return { success, query: {} }
     },
-    async setNameAndDescription(_parent, { input }, { dataSources, userId }) {
+    async setNameAndDescription(_parent, { input }, context) {
+      const { dataSources, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { id, name, description = null } = input
 
       assertStringIsNotEmpty({ name })
 
-      const scope = await fetchScopeOfUuid({
-        id,
-        dataSources,
-      })
+      const scope = await fetchScopeOfUuid({ id }, context)
 
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
         message:
           'You are not allowed to set name or description of this taxonomy term.',
         guard: serloAuth.TaxonomyTerm.set(scope),
+        context,
       })
 
       const { success } =
@@ -234,17 +224,17 @@ export const resolvers: Resolvers = {
 async function getParentTerms(
   taxonomyTerm: Model<'TaxonomyTerm'>,
   parentTerms: Model<'TaxonomyTerm'>[],
-  serloModel: ModelDataSource['serlo'],
+  context: Context,
 ) {
   if (taxonomyTerm.parentId && taxonomyTerm.parentId !== ROOT_TAXONOMY_ID) {
-    const parent = await serloModel.getUuidWithCustomDecoder({
-      id: taxonomyTerm.parentId,
-      decoder: TaxonomyTermDecoder,
-    })
-
+    const parent = await UuidResolver.resolveWithDecoder(
+      TaxonomyTermDecoder,
+      { id: taxonomyTerm.parentId },
+      context,
+    )
     parentTerms.unshift(parent)
 
-    await getParentTerms(parent, parentTerms, serloModel)
+    await getParentTerms(parent, parentTerms, context)
   }
 
   return parentTerms

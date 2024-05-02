@@ -13,6 +13,7 @@ import {
   createNamespace,
   Model,
 } from '~/internals/graphql'
+import { DatabaseLayer } from '~/model'
 import {
   UuidDecoder,
   DiscriminatorType,
@@ -35,11 +36,11 @@ export const UuidResolver = createCachedResolver<
   staleAfter: { days: 1 },
   maxAge: { days: 7 },
   getKey: ({ id }) => {
-    return `uuid/${id}`
+    return `de.serlo.org/api/uuid/${id}`
   },
   getPayload: (key) => {
-    if (!key.startsWith('uuid/')) return O.none
-    const id = parseInt(key.replace('uuid/', ''), 10)
+    if (!key.startsWith('de.serlo.org/api/uuid/')) return O.none
+    const id = parseInt(key.replace('de.serlo.org/api/uuid/', ''), 10)
     return O.some({ id })
   },
   getCurrentValue: resolveUuidFromDatabase,
@@ -61,20 +62,22 @@ export const resolvers: Resolvers = {
 
       const uuid = await UuidResolver.resolve({ id }, context)
 
-      if (uuid != null) return uuid
+      if (
+        payload.alias != null &&
+        payload.alias.path.startsWith('/user/profile/') &&
+        uuid?.__typename !== DiscriminatorType.User
+      )
+        return null
 
-      const uuidFromDatabaseLayer = await dataSources.model.serlo.getUuid({
-        id,
-      })
-
-      return checkUuid(payload, uuidFromDatabaseLayer)
+      return uuid
     },
   },
   Mutation: {
     uuid: createNamespace(),
   },
   UuidMutation: {
-    async setState(_parent, payload, { dataSources, userId }) {
+    async setState(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { id, trashed } = payload.input
       const ids = id
 
@@ -82,8 +85,8 @@ export const resolvers: Resolvers = {
         ids.map(async (id): Promise<auth.AuthorizationGuard | null> => {
           // TODO: this is not optimized since it fetches the object twice and sequentially.
           // change up fetchScopeOfUuid to return { scope, object } instead
-          const scope = await fetchScopeOfUuid({ id, dataSources })
-          const object = await dataSources.model.serlo.getUuid({ id })
+          const scope = await fetchScopeOfUuid({ id }, context)
+          const object = await UuidResolver.resolve({ id }, context)
           if (object === null) {
             return null
           } else {
@@ -115,11 +118,10 @@ export const resolvers: Resolvers = {
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guards: guards.filter(isDefined),
         message:
           'You are not allowed to set the state of the provided UUID(s).',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
@@ -193,7 +195,9 @@ async function resolveUuidFromDatabase(
     }
   }
 
-  return null
+  const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
+
+  return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
 }
 
 async function resolveIdFromPayload(
@@ -240,19 +244,4 @@ async function resolveIdFromAlias(
   if (customId) return customId
 
   return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
-}
-
-function checkUuid(payload: QueryUuidArgs, uuid: Model<'AbstractUuid'> | null) {
-  if (uuid !== null) {
-    if (payload.alias != null) {
-      if (
-        payload.alias.path.startsWith('/user/profile/') &&
-        uuid.__typename !== DiscriminatorType.User
-      ) {
-        return null
-      }
-    }
-  }
-
-  return uuid
 }

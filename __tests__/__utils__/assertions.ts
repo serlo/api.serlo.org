@@ -40,6 +40,8 @@ export class Client {
             cache: global.cache,
             swrQueue: emptySwrQueue,
             authServices,
+            timer: global.timer,
+            database: global.database,
           }),
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,

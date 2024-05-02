@@ -33,7 +33,7 @@ import {
   createEvent,
   toGraphQLModel,
   DatabaseEventRepresentation,
-} from '~/schema/notification/event'
+} from '~/schema/events/event'
 import { Instance } from '~/types'
 
 const basePayload = {
