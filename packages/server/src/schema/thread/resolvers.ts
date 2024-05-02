@@ -294,10 +294,7 @@ export const resolvers: Resolvers = {
         [status == CommentStatus.NoStatus ? 'no_status' : status],
       )
 
-      const promises = ids.map((id) =>
-        UuidResolver.removeCacheEntry({ id }, context),
-      )
-      await Promise.all(promises)
+      UuidResolver.removeCacheEntries(ids.map(id => ({ id })), context)
 
       return { success: true, query: {} }
     },
