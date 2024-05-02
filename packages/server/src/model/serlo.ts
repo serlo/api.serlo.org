@@ -254,48 +254,6 @@ export function createSerloModel({
     context,
   )
 
-  const getEventsAfter = createRequest({
-    type: 'getEventsAfter',
-    decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
-    async getCurrentValue(
-      payload: DatabaseLayer.Payload<'EventsQuery'> & { after: number },
-    ) {
-      return DatabaseLayer.makeRequest('EventsQuery', payload)
-    },
-  })
-
-  const getEvents = createLegacyQuery(
-    {
-      type: 'EventsQuery',
-      decoder: DatabaseLayer.getDecoderFor('EventsQuery'),
-      async getCurrentValue(payload: DatabaseLayer.Payload<'EventsQuery'>) {
-        return DatabaseLayer.makeRequest('EventsQuery', payload)
-      },
-      getKey(payload) {
-        return 'serlo/events/' + JSON.stringify(payload)
-      },
-      getPayload(key: string) {
-        if (!key.startsWith('serlo/events/')) return O.none
-
-        try {
-          const payloadJson = key.substring('serlo/events/'.length)
-          const payload = JSON.parse(payloadJson) as unknown
-
-          return DatabaseLayer.getPayloadDecoderFor('EventsQuery').is(payload)
-            ? O.some(payload)
-            : O.none
-        } catch (e) {
-          return O.none
-        }
-      },
-      enableSwr: true,
-      staleAfter: { minutes: 2 },
-      maxAge: { hours: 1 },
-      examplePayload: { first: 5 },
-    },
-    context,
-  )
-
   const getNotifications = createLegacyQuery(
     {
       type: 'NotificationsQuery',
@@ -872,8 +830,6 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getDeletedEntities,
-    getEvents,
-    getEventsAfter,
     getNotificationEvent,
     getNotifications,
     getPotentialSpamUsers,
