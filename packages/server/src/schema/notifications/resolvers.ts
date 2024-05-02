@@ -1,6 +1,5 @@
 import * as auth from '@serlo/authorization'
 
-import { Context } from '~/context'
 import { Service } from '~/context/service'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
@@ -10,14 +9,9 @@ import {
 } from '~/internals/graphql'
 import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { Instance, Resolvers, QueryEventsArgs } from '~/types'
+import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
-  AbstractNotificationEvent: {
-    __resolveType(notificationEvent) {
-      return notificationEvent.__typename
-    },
-  },
   Notification: {
     async event(parent, _args, { dataSources }) {
       return await dataSources.model.serlo.getNotificationEvent({
@@ -26,9 +20,6 @@ export const resolvers: Resolvers = {
     },
   },
   Query: {
-    events(_parent, payload, { dataSources }) {
-      return resolveEvents({ payload, dataSources })
-    },
     async notifications(
       _parent,
       { userId: requestedUserId, unread, emailSent, email, ...cursorPayload },
@@ -113,77 +104,4 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
   },
-}
-
-export async function resolveEvents({
-  payload,
-  dataSources,
-}: {
-  payload: QueryEventsArgs
-  dataSources: Context['dataSources']
-}) {
-  const limit = 500
-  const first = payload.first ?? limit
-  const { after, objectId, actorId, actorUsername, instance } = payload
-
-  if (first > limit) throw new UserInputError('first cannot be higher than 500')
-
-  const { events, hasNextPage } = await dataSources.model.serlo.getEvents({
-    first: 2 * limit + 50,
-    objectId: objectId ?? undefined,
-    actorId:
-      actorId ??
-      (actorUsername
-        ? (
-            await dataSources.model.serlo.getAlias({
-              path: `/user/profile/${actorUsername}`,
-              instance: Instance.De,
-            })
-          )?.id
-        : undefined),
-    instance: instance ?? undefined,
-  })
-
-  const connection = resolveConnection({
-    nodes: events,
-    payload,
-    limit,
-    createCursor: (node) => node.id.toString(),
-  })
-
-  if (!hasNextPage || connection.nodes.length === first) {
-    const { pageInfo } = connection
-
-    return {
-      ...connection,
-      pageInfo: {
-        ...pageInfo,
-        hasNextPage: pageInfo.hasNextPage || hasNextPage,
-      },
-    }
-  } else {
-    if (after == null) throw new Error('illegal state')
-
-    const { events, hasNextPage } =
-      await dataSources.model.serlo.getEventsAfter({
-        first,
-        after: parseInt(Buffer.from(after, 'base64').toString('utf-8')),
-        objectId: objectId ?? undefined,
-        actorId: actorId ?? undefined,
-        instance: instance ?? undefined,
-      })
-
-    const connection = resolveConnection({
-      nodes: events,
-      payload,
-      limit,
-      createCursor: (node) => node.id.toString(),
-    })
-    const { pageInfo } = connection
-
-    return {
-      ...connection,
-      pageInfo: { ...pageInfo, hasNextPage },
-    }
-  }
 }

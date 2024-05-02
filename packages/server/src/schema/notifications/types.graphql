@@ -1,29 +1,4 @@
-type Notification {
-  id: Int!
-  unread: Boolean!
-  event: AbstractNotificationEvent
-  email: Boolean!
-  emailSent: Boolean!
-}
-
-interface AbstractNotificationEvent {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-}
-
 extend type Query {
-  events(
-    after: String
-    first: Int
-    last: Int
-    actorId: Int
-    actorUsername: String
-    objectId: Int
-    instance: Instance
-  ): AbstractNotificationEventConnection!
   notifications(
     after: String
     first: Int
@@ -54,7 +29,10 @@ type NotificationConnection {
   pageInfo: PageInfo!
 }
 
-type AbstractNotificationEventConnection {
-  nodes: [AbstractNotificationEvent!]!
-  pageInfo: PageInfo!
+type Notification {
+  id: Int!
+  unread: Boolean!
+  event: AbstractNotificationEvent
+  email: Boolean!
+  emailSent: Boolean!
 }

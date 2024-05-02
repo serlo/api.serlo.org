@@ -31,7 +31,6 @@ import {
 } from '~/schema/authorization/roles'
 import { resolveScopedRoles } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
-import { resolveEvents } from '~/schema/notification/resolvers'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
@@ -176,12 +175,6 @@ export const resolvers: Resolvers = {
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    eventsByUser(user, payload, { dataSources }) {
-      return resolveEvents({
-        payload: { ...payload, actorId: user.id },
-        dataSources,
-      })
-    },
     async motivation(user, _args, context) {
       return F.pipe(
         await context.dataSources.model.googleSpreadsheetApi.getValues({

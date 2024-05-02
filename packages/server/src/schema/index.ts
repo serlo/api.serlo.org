@@ -3,11 +3,12 @@ import { authorizationSchema } from './authorization'
 import { cacheSchema } from './cache'
 import { connectionSchema } from './connection'
 import { defaultGraphQLDefinitionsSchema } from './default-graphql-definitions'
+import { eventSchema } from './events'
 import { experimentSchema } from './experiment'
 import { instanceSchema } from './instance'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
-import { notificationSchema } from './notification'
+import { notificationsSchema } from './notifications'
 import { oauthSchema } from './oauth'
 import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
@@ -28,7 +29,8 @@ export const schema = mergeSchemas(
   defaultGraphQLDefinitionsSchema,
   mediaSchema,
   metadataSchema,
-  notificationSchema,
+  notificationsSchema,
+  eventSchema,
   oauthSchema,
   rolesSchema,
   subjectsSchema,
