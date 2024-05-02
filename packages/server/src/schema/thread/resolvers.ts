@@ -274,7 +274,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
-      const { database, dataSources, userId } = context
+      const { database, userId } = context
 
       assertUserIsAuthenticated(userId)
 
@@ -295,12 +295,9 @@ export const resolvers: Resolvers = {
       )
 
       const promises = ids.map((id) =>
-        UuidResolver.removeCache({ id }, context),
+        UuidResolver.removeCacheEntry({ id }, context),
       )
       await Promise.all(promises)
-      await context.dataSources.model.serlo.getUuid._querySpec.removeCache({
-        payloads: ids.map((id) => ({ id })),
-      })
 
       return { success: true, query: {} }
     },
