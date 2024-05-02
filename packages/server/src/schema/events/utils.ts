@@ -6,7 +6,7 @@ import { AbstractNotificationEventResolvers } from '~/types'
 
 const validTypes = Object.values(NotificationEventType)
 
-export function isSupportedNotificationEvent(payload: unknown) {
+export function isSupportedEvent(payload: unknown) {
   return (
     R.has('__typename', payload) && R.includes(payload.__typename, validTypes)
   )

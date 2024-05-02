@@ -14,8 +14,8 @@ import {
   createLegacyQuery,
   createRequest,
 } from '~/internals/data-source-helper'
+import { isSupportedEvent } from '~/schema/events/utils'
 import { isInstance } from '~/schema/instance/utils'
-import { isSupportedNotificationEvent } from '~/schema/notification/utils'
 import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
@@ -236,7 +236,7 @@ export function createSerloModel({
       async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
         const event = await DatabaseLayer.makeRequest('EventQuery', payload)
 
-        return isSupportedNotificationEvent(event) ? event : null
+        return isSupportedEvent(event) ? event : null
       },
       enableSwr: true,
       staleAfter: { days: 1 },
