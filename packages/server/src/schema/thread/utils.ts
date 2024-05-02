@@ -1,5 +1,6 @@
 import * as t from 'io-ts'
 
+import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { Model } from '~/internals/graphql'
@@ -10,17 +11,18 @@ import { isDefined } from '~/utils'
 
 export function createThreadResolvers(): Pick<ThreadAwareResolvers, 'threads'> {
   return {
-    async threads(parent, payload, { dataSources }) {
-      const { firstCommentIds } = await dataSources.model.serlo.getThreadIds({
-        id: parent.id,
-      })
+    async threads(parent, payload, context) {
+      const { firstCommentIds } =
+        await context.dataSources.model.serlo.getThreadIds({ id: parent.id })
 
       return resolveConnection({
-        nodes: await resolveThreads({
-          ...payload,
-          firstCommentIds: firstCommentIds.sort((a, b) => b - a),
-          dataSources,
-        }),
+        nodes: await resolveThreads(
+          {
+            ...payload,
+            firstCommentIds: firstCommentIds.sort((a, b) => b - a),
+          },
+          context,
+        ),
         payload: payload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()
@@ -30,20 +32,21 @@ export function createThreadResolvers(): Pick<ThreadAwareResolvers, 'threads'> {
   }
 }
 
-export async function resolveThreads({
-  firstCommentIds,
-  archived,
-  trashed,
-  subjectId,
-  dataSources,
-}: {
-  firstCommentIds: number[]
-  archived?: boolean
-  trashed?: boolean
-  subjectId?: number | null
-  dataSources: Context['dataSources']
-}): Promise<Model<'Thread'>[]> {
-  const firstComments = await resolveComments(dataSources, firstCommentIds)
+export async function resolveThreads(
+  {
+    firstCommentIds,
+    archived,
+    trashed,
+    subjectId,
+  }: {
+    firstCommentIds: number[]
+    archived?: boolean
+    trashed?: boolean
+    subjectId?: number | null
+  },
+  context: Context,
+): Promise<Model<'Thread'>[]> {
+  const firstComments = await resolveComments(firstCommentIds, context)
 
   const firstCommentsAfterFilter = firstComments.filter((comment) => {
     if (archived !== undefined && archived !== comment.archived) {
@@ -60,9 +63,10 @@ export async function resolveThreads({
     firstCommentsAfterFilter.map(async (comment) => {
       if (subjectId == null) return comment
 
-      const entity = await dataSources.model.serlo.getUuid({
-        id: comment.parentId,
-      })
+      const entity = await UuidResolver.resolve(
+        { id: comment.parentId },
+        context,
+      )
 
       return t.type({ canonicalSubjectId: t.number }).is(entity) &&
         entity.canonicalSubjectId === subjectId
@@ -76,8 +80,8 @@ export async function resolveThreads({
   return await Promise.all(
     filteredFirstComments.map(async (firstComment) => {
       const remainingComments = await resolveComments(
-        dataSources,
         firstComment.childrenIds,
+        context,
       )
       const filteredComments = remainingComments.filter(
         (comment) => trashed === undefined || trashed === comment.trashed,
@@ -92,16 +96,16 @@ export async function resolveThreads({
 
 export async function resolveThread(
   firstCommentId: number,
-  dataSources: Context['dataSources'],
+  context: Context,
 ): Promise<Model<'Thread'>> {
-  const firstComment = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: firstCommentId,
-    decoder: CommentDecoder,
-  })
-
+  const firstComment = await UuidResolver.resolveWithDecoder(
+    CommentDecoder,
+    { id: firstCommentId },
+    context,
+  )
   const remainingComments = await resolveComments(
-    dataSources,
     firstComment.childrenIds,
+    context,
   )
 
   return {
@@ -128,16 +132,14 @@ export function decodeThreadIds(ids: string[]): number[] {
   return ids.map(decodeThreadId)
 }
 
-async function resolveComments(
-  dataSources: Context['dataSources'],
-  ids: number[],
-) {
+async function resolveComments(ids: number[], context: Context) {
   const comments = await Promise.all(
     ids.map((id) =>
-      dataSources.model.serlo.getUuidWithCustomDecoder({
-        id,
-        decoder: t.union([CommentDecoder, t.null]),
-      }),
+      UuidResolver.resolveWithDecoder(
+        t.union([CommentDecoder, t.null]),
+        { id },
+        context,
+      ),
     ),
   )
 

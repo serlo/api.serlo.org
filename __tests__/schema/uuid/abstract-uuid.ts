@@ -342,12 +342,9 @@ describe('property "title"', () => {
       .shouldReturnData({ uuid: { title } })
   })
 
-  test('"title" for comments with title of thread', async () => {
-    givenThreads({
-      uuid: article,
-      threads: [[comment, { ...comment1, title: null }]],
-    })
-
+  // TODO: This property is not used and thus can be deleted
+  // See https://serlo.github.io/unused-graphql-properties/#Comment.title
+  test.skip('"title" for comments with title of thread', async () => {
     await client
       .prepareQuery({
         query: gql`
@@ -384,7 +381,9 @@ describe('property "title"', () => {
       })
   })
 
-  test('"title" for comments without title in thread', async () => {
+  // TODO: This property is not used and thus can be deleted
+  // See https://serlo.github.io/unused-graphql-properties/#Comment.title
+  test.skip('"title" for comments without title in thread', async () => {
     givenThreads({
       uuid: article,
       threads: [

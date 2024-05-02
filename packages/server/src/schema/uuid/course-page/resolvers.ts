@@ -1,3 +1,4 @@
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import {
   CourseDecoder,
   CoursePageDecoder,
@@ -14,11 +15,9 @@ export const resolvers: Resolvers = {
     ...createRepositoryResolvers({
       revisionDecoder: CoursePageRevisionDecoder,
     }),
-    async course(coursePage, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: coursePage.parentId,
-        decoder: CourseDecoder,
-      })
+    async course(coursePage, _args, context) {
+      const id = coursePage.parentId
+      return UuidResolver.resolveWithDecoder(CourseDecoder, { id }, context)
     },
   },
   CoursePageRevision: createRevisionResolvers({

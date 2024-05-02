@@ -3,6 +3,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { fromEntityTypeToEntityRevisionType } from './utils'
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import { autoreviewTaxonomyIds, defaultLicenseIds } from '~/config'
 import { Context } from '~/context'
 import { UserInputError } from '~/errors'
@@ -53,8 +54,9 @@ export function createSetEntityResolver() {
   return async (
     _parent: unknown,
     { input }: { input: SetAbstractEntityInput },
-    { dataSources, userId }: Context,
+    context: Context,
   ): Promise<Model<'SetEntityResponse'>> => {
+    const { dataSources, userId } = context
     const {
       entityType,
       changes,
@@ -115,14 +117,13 @@ export function createSetEntityResolver() {
 
     assertUserIsAuthenticated(userId)
 
-    const scope = await fetchScopeOfUuid({
-      id: input.entityId != null ? input.entityId : input.parentId,
-      dataSources,
-    })
+    const scope = await fetchScopeOfUuid(
+      { id: input.entityId != null ? input.entityId : input.parentId },
+      context,
+    )
 
     await assertUserIsAuthorized({
-      userId,
-      dataSources,
+      context,
       message: `You are not allowed to create ${
         input.entityId == null ? 'entities' : 'revisions'
       }`,
@@ -133,13 +134,12 @@ export function createSetEntityResolver() {
 
     const isAutoreview = await isAutoreviewEntity(
       input.entityId != null ? input.entityId : input.parentId,
-      dataSources,
+      context,
     )
 
     if (!isAutoreview && !needsReview) {
       await assertUserIsAuthorized({
-        userId,
-        dataSources,
+        context,
         message: 'You are not allowed to skip the reviewing process.',
         guard: serloAuth.Entity.checkoutRevision(scope),
       })
@@ -161,18 +161,17 @@ export function createSetEntityResolver() {
 
       return {
         record: success
-          ? await dataSources.model.serlo.getUuidWithCustomDecoder({
-              id: input.entityId,
-              decoder: EntityDecoder,
-            })
+          ? await UuidResolver.resolveWithDecoder(
+              EntityDecoder,
+              { id: input.entityId },
+              context,
+            )
           : null,
         success,
         query: {},
       }
     } else {
-      const parent = await dataSources.model.serlo.getUuid({
-        id: input.parentId,
-      })
+      const parent = await UuidResolver.resolve({ id: input.parentId }, context)
       const isParentTaxonomyTerm = TaxonomyTermDecoder.is(parent)
       const isParentEntity = EntityDecoder.is(parent)
 
@@ -201,21 +200,21 @@ export function createSetEntityResolver() {
 
 async function isAutoreviewEntity(
   id: number,
-  dataSources: Context['dataSources'],
+  context: Context,
 ): Promise<boolean> {
   if (autoreviewTaxonomyIds.includes(id)) return true
 
-  const uuid = await dataSources.model.serlo.getUuid({ id })
+  const uuid = await UuidResolver.resolve({ id }, context)
 
   if (t.type({ parentId: t.number }).is(uuid)) {
     return (
       uuid.parentId != null &&
-      (await isAutoreviewEntity(uuid.parentId, dataSources))
+      (await isAutoreviewEntity(uuid.parentId, context))
     )
   } else if (t.type({ taxonomyTermIds: t.array(t.number) }).is(uuid)) {
     return (
       await Promise.all(
-        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, dataSources)),
+        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, context)),
       )
     ).every((x) => x)
   } else {

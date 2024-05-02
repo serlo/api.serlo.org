@@ -17,11 +17,6 @@ import {
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  ActiveAuthorsQuery: {
-    payload: t.undefined,
-    response: t.array(t.number),
-    canBeNull: false,
-  },
   ActiveReviewersQuery: {
     payload: t.undefined,
     response: t.array(t.number),
@@ -131,22 +126,6 @@ export const spec = {
     payload: t.type({ id: t.number }),
     response: NotificationEventDecoder,
     canBeNull: true,
-  },
-  EventsQuery: {
-    payload: t.intersection([
-      t.type({ first: t.number }),
-      t.partial({
-        after: t.number,
-        actorId: t.number,
-        objectId: t.number,
-        instance: InstanceDecoder,
-      }),
-    ]),
-    response: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    canBeNull: false,
   },
   NotificationSetStateMutation: {
     payload: t.type({
