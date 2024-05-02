@@ -27,7 +27,6 @@ import {
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
-  user2,
 } from '../../__fixtures__'
 import { getTypenameAndId, givenThreads, Client, given } from '../__utils__'
 import { Service } from '~/context/service'
@@ -1859,9 +1858,8 @@ describe('notificationEvent', () => {
   })
 })
 
-// TODO: Update those tests after migration
-describe.skip('mutation notification setState', () => {
-  const mutation = new Client({ userId: user.id })
+describe('mutation notification setState', () => {
+  const mutation = new Client({ userId: 1194 })
     .prepareQuery({
       query: gql`
         mutation notification($input: NotificationSetStateInput!) {
@@ -1873,55 +1871,33 @@ describe.skip('mutation notification setState', () => {
         }
       `,
     })
-    .withVariables({
-      input: { id: [1, 2, 3], unread: false },
-    })
-
-  const notificationQuery = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query {
-        notifications {
-          nodes {
-            id
-            unread
-          }
-          totalCount
-        }
-      }
-    `,
-  })
+    .withVariables({ input: { id: [11599, 11551], unread: false } })
 
   beforeEach(() => {
-    given('UuidQuery').for(user, user2, article)
+    given('UuidQuery').for(user)
   })
 
   test('authenticated with array of ids', async () => {
-    given('NotificationSetStateMutation')
-      .withPayload({
-        ids: [1, 2, 3],
-        userId: user.id,
-        unread: false,
-      })
-      .returns()
-    given('EventQuery').for([
-      {
-        ...createEntityNotificationEvent,
-        id: 1,
-        objectId: article.id,
+    await query.shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 11599, emailSent: false, email: false, unread: true },
+          { id: 11551, emailSent: false, email: false, unread: true },
+        ],
       },
-      {
-        ...createEntityNotificationEvent,
-        id: 2,
-        objectId: article.id,
-      },
-      {
-        ...createEntityNotificationEvent,
-        id: 3,
-        objectId: article.id,
-      },
-    ])
+    })
+
     await mutation.shouldReturnData({
       notification: { setState: { success: true } },
+    })
+
+    await query.shouldReturnData({
+      notifications: {
+        nodes: [
+          { id: 11599, emailSent: false, email: false, unread: false },
+          { id: 11551, emailSent: false, email: false, unread: false },
+        ],
+      },
     })
   })
 
@@ -1932,110 +1908,6 @@ describe.skip('mutation notification setState', () => {
   })
 
   test('setting ids from other user', async () => {
-    given('NotificationSetStateMutation')
-      .withPayload({
-        ids: [1, 2, 3],
-        userId: user2.id,
-        unread: false,
-      })
-      .returns()
-
-    await mutation
-      .withContext({ userId: user2.id })
-      .shouldFailWithError('FORBIDDEN')
-  })
-
-  test('cache is mutated as expected: single id', async () => {
-    given('NotificationSetStateMutation')
-      .withPayload({
-        ids: [1],
-        userId: user.id,
-        unread: true,
-      })
-      .returns()
-    given('EventQuery').for([
-      {
-        ...createEntityNotificationEvent,
-        id: 1,
-        objectId: article.id,
-      },
-    ])
-
-    //fill notification cache
-    await notificationQuery.withVariables({}).shouldReturnData({
-      notifications: {
-        nodes: [
-          { id: 3, unread: true },
-          { id: 2, unread: false },
-          { id: 1, unread: false },
-        ],
-        totalCount: 3,
-      },
-    })
-
-    await mutation.withInput({ id: 1, unread: true }).execute()
-
-    await notificationQuery.shouldReturnData({
-      notifications: {
-        nodes: [
-          { id: 3, unread: true },
-          { id: 2, unread: false },
-          { id: 1, unread: true },
-        ],
-        totalCount: 3,
-      },
-    })
-  })
-
-  test('cache is mutated as expected: array', async () => {
-    given('NotificationSetStateMutation')
-      .withPayload({
-        ids: [1, 2, 3],
-        userId: user.id,
-        unread: false,
-      })
-      .returns()
-    given('EventQuery').for([
-      {
-        ...createEntityNotificationEvent,
-        id: 1,
-        objectId: article.id,
-      },
-      {
-        ...createEntityNotificationEvent,
-        id: 2,
-        objectId: article.id,
-      },
-      {
-        ...createEntityNotificationEvent,
-        id: 3,
-        objectId: article.id,
-      },
-    ])
-
-    //fill notification cache
-    await notificationQuery.withVariables({}).shouldReturnData({
-      notifications: {
-        nodes: [
-          { id: 3, unread: true },
-          { id: 2, unread: false },
-          { id: 1, unread: false },
-        ],
-        totalCount: 3,
-      },
-    })
-
-    await mutation.withInput({ id: [1, 2, 3], unread: false }).execute()
-
-    await notificationQuery.shouldReturnData({
-      notifications: {
-        nodes: [
-          { id: 3, unread: false },
-          { id: 2, unread: false },
-          { id: 1, unread: false },
-        ],
-        totalCount: 3,
-      },
-    })
+    await mutation.withContext({ userId: 1 }).shouldFailWithError('FORBIDDEN')
   })
 })
