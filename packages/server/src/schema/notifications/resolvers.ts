@@ -17,7 +17,7 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { Resolvers } from '~/types'
 
 export const NotificationsResolver = createCachedResolver({
-  name: 'UuidResolver',
+  name: 'NotificationsResolver',
   decoder: t.array(NotificationDecoder),
   enableSwr: true,
   staleAfter: { minutes: 1 },
