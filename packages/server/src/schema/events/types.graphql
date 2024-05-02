@@ -1,0 +1,24 @@
+extend type Query {
+  events(
+    after: String
+    first: Int
+    last: Int
+    actorId: Int
+    actorUsername: String
+    objectId: Int
+    instance: Instance
+  ): AbstractNotificationEventConnection!
+}
+
+type AbstractNotificationEventConnection {
+  nodes: [AbstractNotificationEvent!]!
+  pageInfo: PageInfo!
+}
+
+interface AbstractNotificationEvent {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+}

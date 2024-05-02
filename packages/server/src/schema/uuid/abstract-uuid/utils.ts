@@ -5,24 +5,17 @@ import { UuidResolver } from './resolvers'
 import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
 import { DiscriminatorType, EntityType, UuidDecoder } from '~/model/decoder'
-import { resolveEvents } from '~/schema/notification/resolvers'
 import { createAliasResolvers } from '~/schema/uuid/alias/utils'
 import { AbstractUuidResolvers } from '~/types'
 
 export function createUuidResolvers(): Pick<
   AbstractUuidResolvers,
-  'alias' | 'events' | 'title'
+  'alias' | 'title'
 > {
   return {
     ...createAliasResolvers(),
     title(uuid, _, context) {
       return getTitle(uuid, context)
-    },
-    events(uuid, payload, { dataSources }) {
-      return resolveEvents({
-        payload: { ...payload, objectId: uuid.id },
-        dataSources,
-      })
     },
   }
 }

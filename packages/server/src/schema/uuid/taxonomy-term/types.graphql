@@ -14,13 +14,6 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
     archived: Boolean
     trashed: Boolean
   ): ThreadConnection!
-  events(
-    after: String
-    first: Int
-    instance: Instance
-    actorId: Int
-    actorUsername: String
-  ): AbstractNotificationEventConnection!
   type: TaxonomyTermType!
   instance: Instance!
   alias: String!

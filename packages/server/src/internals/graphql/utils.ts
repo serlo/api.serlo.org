@@ -53,10 +53,10 @@ export function encodeId({ prefix, id }: { prefix: string; id: number }) {
 }
 
 export function decodeId({
-  prefix,
+  prefix = '',
   textId,
 }: {
-  prefix: string
+  prefix?: string
   textId: string
 }) {
   const decodedId = decodeFromBase64(textId)

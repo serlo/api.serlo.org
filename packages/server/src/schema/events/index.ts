@@ -20,7 +20,7 @@ import { mergeSchemas, Schema } from '~/internals/graphql'
 
 const baseSchema: Schema = { resolvers, typeDefs: [typeDefs] }
 
-export const notificationSchema = mergeSchemas(
+export const eventSchema = mergeSchemas(
   baseSchema,
   checkoutRevisionNotificationEventSchema,
   createCommentNotificationEventSchema,
