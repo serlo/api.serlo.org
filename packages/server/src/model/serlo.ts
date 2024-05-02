@@ -16,7 +16,6 @@ import {
 } from '~/internals/data-source-helper'
 import { isSupportedEvent } from '~/schema/events/utils'
 import { isInstance } from '~/schema/instance/utils'
-import { NotificationsResolver } from '~/schema/notifications/resolvers'
 import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance } from '~/types'
@@ -254,17 +253,6 @@ export function createSerloModel({
     },
     context,
   )
-
-  const setNotificationState = createMutation({
-    type: 'NotificationSetStateMutation',
-    decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
-    mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
-      return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
-    },
-    async updateCache({ userId }) {
-      await NotificationsResolver.removeCacheEntry({ userId }, context)
-    },
-  })
 
   const getSubscriptions = createLegacyQuery(
     {
@@ -808,7 +796,6 @@ export function createSerloModel({
     rejectEntityRevision,
     setEmail,
     setEntityLicense,
-    setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
     setThreadStatus,
