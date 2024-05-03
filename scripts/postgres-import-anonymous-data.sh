@@ -1,6 +1,8 @@
-echo 'Important: you should have successfully run yarn mysql:import-anonymous-data first'
+echo '==> IMPORTANT: you should have successfully run yarn mysql:import-anonymous-data first <=='
 
-postgres_exec='docker compose -f docker/net.yml -f docker/db-layer.yml exec -T postgres psql --user=serlo kratos'
+sleep 3
+
+postgres_exec='docker compose -f docker-compose.kratos.yml exec -T postgres psql --user=serlo kratos'
 
 $postgres_exec -c "DROP SCHEMA public CASCADE;"
 $postgres_exec -c "CREATE SCHEMA public;"
