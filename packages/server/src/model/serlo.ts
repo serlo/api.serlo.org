@@ -718,26 +718,6 @@ export function createSerloModel({
     },
   })
 
-  const setTaxonomyTermNameAndDescription = createMutation({
-    type: 'TaxonomyTermSetNameAndDescriptionMutation',
-    decoder: DatabaseLayer.getDecoderFor(
-      'TaxonomyTermSetNameAndDescriptionMutation',
-    ),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyTermSetNameAndDescriptionMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyTermSetNameAndDescriptionMutation',
-        payload,
-      )
-    },
-    async updateCache({ id }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id }, context)
-      }
-    },
-  })
-
   const addRole = createMutation({
     type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
@@ -797,7 +777,6 @@ export function createSerloModel({
     setEmail,
     setEntityLicense,
     setSubscription,
-    setTaxonomyTermNameAndDescription,
     setThreadStatus,
     sortEntity,
     sortTaxonomyTerm,
