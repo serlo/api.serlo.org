@@ -17,7 +17,7 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { Resolvers } from '~/types'
 
 export const NotificationsResolver = createCachedResolver({
-  name: 'UuidResolver',
+  name: 'NotificationsResolver',
   decoder: t.array(NotificationDecoder),
   enableSwr: true,
   staleAfter: { minutes: 1 },
@@ -142,7 +142,7 @@ export const resolvers: Resolvers = {
   },
   NotificationMutation: {
     async setState(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { userId } = context
       const { id, unread } = payload.input
       const ids = id
 
@@ -172,11 +172,17 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.setNotificationState({
-        ids,
-        userId,
-        unread,
-      })
+      await Promise.all(
+        ids.map((id) =>
+          context.database.mutate(
+            'update notification set seen = ? where id = ?',
+            [!unread, id],
+          ),
+        ),
+      )
+
+      await NotificationsResolver.removeCacheEntry({ userId }, context)
+
       return { success: true, query: {} }
     },
   },
