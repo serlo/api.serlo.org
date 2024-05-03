@@ -1,0 +1,50 @@
+services:
+  kratos-migrate:
+    depends_on:
+      - postgres
+    image: oryd/kratos:v1.0.0
+    volumes:
+      - ./kratos:/etc/config/kratos:z
+    command: -c /etc/config/kratos/config.yml migrate sql -e --yes
+    restart: on-failure
+  kratos:
+    depends_on:
+      - kratos-migrate
+    image: oryd/kratos:v1.0.0
+    ports:
+      - '4433:4433' # public
+      - '4434:4434' # admin
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=trace
+    command: serve -c /etc/config/kratos/config.yml --dev --watch-courier
+    volumes:
+      - ./kratos:/etc/config/kratos:z
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+  postgres:
+    image: postgres:9.6
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./kratos/postgres:/docker-entrypoint-initdb.d:z
+    environment:
+      - POSTGRES_USER=serlo
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=kratos
+  mailslurper:
+    # TODO: use image: marcopas/docker-mailslurper:latest or another maintained project
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - '4436:4436'
+      - '4437:4437'
+  nbp:
+    image: quay.io/keycloak/keycloak:21.0.0
+    ports:
+      - 11111:11111
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command: ['start-dev', '--http-port=11111']
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
