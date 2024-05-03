@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 
-import { Client, given } from '../../__utils__'
+import { Client } from '../../__utils__'
 
 const input = {
   description: 'a description',

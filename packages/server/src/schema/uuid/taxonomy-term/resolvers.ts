@@ -2,6 +2,7 @@ import * as serloAuth from '@serlo/authorization'
 
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { Context } from '~/context'
+import { UserInputError } from '~/errors'
 import {
   createNamespace,
   assertUserIsAuthenticated,
@@ -16,7 +17,6 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
 import { isDefined } from '~/utils'
-import { UserInputError } from '~/errors'
 
 const typesMap = {
   root: TaxonomyTermType.Root,
