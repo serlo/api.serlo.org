@@ -2,6 +2,7 @@ import * as auth from '@serlo/authorization'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import { date } from 'io-ts-types/lib/date'
+import * as R from 'ramda'
 
 import { createCachedResolver } from '~/cached-resolver'
 import { resolveCustomId } from '~/config'
@@ -20,10 +21,12 @@ import {
   EntityTypeDecoder,
   EntityRevisionTypeDecoder,
   CommentStatusDecoder,
+  InstanceDecoder,
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Resolvers, QueryUuidArgs } from '~/types'
+import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
 import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
@@ -139,6 +142,11 @@ const BaseUuid = t.type({
   trashed: Tinyint,
 })
 
+const WeightedNumberList = t.record(
+  t.union([t.literal('__no_key'), t.number]),
+  t.union([t.null, t.number]),
+)
+
 const BaseComment = t.intersection([
   BaseUuid,
   t.type({
@@ -151,19 +159,37 @@ const BaseComment = t.intersection([
     commentParentUuid: t.union([t.number, t.null]),
     commentParentCommentId: t.union([t.number, t.null]),
     commentStatus: t.union([CommentStatusDecoder, t.null]),
-    commentChildrenIds: t.array(t.union([t.number, t.null])),
+    commentChildrenIds: WeightedNumberList,
+  }),
+])
+
+const BaseTaxonomy = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('taxonomyTerm'),
+    taxonomyInstance: InstanceDecoder,
+    taxonomyType: t.string,
+    taxonomyName: t.string,
+    taxonomyDescription: t.union([t.null, t.string]),
+    taxonomyWeight: t.union([t.null, t.number]),
+    taxonomyId: t.number,
+    taxonomyParentId: t.union([t.null, t.number]),
+    taxonomyChildrenIds: WeightedNumberList,
+    taxonomyEntityChildrenIds: WeightedNumberList,
   }),
 ])
 
 async function resolveUuidFromDatabase(
   { id }: { id: number },
-  context: Pick<Context, 'database'>,
+  context: Pick<Context, 'database' | 'timer' | 'swrQueue' | 'cache'>,
 ): Promise<Model<'AbstractUuid'> | null> {
   const baseUuid = await context.database.fetchOne(
-    ` select
+    `
+    select
         uuid.id as id,
         uuid.trashed,
         uuid.discriminator,
+
         comment.author_id as commentAuthorId,
         comment.title as commentTitle,
         comment.date as commentDate,
@@ -171,12 +197,41 @@ async function resolveUuidFromDatabase(
         comment.content as commentContent,
         comment.parent_id as commentParentCommentId,
         comment.uuid_id as commentParentUuid,
-        JSON_ARRAYAGG(comment_children.id) as commentChildrenIds,
-        comment_status.name as commentStatus
+        JSON_OBJECTAGG(
+          COALESCE(comment_children.id, "__no_key"),
+          comment_children.id
+        ) as commentChildrenIds,
+        comment_status.name as commentStatus,
+
+        taxonomy_type.name as taxonomyType,
+        taxonomy_instance.subdomain as taxonomyInstance,
+        term.name as taxonomyName,
+        term_taxonomy.description as taxonomyDescription,
+        term_taxonomy.weight as taxonomyWeight,
+        taxonomy.id as taxonomyId,
+        term_taxonomy.parent_id as taxonomyParentId,
+        JSON_OBJECTAGG(
+          COALESCE(taxonomy_child.id, "__no_key"),
+          taxonomy_child.weight
+        ) as taxonomyChildrenIds,
+        JSON_OBJECTAGG(
+          COALESCE(term_taxonomy_entity.entity_id, "__no_key"),
+          term_taxonomy_entity.position
+        ) as taxonomyEntityChildrenIds
       from uuid
+
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
       left join comment_status on comment_status.id = comment.id
+
+      left join term_taxonomy on term_taxonomy.id = uuid.id
+      left join taxonomy on taxonomy.id = term_taxonomy.taxonomy_id
+      left join type taxonomy_type on taxonomy_type.id = taxonomy.type_id
+      left join instance taxonomy_instance on taxonomy_instance.id = taxonomy.instance_id
+      left join term on term.id = term_taxonomy.term_id
+      left join term_taxonomy taxonomy_child on taxonomy_child.parent_id = term_taxonomy.id
+      left join term_taxonomy_entity on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+
       where uuid.id = ?
       group by uuid.id
     `,
@@ -199,11 +254,37 @@ async function resolveUuidFromDatabase(
         parentId,
         alias: `/${parentId}#comment-${baseUuid.id}`,
         status: baseUuid.commentStatus ?? 'noStatus',
-        childrenIds: baseUuid.commentChildrenIds.filter(isDefined),
+        childrenIds: getSortedList(baseUuid.commentChildrenIds),
         date: baseUuid.commentDate.toISOString(),
         title: baseUuid.commentTitle,
         authorId: baseUuid.commentAuthorId,
         content: baseUuid.commentContent,
+      }
+    } else if (BaseTaxonomy.is(baseUuid)) {
+      const subject = await SubjectResolver.resolve(
+        { taxonomyId: baseUuid.id },
+        context,
+      )
+      const subjectName =
+        subject != null && subject.name.length > 0 ? subject.name : 'root'
+      const alias = `/${toSlug(subjectName)}/${baseUuid.id}/${toSlug(baseUuid.taxonomyName)}`
+      const childrenIds = [
+        ...getSortedList(baseUuid.taxonomyChildrenIds),
+        ...getSortedList(baseUuid.taxonomyEntityChildrenIds),
+      ]
+
+      return {
+        ...base,
+        __typename: DiscriminatorType.TaxonomyTerm,
+        instance: baseUuid.taxonomyInstance,
+        type: getTaxonomyTermType(baseUuid.taxonomyType),
+        alias,
+        name: baseUuid.taxonomyName,
+        description: baseUuid.taxonomyDescription,
+        weight: baseUuid.taxonomyWeight ?? 0,
+        taxonomyId: baseUuid.taxonomyId,
+        parentId: baseUuid.taxonomyParentId,
+        childrenIds,
       }
     }
   }
@@ -211,6 +292,27 @@ async function resolveUuidFromDatabase(
   const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
 
   return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
+}
+
+function getSortedList(listAsDict: t.TypeOf<typeof WeightedNumberList>) {
+  const ids = Object.keys(listAsDict)
+    .map((x) => parseInt(x))
+    .filter((x) => !isNaN(x))
+
+  return R.sortBy((x) => listAsDict[x] ?? 0, ids)
+}
+
+function getTaxonomyTermType(type: string) {
+  switch (type) {
+    case 'subject':
+      return TaxonomyTermType.Subject
+    case 'root':
+      return TaxonomyTermType.Root
+    case 'topic-folder':
+      return 'topicFolder'
+    default:
+      return TaxonomyTermType.Topic
+  }
 }
 
 async function resolveIdFromPayload(
@@ -257,4 +359,14 @@ async function resolveIdFromAlias(
   if (customId) return customId
 
   return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
+}
+
+function toSlug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/ /g, '-') // replace spaces with hyphens
+    .replace(/[^\w-]+/g, '') // remove all non-word chars including _
+    .replace(/--+/g, '-') // replace multiple hyphens
+    .replace(/^-+/, '') // trim starting hyphen
+    .replace(/-+$/, '') // trim end hyphen
 }

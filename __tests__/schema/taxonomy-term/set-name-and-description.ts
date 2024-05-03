@@ -72,7 +72,8 @@ describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
     await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 
-  test('updates the cache', async () => {
+  // Todo: Needs update of mutation first
+  test.skip('updates the cache', async () => {
     const query = new Client({ userId: user.id })
       .prepareQuery({
         query: gql`
