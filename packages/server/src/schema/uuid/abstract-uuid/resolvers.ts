@@ -134,20 +134,26 @@ export const resolvers: Resolvers = {
 // TODO: Move to util file databse.ts
 const Tinyint = t.union([t.literal(0), t.literal(1)])
 
-const BaseComment = t.type({
+const BaseUuid = t.type({
   id: t.number,
-  discriminator: t.literal('comment'),
   trashed: Tinyint,
-  authorId: t.number,
-  title: t.string,
-  date: date,
-  archived: Tinyint,
-  content: t.string,
-  parentUuid: t.union([t.number, t.null]),
-  parentCommentId: t.union([t.number, t.null]),
-  status: t.union([CommentStatusDecoder, t.null]),
-  childrenIds: t.array(t.union([t.number, t.null])),
 })
+
+const BaseComment = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('comment'),
+    commentAuthorId: t.number,
+    commentTitle: t.string,
+    commentDate: date,
+    commentArchived: Tinyint,
+    commentContent: t.string,
+    commentParentUuid: t.union([t.number, t.null]),
+    commentParentCommentId: t.union([t.number, t.null]),
+    commentStatus: t.union([CommentStatusDecoder, t.null]),
+    commentChildrenIds: t.array(t.union([t.number, t.null])),
+  }),
+])
 
 async function resolveUuidFromDatabase(
   { id }: { id: number },
@@ -158,15 +164,15 @@ async function resolveUuidFromDatabase(
         uuid.id as id,
         uuid.trashed,
         uuid.discriminator,
-        comment.author_id as authorId,
-        comment.title as title,
-        comment.date as date,
-        comment.archived as archived,
-        comment.content as content,
-        comment.parent_id as parentCommentId,
-        comment.uuid_id as parentUuid,
-        JSON_ARRAYAGG(comment_children.id) as childrenIds,
-        comment_status.name as status
+        comment.author_id as commentAuthorId,
+        comment.title as commentTitle,
+        comment.date as commentDate,
+        comment.archived as commentArchived,
+        comment.content as commentContent,
+        comment.parent_id as commentParentCommentId,
+        comment.uuid_id as commentParentUuid,
+        JSON_ARRAYAGG(comment_children.id) as commentChildrenIds,
+        comment_status.name as commentStatus
       from uuid
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
@@ -177,21 +183,28 @@ async function resolveUuidFromDatabase(
     [id],
   )
 
-  if (BaseComment.is(baseUuid)) {
-    const parentId = baseUuid.parentUuid ?? baseUuid.parentCommentId ?? null
+  if (BaseUuid.is(baseUuid)) {
+    const base = { id: baseUuid.id, trashed: Boolean(baseUuid.trashed) }
 
-    if (parentId == null) return null
+    if (BaseComment.is(baseUuid)) {
+      const parentId =
+        baseUuid.commentParentUuid ?? baseUuid.commentParentCommentId ?? null
 
-    return {
-      ...baseUuid,
-      __typename: DiscriminatorType.Comment,
-      trashed: Boolean(baseUuid.trashed),
-      archived: Boolean(baseUuid.archived),
-      parentId,
-      alias: `/${parentId}#comment-${baseUuid.id}`,
-      status: baseUuid.status ?? 'noStatus',
-      childrenIds: baseUuid.childrenIds.filter(isDefined),
-      date: baseUuid.date.toISOString(),
+      if (parentId == null) return null
+
+      return {
+        ...base,
+        __typename: DiscriminatorType.Comment,
+        archived: Boolean(baseUuid.commentArchived),
+        parentId,
+        alias: `/${parentId}#comment-${baseUuid.id}`,
+        status: baseUuid.commentStatus ?? 'noStatus',
+        childrenIds: baseUuid.commentChildrenIds.filter(isDefined),
+        date: baseUuid.commentDate.toISOString(),
+        title: baseUuid.commentTitle,
+        authorId: baseUuid.commentAuthorId,
+        content: baseUuid.commentContent,
+      }
     }
   }
 
