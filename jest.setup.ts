@@ -32,18 +32,7 @@ beforeAll(() => {
   global.timer = timer
   global.kratos = kratos
 
-  global.server.listen({
-    async onUnhandledRequest(req) {
-      // eslint-disable-next-line no-console
-      console.error(
-        'Found an unhandled %s request to %s with body %s',
-        req.method,
-        req.url,
-        await req.text(),
-      )
-      return 'error'
-    },
-  })
+  global.server.listen({ onUnhandledRequest: 'bypass' })
 
   process.env.OPENAI_API_KEY = 'fake-test-key-we-are-mocking-responses'
 })
