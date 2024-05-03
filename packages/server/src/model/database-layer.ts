@@ -246,16 +246,6 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
-  TaxonomyTermSetNameAndDescriptionMutation: {
-    payload: t.type({
-      name: t.string,
-      id: t.number,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-    }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
   ThreadCreateCommentMutation: {
     payload: t.type({
       content: t.string,

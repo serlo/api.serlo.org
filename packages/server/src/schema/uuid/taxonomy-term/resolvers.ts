@@ -16,6 +16,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
 import { isDefined } from '~/utils'
+import { UserInputError } from '~/errors'
 
 const typesMap = {
   root: TaxonomyTermType.Root,
@@ -192,10 +193,10 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
     async setNameAndDescription(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
-      const { id, name, description = null } = input
+      const { id, name } = input
 
       assertStringIsNotEmpty({ name })
 
@@ -208,15 +209,24 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const { success } =
-        await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
-          id,
-          name,
-          description,
-          userId,
-        })
+      const { affectedRows } = await database.mutate(
+        `
+          UPDATE term
+          JOIN term_taxonomy ON term.id = term_taxonomy.term_id
+          SET term.name = ?,
+              term_taxonomy.description = ?
+          WHERE term_taxonomy.id = ?;
+        `,
+        [input.name, input.description, input.id],
+      )
 
-      return { success, query: {} }
+      if (affectedRows === 0) {
+        throw new UserInputError(`Taxonomy term ${input.id} does not exists`)
+      }
+
+      await UuidResolver.removeCacheEntry(input, context)
+
+      return { success: true, query: {} }
     },
   },
 }
