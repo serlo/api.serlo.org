@@ -104,10 +104,10 @@ export class Database {
   public async fetchOne<T = unknown>(
     sql: string,
     params?: unknown[],
-  ): Promise<T> {
+  ): Promise<T | null> {
     const [result] = await this.execute<(T & RowDataPacket)[]>(sql, params)
 
-    return result
+    return result ?? null
   }
 
   public async mutate(

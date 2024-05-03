@@ -30,7 +30,7 @@ test('endpoint "subjects" returns list of all subjects for an instance', async (
     .withVariables({ instance: taxonomyTermSubject.instance })
     .shouldReturnData({
       subject: {
-        subjects: [{ taxonomyTerm: { name: taxonomyTermSubject.name } }],
+        subjects: [{ taxonomyTerm: { name: 'Mathe' } }],
       },
     })
 })

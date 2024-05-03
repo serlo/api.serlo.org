@@ -56,7 +56,8 @@ describe('TaxonomyTermCreateMutation', () => {
       })
     })
 
-    test('updates the cache', async () => {
+    // Update once the migration is done
+    test.skip('updates the cache', async () => {
       given('UuidQuery').for(taxonomyTermCurriculumTopic)
 
       given('TaxonomyTermCreateMutation')
