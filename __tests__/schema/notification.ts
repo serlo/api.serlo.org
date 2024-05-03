@@ -183,10 +183,6 @@ describe('notificationEvent', () => {
   })
 
   describe('CheckoutRevisionNotification', () => {
-    beforeEach(() => {
-      given('EventQuery').for(checkoutRevisionNotificationEvent)
-    })
-
     test('by id', async () => {
       await client
         .prepareQuery({

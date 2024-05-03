@@ -122,11 +122,6 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
-  EventQuery: {
-    payload: t.type({ id: t.number }),
-    response: NotificationEventDecoder,
-    canBeNull: true,
-  },
   PageAddRevisionMutation: {
     payload: t.type({
       content: t.string,

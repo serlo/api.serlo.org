@@ -1,7 +1,10 @@
 import gql from 'graphql-tag'
 
+import { article } from '../../__fixtures__'
 import { given, Client } from '../__utils__'
+import { encodeId } from '~/internals/graphql'
 import { Instance } from '~/types'
+import { HttpResponse } from 'msw'
 
 const query = new Client().prepareQuery({
   query: gql`
@@ -117,4 +120,69 @@ describe('query endpoint "events"', () => {
       .withVariables({ first: 600 })
       .shouldFailWithError('BAD_USER_INPUT')
   })
+})
+
+describe('event types', () => {
+  beforeEach(() => {
+    given('UuidQuery').isDefinedBy(async ({ request }) => {
+      const payload = await request.json()
+
+      console.log(payload)
+
+      return HttpResponse.json({ id: 1 })
+    })
+  })
+
+  test('CheckoutRevisionNotificationEvent', async () => {
+    given('UuidQuery').for({ ...article, id: 35603 })
+
+    expect(await getEvent(86577)).toEqual({})
+  })
+
+  async function getEvent(id: number) {
+    const query = new Client().prepareQuery({
+      query: gql`
+        query ($after: String) {
+          events(after: $after, first: 1) {
+            nodes {
+              __typename
+              id
+              instance
+              actor {
+                id
+              }
+              objectId
+
+              ... on CheckoutRevisionNotificationEvent {
+                repository {
+                  id
+                }
+                revision {
+                  id
+                }
+                reason
+              }
+            }
+          }
+        }
+      `,
+      variables: { after: encodeId({ id: id + 1 }) },
+    })
+
+    const result = await query.execute()
+
+    if (result.body.kind === 'single' && result.body.singleResult['errors']) {
+      console.log(result.body.singleResult['errors'])
+    }
+
+    const { events } = (await query.getData()) as {
+      events: { nodes: unknown[] }
+    }
+
+    expect(events.nodes).toHaveLength(1)
+
+    console.log(JSON.stringify(events.nodes[0]))
+
+    return events.nodes[0]
+  }
 })

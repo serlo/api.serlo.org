@@ -47,7 +47,7 @@ export const resolvers: Resolvers = {
   },
 }
 
-async function resolveEventsFromDB(
+export async function resolveEventsFromDB(
   args: {
     after?: number | null
     first: number

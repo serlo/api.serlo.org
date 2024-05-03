@@ -48,7 +48,7 @@ export function createNamespace() {
   }
 }
 
-export function encodeId({ prefix, id }: { prefix: string; id: number }) {
+export function encodeId({ prefix = '', id }: { prefix?: string; id: number }) {
   return encodeToBase64(`${prefix}${id}`)
 }
 

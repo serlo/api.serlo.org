@@ -2,6 +2,7 @@ import * as auth from '@serlo/authorization'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
+import { resolveEventsFromDB } from '~/schema/events/resolvers'
 import { DatabaseEventRepresentation, toGraphQLModel } from '../events/event'
 import { createCachedResolver } from '~/cached-resolver'
 import { Service } from '~/context/service'
@@ -133,8 +134,14 @@ export const resolvers: Resolvers = {
         createCursor: (node) => `${node.id}`,
       })
     },
-    notificationEvent(_parent, payload, { dataSources }) {
-      return dataSources.model.serlo.getNotificationEvent(payload)
+    async notificationEvent(_parent, payload, context) {
+      const events = await resolveEventsFromDB(
+        { after: payload.id + 1, first: 1 },
+        context,
+      )
+      const event = events.at(0)
+
+      return event != null && event.id === payload.id ? event : null
     },
   },
   Mutation: {
