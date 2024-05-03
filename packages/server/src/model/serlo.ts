@@ -254,53 +254,6 @@ export function createSerloModel({
     context,
   )
 
-  const getNotifications = createLegacyQuery(
-    {
-      type: 'NotificationsQuery',
-      decoder: DatabaseLayer.getDecoderFor('NotificationsQuery'),
-      getCurrentValue(payload: DatabaseLayer.Payload<'NotificationsQuery'>) {
-        return DatabaseLayer.makeRequest('NotificationsQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { minutes: 1 },
-      maxAge: { minutes: 10 },
-      getKey: ({ userId }) => {
-        return `de.serlo.org/api/notifications/${userId}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/notifications/'
-        return key.startsWith(prefix)
-          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { userId: 1 },
-    },
-    context,
-  )
-
-  const setNotificationState = createMutation({
-    type: 'NotificationSetStateMutation',
-    decoder: DatabaseLayer.getDecoderFor('NotificationSetStateMutation'),
-    mutate(payload: DatabaseLayer.Payload<'NotificationSetStateMutation'>) {
-      return DatabaseLayer.makeRequest('NotificationSetStateMutation', payload)
-    },
-    async updateCache({ ids, userId, unread }) {
-      await getNotifications._querySpec.setCache({
-        payload: { userId },
-        getValue(current) {
-          if (!current) return
-
-          const notifications = current.notifications.map((notification) =>
-            ids.includes(notification.id)
-              ? { ...notification, unread }
-              : notification,
-          )
-          return { ...current, notifications }
-        },
-      })
-    },
-  })
-
   const getSubscriptions = createLegacyQuery(
     {
       type: 'SubjectsQuery',
@@ -815,7 +768,6 @@ export function createSerloModel({
     getAlias,
     getDeletedEntities,
     getNotificationEvent,
-    getNotifications,
     getPotentialSpamUsers,
     getSubjects,
     getSubscriptions,
@@ -828,7 +780,6 @@ export function createSerloModel({
     rejectEntityRevision,
     setEmail,
     setEntityLicense,
-    setNotificationState,
     setSubscription,
     setTaxonomyTermNameAndDescription,
     sortEntity,
