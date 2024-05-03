@@ -168,6 +168,6 @@ Run the local frontend (not forgetting to change environment in its `.env` to lo
 
 Kratos has to be rebuilt every time you change an email template. Use the following workflow:
 
-1. Edit templates.
+1. Edit templates. See at `kratos/config.yml` where they are.
 2. Run `yarn kratos:rebuild`
 3. Test the verification or the recovery email at `localhost:4436`. Repeat the process.
