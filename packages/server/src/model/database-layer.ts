@@ -321,15 +321,6 @@ export const spec = {
     response: t.type({ success: t.boolean, username: t.string }),
     canBeNull: false,
   },
-  UuidSetStateMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      trashed: t.boolean,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
   UuidQuery: {
     payload: t.type({ id: t.number }),
     response: UuidDecoder,

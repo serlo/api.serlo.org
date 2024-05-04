@@ -3,6 +3,7 @@ import {
   instanceToScope,
   Scope,
 } from '@serlo/authorization'
+import * as t from 'io-ts'
 
 import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { Context } from '~/context'
@@ -13,6 +14,7 @@ import {
   EntityRevisionDecoder,
   PageRevisionDecoder,
   UserDecoder,
+  UuidDecoder,
 } from '~/model/decoder'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { isInstance, isInstanceAware } from '~/schema/instance/utils'
@@ -61,21 +63,9 @@ export async function fetchScopeOfUuid(
 
   if (object === null) throw new UserInputError('UUID does not exist.')
 
-  // If the object has an instance, return the corresponding scope
-  if (isInstanceAware(object)) {
-    return instanceToScope(object.instance)
-  }
+  const instance = await fetchInstance(object, context)
 
-  // Comments and Threads don't have an instance itself, but their object descendant has
-  if (object.__typename === DiscriminatorType.Comment) {
-    return await fetchScopeOfUuid({ id: object.parentId }, context)
-  }
-
-  if (EntityRevisionDecoder.is(object) || PageRevisionDecoder.is(object)) {
-    return await fetchScopeOfUuid({ id: object.repositoryId }, context)
-  }
-
-  return Scope.Serlo
+  return instance != null ? instanceToScope(instance) : Scope.Serlo
 }
 
 export async function fetchScopeOfNotificationEvent(
@@ -97,6 +87,34 @@ export async function fetchScopeOfNotificationEvent(
 
 export function resolveScopedRoles(user: Model<'User'>): Model<'ScopedRole'>[] {
   return user.roles.map(legacyRoleToRole).filter(isDefined)
+}
+
+export async function fetchInstance(
+  object: t.TypeOf<typeof UuidDecoder> | null,
+  context: Context,
+) {
+  if (object == null) return null
+
+  // If the object has an instance, return the corresponding scope
+  if (isInstanceAware(object)) {
+    return object.instance
+  }
+
+  // Comments and Threads don't have an instance itself, but their object descendant has
+  if (object.__typename === DiscriminatorType.Comment) {
+    const parent = await UuidResolver.resolve({ id: object.parentId }, context)
+    return await fetchInstance(parent, context)
+  }
+
+  if (EntityRevisionDecoder.is(object) || PageRevisionDecoder.is(object)) {
+    const repository = await UuidResolver.resolve(
+      { id: object.repositoryId },
+      context,
+    )
+    return await fetchInstance(repository, context)
+  }
+
+  return null
 }
 
 function legacyRoleToRole(role: string): Model<'ScopedRole'> | null {
