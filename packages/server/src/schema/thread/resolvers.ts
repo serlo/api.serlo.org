@@ -7,6 +7,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
+import { createEvent } from '../events/event'
 import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
@@ -31,7 +32,6 @@ import {
 } from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { CommentStatus, Resolvers } from '~/types'
-import { createEvent } from '../events/event'
 
 export const resolvers: Resolvers = {
   ThreadAware: {
