@@ -246,7 +246,7 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
     async sort(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { childrenIds, taxonomyTermId } = input
@@ -266,18 +266,53 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
-      const allChildrenIds = [
-        ...new Set(childrenIds.concat(taxonomyTerm.childrenIds)),
-      ]
+      if (
+        childrenIds.some(
+          (childId) => !taxonomyTerm.childrenIds.includes(childId),
+        )
+      ) {
+        throw new UserInputError(
+          'children_ids have to be a subset of children entities and taxonomy terms of the given taxonomy term',
+        )
+      }
 
-      const { success } = await dataSources.model.serlo.sortTaxonomyTerm({
-        childrenIds: allChildrenIds,
-        taxonomyTermId,
-        userId,
-      })
+      const transaction = await database.beginTransaction()
 
-      return { success, query: {} }
+      try {
+        await Promise.all(
+          childrenIds.map(async (childId, position) => {
+            // Since the id of entities and taxonomies is always different
+            // we do not need to distinguish between them
+
+            await database.mutate(
+              'update term_taxonomy set weight = ? where parent_id = ? and id = ?',
+              [position, taxonomyTermId, childId],
+            )
+
+            await database.mutate(
+              'update term_taxonomy_entity set position = ? where term_taxonomy_id = ? and entity_id = ?',
+              [position, taxonomyTermId, childId],
+            )
+          }),
+        )
+
+        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
+        await createEvent(
+          {
+            __typename: NotificationEventType.SetTaxonomyTerm,
+            taxonomyTermId,
+            actorId: userId,
+            instance: taxonomyTerm.instance,
+          },
+          context,
+        )
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async setNameAndDescription(_parent, { input }, context) {
       const { database, userId } = context

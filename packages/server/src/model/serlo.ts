@@ -670,20 +670,6 @@ export function createSerloModel({
     },
   })
 
-  const sortTaxonomyTerm = createMutation({
-    type: 'TaxonomySortMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
-    },
-
-    async updateCache({ taxonomyTermId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
-      }
-    },
-  })
-
   const setEntityLicense = createMutation({
     type: 'EntitySetLicenseMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
@@ -765,7 +751,6 @@ export function createSerloModel({
     setSubscription,
     setThreadStatus,
     sortEntity,
-    sortTaxonomyTerm,
     setUuidState,
     unlinkEntitiesFromTaxonomy,
   }
