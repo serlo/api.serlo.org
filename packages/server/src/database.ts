@@ -5,6 +5,8 @@ import {
   type ResultSetHeader,
 } from 'mysql2/promise'
 
+import { InternalServerError } from './errors'
+
 export class Database {
   private state: DatabaseState
   private pool: Pool
@@ -29,9 +31,26 @@ export class Database {
 
       this.state = { type: 'InsideSavepoint', transaction, depth: newDepth }
     }
+
+    let isComittedOrRollbacked = false
+
+    return {
+      commit: async () => {
+        if (!isComittedOrRollbacked) {
+          await this.commitLastTransaction()
+          isComittedOrRollbacked = true
+        }
+      },
+      rollback: async () => {
+        if (!isComittedOrRollbacked) {
+          await this.rollbackLastTransaction()
+          isComittedOrRollbacked = true
+        }
+      },
+    }
   }
 
-  public async commitLastTransaction() {
+  private async commitLastTransaction() {
     if (this.state.type === 'OutsideOfTransaction') return
 
     const { transaction } = this.state
@@ -53,13 +72,16 @@ export class Database {
     }
   }
 
-  public async rollbackLastTransaction() {
+  private async rollbackLastTransaction() {
     if (this.state.type === 'OutsideOfTransaction') return
 
     const { transaction } = this.state
 
     if (this.state.type === 'InsideTransaction') {
-      await this.commitAllTransactions()
+      await transaction.commit()
+      transaction.release()
+
+      this.state = { type: 'OutsideOfTransaction' }
     } else {
       const { depth } = this.state
 
@@ -70,17 +92,6 @@ export class Database {
           ? { type: 'InsideSavepoint', transaction, depth: depth - 1 }
           : { type: 'InsideTransaction', transaction }
     }
-  }
-
-  public async commitAllTransactions() {
-    if (this.state.type === 'OutsideOfTransaction') return
-
-    const { transaction } = this.state
-
-    await transaction.commit()
-    transaction.release()
-
-    this.state = { type: 'OutsideOfTransaction' }
   }
 
   public async rollbackAllTransactions() {
@@ -101,13 +112,24 @@ export class Database {
     return this.execute<(T & RowDataPacket)[]>(sql, params)
   }
 
-  public async fetchOne<T = unknown>(
+  public async fetchOptional<T = unknown>(
     sql: string,
     params?: unknown[],
   ): Promise<T | null> {
     const [result] = await this.execute<(T & RowDataPacket)[]>(sql, params)
 
     return result ?? null
+  }
+
+  public async fetchOne<T = unknown>(
+    sql: string,
+    params?: unknown[],
+  ): Promise<T> {
+    const result = await this.fetchOptional<T>(sql, params)
+
+    if (result == null) throw new InternalServerError()
+
+    return result
   }
 
   public async mutate(
