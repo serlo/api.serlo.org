@@ -72,7 +72,7 @@ export const SubjectResolver = createCachedResolver({
       id: number
     }
 
-    return await database.fetchOne<Row>(
+    return await database.fetchOptional<Row>(
       `
       SELECT t.name as name, t1.id as id
       FROM term_taxonomy t0
