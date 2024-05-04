@@ -41,6 +41,7 @@ export function getEsbuildOptions(source: string, outfile: string) {
     platform: 'node',
     format: 'cjs',
     target: 'node18',
+    sourcemap: 'linked',
     // Bundling `bee-queue` inside the run package would result in an error
     //
     //    Error: node_redis: The EVALSHA command contains a invalid argument
