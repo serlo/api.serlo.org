@@ -139,6 +139,10 @@ export class Database {
     return this.execute<ResultSetHeader>(sql, params)
   }
 
+  public async close() {
+    await this.pool.end()
+  }
+
   private async execute<T extends RowDataPacket[] | ResultSetHeader>(
     sql: string,
     params?: unknown[],
