@@ -162,13 +162,15 @@ async function getLastEvent() {
       limit 1
     `)
 
-  return toGraphQLModel(lastAbstractEvent!)
+  return toGraphQLModel(lastAbstractEvent)
 }
 
 async function getEventsNumber() {
-  return (await global.database.fetchOne<{ n: number }>(
-    'SELECT count(*) AS n FROM event_log',
-  ))!.n
+  return (
+    await global.database.fetchOne<{ n: number }>(
+      'SELECT count(*) AS n FROM event_log',
+    )
+  ).n
 }
 
 function getContext() {
