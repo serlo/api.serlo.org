@@ -25,20 +25,6 @@ export function createSerloModel({
 }: {
   context: Pick<Context, 'cache' | 'swrQueue' | 'database' | 'timer'>
 }) {
-  const setUuidState = createMutation({
-    type: 'UuidSetStateMutation',
-    decoder: DatabaseLayer.getDecoderFor('UuidSetStateMutation'),
-    mutate(payload: DatabaseLayer.Payload<'UuidSetStateMutation'>) {
-      return DatabaseLayer.makeRequest('UuidSetStateMutation', payload)
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
   const getActiveReviewerIds = createLegacyQuery(
     {
       type: 'ActiveReviewersQuery',
@@ -712,7 +698,6 @@ export function createSerloModel({
     setSubscription,
     setThreadStatus,
     sortEntity,
-    setUuidState,
   }
 }
 

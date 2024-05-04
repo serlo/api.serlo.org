@@ -19,15 +19,16 @@ import {
   UuidDecoder,
   DiscriminatorType,
   EntityTypeDecoder,
-  EntityRevisionTypeDecoder,
   CommentStatusDecoder,
   InstanceDecoder,
+  EntityRevisionDecoder,
+  PageRevisionDecoder,
+  NotificationEventType,
 } from '~/model/decoder'
-import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
-import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
   { id: number },
@@ -80,56 +81,71 @@ export const resolvers: Resolvers = {
   },
   UuidMutation: {
     async setState(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { userId } = context
       const { id, trashed } = payload.input
       const ids = id
 
-      const guards = await Promise.all(
-        ids.map(async (id): Promise<auth.AuthorizationGuard | null> => {
-          // TODO: this is not optimized since it fetches the object twice and sequentially.
-          // change up fetchScopeOfUuid to return { scope, object } instead
-          const scope = await fetchScopeOfUuid({ id }, context)
-          const object = await UuidResolver.resolve({ id }, context)
-          if (object === null) {
-            return null
-          } else {
-            return auth.Uuid.setState(getType(object))(scope)
-          }
+      assertUserIsAuthenticated(userId)
 
-          function getType(object: Model<'AbstractUuid'>): auth.UuidType {
-            switch (object.__typename) {
-              case DiscriminatorType.Page:
-                return 'Page'
-              case DiscriminatorType.PageRevision:
-                return 'PageRevision'
-              case DiscriminatorType.TaxonomyTerm:
-                return 'TaxonomyTerm'
-              case DiscriminatorType.User:
-                return 'User'
-              default:
-                if (EntityTypeDecoder.is(object.__typename)) {
-                  return 'Entity'
-                }
-                if (EntityRevisionTypeDecoder.is(object.__typename)) {
-                  return 'EntityRevision'
-                }
-                return 'unknown'
-            }
-          }
-        }),
+      const objects = await Promise.all(
+        ids.map((id) => UuidResolver.resolve({ id }, context)),
       )
 
-      assertUserIsAuthenticated(userId)
-      await assertUserIsAuthorized({
-        guards: guards.filter(isDefined),
-        message:
-          'You are not allowed to set the state of the provided UUID(s).',
-        context,
-      })
+      const transaction = await database.beginTransaction()
 
-      await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
+      try {
+        for (const object of objects) {
+          if (
+            object === null ||
+            object.__typename === DiscriminatorType.Comment ||
+            object.__typename === DiscriminatorType.User ||
+            EntityRevisionDecoder.is(object) ||
+            PageRevisionDecoder.is(object)
+          ) {
+            throw new UserInputError(
+              'One of the provided ids cannot be deleted',
+            )
+          }
 
-      return { success: true, query: {} }
+          const scope = auth.instanceToScope(object.instance)
+          const type = EntityTypeDecoder.is(object)
+            ? 'Entity'
+            : object.__typename === DiscriminatorType.Page
+              ? 'Page'
+              : 'TaxonomyTerm'
+
+          await assertUserIsAuthorized({
+            guard: auth.Uuid.setState(type)(scope),
+            message:
+              'You are not allowed to set the state of the provided UUID(s).',
+            context,
+          })
+
+          await setUuidState({ id: object.id, trashed }, context)
+
+          await createEvent(
+            {
+              __typename: NotificationEventType.SetUuidState,
+              actorId: userId,
+              instance: object.instance,
+              objectId: object.id,
+              trashed,
+            },
+            context,
+          )
+        }
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntries(
+          ids.map((id) => ({ id }), context),
+          context,
+        )
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
   },
 }
@@ -292,6 +308,16 @@ async function resolveUuidFromDatabase(
   const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
 
   return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
+}
+
+export async function setUuidState(
+  { id, trashed }: { id: number; trashed: boolean },
+  { database }: Pick<Context, 'database'>,
+) {
+  await database.mutate('update uuid set trashed = ? where id = ?', [
+    trashed ? 1 : 0,
+    id,
+  ])
 }
 
 function getSortedList(listAsDict: t.TypeOf<typeof WeightedNumberList>) {
