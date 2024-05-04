@@ -637,25 +637,6 @@ export function createSerloModel({
     },
   })
 
-  const unlinkEntitiesFromTaxonomy = createMutation({
-    type: 'TaxonomyCreateEntityLinksMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyDeleteEntityLinksMutation',
-        payload,
-      )
-    },
-    async updateCache({ taxonomyTermId, entityIds }, { success }) {
-      if (success) {
-        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
-        await UuidResolver.removeCacheEntries(payloads, context)
-      }
-    },
-  })
-
   const sortEntity = createMutation({
     type: 'EntitySortMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
@@ -752,7 +733,6 @@ export function createSerloModel({
     setThreadStatus,
     sortEntity,
     setUuidState,
-    unlinkEntitiesFromTaxonomy,
   }
 }
 

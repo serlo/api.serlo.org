@@ -12,6 +12,8 @@ import {
 } from '~/internals/graphql'
 import {
   DiscriminatorType,
+  EntityDecoder,
+  EntityType,
   NotificationEventType,
   TaxonomyTermDecoder,
 } from '~/model/decoder'
@@ -222,28 +224,78 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
     async deleteEntityLinks(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({ id: taxonomyTermId }, context)
+      const entities = await Promise.all(
+        entityIds.map((id) => UuidResolver.resolve({ id }, context)),
+      )
+      const taxonomyTerm = await UuidResolver.resolveWithDecoder(
+        TaxonomyTermDecoder,
+        { id: taxonomyTermId },
+        context,
+      )
+
+      if (
+        entities.some(
+          (entity) =>
+            !EntityDecoder.is(entity) ||
+            entity.__typename === EntityType.CoursePage ||
+            entity.taxonomyTermIds.length <= 1,
+        )
+      ) {
+        throw new UserInputError(
+          'All children must be entities (beside course pages) and must have more than one parent',
+        )
+      }
 
       await assertUserIsAuthorized({
         message:
           'You are not allowed to unlink entities from this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.change(scope),
+        guard: serloAuth.TaxonomyTerm.change(
+          serloAuth.instanceToScope(taxonomyTerm.instance),
+        ),
         context,
       })
 
-      const { success } =
-        await dataSources.model.serlo.unlinkEntitiesFromTaxonomy({
-          entityIds,
-          taxonomyTermId,
-          userId,
-        })
+      const transaction = await database.beginTransaction()
 
-      return { success, query: {} }
+      try {
+        for (const entityId of entityIds) {
+          await database.mutate(
+            `
+              delete from term_taxonomy_entity
+              where entity_id = ? and term_taxonomy_id = ?
+            `,
+            [entityId, taxonomyTermId],
+          )
+
+          await createEvent(
+            {
+              __typename: NotificationEventType.RemoveEntityLink,
+              actorId: userId,
+              instance: taxonomyTerm.instance,
+              parentId: taxonomyTermId,
+              childId: entityId,
+            },
+            context,
+          )
+        }
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntries(
+          entityIds.map((id) => ({ id })),
+          context,
+        )
+        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async sort(_parent, { input }, context) {
       const { database, userId } = context

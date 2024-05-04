@@ -216,15 +216,6 @@ export const spec = {
     response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
-  TaxonomyDeleteEntityLinksMutation: {
-    payload: t.type({
-      entityIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
   ThreadCreateCommentMutation: {
     payload: t.type({
       content: t.string,
