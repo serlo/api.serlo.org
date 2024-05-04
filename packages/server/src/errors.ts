@@ -18,6 +18,12 @@ export class UserInputError extends GraphQLError {
   }
 }
 
+export class InternalServerError extends GraphQLError {
+  constructor(message = '') {
+    super(message, { extensions: { code: 'INTERNAL_SERVER_ERROR' } })
+  }
+}
+
 export class InvalidCurrentValueError extends GraphQLError {
   constructor(
     public errorContext: {
