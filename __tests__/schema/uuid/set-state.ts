@@ -3,9 +3,6 @@ import gql from 'graphql-tag'
 import {
   article,
   page,
-  pageRevision,
-  taxonomyTermRoot,
-  user as baseUser,
   taxonomyTermSubject,
   user,
   articleRevision,

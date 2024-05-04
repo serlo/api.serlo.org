@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { comment, comment2, comment3, user, user2 } from '../../../__fixtures__'
+import { comment, comment3, user, user2 } from '../../../__fixtures__'
 import { Client } from '../../__utils__'
 
 const mutation = new Client({ userId: user.id }).prepareQuery({
