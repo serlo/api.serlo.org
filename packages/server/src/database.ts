@@ -78,10 +78,7 @@ export class Database {
     const { transaction } = this.state
 
     if (this.state.type === 'InsideTransaction') {
-      await transaction.commit()
-      transaction.release()
-
-      this.state = { type: 'OutsideOfTransaction' }
+      await this.rollbackAllTransactions()
     } else {
       const { depth } = this.state
 
