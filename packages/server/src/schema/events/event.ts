@@ -34,9 +34,9 @@ export async function createEvent(
   const abstractEventPayload = toDatabaseRepresentation(payload)
   const { type, actorId, objectId, instance } = abstractEventPayload
 
-  try {
-    await database.beginTransaction()
+  const transaction = await database.beginTransaction()
 
+  try {
     const { insertId: eventId } = await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
@@ -84,10 +84,9 @@ export async function createEvent(
 
     await createNotifications(event, { database })
 
-    await database.commitLastTransaction()
-  } catch (error) {
-    await database.rollbackLastTransaction()
-    return Promise.reject(error)
+    await transaction.commit()
+  } finally {
+    await transaction.rollback()
   }
 }
 
