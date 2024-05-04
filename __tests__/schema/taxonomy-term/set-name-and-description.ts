@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 
-import { Client } from '../../__utils__'
+import { Client, expectEvent } from '../../__utils__'
+import { NotificationEventType } from '~/model/decoder'
 
 const input = {
   description: 'a description',
@@ -45,6 +46,10 @@ test('updates name and description', async () => {
 
   await query.shouldReturnData({
     uuid: { name: input.name, description: input.description },
+  })
+  await expectEvent({
+    __typename: NotificationEventType.SetTaxonomyTerm,
+    objectId: input.id,
   })
 })
 
