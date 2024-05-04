@@ -76,8 +76,9 @@ afterEach(async () => {
   await new Promise((resolve) => setImmediate(resolve))
 })
 
-afterAll(() => {
+afterAll(async () => {
   global.server.close()
+  await global.database.close()
 })
 
 class MockTimer implements Timer {
