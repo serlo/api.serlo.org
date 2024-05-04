@@ -170,7 +170,7 @@ async function resolveUuidFromDatabase(
       from uuid
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
-      left join comment_status on comment_status.id = comment.id
+      left join comment_status on comment_status.id = comment.comment_status_id
       where uuid.id = ?
       group by uuid.id
     `,
