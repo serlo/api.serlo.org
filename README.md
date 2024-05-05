@@ -122,7 +122,7 @@ Usually you won't need it, but if you do, run first:
 
 `yarn start:kratos`
 
-In folder `./kratos` you will all important configuration files.
+In the folder `./kratos` you find all important configuration files.
 Emails sent by Kratos are going to be found at `http://localhost:4436`.
 
 For more info about it see its [documentation](https://www.ory.sh/docs/kratos).
@@ -132,7 +132,7 @@ For more info about it see its [documentation](https://www.ory.sh/docs/kratos).
 First of all add `nbp` as host  
 `sudo bash -c "echo '127.0.0.1	nbp'" >> /etc/hosts`
 
-_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since its running inside a container, it can't easily use host port. nbp is a dns that is discoverable for the kratos container, so the host can use it also._
+_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. nbp is a dns that is discoverable for the kratos container, so the host can also use it._
 
 Run `yarn start:nbp`.
 
