@@ -1,6 +1,7 @@
 import * as auth from '@serlo/authorization'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
+import { PathReporter } from 'io-ts/lib/PathReporter'
 import { date } from 'io-ts-types/lib/date'
 import * as R from 'ramda'
 
@@ -24,6 +25,7 @@ import {
   EntityRevisionDecoder,
   PageRevisionDecoder,
   NotificationEventType,
+  EntityType,
 } from '~/model/decoder'
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
@@ -159,9 +161,38 @@ const BaseUuid = t.type({
 })
 
 const WeightedNumberList = t.record(
-  t.union([t.literal('__no_key'), t.number]),
+  t.union([t.literal('__no_key'), t.string]),
   t.union([t.null, t.number]),
 )
+
+type DBEntityType = t.TypeOf<typeof DBEntityType>
+const DBEntityType = t.union([
+  t.literal('applet'),
+  t.literal('article'),
+  t.literal('course'),
+  t.literal('course-page'),
+  t.literal('event'),
+  t.literal('text-exercise'),
+  t.literal('text-exercise-group'),
+  t.literal('video'),
+])
+
+const BaseEntity = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('entity'),
+    entityInstance: InstanceDecoder,
+    entityLicenseId: t.number,
+    entityCurrentRevisionId: t.union([t.null, t.number]),
+    entityDate: date,
+    entityType: DBEntityType,
+    entityRevisionIds: WeightedNumberList,
+    entityTaxonomyIds: WeightedNumberList,
+    entityTitle: t.union([t.string, t.null]),
+    entityChildrenIds: WeightedNumberList,
+    entityParentId: t.union([t.null, t.number]),
+  }),
+])
 
 const BaseComment = t.intersection([
   BaseUuid,
@@ -206,6 +237,26 @@ async function resolveUuidFromDatabase(
         uuid.trashed,
         uuid.discriminator,
 
+        entity_instance.subdomain as entityInstance,
+        entity.license_id as entityLicenseId,
+        entity.current_revision_id as entityCurrentRevisionId,
+        entity.date as entityDate,
+        entity_type.name as entityType,
+        JSON_OBJECTAGG(
+          COALESCE(entity_revision.id, "__no_key"),
+          entity_revision.id
+        ) as entityRevisionIds,
+        JSON_OBJECTAGG(
+          COALESCE(entity_taxonomy.term_taxonomy_id, "__no_key"),
+          entity_taxonomy.term_taxonomy_id
+        ) as entityTaxonomyIds,
+        current_revision.title as entityTitle,
+        JSON_OBJECTAGG(
+          COALESCE(entity_link_child.child_id, "__no_key"),
+          entity_link_child.order
+        ) as entityChildrenIds,
+        MIN(entity_link_parent.parent_id) as entityParentId,
+
         comment.author_id as commentAuthorId,
         comment.title as commentTitle,
         comment.date as commentDate,
@@ -236,6 +287,15 @@ async function resolveUuidFromDatabase(
         ) as taxonomyEntityChildrenIds
       from uuid
 
+      left join entity on entity.id = uuid.id
+      left join instance entity_instance on entity_instance.id = entity.instance_id
+      left join type entity_type on entity_type.id = entity.type_id
+      left join entity_revision on entity_revision.repository_id = entity.id
+      left join term_taxonomy_entity entity_taxonomy on entity_taxonomy.entity_id = entity.id
+      left join entity_revision current_revision on current_revision.id = entity.current_revision_id
+      left join entity_link entity_link_child on entity_link_child.parent_id = entity.id
+      left join entity_link entity_link_parent on entity_link_parent.child_id = entity.id
+
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
       left join comment_status on comment_status.id = comment.id
@@ -257,7 +317,61 @@ async function resolveUuidFromDatabase(
   if (BaseUuid.is(baseUuid)) {
     const base = { id: baseUuid.id, trashed: Boolean(baseUuid.trashed) }
 
-    if (BaseComment.is(baseUuid)) {
+    if (BaseEntity.is(baseUuid)) {
+      const taxonomyTermIds = getSortedList(baseUuid.entityTaxonomyIds)
+
+      const subject =
+        taxonomyTermIds.length > 0
+          ? await SubjectResolver.resolve(
+              { taxonomyId: taxonomyTermIds[0] },
+              context,
+            )
+          : null
+      const subjectName = subject != null ? '/' + toSlug(subject.name) : ''
+      const slugTitle = baseUuid.entityTitle
+        ? toSlug(baseUuid.entityTitle)
+        : baseUuid.id
+
+      const entity = {
+        ...base,
+        instance: baseUuid.entityInstance,
+        date: baseUuid.entityDate.toISOString(),
+        licenseId: baseUuid.entityLicenseId,
+        currentRevisionId: baseUuid.entityCurrentRevisionId,
+        taxonomyTermIds,
+        alias: `${subjectName}/${baseUuid.id}/${slugTitle}`,
+        revisionIds: getSortedList(baseUuid.entityRevisionIds),
+        canonicalSubjectId: subject != null ? subject.id : null,
+      }
+      switch (baseUuid.entityType) {
+        case 'applet':
+          return { ...entity, __typename: EntityType.Applet }
+        case 'article':
+          return { ...entity, __typename: EntityType.Article }
+        case 'course':
+          return {
+            ...entity,
+            __typename: EntityType.Course,
+            pageIds: getSortedList(baseUuid.entityChildrenIds),
+          }
+        case 'course-page':
+          return baseUuid.entityParentId != null
+            ? {
+                ...entity,
+                __typename: EntityType.CoursePage,
+                parentId: baseUuid.entityParentId,
+              }
+            : null
+        case 'event':
+          return { ...entity, __typename: EntityType.Event }
+        case 'text-exercise':
+          return { ...entity, __typename: EntityType.Exercise }
+        case 'text-exercise-group':
+          return { ...entity, __typename: EntityType.ExerciseGroup }
+        default:
+          return { ...entity, __typename: EntityType.Video }
+      }
+    } else if (BaseComment.is(baseUuid)) {
       const parentId =
         baseUuid.commentParentUuid ?? baseUuid.commentParentCommentId ?? null
 
