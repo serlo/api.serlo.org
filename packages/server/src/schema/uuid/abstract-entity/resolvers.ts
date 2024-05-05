@@ -10,11 +10,16 @@ import {
   assertUserIsAuthorized,
   createNamespace,
 } from '~/internals/graphql'
-import { CourseDecoder, EntityDecoder } from '~/model/decoder'
+import {
+  CourseDecoder,
+  EntityDecoder,
+  NotificationEventType,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { Resolvers } from '~/types'
 import { isDateString } from '~/utils'
+import { createEvent } from '~/schema/events/event'
 
 export const resolvers: Resolvers = {
   Query: {
@@ -108,7 +113,7 @@ export const resolvers: Resolvers = {
     },
 
     async updateLicense(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { licenseId, entityId } = input
@@ -124,13 +129,32 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.setEntityLicense({
-        entityId,
-        licenseId,
-        userId,
-      })
+      const transaction = await database.beginTransaction()
 
-      return { success: true, query: {} }
+      try {
+        await database.mutate('update entity set license_id = ? where id = ?', [
+          licenseId,
+          entityId,
+        ])
+
+        await createEvent(
+          {
+            __typename: NotificationEventType.SetLicense,
+            actorId: userId,
+            repositoryId: entity.id,
+            instance: entity.instance,
+          },
+          context,
+        )
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntry({ id: entity.id }, context)
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
 
     async checkoutRevision(_parent, { input }, context) {

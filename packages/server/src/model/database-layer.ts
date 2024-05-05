@@ -174,15 +174,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  EntitySetLicenseMutation: {
-    payload: t.type({
-      entityId: t.number,
-      licenseId: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
   SubjectsQuery: {
     payload: t.type({}),
     response: t.strict({
