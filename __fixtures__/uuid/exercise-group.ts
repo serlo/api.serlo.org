@@ -28,7 +28,7 @@ export const exerciseGroup: Model<'ExerciseGroup'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/2217/2217',
-  date: '2014-03-01T20:45:56Z',
+  date: '2014-03-01T20:54:51.000Z',
   currentRevisionId: 2218,
   revisionIds: [2218],
   licenseId,
