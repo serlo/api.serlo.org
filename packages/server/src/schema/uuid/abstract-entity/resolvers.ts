@@ -17,9 +17,9 @@ import {
 } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { createEvent } from '~/schema/events/event'
 import { Resolvers } from '~/types'
 import { isDateString } from '~/utils'
-import { createEvent } from '~/schema/events/event'
 
 export const resolvers: Resolvers = {
   Query: {
