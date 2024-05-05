@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
 import { Client } from '../../__utils__'
 
