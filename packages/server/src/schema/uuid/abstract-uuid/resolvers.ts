@@ -1,7 +1,6 @@
 import * as auth from '@serlo/authorization'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
-import { PathReporter } from 'io-ts/lib/PathReporter'
 import { date } from 'io-ts-types/lib/date'
 import * as R from 'ramda'
 
@@ -26,6 +25,8 @@ import {
   PageRevisionDecoder,
   NotificationEventType,
   EntityType,
+  EntityRevisionType,
+  castToNonEmptyString,
 } from '~/model/decoder'
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
@@ -194,6 +195,23 @@ const BaseEntity = t.intersection([
   }),
 ])
 
+const BaseEntityRevision = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('entityRevision'),
+    revisionType: DBEntityType,
+    revisionContent: t.union([t.string, t.null]),
+    revisionDate: date,
+    revisionAuthorId: t.number,
+    revisionRepositoryId: t.number,
+    revisionChanges: t.union([t.string, t.null]),
+    revisionTitle: t.union([t.string, t.null]),
+    revisionMetaTitle: t.union([t.string, t.null]),
+    revisionMetaDescription: t.union([t.string, t.null]),
+    revisionUrl: t.union([t.string, t.null]),
+  }),
+])
+
 const BaseComment = t.intersection([
   BaseUuid,
   t.type({
@@ -257,6 +275,17 @@ async function resolveUuidFromDatabase(
         ) as entityChildrenIds,
         MIN(entity_link_parent.parent_id) as entityParentId,
 
+        revision_type.name as revisionType,
+        revision.content as revisionContent,
+        revision.date as revisionDate,
+        revision.author_id as revisionAuthorId,
+        revision.repository_id as revisionRepositoryId,
+        revision.changes as revisionChanges,
+        revision.title as revisionTitle,
+        revision.meta_title as revisionMetaTitle,
+        revision.meta_description as revisionMetaDescription,
+        revision.url as revisionUrl,
+
         comment.author_id as commentAuthorId,
         comment.title as commentTitle,
         comment.date as commentDate,
@@ -295,6 +324,10 @@ async function resolveUuidFromDatabase(
       left join entity_revision current_revision on current_revision.id = entity.current_revision_id
       left join entity_link entity_link_child on entity_link_child.parent_id = entity.id
       left join entity_link entity_link_parent on entity_link_parent.child_id = entity.id
+
+      left join entity_revision revision on revision.id = uuid.id
+      left join entity revision_entity on revision_entity.id = revision.repository_id
+      left join type revision_type on revision_entity.type_id = revision_type.id
 
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
@@ -370,6 +403,54 @@ async function resolveUuidFromDatabase(
           return { ...entity, __typename: EntityType.ExerciseGroup }
         default:
           return { ...entity, __typename: EntityType.Video }
+      }
+    } else if (BaseEntityRevision.is(baseUuid)) {
+      const defaultContent = JSON.stringify({ plugin: 'rows', state: [] })
+      const content =
+        baseUuid.revisionContent != null && baseUuid.revisionContent.length > 0
+          ? baseUuid.revisionContent
+          : defaultContent
+      const revision = {
+        ...base,
+        alias: `/entity/repository/compare/${baseUuid.revisionRepositoryId}/${baseUuid.id}`,
+        content: castToNonEmptyString(content),
+        date: baseUuid.revisionDate.toISOString(),
+        authorId: baseUuid.revisionAuthorId,
+        changes: baseUuid.revisionChanges ?? '',
+        title:
+          baseUuid.revisionTitle ?? `${baseUuid.revisionType} ${baseUuid.id}`,
+        metaTitle: baseUuid.revisionMetaTitle ?? '',
+        metaDescription: baseUuid.revisionMetaDescription ?? '',
+        repositoryId: baseUuid.revisionRepositoryId,
+        url: baseUuid.revisionUrl ?? '',
+      }
+
+      switch (baseUuid.revisionType) {
+        case 'applet':
+          return { ...revision, __typename: EntityRevisionType.AppletRevision }
+        case 'article':
+          return { ...revision, __typename: EntityRevisionType.ArticleRevision }
+        case 'course':
+          return { ...revision, __typename: EntityRevisionType.CourseRevision }
+        case 'course-page':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.CoursePageRevision,
+          }
+        case 'event':
+          return { ...revision, __typename: EntityRevisionType.EventRevision }
+        case 'text-exercise':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.ExerciseRevision,
+          }
+        case 'text-exercise-group':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.ExerciseGroupRevision,
+          }
+        default:
+          return { ...revision, __typename: EntityRevisionType.VideoRevision }
       }
     } else if (BaseComment.is(baseUuid)) {
       const parentId =
