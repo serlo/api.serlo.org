@@ -618,19 +618,6 @@ export function createSerloModel({
     },
   })
 
-  const setEntityLicense = createMutation({
-    type: 'EntitySetLicenseMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
-      return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
-    },
-    async updateCache({ entityId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: entityId }, context)
-      }
-    },
-  })
-
   const getPages = createRequest({
     type: 'PagesQuery',
     decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
@@ -694,7 +681,6 @@ export function createSerloModel({
     getPages,
     rejectEntityRevision,
     setEmail,
-    setEntityLicense,
     setSubscription,
     setThreadStatus,
     sortEntity,
