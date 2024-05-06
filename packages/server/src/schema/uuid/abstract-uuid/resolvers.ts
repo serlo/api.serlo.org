@@ -190,13 +190,13 @@ async function resolveUuidFromDatabase(
       uuid.trashed,
       uuid.discriminator,
 
-      comment.author_id as commentAuthorId,
-      comment.title as commentTitle,
-      comment.date as commentDate,
-      comment.archived as commentArchived,
-      comment.content as commentContent,
-      comment.parent_id as commentParentCommentId,
-      comment.uuid_id as commentParentUuid,
+      comment.author_id AS commentAuthorId,
+      comment.title AS commentTitle,
+      comment.date AS commentDate,
+      comment.archived AS commentArchived,
+      comment.content AS commentContent,
+      comment.parent_id AS commentParentCommentId,
+      comment.uuid_id AS commentParentUuid,
       JSON_OBJECTAGG(
           COALESCE(comment_children.id, "__no_key"),
           comment_children.id
