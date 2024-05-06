@@ -8,6 +8,7 @@ import {
   user as baseUser,
 } from '../../../__fixtures__'
 import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
+import { emptySubjects } from '../subject'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }
@@ -21,6 +22,7 @@ const currentRevision = {
   id: nextUuid(articleRevision.id),
   trashed: false,
 }
+
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
@@ -37,7 +39,6 @@ const mutation = new Client({ userId: user.id })
 
 beforeEach(() => {
   given('UuidQuery').for(user, article, articleRevision, currentRevision)
-  given('SubjectsQuery').for(taxonomyTermSubject)
   given('UnrevisedEntitiesQuery').for([article])
 
   given('EntityRejectRevisionMutation')
@@ -104,7 +105,10 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
 
   await unrevisedEntitiesQuery.shouldReturnData({
     subject: {
-      subjects: [{ unrevisedEntities: { nodes: [getTypenameAndId(article)] } }],
+      subjects: [
+        { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
+        ...emptySubjects,
+      ],
     },
   })
 
@@ -113,7 +117,9 @@ test('after the reject mutation the cache is cleared for unrevisedEntities', asy
   })
 
   await unrevisedEntitiesQuery.shouldReturnData({
-    subject: { subjects: [{ unrevisedEntities: { nodes: [] } }] },
+    subject: {
+      subjects: [{ unrevisedEntities: { nodes: [] } }, ...emptySubjects],
+    },
   })
 })
 
