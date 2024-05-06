@@ -169,24 +169,6 @@ export function createSerloModel({
     context,
   )
 
-  const getSubjects = createLegacyQuery(
-    {
-      type: 'SubjectsQuery',
-      decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
-      getCurrentValue: () => {
-        return DatabaseLayer.makeRequest('SubjectsQuery', {})
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: () => 'serlo.org/subjects',
-      getPayload: (key) => {
-        return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
-      },
-      examplePayload: undefined,
-    },
-    context,
-  )
-
   const getUnrevisedEntities = createLegacyQuery(
     {
       type: 'UnrevisedEntitiesQuery',
@@ -256,7 +238,7 @@ export function createSerloModel({
 
   const getSubscriptions = createLegacyQuery(
     {
-      type: 'SubjectsQuery',
+      type: 'SubscriptionsQuery',
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
       getCurrentValue: (
@@ -769,7 +751,6 @@ export function createSerloModel({
     getDeletedEntities,
     getNotificationEvent,
     getPotentialSpamUsers,
-    getSubjects,
     getSubscriptions,
     getThreadIds,
     getUnrevisedEntities,
