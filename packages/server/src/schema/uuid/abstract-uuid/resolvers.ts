@@ -204,7 +204,7 @@ async function resolveUuidFromDatabase(
       CASE
         WHEN comment_status.name = 'no_status' THEN 'noStatus'
         ELSE comment_status.name
-      END AS commentStatus
+      END AS commentStatus,
       
       taxonomy_type.name as taxonomyType,
       taxonomy_instance.subdomain as taxonomyInstance,
