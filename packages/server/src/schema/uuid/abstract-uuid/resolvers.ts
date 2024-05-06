@@ -246,6 +246,10 @@ async function resolveUuidFromDatabase(
     LEFT JOIN term ON term.id = term_taxonomy.term_id
     LEFT JOIN term_taxonomy taxonomy_child ON taxonomy_child.parent_id = term_taxonomy.id
     LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+
+    LEFT JOIN user ON user.id = uuid.id
+    LEFT JOIN role_user ON user.id = role_user.user_id
+    LEFT JOIN role ON role.id = role_user.role_id
     
     WHERE uuid.id = ?
     GROUP BY uuid.id
