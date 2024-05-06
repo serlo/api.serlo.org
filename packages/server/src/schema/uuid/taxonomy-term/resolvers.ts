@@ -2,6 +2,7 @@ import * as serloAuth from '@serlo/authorization'
 
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { Context } from '~/context'
+import { UserInputError } from '~/errors'
 import {
   createNamespace,
   assertUserIsAuthenticated,
@@ -9,9 +10,14 @@ import {
   assertStringIsNotEmpty,
   Model,
 } from '~/internals/graphql'
-import { TaxonomyTermDecoder } from '~/model/decoder'
+import {
+  DiscriminatorType,
+  NotificationEventType,
+  TaxonomyTermDecoder,
+} from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
+import { createEvent } from '~/schema/events/event'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
@@ -192,31 +198,54 @@ export const resolvers: Resolvers = {
       return { success, query: {} }
     },
     async setNameAndDescription(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
-      const { id, name, description = null } = input
+      const { name } = input
 
       assertStringIsNotEmpty({ name })
 
-      const scope = await fetchScopeOfUuid({ id }, context)
+      const taxonomyTerm = await UuidResolver.resolve(input, context)
+
+      if (
+        taxonomyTerm == null ||
+        taxonomyTerm.__typename !== DiscriminatorType.TaxonomyTerm
+      ) {
+        throw new UserInputError(`Taxonomy term ${input.id} does not exists`)
+      }
 
       await assertUserIsAuthorized({
         message:
           'You are not allowed to set name or description of this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.set(scope),
+        guard: serloAuth.TaxonomyTerm.set(
+          serloAuth.instanceToScope(taxonomyTerm.instance),
+        ),
         context,
       })
 
-      const { success } =
-        await dataSources.model.serlo.setTaxonomyTermNameAndDescription({
-          id,
-          name,
-          description,
-          userId,
-        })
+      await database.mutate(
+        `
+          UPDATE term
+          JOIN term_taxonomy ON term.id = term_taxonomy.term_id
+          SET term.name = ?,
+              term_taxonomy.description = ?
+          WHERE term_taxonomy.id = ?;
+        `,
+        [input.name, input.description, input.id],
+      )
 
-      return { success, query: {} }
+      await createEvent(
+        {
+          __typename: NotificationEventType.SetTaxonomyTerm,
+          taxonomyTermId: input.id,
+          actorId: userId,
+          instance: taxonomyTerm.instance,
+        },
+        context,
+      )
+      await UuidResolver.removeCacheEntry(input, context)
+
+      return { success: true, query: {} }
     },
   },
 }
