@@ -1,39 +1,4 @@
-import gql from 'graphql-tag'
-
-import { Client } from '../../__utils__'
-
-export const taxonomyTermQuery = new Client().prepareQuery({
-  query: gql`
-    query ($id: Int!) {
-      uuid(id: $id) {
-        __typename
-        ... on TaxonomyTerm {
-          id
-          trashed
-          type
-          instance
-          alias
-          title
-          name
-          description
-          weight
-          taxonomyId
-          path {
-            id
-          }
-          parent {
-            id
-          }
-          children {
-            nodes {
-              id
-            }
-          }
-        }
-      }
-    }
-  `,
-})
+import { taxonomyTermQuery } from '../../__utils__'
 
 test('TaxonomyTerm root', async () => {
   await taxonomyTermQuery.withVariables({ id: 3 }).shouldReturnData({
