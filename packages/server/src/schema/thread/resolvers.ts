@@ -7,6 +7,7 @@ import {
   encodeThreadId,
   resolveThreads,
 } from './utils'
+import { createEvent } from '../events/event'
 import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
@@ -18,13 +19,17 @@ import {
 import {
   CommentDecoder,
   DiscriminatorType,
+  NotificationEventType,
   UserDecoder,
   UuidDecoder,
 } from '~/model/decoder'
-import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { fetchInstance, fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { decodeSubjectId } from '~/schema/subject/utils'
-import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
+import {
+  UuidResolver,
+  setUuidState,
+} from '~/schema/uuid/abstract-uuid/resolvers'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { CommentStatus, Resolvers } from '~/types'
 
@@ -325,7 +330,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadState(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const { trashed } = payload.input
       const ids = decodeThreadIds(payload.input.id)
 
@@ -342,12 +347,45 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
+      const transaction = await database.beginTransaction()
 
-      return { success: true, query: {} }
+      try {
+        for (const id of ids) {
+          const comment = await UuidResolver.resolve({ id }, context)
+
+          if (comment?.__typename !== DiscriminatorType.Comment) {
+            throw new UserInputError(`${id} is no comment`)
+          }
+
+          const instance = await fetchInstance(comment, context)
+
+          if (instance == null) {
+            throw new UserInputError('comment must have an instance')
+          }
+
+          await setUuidState({ id, trashed }, context)
+
+          await createEvent(
+            {
+              __typename: NotificationEventType.SetThreadState,
+              actorId: userId,
+              archived: trashed,
+              threadId: comment.id,
+              instance,
+            },
+            context,
+          )
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async setCommentState(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { userId } = context
       const { id: ids, trashed } = payload.input
 
       const scopes = await Promise.all(
@@ -375,9 +413,42 @@ export const resolvers: Resolvers = {
         })
       }
 
-      await dataSources.model.serlo.setUuidState({ ids, trashed, userId })
+      const transaction = await database.beginTransaction()
 
-      return { success: true, query: {} }
+      try {
+        for (const id of ids) {
+          const comment = await UuidResolver.resolve({ id }, context)
+
+          if (comment?.__typename !== DiscriminatorType.Comment) {
+            throw new UserInputError(`${id} is no comment`)
+          }
+
+          const instance = await fetchInstance(comment, context)
+
+          if (instance == null) {
+            throw new UserInputError('comment must have an instance')
+          }
+
+          await setUuidState({ id, trashed }, context)
+
+          await createEvent(
+            {
+              __typename: NotificationEventType.SetThreadState,
+              actorId: userId,
+              archived: trashed,
+              threadId: comment.id,
+              instance,
+            },
+            context,
+          )
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
   },
 }

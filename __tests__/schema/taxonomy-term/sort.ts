@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
 
-import { Client } from '../../__utils__'
-import { taxonomyTermQuery } from '../uuid/taxonomy-term'
+import { Client, taxonomyTermQuery } from '../../__utils__'
 
 const input = {
   childrenIds: [18888, 18887, 21069, 18884, 23256, 18232, 18885, 18886],
