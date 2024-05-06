@@ -1,8 +1,7 @@
 import gql from 'graphql-tag'
 
 import { exercise } from '../../../__fixtures__'
-import { Client } from '../../__utils__'
-import { taxonomyTermQuery } from '../uuid/taxonomy-term'
+import { Client, taxonomyTermQuery } from '../../__utils__'
 
 const input = {
   entityIds: [32321, 1855],
