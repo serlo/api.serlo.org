@@ -166,7 +166,10 @@ async function resolveUuidFromDatabase(
         comment.parent_id as parentCommentId,
         comment.uuid_id as parentUuid,
         JSON_ARRAYAGG(comment_children.id) as childrenIds,
-        comment_status.name as status
+        CASE
+          WHEN comment_status.name = 'no_status' THEN 'noStatus'
+          ELSE comment_status.name
+        END AS status
       from uuid
       left join comment on comment.id = uuid.id
       left join comment comment_children on comment_children.parent_id = comment.id
