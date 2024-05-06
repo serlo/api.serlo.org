@@ -78,7 +78,7 @@ interface ResolverSpec<Payload, Result> {
   getPayload: (key: string) => O.Option<Payload>
   getCurrentValue: (
     args: Payload,
-    context: Pick<Context, 'database' | 'timer'>,
+    context: Pick<Context, 'database' | 'timer' | 'swrQueue' | 'cache'>,
   ) => Promise<unknown>
   enableSwr: boolean
   swrFrequency?: number

@@ -584,57 +584,6 @@ export function createSerloModel({
     },
   })
 
-  const linkEntitiesToTaxonomy = createMutation({
-    type: 'TaxonomyCreateEntityLinksMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyCreateEntityLinksMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyCreateEntityLinksMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyCreateEntityLinksMutation',
-        payload,
-      )
-    },
-    async updateCache({ taxonomyTermId, entityIds }, { success }) {
-      if (success) {
-        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
-        await UuidResolver.removeCacheEntries(payloads, context)
-      }
-    },
-  })
-
-  const unlinkEntitiesFromTaxonomy = createMutation({
-    type: 'TaxonomyCreateEntityLinksMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyDeleteEntityLinksMutation',
-        payload,
-      )
-    },
-    async updateCache({ taxonomyTermId, entityIds }, { success }) {
-      if (success) {
-        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
-        await UuidResolver.removeCacheEntries(payloads, context)
-      }
-    },
-  })
-
-  const createTaxonomyTerm = createMutation({
-    type: 'TaxonomyTermCreateMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyTermCreateMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomyTermCreateMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomyTermCreateMutation', payload)
-    },
-    async updateCache({ parentId }) {
-      if (parentId) {
-        await UuidResolver.removeCacheEntry({ id: parentId }, context)
-      }
-    },
-  })
-
   const sortEntity = createMutation({
     type: 'EntitySortMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
@@ -645,20 +594,6 @@ export function createSerloModel({
     async updateCache({ entityId }, { success }) {
       if (success) {
         await UuidResolver.removeCacheEntry({ id: entityId }, context)
-      }
-    },
-  })
-
-  const sortTaxonomyTerm = createMutation({
-    type: 'TaxonomySortMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
-    },
-
-    async updateCache({ taxonomyTermId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
       }
     },
   })
@@ -681,26 +616,6 @@ export function createSerloModel({
     decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
     async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
       return DatabaseLayer.makeRequest('PagesQuery', payload)
-    },
-  })
-
-  const setTaxonomyTermNameAndDescription = createMutation({
-    type: 'TaxonomyTermSetNameAndDescriptionMutation',
-    decoder: DatabaseLayer.getDecoderFor(
-      'TaxonomyTermSetNameAndDescriptionMutation',
-    ),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyTermSetNameAndDescriptionMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyTermSetNameAndDescriptionMutation',
-        payload,
-      )
-    },
-    async updateCache({ id }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id }, context)
-      }
     },
   })
 
@@ -740,7 +655,6 @@ export function createSerloModel({
     createComment,
     createEntity,
     createPage,
-    createTaxonomyTerm,
     createThread,
     deleteBots,
     deleteRegularUsers,
@@ -756,17 +670,13 @@ export function createSerloModel({
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
     getUsersByRole,
-    linkEntitiesToTaxonomy,
     getPages,
     rejectEntityRevision,
     setEmail,
     setEntityLicense,
     setSubscription,
-    setTaxonomyTermNameAndDescription,
     sortEntity,
-    sortTaxonomyTerm,
     setUuidState,
-    unlinkEntitiesFromTaxonomy,
   }
 }
 

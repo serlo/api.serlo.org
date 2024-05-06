@@ -10,7 +10,6 @@ import {
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
-  TaxonomyTermDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -196,54 +195,6 @@ export const spec = {
       sendEmail: t.boolean,
     }),
     response: t.void,
-    canBeNull: false,
-  },
-  TaxonomyCreateEntityLinksMutation: {
-    payload: t.type({
-      entityIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  TaxonomyDeleteEntityLinksMutation: {
-    payload: t.type({
-      entityIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  TaxonomyTermCreateMutation: {
-    payload: t.type({
-      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
-      name: t.string,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-      parentId: t.number,
-    }),
-    response: TaxonomyTermDecoder,
-    canBeNull: false,
-  },
-  TaxonomySortMutation: {
-    payload: t.type({
-      childrenIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
-  TaxonomyTermSetNameAndDescriptionMutation: {
-    payload: t.type({
-      name: t.string,
-      id: t.number,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-    }),
-    response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
   ThreadCreateCommentMutation: {

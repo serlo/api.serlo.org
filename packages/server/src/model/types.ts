@@ -149,6 +149,11 @@ export interface Models {
     record: t.TypeOf<typeof AbstractEntityDecoder> | null
     query: Record<string, never>
   }
+  TaxonomyTermCreateResponse: {
+    success: boolean
+    record: t.TypeOf<typeof TaxonomyTermDecoder> | null
+    query: Record<string, never>
+  }
 }
 
 enum Role {
