@@ -276,9 +276,9 @@ describe('User', () => {
     })
 
     test('by id (w/ activeAuthor when user is not an active author', async () => {
-      query.changeInput({ id: user2.id })
-
-      await query.shouldReturnData({ uuid: { isActiveAuthor: false } })
+      await query
+        .withVariables({ id: user2.id })
+        .shouldReturnData({ uuid: { isActiveAuthor: false } })
     })
   })
 
