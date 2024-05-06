@@ -153,29 +153,29 @@ async function resolveUuidFromDatabase(
   { id }: { id: number },
   context: Pick<Context, 'database'>,
 ): Promise<Model<'AbstractUuid'> | null> {
-  const baseUuid = await context.database.fetchOptional(
-    ` select
-        uuid.id as id,
-        uuid.trashed,
-        uuid.discriminator,
-        comment.author_id as authorId,
-        comment.title as title,
-        comment.date as date,
-        comment.archived as archived,
-        comment.content as content,
-        comment.parent_id as parentCommentId,
-        comment.uuid_id as parentUuid,
-        JSON_ARRAYAGG(comment_children.id) as childrenIds,
-        CASE
-          WHEN comment_status.name = 'no_status' THEN 'noStatus'
-          ELSE comment_status.name
-        END AS status
-      from uuid
-      left join comment on comment.id = uuid.id
-      left join comment comment_children on comment_children.parent_id = comment.id
-      left join comment_status on comment_status.id = comment.comment_status_id
-      where uuid.id = ?
-      group by uuid.id
+  const baseUuid = await context.database.fetchOptional(`
+    SELECT
+      uuid.id as id,
+      uuid.trashed,
+      uuid.discriminator,
+      comment.author_id as authorId,
+      comment.title as title,
+      comment.date as date,
+      comment.archived as archived,
+      comment.content as content,
+      comment.parent_id as parentCommentId,
+      comment.uuid_id as parentUuid,
+      JSON_ARRAYAGG(comment_children.id) as childrenIds,
+      CASE
+        WHEN comment_status.name = 'no_status' THEN 'noStatus'
+        ELSE comment_status.name
+      END AS status
+    FROM uuid
+    LEFT JOIN comment ON comment.id = uuid.id
+    LEFT JOIN comment comment_children ON comment_children.parent_id = comment.id
+    LEFT JOIN comment_status on comment_status.id = comment.comment_status_id
+    WHERE uuid.id = ?
+    GROUP BY uuid.id
     `,
     [id],
   )
