@@ -40,44 +40,76 @@ beforeEach(() => {
   )
 })
 
+test('status is actually changed', async function () {
+  const threadQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query (
+          $first: Int
+          $after: String
+          $instance: Instance
+          $subjectId: String
+          $status: CommentStatus
+        ) {
+          thread {
+            allThreads(
+              first: $first
+              after: $after
+              instance: $instance
+              subjectId: $subjectId
+              status: $status
+            ) {
+              nodes {
+                id
+                status
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ first: 1 })
+
+  await threadQuery.shouldReturnData({
+    thread: {
+      allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'noStatus' }] },
+    },
+  })
+
+  await mutation
+    .withContext({ userId: moderator.id })
+    .withInput({ id: 'dDM1MTYz', status: 'done' })
+    .shouldReturnData({
+      thread: { setThreadStatus: { success: true } },
+    })
+
+  await threadQuery.shouldReturnData({
+    thread: { allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'done' }] } },
+  })
+})
+
 test('unauthenticated user gets error', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-describe('Authorization:', () => {
-  beforeEach(() => {
-    given('ThreadSetThreadStatusMutation')
-      .withPayload({ ids: [thread.id], status: 'open' })
-      .returns({ success: true })
+test('thread initiators are allowed to change thread status', async () => {
+  await mutation.shouldReturnData({
+    thread: { setThreadStatus: { success: true } },
   })
+})
 
-  test('thread initiators are allowed to change thread status', async () => {
-    await mutation.shouldReturnData({
-      thread: { setThreadStatus: { success: true } },
-    })
+test('commentators are allowed to change thread status', async () => {
+  await mutation.withContext({ userId: commentator.id }).shouldReturnData({
+    thread: { setThreadStatus: { success: true } },
   })
+})
 
-  test('commentators are allowed to change thread status', async () => {
-    await mutation
-      .withContext({
-        userId: commentator.id,
-      })
-      .shouldReturnData({
-        thread: { setThreadStatus: { success: true } },
-      })
+test('moderators are allowed to change thread status', async () => {
+  await mutation.withContext({ userId: moderator.id }).shouldReturnData({
+    thread: { setThreadStatus: { success: true } },
   })
+})
 
-  test('moderators are allowed to change thread status', async () => {
-    await mutation
-      .withContext({
-        userId: moderator.id,
-      })
-      .shouldReturnData({
-        thread: { setThreadStatus: { success: true } },
-      })
-  })
-
-  test('unauthorized users get error', async () => {
-    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
-  })
+test('unauthorized users get error', async () => {
+  await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
 })
