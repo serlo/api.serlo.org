@@ -24,6 +24,20 @@ export const article: ArticleWithAllFieldsDefined = {
   canonicalSubjectId: 5,
 }
 
+export const articleEn: ArticleWithAllFieldsDefined = {
+  __typename: EntityType.Article,
+  id: 138148,
+  trashed: false,
+  instance: Instance.En,
+  alias: '/math/138148/addition',
+  date: '2014-03-01T20:45:56Z',
+  currentRevisionId: 272538,
+  licenseId,
+  taxonomyTermIds: [138146],
+  revisionIds: [272538],
+  canonicalSubjectId: 23593,
+}
+
 export const article2: Model<'Article'> = {
   __typename: EntityType.Article,
   id: 1495,
@@ -46,6 +60,21 @@ export const articleRevision: Model<'ArticleRevision'> = {
   date: '2014-09-15T15:28:35Z',
   authorId: user.id,
   repositoryId: article.id,
+  title: 'title',
+  content: castToNonEmptyString('content'),
+  changes: 'changes',
+  metaDescription: 'metaDescription',
+  metaTitle: 'metaTitle',
+}
+
+export const articleEnRevision: Model<'ArticleRevision'> = {
+  __typename: EntityRevisionType.ArticleRevision,
+  id: 30674,
+  trashed: false,
+  alias: '/math/138148/addition',
+  date: '2014-09-15T15:28:35Z',
+  authorId: user.id,
+  repositoryId: articleEn.id,
   title: 'title',
   content: castToNonEmptyString('content'),
   changes: 'changes',
