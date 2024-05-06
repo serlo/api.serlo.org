@@ -603,25 +603,6 @@ export function createSerloModel({
     },
   })
 
-  const unlinkEntitiesFromTaxonomy = createMutation({
-    type: 'TaxonomyCreateEntityLinksMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomyDeleteEntityLinksMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'TaxonomyDeleteEntityLinksMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'TaxonomyDeleteEntityLinksMutation',
-        payload,
-      )
-    },
-    async updateCache({ taxonomyTermId, entityIds }, { success }) {
-      if (success) {
-        const payloads = [...entityIds, taxonomyTermId].map((id) => ({ id }))
-        await UuidResolver.removeCacheEntries(payloads, context)
-      }
-    },
-  })
-
   const sortEntity = createMutation({
     type: 'EntitySortMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
@@ -632,20 +613,6 @@ export function createSerloModel({
     async updateCache({ entityId }, { success }) {
       if (success) {
         await UuidResolver.removeCacheEntry({ id: entityId }, context)
-      }
-    },
-  })
-
-  const sortTaxonomyTerm = createMutation({
-    type: 'TaxonomySortMutation',
-    decoder: DatabaseLayer.getDecoderFor('TaxonomySortMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'TaxonomySortMutation'>) => {
-      return DatabaseLayer.makeRequest('TaxonomySortMutation', payload)
-    },
-
-    async updateCache({ taxonomyTermId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
       }
     },
   })
@@ -729,9 +696,7 @@ export function createSerloModel({
     setEntityLicense,
     setSubscription,
     sortEntity,
-    sortTaxonomyTerm,
     setUuidState,
-    unlinkEntitiesFromTaxonomy,
   }
 }
 
