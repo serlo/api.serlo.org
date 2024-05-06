@@ -17,7 +17,6 @@ import {
   NotificationEventType,
   TaxonomyTermDecoder,
 } from '~/model/decoder'
-import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createEvent } from '~/schema/events/event'
 import { createThreadResolvers } from '~/schema/thread/utils'
@@ -202,26 +201,104 @@ export const resolvers: Resolvers = {
       }
     },
     async createEntityLinks(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { entityIds, taxonomyTermId } = input
 
-      const scope = await fetchScopeOfUuid({ id: taxonomyTermId }, context)
+      const taxonomyTerm = await UuidResolver.resolve(
+        { id: taxonomyTermId },
+        context,
+      )
+      const entities = await Promise.all(
+        entityIds.map((id) => UuidResolver.resolve({ id }, context)),
+      )
+
+      if (
+        taxonomyTerm == null ||
+        taxonomyTerm.__typename !== DiscriminatorType.TaxonomyTerm
+      ) {
+        throw new UserInputError('termTaxonomyId must belong to taxonomy')
+      }
+
+      const canBeLinked = (entity: (typeof entities)[number]) => {
+        if (!EntityDecoder.is(entity)) return false
+        if (entity.__typename === EntityType.CoursePage) return false
+        if (entity.instance !== taxonomyTerm.instance) return false
+        if (
+          taxonomyTerm.type === 'topicFolder' &&
+          entity.__typename !== EntityType.Exercise &&
+          entity.__typename !== EntityType.ExerciseGroup
+        ) {
+          return false
+        }
+        if (
+          taxonomyTerm.type !== 'topicFolder' &&
+          (entity.__typename === EntityType.Exercise ||
+            entity.__typename === EntityType.ExerciseGroup)
+        ) {
+          return false
+        }
+        return true
+      }
+
+      if (entities.some((entity) => !canBeLinked(entity))) {
+        throw new UserInputError(
+          'At least one child cannot be added to the taxonomy',
+        )
+      }
 
       await assertUserIsAuthorized({
         message: 'You are not allowed to link entities to this taxonomy term.',
-        guard: serloAuth.TaxonomyTerm.change(scope),
+        guard: serloAuth.TaxonomyTerm.change(
+          serloAuth.instanceToScope(taxonomyTerm.instance),
+        ),
         context,
       })
 
-      const { success } = await dataSources.model.serlo.linkEntitiesToTaxonomy({
-        entityIds,
-        taxonomyTermId,
-        userId,
-      })
+      const transaction = await database.beginTransaction()
 
-      return { success, query: {} }
+      try {
+        for (const entity of entities) {
+          if (
+            !EntityDecoder.is(entity) ||
+            entity.__typename === EntityType.CoursePage ||
+            entity.taxonomyTermIds.includes(taxonomyTermId)
+          ) {
+            continue
+          }
+
+          const { lastPosition } = await database.fetchOne<{
+            lastPosition: number
+          }>(
+            `
+              SELECT IFNULL(MAX(position), 0) as lastPosition
+                FROM term_taxonomy_entity
+                WHERE term_taxonomy_id = ?`,
+            [taxonomyTermId],
+          )
+
+          await database.mutate(
+            `
+            insert into term_taxonomy_entity (entity_id, term_taxonomy_id, position)
+              values (?,?,?)
+          `,
+            [entity.id, taxonomyTermId, lastPosition + 1],
+          )
+        }
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntries(
+          entityIds.map((id) => ({ id })),
+          context,
+        )
+        await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async deleteEntityLinks(_parent, { input }, context) {
       const { database, userId } = context
