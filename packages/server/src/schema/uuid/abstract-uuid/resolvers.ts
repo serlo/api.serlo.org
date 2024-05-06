@@ -179,6 +179,18 @@ const BaseTaxonomy = t.intersection([
   }),
 ])
 
+const BaseUser = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('user'),
+    userUsername: t.string,
+    userDate: date,
+    userLastLogin: date,
+    userDescription: t.string,
+    userRoles: t.array(t.string)
+  })
+])
+
 async function resolveUuidFromDatabase(
   { id }: { id: number },
   context: Pick<Context, 'database' | 'timer' | 'swrQueue' | 'cache'>,
