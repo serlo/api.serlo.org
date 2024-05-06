@@ -183,15 +183,6 @@ export const spec = {
     response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
-  SubjectsQuery: {
-    payload: t.type({}),
-    response: t.strict({
-      subjects: t.array(
-        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number }),
-      ),
-    }),
-    canBeNull: false,
-  },
   SubscriptionsQuery: {
     payload: t.type({ userId: t.number }),
     response: SubscriptionsDecoder,
