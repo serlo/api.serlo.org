@@ -10,7 +10,6 @@ import {
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
-  TaxonomyTermDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -214,17 +213,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  TaxonomyTermCreateMutation: {
-    payload: t.type({
-      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
-      name: t.string,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-      parentId: t.number,
-    }),
-    response: TaxonomyTermDecoder,
     canBeNull: false,
   },
   TaxonomySortMutation: {
