@@ -169,24 +169,6 @@ export function createSerloModel({
     context,
   )
 
-  const getSubjects = createLegacyQuery(
-    {
-      type: 'SubjectsQuery',
-      decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
-      getCurrentValue: () => {
-        return DatabaseLayer.makeRequest('SubjectsQuery', {})
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: () => 'serlo.org/subjects',
-      getPayload: (key) => {
-        return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
-      },
-      examplePayload: undefined,
-    },
-    context,
-  )
-
   const getUnrevisedEntities = createLegacyQuery(
     {
       type: 'UnrevisedEntitiesQuery',
@@ -256,7 +238,7 @@ export function createSerloModel({
 
   const getSubscriptions = createLegacyQuery(
     {
-      type: 'SubjectsQuery',
+      type: 'SubscriptionsQuery',
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
       getCurrentValue: (
@@ -382,22 +364,6 @@ export function createSerloModel({
         'ThreadSetThreadArchivedMutation',
         payload,
       )
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
-  const setThreadStatus = createMutation({
-    type: 'ThreadSetThreadStatusMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
     },
     async updateCache({ ids }) {
       await UuidResolver.removeCacheEntries(
@@ -765,7 +731,6 @@ export function createSerloModel({
     getDeletedEntities,
     getNotificationEvent,
     getPotentialSpamUsers,
-    getSubjects,
     getSubscriptions,
     getThreadIds,
     getUnrevisedEntities,
@@ -777,7 +742,6 @@ export function createSerloModel({
     setEmail,
     setEntityLicense,
     setSubscription,
-    setThreadStatus,
     sortEntity,
     sortTaxonomyTerm,
     setUuidState,

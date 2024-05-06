@@ -43,18 +43,6 @@ const comment3 = {
 describe('allThreads', () => {
   beforeEach(() => {
     given('UuidQuery').for(article, article2)
-    given('SubjectsQuery').returns({
-      subjects: [
-        {
-          instance: article.instance,
-          taxonomyTermId: article.taxonomyTermIds[0],
-        },
-        {
-          instance: article2.instance,
-          taxonomyTermId: article2.taxonomyTermIds[0],
-        },
-      ],
-    })
   })
 
   const query = new Client().prepareQuery({
