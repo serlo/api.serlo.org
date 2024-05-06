@@ -232,7 +232,14 @@ async function resolveUuidFromDatabase(
       JSON_OBJECTAGG(
         COALESCE(term_taxonomy_entity.entity_id, "__no_key"),
         term_taxonomy_entity.position
-      ) AS taxonomyEntityChildrenIds      
+      ) AS taxonomyEntityChildrenIds
+
+      user.username AS userUsername
+      user.date AS userDate
+      user.last_login AS userLastLogin
+      user.description AS userDescription
+      JSON_ARRAYAGG(role.name) AS userRoles
+      
     FROM uuid
  
     LEFT JOIN comment ON comment.id = uuid.id
