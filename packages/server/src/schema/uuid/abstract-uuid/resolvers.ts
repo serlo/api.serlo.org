@@ -185,55 +185,58 @@ async function resolveUuidFromDatabase(
 ): Promise<Model<'AbstractUuid'> | null> {
   const baseUuid = await context.database.fetchOptional(
     `
-      select
-        uuid.id as id,
-        uuid.trashed,
-        uuid.discriminator,
+    SELECT
+      uuid.id as id,
+      uuid.trashed,
+      uuid.discriminator,
 
-        comment.author_id as commentAuthorId,
-        comment.title as commentTitle,
-        comment.date as commentDate,
-        comment.archived as commentArchived,
-        comment.content as commentContent,
-        comment.parent_id as commentParentCommentId,
-        comment.uuid_id as commentParentUuid,
-        JSON_OBJECTAGG(
+      comment.author_id as authorId,
+      comment.title as title,
+      comment.date as date,
+      comment.archived as archived,
+      comment.content as content,
+      comment.parent_id as parentCommentId,
+      comment.uuid_id as parentUuid,
+      JSON_OBJECTAGG(
           COALESCE(comment_children.id, "__no_key"),
           comment_children.id
-        ) as commentChildrenIds,
-        comment_status.name as commentStatus,
+      ) AS commentChildrenIds,
+      CASE
+        WHEN comment_status.name = 'no_status' THEN 'noStatus'
+        ELSE comment_status.name
+      END AS status
+      
+      taxonomy_type.name as taxonomyType,
+      taxonomy_instance.subdomain as taxonomyInstance,
+      term.name as taxonomyName,
+      term_taxonomy.description as taxonomyDescription,
+      term_taxonomy.weight as taxonomyWeight,
+      taxonomy.id as taxonomyId,
+      term_taxonomy.parent_id as taxonomyParentId,
+      JSON_OBJECTAGG(
+        COALESCE(taxonomy_child.id, "__no_key"),
+        taxonomy_child.weight
+      ) as taxonomyChildrenIds,
+      JSON_OBJECTAGG(
+        COALESCE(term_taxonomy_entity.entity_id, "__no_key"),
+        term_taxonomy_entity.position
+      ) as taxonomyEntityChildrenIds      
+    FROM uuid
+ 
+    LEFT JOIN comment ON comment.id = uuid.id
+    LEFT JOIN comment comment_children ON comment_children.parent_id = comment.id
+    LEFT JOIN comment_status on comment_status.id = comment.comment_status_id
 
-        taxonomy_type.name as taxonomyType,
-        taxonomy_instance.subdomain as taxonomyInstance,
-        term.name as taxonomyName,
-        term_taxonomy.description as taxonomyDescription,
-        term_taxonomy.weight as taxonomyWeight,
-        taxonomy.id as taxonomyId,
-        term_taxonomy.parent_id as taxonomyParentId,
-        JSON_OBJECTAGG(
-          COALESCE(taxonomy_child.id, "__no_key"),
-          taxonomy_child.weight
-        ) as taxonomyChildrenIds,
-        JSON_OBJECTAGG(
-          COALESCE(term_taxonomy_entity.entity_id, "__no_key"),
-          term_taxonomy_entity.position
-        ) as taxonomyEntityChildrenIds
-      from uuid
-
-      left join comment on comment.id = uuid.id
-      left join comment comment_children on comment_children.parent_id = comment.id
-      left join comment_status on comment_status.id = comment.id
-
-      left join term_taxonomy on term_taxonomy.id = uuid.id
-      left join taxonomy on taxonomy.id = term_taxonomy.taxonomy_id
-      left join type taxonomy_type on taxonomy_type.id = taxonomy.type_id
-      left join instance taxonomy_instance on taxonomy_instance.id = taxonomy.instance_id
-      left join term on term.id = term_taxonomy.term_id
-      left join term_taxonomy taxonomy_child on taxonomy_child.parent_id = term_taxonomy.id
-      left join term_taxonomy_entity on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
-
-      where uuid.id = ?
-      group by uuid.id
+    left join term_taxonomy on term_taxonomy.id = uuid.id
+    left join taxonomy on taxonomy.id = term_taxonomy.taxonomy_id
+    left join type taxonomy_type on taxonomy_type.id = taxonomy.type_id
+    left join instance taxonomy_instance on taxonomy_instance.id = taxonomy.instance_id
+    left join term on term.id = term_taxonomy.term_id
+    left join term_taxonomy taxonomy_child on taxonomy_child.parent_id = term_taxonomy.id
+    left join term_taxonomy_entity on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+    
+    WHERE uuid.id = ?
+    GROUP BY uuid.id
     `,
     [id],
   )
