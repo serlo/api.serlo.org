@@ -190,13 +190,13 @@ async function resolveUuidFromDatabase(
       uuid.trashed,
       uuid.discriminator,
 
-      comment.author_id as authorId,
-      comment.title as title,
-      comment.date as date,
-      comment.archived as archived,
-      comment.content as content,
-      comment.parent_id as parentCommentId,
-      comment.uuid_id as parentUuid,
+      comment.author_id as commentAuthorId,
+      comment.title as commentTitle,
+      comment.date as commentDate,
+      comment.archived as commentArchived,
+      comment.content as commentContent,
+      comment.parent_id as commentParentCommentId,
+      comment.uuid_id as commentParentUuid,
       JSON_OBJECTAGG(
           COALESCE(comment_children.id, "__no_key"),
           comment_children.id
@@ -204,7 +204,7 @@ async function resolveUuidFromDatabase(
       CASE
         WHEN comment_status.name = 'no_status' THEN 'noStatus'
         ELSE comment_status.name
-      END AS status
+      END AS commentStatus
       
       taxonomy_type.name as taxonomyType,
       taxonomy_instance.subdomain as taxonomyInstance,
