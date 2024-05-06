@@ -391,22 +391,6 @@ export function createSerloModel({
     },
   })
 
-  const setThreadStatus = createMutation({
-    type: 'ThreadSetThreadStatusMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
   const createEntity = createMutation({
     type: 'EntityCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
@@ -798,7 +782,6 @@ export function createSerloModel({
     setEntityLicense,
     setSubscription,
     setTaxonomyTermNameAndDescription,
-    setThreadStatus,
     sortEntity,
     sortTaxonomyTerm,
     setUuidState,
