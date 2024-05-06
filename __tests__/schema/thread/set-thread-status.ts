@@ -68,23 +68,35 @@ test('status is actually changed', async function () {
         }
       `,
     })
-    .withVariables({ first: 1 })
+    .withVariables({ first: 3 })
 
-  await threadQuery.shouldReturnData({
+  const queryResult = await threadQuery.getData()
+  const data = queryResult as {
     thread: {
-      allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'noStatus' }] },
-    },
+      allThreads: {
+        nodes: Array<{ id: string; status: string }>
+      }
+    }
+  }
+
+  const threadIDs = data.thread.allThreads.nodes.map((node) => {
+    expect(node.status).toBe('noStatus')
+    return node.id
   })
 
   await mutation
     .withContext({ userId: moderator.id })
-    .withInput({ id: 'dDM1MTYz', status: 'done' })
+    .withInput({ id: threadIDs, status: 'done' })
     .shouldReturnData({
       thread: { setThreadStatus: { success: true } },
     })
 
   await threadQuery.shouldReturnData({
-    thread: { allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'done' }] } },
+    thread: {
+      allThreads: {
+        nodes: threadIDs.map((id) => ({ id, status: 'done' })),
+      },
+    },
   })
 })
 
