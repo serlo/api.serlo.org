@@ -187,8 +187,8 @@ const BaseUser = t.intersection([
     userDate: date,
     userLastLogin: date,
     userDescription: t.string,
-    userRoles: t.array(t.string)
-  })
+    userRoles: t.array(t.string),
+  }),
 ])
 
 async function resolveUuidFromDatabase(
@@ -311,6 +311,16 @@ async function resolveUuidFromDatabase(
         taxonomyId: baseUuid.taxonomyId,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
+      }
+    } else if (BaseUser.is(baseUuid)) {
+      return {
+        ...base,
+        __typename: DiscriminatorType.User,
+        username: baseUuid.userUsername,
+        date: baseUuid.userDate.toISOString(),
+        lastLogin: baseUuid.userLastLogin.toISOString(),
+        description: baseUuid.userDescription,
+        roles: baseUuid.userRoles,
       }
     }
   }
