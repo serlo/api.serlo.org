@@ -70,21 +70,30 @@ test('status is actually changed', async function () {
     })
     .withVariables({ first: 1 })
 
-  await threadQuery.shouldReturnData({
+  const queryResult = await threadQuery.getData()
+  const data = queryResult as {
     thread: {
-      allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'noStatus' }] },
-    },
-  })
+      allThreads: {
+        nodes: Array<{ id: string; status: string }>
+      }
+    }
+  }
+
+  const firstNode = data.thread.allThreads.nodes[0]
+  const queriedId = firstNode.id
+  const queriedStatus = firstNode.status
+
+  expect(queriedStatus).toBe('noStatus')
 
   await mutation
     .withContext({ userId: moderator.id })
-    .withInput({ id: 'dDM1MTYz', status: 'done' })
+    .withInput({ id: queriedId, status: 'done' })
     .shouldReturnData({
       thread: { setThreadStatus: { success: true } },
     })
 
   await threadQuery.shouldReturnData({
-    thread: { allThreads: { nodes: [{ id: 'dDM1MTYz', status: 'done' }] } },
+    thread: { allThreads: { nodes: [{ id: queriedId, status: 'done' }] } },
   })
 })
 
