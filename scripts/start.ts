@@ -28,7 +28,9 @@ async function main() {
 
         if (serverProcess) serverProcess.kill()
 
-        serverProcess = spawn('node', [outfile], { stdio: 'inherit' })
+        serverProcess = spawn('node', ['--enable-source-maps', outfile], {
+          stdio: 'inherit',
+        })
       })
     },
   }
