@@ -39,7 +39,7 @@ export const resolvers: Resolvers = {
   },
   ThreadQuery: {
     async allThreads(_parent, input, context) {
-      const { dataSources, database } = context
+      const { database } = context
       const subjectId = input.subjectId
         ? decodeSubjectId(input.subjectId)
         : null
@@ -127,10 +127,12 @@ export const resolvers: Resolvers = {
         ],
       )
 
-      const threads = await resolveThreads({
-        firstCommentIds: firstComments.map((firstComment) => firstComment.id),
-        dataSources,
-      })
+      const threads = await resolveThreads(
+        {
+          firstCommentIds: firstComments.map((firstComment) => firstComment.id),
+        },
+        context,
+      )
 
       // TODO: The types do not match
       // TODO: Support for resolving small changes
@@ -165,11 +167,9 @@ export const resolvers: Resolvers = {
     status(thread) {
       return convertToApiCommentStatus(thread.commentPayloads[0].status)
     },
-    async object(thread, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: thread.commentPayloads[0].parentId,
-        decoder: UuidDecoder,
-      })
+    object(thread, _args, context) {
+      const id = thread.commentPayloads[0].parentId
+      return UuidResolver.resolveWithDecoder(UuidDecoder, { id }, context)
     },
     comments(thread, cursorPayload) {
       return resolveConnection({
@@ -186,30 +186,28 @@ export const resolvers: Resolvers = {
     createdAt(comment) {
       return comment.date
     },
-    async author(comment, _args, { dataSources }) {
-      return await dataSources.model.serlo.getUuidWithCustomDecoder({
-        id: comment.authorId,
-        decoder: UserDecoder,
-      })
+    async author(comment, _args, context) {
+      const id = comment.authorId
+      return await UuidResolver.resolveWithDecoder(UserDecoder, { id }, context)
     },
-    async legacyObject(comment, _args, { dataSources }) {
-      return resolveObject(comment, dataSources)
+    async legacyObject(comment, _args, context) {
+      return resolveObject(comment, context)
     },
   },
   Mutation: {
     thread: createNamespace(),
   },
   ThreadMutation: {
-    async createThread(_parent, payload, { dataSources, userId }) {
+    async createThread(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { objectId } = payload.input
-      const scope = await fetchScopeOfUuid({ id: objectId, dataSources })
+      const scope = await fetchScopeOfUuid({ id: objectId }, context)
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guard: auth.Thread.createThread(scope),
         message: 'You are not allowed to create a thread on this object.',
-        dataSources,
+        context,
       })
 
       const commentPayload = await dataSources.model.serlo.createThread({
@@ -226,16 +224,16 @@ export const resolvers: Resolvers = {
         query: {},
       }
     },
-    async createComment(_parent, { input }, { dataSources, userId }) {
+    async createComment(_parent, { input }, context) {
+      const { dataSources, userId } = context
       const threadId = decodeThreadId(input.threadId)
-      const scope = await fetchScopeOfUuid({ id: threadId, dataSources })
+      const scope = await fetchScopeOfUuid({ id: threadId }, context)
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guard: auth.Thread.createComment(scope),
         message: 'You are not allowed to comment on this thread.',
-        dataSources,
+        context,
       })
 
       const commentPayload = await dataSources.model.serlo.createComment({
@@ -251,7 +249,7 @@ export const resolvers: Resolvers = {
       }
     },
     async editComment(_parent, { input }, context) {
-      const { dataSources, userId, database } = context
+      const { userId, database } = context
 
       assertUserIsAuthenticated(userId)
 
@@ -259,12 +257,11 @@ export const resolvers: Resolvers = {
 
       if (content.trim() === '') throw new UserInputError('content is empty')
 
-      const scope = await fetchScopeOfUuid({ id: commentId, dataSources })
+      const scope = await fetchScopeOfUuid({ id: commentId }, context)
       await assertUserIsAuthorized({
-        userId,
         guard: auth.Thread.createThread(scope),
         message: 'You are not allowed to edit this thread or comment.',
-        dataSources,
+        context,
       })
 
       await database.mutate(`UPDATE comment set content = ? where id = ?`, [
@@ -272,43 +269,52 @@ export const resolvers: Resolvers = {
         commentId,
       ])
 
-      await UuidResolver.removeCache({ id: commentId }, context)
+      await UuidResolver.removeCacheEntry({ id: commentId }, context)
 
       return { success: true, query: {} }
     },
     async setThreadStatus(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
 
       assertUserIsAuthenticated(userId)
 
       const { id, status } = payload.input
       const ids = decodeThreadIds(id)
 
-      const threads = await resolveThreads({
-        firstCommentIds: ids,
-        dataSources,
-      })
+      const threads = await resolveThreads({ firstCommentIds: ids }, context)
 
       await assertUserIsAuthorizedOrTookPartInDiscussion({ context, threads })
 
-      await dataSources.model.serlo.setThreadStatus({ ids, status })
+      await database.mutate(
+        `
+        UPDATE comment
+        SET comment_status_id = (SELECT id from comment_status where name = ?)
+        WHERE comment.id IN (${ids.join(',')})
+        `,
+        [status == CommentStatus.NoStatus ? 'no_status' : status],
+      )
+
+      await UuidResolver.removeCacheEntries(
+        ids.map((id) => ({ id })),
+        context,
+      )
 
       return { success: true, query: {} }
     },
-    async setThreadArchived(_parent, payload, { dataSources, userId }) {
+    async setThreadArchived(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
+        ids.map((id) => fetchScopeOfUuid({ id }, context)),
       )
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        userId,
         guards: scopes.map((scope) => auth.Thread.setThreadArchived(scope)),
         message: 'You are not allowed to archive the provided thread(s).',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.archiveThread({
@@ -318,43 +324,41 @@ export const resolvers: Resolvers = {
       })
       return { success: true, query: {} }
     },
-    async setThreadState(_parent, payload, { dataSources, userId }) {
+    async setThreadState(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { trashed } = payload.input
       const ids = decodeThreadIds(payload.input.id)
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
+        ids.map((id) => fetchScopeOfUuid({ id }, context)),
       )
 
       assertUserIsAuthenticated(userId)
 
       await assertUserIsAuthorized({
-        userId,
         guards: scopes.map((scope) => auth.Thread.setThreadState(scope)),
         message:
           'You are not allowed to set the state of the provided thread(s).',
-        dataSources,
+        context,
       })
 
       await dataSources.model.serlo.setUuidState({ ids, userId, trashed })
 
       return { success: true, query: {} }
     },
-    async setCommentState(_parent, payload, { dataSources, userId }) {
+    async setCommentState(_parent, payload, context) {
+      const { dataSources, userId } = context
       const { id: ids, trashed } = payload.input
 
       const scopes = await Promise.all(
-        ids.map((id) => fetchScopeOfUuid({ id, dataSources })),
+        ids.map((id) => fetchScopeOfUuid({ id }, context)),
       )
 
       assertUserIsAuthenticated(userId)
 
       const comments = await Promise.all(
         ids.map((id) =>
-          dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: CommentDecoder,
-          }),
+          UuidResolver.resolveWithDecoder(CommentDecoder, { id }, context),
         ),
       )
 
@@ -364,11 +368,10 @@ export const resolvers: Resolvers = {
 
       if (!currentUserHasCreatedAllComments) {
         await assertUserIsAuthorized({
-          userId,
           guards: scopes.map((scope) => auth.Thread.setCommentState(scope)),
           message:
             'You are not allowed to set the state of the provided comments(s).',
-          dataSources,
+          context,
         })
       }
 
@@ -381,15 +384,16 @@ export const resolvers: Resolvers = {
 
 async function resolveObject(
   comment: Model<'Comment'>,
-  dataSources: Context['dataSources'],
+  context: Context,
 ): Promise<Model<'AbstractUuid'>> {
-  const obj = await dataSources.model.serlo.getUuidWithCustomDecoder({
-    id: comment.parentId,
-    decoder: UuidDecoder,
-  })
+  const obj = await UuidResolver.resolveWithDecoder(
+    UuidDecoder,
+    { id: comment.parentId },
+    context,
+  )
 
   return obj.__typename === DiscriminatorType.Comment
-    ? resolveObject(obj, dataSources)
+    ? resolveObject(obj, context)
     : obj
 }
 
@@ -413,14 +417,11 @@ async function assertUserIsAuthorizedOrTookPartInDiscussion({
   context: Context
   threads: Model<'Thread'>[]
 }) {
-  const { dataSources, userId } = context
+  const { userId } = context
 
   const scopes = await Promise.all(
     threads.map((thread) =>
-      fetchScopeOfUuid({
-        id: thread.commentPayloads[0].parentId,
-        dataSources,
-      }),
+      fetchScopeOfUuid({ id: thread.commentPayloads[0].parentId }, context),
     ),
   )
 
@@ -429,10 +430,9 @@ async function assertUserIsAuthorizedOrTookPartInDiscussion({
 
   try {
     await assertUserIsAuthorized({
-      userId,
       guards: scopes.map((scope) => auth.Thread.setThreadStatus(scope)),
       message,
-      dataSources,
+      context,
     })
   } catch {
     for (const thread of threads) {

@@ -3,12 +3,10 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
-  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
-  NotificationDecoder,
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
@@ -128,39 +126,6 @@ export const spec = {
     response: NotificationEventDecoder,
     canBeNull: true,
   },
-  EventsQuery: {
-    payload: t.intersection([
-      t.type({ first: t.number }),
-      t.partial({
-        after: t.number,
-        actorId: t.number,
-        objectId: t.number,
-        instance: InstanceDecoder,
-      }),
-    ]),
-    response: t.type({
-      events: t.array(NotificationEventDecoder),
-      hasNextPage: t.boolean,
-    }),
-    canBeNull: false,
-  },
-  NotificationSetStateMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      unread: t.boolean,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
-  NotificationsQuery: {
-    payload: t.type({ userId: t.number }),
-    response: t.strict({
-      notifications: t.array(NotificationDecoder),
-      userId: t.number,
-    }),
-    canBeNull: false,
-  },
   PageAddRevisionMutation: {
     payload: t.type({
       content: t.string,
@@ -216,15 +181,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  SubjectsQuery: {
-    payload: t.type({}),
-    response: t.strict({
-      subjects: t.array(
-        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number }),
-      ),
-    }),
     canBeNull: false,
   },
   SubscriptionsQuery: {
@@ -321,14 +277,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.void,
-    canBeNull: false,
-  },
-  ThreadSetThreadStatusMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      status: CommentStatusDecoder,
-    }),
-    response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
   ThreadsQuery: {

@@ -1,3 +1,4 @@
+import { UuidResolver } from '../abstract-uuid/resolvers'
 import { TaxonomyTermDecoder } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { AbstractTaxonomyTermChildResolvers } from '~/types'
@@ -7,14 +8,11 @@ export function createTaxonomyTermChildResolvers(): Pick<
   'taxonomyTerms'
 > {
   return {
-    async taxonomyTerms(entity, cursorPayload, { dataSources }) {
+    async taxonomyTerms(entity, cursorPayload, context) {
       const taxonomyTerms = await Promise.all(
-        entity.taxonomyTermIds.map(async (id: number) => {
-          return await dataSources.model.serlo.getUuidWithCustomDecoder({
-            id,
-            decoder: TaxonomyTermDecoder,
-          })
-        }),
+        entity.taxonomyTermIds.map(async (id: number) =>
+          UuidResolver.resolveWithDecoder(TaxonomyTermDecoder, { id }, context),
+        ),
       )
       return resolveConnection({
         nodes: taxonomyTerms,

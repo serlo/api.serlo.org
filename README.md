@@ -47,9 +47,11 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 
 By default, while developing, the caching won't work. If you want to have caching, change the value `CACHE_TYPE` in `.env` to any other
 value besides 'empty'.  
-To check the cache locally, run `yarn cache:cli`.  
-With `GET <key>` you get the cache value of the key that is defined in [serlo.ts](https://github.com/serlo/api.serlo.org/blob/staging/packages/server/src/model/serlo.ts).  
-See in `package.json` for other scripts regarding cache.
+To check the cache locally, run `yarn cache:cli`.
+
+Some other useful commands:  
+`redis:empty` removes the whole cache
+`redis:list` lists all cached keys
 
 ### Run tests
 
@@ -101,7 +103,6 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 ### Other commands
 
 - `yarn build:server` builds the server (only needed for deployment)
-- `yarn deploy:images` deploys the docker images to our Container Registry (only needed for deployment)
 - `yarn format` formats all source code
 - `yarn lint` lints all source code
 - `yarn license` updates license headers in source files
@@ -109,8 +110,64 @@ We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` r
 - `yarn test` runs the unit tests
 - `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
-- `yarn update-version` starts the process for adding a new version (only needed for deployment)
 
 ## Changelog
 
 Via filtering PRs by [`base:production`](https://github.com/serlo/api.serlo.org/pulls?q=is%3Apr+base%3Aproduction+) you can access the changelog of production.
+
+## Developing with Ory Kratos
+
+We use Ory Kratos for our user management.
+Usually you won't need it, but if you do, run first:
+
+`yarn start:kratos`
+
+In the folder `./kratos` you find all important configuration files.
+Emails sent by Kratos are going to be found at `http://localhost:4436`.
+
+For more info about it see its [documentation](https://www.ory.sh/docs/kratos).
+
+### Integrating Keycloak
+
+First of all add `nbp` as host  
+`sudo bash -c "echo '127.0.0.1	nbp'" >> /etc/hosts`
+
+_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. nbp is a dns that is discoverable for the kratos container, so the host can also use it._
+
+Run `yarn start:nbp`.
+
+Keycloak UI is available on `nbp:11111` (username: admin, pw: admin).  
+There you have to configure Serlo as a client.
+
+> Client -> Create Client
+>
+> ```
+> id: serlo
+> home and root url: http://localhost:3000
+> redirect uri: http://localhost:4433/self-service/methods/oidc/callback/nbp
+> ```
+
+Get the credentials and go to `kratos/config.yml`:
+
+```yaml
+selfservice:
+  methods:
+    oidc:
+      enabled: true
+      config:
+        providers:
+          - id: nbp
+            provider: generic
+            client_id: serlo
+            client_secret: <put secret here>
+```
+
+Run the local frontend (not forgetting to change environment in its `.env` to local) to test.
+
+### Email templates
+
+Kratos has to be rebuilt every time you change an email template. Use the following workflow:
+
+1. Edit templates. See at `kratos/config.yml` where they are.
+2. Run `yarn kratos:rebuild`
+3. Test the verification or the recovery email at `localhost:4436`. Repeat the process.

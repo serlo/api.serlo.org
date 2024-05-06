@@ -665,10 +665,15 @@ export const NotificationDecoder = t.exact(
     unread: t.boolean,
     email: t.boolean,
     emailSent: t.boolean,
-    eventId: t.number,
+    event: NotificationEventDecoder,
   }),
 )
 
 export const SubscriptionsDecoder = t.strict({
   subscriptions: t.array(t.type({ objectId: t.number, sendEmail: t.boolean })),
+})
+
+export const SubjectDecoder = t.strict({
+  instance: InstanceDecoder,
+  taxonomyTermId: t.number,
 })
