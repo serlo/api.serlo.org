@@ -153,7 +153,8 @@ async function resolveUuidFromDatabase(
   { id }: { id: number },
   context: Pick<Context, 'database'>,
 ): Promise<Model<'AbstractUuid'> | null> {
-  const baseUuid = await context.database.fetchOptional(`
+  const baseUuid = await context.database.fetchOptional(
+    `
     SELECT
       uuid.id as id,
       uuid.trashed,
