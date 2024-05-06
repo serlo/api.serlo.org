@@ -3,7 +3,6 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
-  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -287,14 +286,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.void,
-    canBeNull: false,
-  },
-  ThreadSetThreadStatusMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      status: CommentStatusDecoder,
-    }),
-    response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
   ThreadsQuery: {
