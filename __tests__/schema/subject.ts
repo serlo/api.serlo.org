@@ -1,17 +1,22 @@
 import gql from 'graphql-tag'
 
 import { article, taxonomyTermSubject } from '../../__fixtures__'
-import { Client, given, getTypenameAndId, nextUuid } from '../__utils__'
-import { encodeSubjectId } from '~/schema/subject/utils'
+import { Client, given } from '../__utils__'
 import { Instance } from '~/types'
+
+export const emptySubjects = [
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+]
 
 test('endpoint "subjects" returns list of all subjects for an instance', async () => {
   given('UuidQuery').for(taxonomyTermSubject)
-  given('SubjectsQuery').for(taxonomyTermSubject, {
-    ...taxonomyTermSubject,
-    instance: Instance.En,
-    id: nextUuid(taxonomyTermSubject.id),
-  })
 
   await new Client()
     .prepareQuery({
@@ -27,17 +32,16 @@ test('endpoint "subjects" returns list of all subjects for an instance', async (
         }
       `,
     })
-    .withVariables({ instance: taxonomyTermSubject.instance })
+    .withVariables({ instance: Instance.En })
     .shouldReturnData({
       subject: {
-        subjects: [{ taxonomyTerm: { name: 'Mathe' } }],
+        subjects: [{ taxonomyTerm: { name: 'Math' } }],
       },
     })
 })
 
 test('`Subject.id` returns encoded id of subject', async () => {
   given('UuidQuery').for(taxonomyTermSubject)
-  given('SubjectsQuery').for(taxonomyTermSubject)
 
   await new Client()
     .prepareQuery({
@@ -51,17 +55,16 @@ test('`Subject.id` returns encoded id of subject', async () => {
         }
       `,
     })
-    .withVariables({ instance: taxonomyTermSubject.instance })
+    .withVariables({ instance: Instance.En })
     .shouldReturnData({
       subject: {
-        subjects: [{ id: encodeSubjectId(taxonomyTermSubject.id) }],
+        subjects: [{ id: 'czIzNTkz' }],
       },
     })
 })
 
 test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () => {
   given('UuidQuery').for(taxonomyTermSubject, article)
-  given('SubjectsQuery').for(taxonomyTermSubject)
   given('UnrevisedEntitiesQuery').for(article)
 
   await new Client()
@@ -81,11 +84,16 @@ test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () =
         }
       `,
     })
-    .withVariables({ instance: taxonomyTermSubject.instance })
+    .withVariables({ instance: article.instance })
     .shouldReturnData({
       subject: {
         subjects: [
-          { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
+          {
+            unrevisedEntities: {
+              nodes: [{ __typename: 'Article', id: article.id }],
+            },
+          },
+          ...emptySubjects,
         ],
       },
     })
