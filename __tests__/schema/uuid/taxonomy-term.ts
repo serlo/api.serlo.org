@@ -1,42 +1,7 @@
-import gql from 'graphql-tag'
-
-import { Client } from '../../__utils__'
-
-const query = new Client().prepareQuery({
-  query: gql`
-    query ($id: Int!) {
-      uuid(id: $id) {
-        __typename
-        ... on TaxonomyTerm {
-          id
-          trashed
-          type
-          instance
-          alias
-          title
-          name
-          description
-          weight
-          taxonomyId
-          path {
-            id
-          }
-          parent {
-            id
-          }
-          children {
-            nodes {
-              id
-            }
-          }
-        }
-      }
-    }
-  `,
-})
+import { taxonomyTermQuery } from '../../__utils__'
 
 test('TaxonomyTerm root', async () => {
-  await query.withVariables({ id: 3 }).shouldReturnData({
+  await taxonomyTermQuery.withVariables({ id: 3 }).shouldReturnData({
     uuid: {
       __typename: 'TaxonomyTerm',
       id: 3,
@@ -78,7 +43,7 @@ test('TaxonomyTerm root', async () => {
 })
 
 test('TaxonomyTerm subject', async () => {
-  await query.withVariables({ id: 18230 }).shouldReturnData({
+  await taxonomyTermQuery.withVariables({ id: 18230 }).shouldReturnData({
     uuid: {
       __typename: 'TaxonomyTerm',
       id: 18230,
@@ -110,7 +75,7 @@ test('TaxonomyTerm subject', async () => {
 })
 
 test('TaxonomyTerm exerciseFolder', async () => {
-  await query.withVariables({ id: 35562 }).shouldReturnData({
+  await taxonomyTermQuery.withVariables({ id: 35562 }).shouldReturnData({
     uuid: {
       __typename: 'TaxonomyTerm',
       id: 35562,

@@ -6,6 +6,7 @@ import {
   articleRevision,
   user as baseUser,
   taxonomyTermSubject,
+  emptySubjects,
 } from '../../../__fixtures__'
 import { getTypenameAndId, nextUuid, given, Client } from '../../__utils__'
 import { emptySubjects } from '../subject'
