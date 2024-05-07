@@ -1,19 +1,8 @@
 import gql from 'graphql-tag'
 
-import { article, taxonomyTermSubject } from '../../__fixtures__'
+import { article, emptySubjects, taxonomyTermSubject } from '../../__fixtures__'
 import { Client, given } from '../__utils__'
 import { Instance } from '~/types'
-
-export const emptySubjects = [
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-  { unrevisedEntities: { nodes: [] } },
-]
 
 test('endpoint "subjects" returns list of all subjects for an instance', async () => {
   given('UuidQuery').for(taxonomyTermSubject)

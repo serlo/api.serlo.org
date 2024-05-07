@@ -41,7 +41,12 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start:containers
-      - run: yarn test
+      # It seems that running tests for changing taxonomies in parallel
+      # to metadata query messes up with internal optimizatons so that
+      # testing metadata endpoint runs into a timout
+      # => solution: Run tests for metadata in an extra step
+      - run: yarn test metadata.ts
+      - run: yarn test --testPathIgnorePatterns metadata.ts __utils__
 
   codegen:
     runs-on: ubuntu-latest
