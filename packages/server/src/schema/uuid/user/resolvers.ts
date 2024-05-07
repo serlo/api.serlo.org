@@ -490,7 +490,6 @@ export const resolvers: Resolvers = {
         input.email,
         userId,
       ])
-      await UuidResolver.removeCacheEntry({ id: userId }, context)
       return { success: true, query: {} }
     },
   },
