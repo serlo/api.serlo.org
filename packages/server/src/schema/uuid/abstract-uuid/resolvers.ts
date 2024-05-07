@@ -316,25 +316,13 @@ async function resolveUuidFromDatabase(
       return {
         ...base,
         __typename: DiscriminatorType.User,
-  //activityByType: "test",
-  alias: "test", // TODO!
-  //chatUrl: "test",
+        alias: 'test', // TODO!
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-  //imageUrl: "test",
-  //isActiveAuthor: false,
-  //isActiveDonor: false,
-  //isActiveReviewer: false,
-  //isNewAuthor: false,
-  language: Instance.De, // TODO!
+        language: Instance.De, // TODO!
         lastLogin: baseUuid.userLastLogin.toISOString(),
-  //motivation: 'teacher',
         roles: baseUuid.userRoles,
-  //threads: [1],
-  //title: "test",
-  //unrevisedEntities: [1],
         username: baseUuid.userUsername,
-
       }
     }
   }
