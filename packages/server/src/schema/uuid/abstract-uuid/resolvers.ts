@@ -29,7 +29,6 @@ import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Instance, Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
-import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
   { id: number },
