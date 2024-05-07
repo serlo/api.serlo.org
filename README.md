@@ -76,7 +76,7 @@ Happy coding!
 
 ### Stop
 
-Interrupt the `yarn start` command to stop the dev server and run `yarn stop:redis` to stop Redis.
+Interrupt the `yarn start` command to stop the dev server and run `yarn down` to remove all containers.
 
 ### Automatically check your codebase before pushing
 
@@ -129,14 +129,17 @@ For more info about it see its [documentation](https://www.ory.sh/docs/kratos).
 
 ### Integrating Keycloak
 
-First of all add `nbp` as host  
+First of all add `nbp` and `vidis` as host  
 `sudo bash -c "echo '127.0.0.1	nbp'" >> /etc/hosts`
+`sudo bash -c "echo '127.0.0.1	vidis'" >> /etc/hosts`
 
-_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. nbp is a dns that is discoverable for the kratos container, so the host can also use it._
+_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. These dns's are discoverable for the kratos container, so the host can also use it._
 
-Run `yarn start:nbp`.
+Run `yarn start:sso`.  
+_Make sure you already run `yarn start:kratos` before._
 
-Keycloak UI is available on `nbp:11111` (username: admin, pw: admin).  
+Keycloak UI is available on `nbp:11111` and `vidis:11112`.  
+Username: admin, pw: admin.  
 There you have to configure Serlo as a client.
 
 > Client -> Create Client
@@ -145,6 +148,7 @@ There you have to configure Serlo as a client.
 > id: serlo
 > home and root url: http://localhost:3000
 > redirect uri: http://localhost:4433/self-service/methods/oidc/callback/nbp
+> // OR redirect uri: http://localhost:4433/self-service/methods/oidc/callback/vidis
 > ```
 
 Get the credentials and go to `kratos/config.yml`:
@@ -156,7 +160,7 @@ selfservice:
       enabled: true
       config:
         providers:
-          - id: nbp
+          - id: nbp # or vidis
             provider: generic
             client_id: serlo
             client_secret: <put secret here>
