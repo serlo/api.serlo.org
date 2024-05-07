@@ -18,7 +18,8 @@
     "deploy:image:production": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/deploy-env.js production"
   },
   "dependencies": {
-    "bee-queue": "^1.7.1"
+    "bee-queue": "^1.7.1",
+    "bull-arena": "^4.4.0"
   },
   "devDependencies": {
     "@apollo/server": "^4.10.4",
@@ -41,7 +42,6 @@
     "@types/uuid": "^9.0.8",
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
-    "bull-arena": "^4.4.0",
     "default-import": "^1.1.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
