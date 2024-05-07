@@ -26,7 +26,7 @@ import {
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { Instance, Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
 import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
@@ -316,11 +316,25 @@ async function resolveUuidFromDatabase(
       return {
         ...base,
         __typename: DiscriminatorType.User,
-        username: baseUuid.userUsername,
+  //activityByType: "test",
+  alias: "test", // TODO!
+  //chatUrl: "test",
         date: baseUuid.userDate.toISOString(),
-        lastLogin: baseUuid.userLastLogin.toISOString(),
         description: baseUuid.userDescription,
+  //imageUrl: "test",
+  //isActiveAuthor: false,
+  //isActiveDonor: false,
+  //isActiveReviewer: false,
+  //isNewAuthor: false,
+  language: Instance.De, // TODO!
+        lastLogin: baseUuid.userLastLogin.toISOString(),
+  //motivation: 'teacher',
         roles: baseUuid.userRoles,
+  //threads: [1],
+  //title: "test",
+  //unrevisedEntities: [1],
+        username: baseUuid.userUsername,
+
       }
     }
   }
