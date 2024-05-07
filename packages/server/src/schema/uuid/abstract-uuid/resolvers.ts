@@ -335,7 +335,6 @@ async function resolveUuidFromDatabase(
         alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        language: undefined,
         lastLogin: baseUuid.userLastLogin.toISOString(),
         roles: baseUuid.userRoles,
         username: baseUuid.userUsername,
