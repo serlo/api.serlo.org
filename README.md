@@ -89,17 +89,6 @@ chmod +x .git/hooks/pre-push
 
 With `git push --no-verify` you can bypass the automatic checks.
 
-### Repository structure
-
-- `__fixtures__` contains test data (used by both unit and contract tests).
-- `__tests__` contains the unit tests.
-- `__tests-pacts__` contains the contract test.
-- `src/internals` contains a couple of internal data structures. In most cases, you won't need to touch this. Here we hide complexity that isn't needed for typical development tasks.
-- `src/model` defines the model.
-- `src/schema` defines the GraphQL schema.
-
-We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` refers to `./src/internals`.
-
 ### Other commands
 
 - `yarn build:server` builds the server (only needed for deployment)
