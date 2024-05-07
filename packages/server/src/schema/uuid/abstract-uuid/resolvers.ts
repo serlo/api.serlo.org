@@ -195,6 +195,18 @@ const BaseTaxonomy = t.intersection([
   }),
 ])
 
+const BaseUser = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('user'),
+    userUsername: t.string,
+    userDate: date,
+    userLastLogin: date,
+    userDescription: t.string,
+    userRoles: t.array(t.string),
+  }),
+])
+
 async function resolveUuidFromDatabase(
   { id }: { id: number },
   context: Pick<Context, 'database' | 'timer' | 'swrQueue' | 'cache'>,
@@ -236,7 +248,14 @@ async function resolveUuidFromDatabase(
       JSON_OBJECTAGG(
         COALESCE(term_taxonomy_entity.entity_id, "__no_key"),
         term_taxonomy_entity.position
-      ) AS taxonomyEntityChildrenIds      
+      ) AS taxonomyEntityChildrenIds,
+
+      user.username AS userUsername,
+      user.date AS userDate,
+      user.last_login AS userLastLogin,
+      user.description AS userDescription,
+      JSON_ARRAYAGG(role.name) AS userRoles
+      
     FROM uuid
  
     LEFT JOIN comment ON comment.id = uuid.id
@@ -250,6 +269,10 @@ async function resolveUuidFromDatabase(
     LEFT JOIN term ON term.id = term_taxonomy.term_id
     LEFT JOIN term_taxonomy taxonomy_child ON taxonomy_child.parent_id = term_taxonomy.id
     LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+
+    LEFT JOIN user ON user.id = uuid.id
+    LEFT JOIN role_user ON user.id = role_user.user_id
+    LEFT JOIN role ON role.id = role_user.role_id
     
     WHERE uuid.id = ?
     GROUP BY uuid.id
@@ -304,6 +327,17 @@ async function resolveUuidFromDatabase(
         taxonomyId: baseUuid.taxonomyId,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
+      }
+    } else if (BaseUser.is(baseUuid)) {
+      return {
+        ...base,
+        __typename: DiscriminatorType.User,
+        alias: `/user/${base.id}/${baseUuid.userUsername}`,
+        date: baseUuid.userDate.toISOString(),
+        description: baseUuid.userDescription,
+        lastLogin: baseUuid.userLastLogin.toISOString(),
+        roles: baseUuid.userRoles,
+        username: baseUuid.userUsername,
       }
     }
   }
