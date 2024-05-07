@@ -28,7 +28,7 @@ import {
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance, Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
 
 export const UuidResolver = createCachedResolver<
   { id: number },
@@ -332,10 +332,10 @@ async function resolveUuidFromDatabase(
       return {
         ...base,
         __typename: DiscriminatorType.User,
-        alias: 'test', // TODO!
+        alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        language: Instance.De, // TODO!
+        language: undefined,
         lastLogin: baseUuid.userLastLogin.toISOString(),
         roles: baseUuid.userRoles,
         username: baseUuid.userUsername,
