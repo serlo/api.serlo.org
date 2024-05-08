@@ -157,6 +157,8 @@ selfservice:
 
 Run the local frontend (not forgetting to change environment in its `.env` to local) to test.
 
+Hint: you may want to create some users in Keycloak in order to test.
+
 ### Email templates
 
 Kratos has to be rebuilt every time you change an email template. Use the following workflow:
