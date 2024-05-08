@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
-import { user as baseUser } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import { user } from '../../../__fixtures__'
+import { Client } from '../../__utils__'
 
-const user = { ...baseUser, roles: ['sysadmin'] }
+const input = { userId: user.id, email: 'user@example.org' }
 const query = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
@@ -16,14 +16,17 @@ const query = new Client({ userId: user.id })
       }
     `,
   })
-  .withInput({ userId: user.id, email: 'user@example.org' })
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-})
+  .withInput(input)
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await query.shouldReturnData({ user: { setEmail: { success: true } } })
+
+  const { email } = await database.fetchOne<{ email: string }>(
+    'select email from user where id = ?',
+    [input.userId],
+  )
+
+  expect(email).toBe(input.email)
 })
 
 test('fails when user is not authenticated', async () => {
