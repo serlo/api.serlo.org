@@ -672,3 +672,8 @@ export const NotificationDecoder = t.exact(
 export const SubscriptionsDecoder = t.strict({
   subscriptions: t.array(t.type({ objectId: t.number, sendEmail: t.boolean })),
 })
+
+export const SubjectDecoder = t.strict({
+  instance: InstanceDecoder,
+  taxonomyTermId: t.number,
+})

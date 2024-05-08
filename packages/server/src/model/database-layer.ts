@@ -3,7 +3,6 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
-  CommentStatusDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -174,15 +173,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  SubjectsQuery: {
-    payload: t.type({}),
-    response: t.strict({
-      subjects: t.array(
-        t.strict({ instance: InstanceDecoder, taxonomyTermId: t.number }),
-      ),
-    }),
-    canBeNull: false,
-  },
   SubscriptionsQuery: {
     payload: t.type({ userId: t.number }),
     response: SubscriptionsDecoder,
@@ -229,14 +219,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.void,
-    canBeNull: false,
-  },
-  ThreadSetThreadStatusMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      status: CommentStatusDecoder,
-    }),
-    response: t.strict({ success: t.literal(true) }),
     canBeNull: false,
   },
   ThreadsQuery: {
@@ -305,11 +287,6 @@ export const spec = {
     response: t.strict({
       success: t.literal(true),
     }),
-    canBeNull: false,
-  },
-  UserSetEmailMutation: {
-    payload: t.type({ userId: t.number, email: t.string }),
-    response: t.type({ success: t.boolean, username: t.string }),
     canBeNull: false,
   },
   UuidQuery: {
