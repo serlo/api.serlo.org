@@ -122,7 +122,7 @@ First of all add `nbp` and `vidis` as host
 `sudo bash -c "echo '127.0.0.1	nbp'" >> /etc/hosts`
 `sudo bash -c "echo '127.0.0.1	vidis'" >> /etc/hosts`
 
-_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. These dns's are discoverable for the kratos container, so the host can also use it._
+_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. These DNSs are discoverable for the kratos container, so the host can also use it._
 
 Run `yarn start:sso`.  
 _Make sure you already run `yarn start:kratos` before._
