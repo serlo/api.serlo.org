@@ -470,7 +470,7 @@ export const resolvers: Resolvers = {
       if (input.description.length >= 64 * 1024) {
         throw new UserInputError('description too long')
       }
-      await database.mutate('update user set description = ? where id = ?', [
+      await database.mutate('UPDATE user SET description = ? WHERE id = ?', [
         input.description,
         userId,
       ])
@@ -479,17 +479,18 @@ export const resolvers: Resolvers = {
     },
 
     async setEmail(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         guard: serloAuth.User.setEmail(serloAuth.Scope.Serlo),
         message: 'You are not allowed to change the E-mail address for a user',
         context,
       })
-
-      const result = await dataSources.model.serlo.setEmail(input)
-
-      return { ...result, query: {} }
+      await database.mutate('UPDATE user SET email = ? WHERE id = ?', [
+        input.email,
+        userId,
+      ])
+      return { success: true, query: {} }
     },
   },
 }

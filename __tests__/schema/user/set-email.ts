@@ -37,15 +37,3 @@ test('fails when user is not authenticated', async () => {
 test('fails when user does not have role "sysadmin"', async () => {
   await query.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
-
-test('fails when database layer returns a 400er response', async () => {
-  given('UserSetEmailMutation').returnsBadRequest()
-
-  await query.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('UserSetEmailMutation').hasInternalServerError()
-
-  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
-})
