@@ -61,9 +61,7 @@ test('fails if one of the given bot ids is not a user', async () => {
 })
 
 test('fails if you try to delete user Deleted', async () => {
-  await mutation
-    .withInput({ userIds: 4 })
-    .shouldFailWithError('BAD_USER_INPUT')
+  await mutation.withInput({ userIds: 4 }).shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails if user is not authenticated', async () => {
