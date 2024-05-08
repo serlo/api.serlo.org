@@ -419,32 +419,44 @@ export const resolvers: Resolvers = {
         throw new ForbiddenError('You must not delete the user Deleted.')
       }
 
-      await database.mutate(
-        'UPDATE comment SET author_id = ? WHERE author_id = ?',
-        [idUserDeleted, id],
-      )
-      await database.mutate(
-        'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
-        [idUserDeleted, id],
-      )
-      await database.mutate(
-        'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
-        [idUserDeleted, id],
-      )
-      await database.mutate(
-        'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
-        [idUserDeleted, id],
-      )
-      await database.mutate('DELETE FROM notification WHERE user_id = ?', [id])
-      await database.mutate('DELETE FROM role_user WHERE user_id = ?', [id])
-      await database.mutate('DELETE FROM subscription WHERE user_id = ?', [id])
-      await database.mutate('DELETE FROM subscription WHERE uuid_id = ?', [id])
-      await database.mutate(
-        "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
-        [id],
-      )
+      const transaction = await database.beginTransaction()
+      try {
+        await database.mutate(
+          'UPDATE comment SET author_id = ? WHERE author_id = ?',
+          [idUserDeleted, id],
+        )
+        await database.mutate(
+          'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
+          [idUserDeleted, id],
+        )
+        await database.mutate(
+          'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
+          [idUserDeleted, id],
+        )
+        await database.mutate(
+          'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
+          [idUserDeleted, id],
+        )
+        await database.mutate('DELETE FROM notification WHERE user_id = ?', [
+          id,
+        ])
+        await database.mutate('DELETE FROM role_user WHERE user_id = ?', [id])
+        await database.mutate('DELETE FROM subscription WHERE user_id = ?', [
+          id,
+        ])
+        await database.mutate('DELETE FROM subscription WHERE uuid_id = ?', [
+          id,
+        ])
+        await database.mutate(
+          "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
+          [id],
+        )
+        await transaction.commit()
+      } finally {
+        await transaction.rollback()
+      }
 
-      await UuidResolver.removeCacheEntry({ id }, context)
+      await UuidResolver.removeCacheEntry({ id: user.id }, context)
 
       await deleteKratosUser(id, authServices)
       return { success: true, query: {} }
