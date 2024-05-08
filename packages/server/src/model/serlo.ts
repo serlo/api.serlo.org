@@ -469,34 +469,6 @@ export function createSerloModel({
     },
   })
 
-  const checkoutEntityRevision = createMutation({
-    type: 'EntityCheckoutRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest(
-        'EntityCheckoutRevisionMutation',
-        payload,
-      )
-    },
-    async updateCache({ revisionId }) {
-      const revision = await UuidResolver.resolveWithDecoder(
-        EntityRevisionDecoder,
-        { id: revisionId },
-        context,
-      )
-
-      await UuidResolver.removeCacheEntry(
-        { id: revision.repositoryId },
-        context,
-      )
-      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-
-      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
-    },
-  })
-
   const createPage = createMutation({
     type: 'PageCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
@@ -536,19 +508,6 @@ export function createSerloModel({
         context,
       )
       await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-    },
-  })
-
-  const rejectEntityRevision = createMutation({
-    type: 'EntityRejectRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
-    mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
-      return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
-    },
-    async updateCache({ revisionId }) {
-      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-
-      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
     },
   })
 
@@ -615,7 +574,6 @@ export function createSerloModel({
     addPageRevision,
     addRole,
     archiveThread,
-    checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
     createEntity,
@@ -636,7 +594,6 @@ export function createSerloModel({
     getUnrevisedEntitiesPerSubject,
     getUsersByRole,
     getPages,
-    rejectEntityRevision,
     setSubscription,
     sortEntity,
   }
