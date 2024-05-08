@@ -23,10 +23,6 @@ beforeEach(() => {
 })
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  given('UserSetEmailMutation')
-    .withPayload({ userId: user.id, email: 'user@example.org' })
-    .returns({ success: true, username: user.username })
-
   await query.shouldReturnData({ user: { setEmail: { success: true } } })
 })
 
