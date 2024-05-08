@@ -1,9 +1,8 @@
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { createFakeIdentity, Client, given, nextUuid, Query } from '../../__utils__'
+import { Client, nextUuid, Query } from '../../__utils__'
 
 let client: Client
 let mutation: Query
