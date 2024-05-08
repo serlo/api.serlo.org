@@ -451,14 +451,16 @@ export const resolvers: Resolvers = {
           "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
           [id],
         )
+
+        await UuidResolver.removeCacheEntry({ id }, context)
+
+        await deleteKratosUser(id, authServices)
+
         await transaction.commit()
       } finally {
         await transaction.rollback()
       }
 
-      await UuidResolver.removeCacheEntry({ id }, context)
-
-      await deleteKratosUser(id, authServices)
       return { success: true, query: {} }
     },
 
