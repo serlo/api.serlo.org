@@ -116,14 +116,6 @@ export function createSerloModel({
     },
   })
 
-  const setEmail = createMutation({
-    type: 'UserSetEmailMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
-    mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
-      return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -658,7 +650,6 @@ export function createSerloModel({
     getUsersByRole,
     getPages,
     rejectEntityRevision,
-    setEmail,
     setEntityLicense,
     setSubscription,
     sortEntity,
