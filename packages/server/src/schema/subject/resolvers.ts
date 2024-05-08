@@ -24,15 +24,10 @@ export const SubjectsResolver = createCachedResolver({
   },
   examplePayload: undefined,
   async getCurrentValue(_, { database }) {
-    interface Row {
-      id: number
-      instance: string
-    }
-
-    const rows = await database.fetchAll<Row>(
+    const rows = await database.fetchAll(
       `
         SELECT
-          subject.id,
+          subject.id as taxonomyTermId,
           subject_instance.subdomain as instance
         FROM term_taxonomy AS subject
         JOIN term_taxonomy AS root ON root.id = subject.parent_id
@@ -51,15 +46,7 @@ export const SubjectsResolver = createCachedResolver({
       `,
     )
 
-    return rows
-      .map((row) => {
-        const { id, instance } = row
-        return {
-          taxonomyTermId: id,
-          instance,
-        }
-      })
-      .filter(SubjectDecoder.is)
+    return rows.filter(SubjectDecoder.is)
   },
 })
 
