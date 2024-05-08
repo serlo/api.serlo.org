@@ -431,7 +431,7 @@ export const resolvers: Resolvers = {
       database.mutate("DELETE FROM subscription WHERE uuid_id = ?", [id])
       database.mutate("DELETE FROM uuid WHERE id = ? and discriminator = 'user'", [id])
       
-      UuidResolver.removeCacheEntry( {id}, context )
+      await UuidResolver.removeCacheEntry( {id}, context )
 
       await deleteKratosUser(id, authServices)
       return { success: true, query: {} }
