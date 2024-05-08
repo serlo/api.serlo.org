@@ -298,11 +298,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserSetEmailMutation: {
-    payload: t.type({ userId: t.number, email: t.string }),
-    response: t.type({ success: t.boolean, username: t.string }),
-    canBeNull: false,
-  },
   UuidQuery: {
     payload: t.type({ id: t.number }),
     response: UuidDecoder,
