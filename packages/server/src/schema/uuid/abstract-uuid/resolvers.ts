@@ -313,7 +313,7 @@ async function resolveUuidFromDatabase(
         WHEN comment_status.name = 'no_status' THEN 'noStatus'
         ELSE comment_status.name
       END AS commentStatus,
-      
+
       taxonomy_type.name AS taxonomyType,
       taxonomy_instance.subdomain AS taxonomyInstance,
       term.name AS taxonomyName,
@@ -335,7 +335,7 @@ async function resolveUuidFromDatabase(
       user.last_login AS userLastLogin,
       user.description AS userDescription,
       JSON_ARRAYAGG(role.name) AS userRoles
-      
+
     FROM uuid
 
     LEFT JOIN comment ON comment.id = uuid.id
@@ -366,7 +366,7 @@ async function resolveUuidFromDatabase(
     LEFT JOIN user ON user.id = uuid.id
     LEFT JOIN role_user ON user.id = role_user.user_id
     LEFT JOIN role ON role.id = role_user.role_id
-    
+
     WHERE uuid.id = ?
     GROUP BY uuid.id
     `,
