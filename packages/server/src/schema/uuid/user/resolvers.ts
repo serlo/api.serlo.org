@@ -456,7 +456,7 @@ export const resolvers: Resolvers = {
         await transaction.rollback()
       }
 
-      await UuidResolver.removeCacheEntry({ id: user.id }, context)
+      await UuidResolver.removeCacheEntry({ id }, context)
 
       await deleteKratosUser(id, authServices)
       return { success: true, query: {} }
