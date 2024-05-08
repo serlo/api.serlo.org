@@ -12,7 +12,7 @@ import {
   createNamespace,
 } from '~/internals/graphql'
 import { NotificationDecoder } from '~/model/decoder'
-import { fetchScopeOfNotificationEvent } from '~/schema/authorization/utils'
+import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { Resolvers } from '~/types'
 
@@ -151,18 +151,20 @@ export const resolvers: Resolvers = {
         { userId },
         context,
       )
-      const eventIds = ids.map((id) => {
+      const events = ids.map((id) => {
         const notification = notifications.find((n) => n.id === id)
         if (!notification) {
           throw new ForbiddenError(
             'You are only allowed to set your own notification states.',
           )
         }
-        return notification.event.id
+        return notification.event
       })
 
       const scopes = await Promise.all(
-        eventIds.map((id) => fetchScopeOfNotificationEvent({ id }, context)),
+        events.map(({ objectId }) =>
+          fetchScopeOfUuid({ id: objectId }, context),
+        ),
       )
 
       await assertUserIsAuthorized({

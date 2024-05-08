@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
-import { user as baseUser } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import { user } from '../../../__fixtures__'
+import { Client } from '../../__utils__'
 
-const user = { ...baseUser, roles: ['sysadmin'] }
+const input = { userId: user.id, email: 'user@example.org' }
 const query = new Client({ userId: user.id })
   .prepareQuery({
     query: gql`
@@ -16,18 +16,17 @@ const query = new Client({ userId: user.id })
       }
     `,
   })
-  .withInput({ userId: user.id, email: 'user@example.org' })
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-})
+  .withInput(input)
 
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  given('UserSetEmailMutation')
-    .withPayload({ userId: user.id, email: 'user@example.org' })
-    .returns({ success: true, username: user.username })
-
   await query.shouldReturnData({ user: { setEmail: { success: true } } })
+
+  const { email } = await database.fetchOne<{ email: string }>(
+    'select email from user where id = ?',
+    [input.userId],
+  )
+
+  expect(email).toBe(input.email)
 })
 
 test('fails when user is not authenticated', async () => {
@@ -36,16 +35,4 @@ test('fails when user is not authenticated', async () => {
 
 test('fails when user does not have role "sysadmin"', async () => {
   await query.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  given('UserSetEmailMutation').returnsBadRequest()
-
-  await query.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('UserSetEmailMutation').hasInternalServerError()
-
-  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

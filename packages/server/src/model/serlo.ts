@@ -116,14 +116,6 @@ export function createSerloModel({
     },
   })
 
-  const setEmail = createMutation({
-    type: 'UserSetEmailMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserSetEmailMutation'),
-    mutate(payload: DatabaseLayer.Payload<'UserSetEmailMutation'>) {
-      return DatabaseLayer.makeRequest('UserSetEmailMutation', payload)
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -151,24 +143,6 @@ export function createSerloModel({
           : O.none
       },
       examplePayload: { path: '/math', instance: Instance.En },
-    },
-    context,
-  )
-
-  const getSubjects = createLegacyQuery(
-    {
-      type: 'SubjectsQuery',
-      decoder: DatabaseLayer.getDecoderFor('SubjectsQuery'),
-      getCurrentValue: () => {
-        return DatabaseLayer.makeRequest('SubjectsQuery', {})
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: () => 'serlo.org/subjects',
-      getPayload: (key) => {
-        return key === 'serlo.org/subjects' ? O.some(undefined) : O.none
-      },
-      examplePayload: undefined,
     },
     context,
   )
@@ -242,7 +216,7 @@ export function createSerloModel({
 
   const getSubscriptions = createLegacyQuery(
     {
-      type: 'SubjectsQuery',
+      type: 'SubscriptionsQuery',
       decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
       enableSwr: true,
       getCurrentValue: (
@@ -368,22 +342,6 @@ export function createSerloModel({
         'ThreadSetThreadArchivedMutation',
         payload,
       )
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
-  const setThreadStatus = createMutation({
-    type: 'ThreadSetThreadStatusMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadStatusMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadStatusMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadSetThreadStatusMutation', payload)
     },
     async updateCache({ ids }) {
       await UuidResolver.removeCacheEntries(
@@ -672,7 +630,6 @@ export function createSerloModel({
     getDeletedEntities,
     getNotificationEvent,
     getPotentialSpamUsers,
-    getSubjects,
     getSubscriptions,
     getThreadIds,
     getUnrevisedEntities,
@@ -680,9 +637,7 @@ export function createSerloModel({
     getUsersByRole,
     getPages,
     rejectEntityRevision,
-    setEmail,
     setSubscription,
-    setThreadStatus,
     sortEntity,
   }
 }

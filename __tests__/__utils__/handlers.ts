@@ -26,15 +26,6 @@ const ForDefinitions = {
       given('EventQuery').withPayload({ id: event.id }).returns(event)
     })
   },
-  SubjectsQuery(terms: Model<'TaxonomyTerm'>[]) {
-    given('SubjectsQuery')
-      .withPayload({})
-      .returns({
-        subjects: terms.map((term) => {
-          return { taxonomyTermId: term.id, instance: term.instance }
-        }),
-      })
-  },
   UnrevisedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
     given('UnrevisedEntitiesQuery')
       .withPayload({})
