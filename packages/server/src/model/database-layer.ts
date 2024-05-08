@@ -278,14 +278,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserDeleteRegularUsersMutation: {
-    payload: t.type({ userId: t.number }),
-    response: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
-    canBeNull: false,
-  },
   UserPotentialSpamUsersQuery: {
     payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
     response: t.type({ userIds: t.array(t.number) }),
@@ -296,11 +288,6 @@ export const spec = {
     response: t.strict({
       success: t.literal(true),
     }),
-    canBeNull: false,
-  },
-  UserSetEmailMutation: {
-    payload: t.type({ userId: t.number, email: t.string }),
-    response: t.type({ success: t.boolean, username: t.string }),
     canBeNull: false,
   },
   UuidQuery: {
