@@ -3,7 +3,7 @@ import { HttpResponse } from 'msw'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { Client, given, nextUuid, Query } from '../../__utils__'
+import { createFakeIdentity, Client, given, nextUuid, Query } from '../../__utils__'
 
 let client: Client
 let mutation: Query
@@ -27,42 +27,9 @@ beforeEach(() => {
       `,
     })
     .withInput(R.pick(['id', 'username'], user))
-
-  given('UserDeleteRegularUsersMutation').isDefinedBy(async ({ request }) => {
-    const body = await request.json()
-    const { userId } = body.payload
-
-    given('UuidQuery').withPayload({ id: userId }).returnsNotFound()
-
-    return HttpResponse.json({ success: true })
-  })
-
-  given('UuidQuery').for(user)
 })
 
-test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(1)
-
-  await mutation.shouldReturnData({
-    user: { deleteRegularUser: { success: true } },
-  })
-  expect(global.kratos.identities).toHaveLength(0)
-})
-
-test('fails when mutation failes', async () => {
-  given('UserDeleteRegularUsersMutation').returns({
-    success: false,
-    reason: 'failure',
-  })
-  expect(global.kratos.identities).toHaveLength(1)
-
-  await mutation.shouldReturnData({
-    user: { deleteRegularUser: { success: false } },
-  })
-  expect(global.kratos.identities).toHaveLength(1)
-})
-
-test('fails when username does not match user', async () => {
+test('fails if username does not match user', async () => {
   await mutation
     .withInput({ users: [{ id: user.id, username: 'something' }] })
     .shouldFailWithError('BAD_USER_INPUT')
@@ -88,29 +55,27 @@ test('updates the cache', async () => {
   await uuidQuery.shouldReturnData({ uuid: null })
 })
 
-test('fails when one of the given bot ids is not a user', async () => {
+test('fails if one of the given bot ids is not a user', async () => {
   await mutation
     .withInput({ userIds: [noUserId] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('fails when user is not authenticated', async () => {
+test('fails if you try to delete user Deleted', async () => {
+  await mutation
+    .withInput({ userIds: 4 })
+    .shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails when user does not have role "sysadmin"', async () => {
+test('fails if user does not have role "sysadmin"', async () => {
   await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
-test('fails when database layer has an internal error', async () => {
-  given('UserDeleteRegularUsersMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-
-  expect(global.kratos.identities).toHaveLength(1)
-})
-
-test('fails when kratos has an error', async () => {
+test('fails if kratos has an error', async () => {
   global.kratos.admin.deleteIdentity = () => {
     throw new Error('Error in kratos')
   }
