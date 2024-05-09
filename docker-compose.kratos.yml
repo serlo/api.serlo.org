@@ -38,13 +38,3 @@ services:
     ports:
       - '4436:4436'
       - '4437:4437'
-  nbp:
-    image: quay.io/keycloak/keycloak:21.0.0
-    ports:
-      - 11111:11111
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: ['start-dev', '--http-port=11111']
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
