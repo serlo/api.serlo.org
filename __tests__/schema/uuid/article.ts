@@ -1,71 +1,7 @@
-import gql from 'graphql-tag'
-
-import { Client } from '../../__utils__'
-
-export const articleQuery = new Client().prepareQuery({
-  query: gql`
-    query ($id: Int!) {
-      uuid(id: $id) {
-        ... on Article {
-          __typename
-          id
-          instance
-          alias
-          trashed
-          date
-          title
-          licenseId
-          currentRevision {
-            id
-          }
-          revisions {
-            nodes {
-              id
-            }
-          }
-          taxonomyTerms {
-            nodes {
-              id
-            }
-          }
-        }
-      }
-    }
-  `,
-  variables: { id: 27801 },
-})
-
-const articleRevisionQuery = new Client().prepareQuery({
-  query: gql`
-    query ($id: Int!) {
-      uuid(id: $id) {
-        ... on ArticleRevision {
-          __typename
-          id
-          author {
-            id
-          }
-          trashed
-          alias
-          date
-          repository {
-            id
-          }
-          title
-          content
-          changes
-          metaTitle
-          metaDescription
-          url
-        }
-      }
-    }
-  `,
-  variables: { id: 35296 },
-})
+import { entityQuery, entityRevisionQuery } from '../../__utils__'
 
 test('Article', async () => {
-  await articleQuery.shouldReturnData({
+  await entityQuery.shouldReturnData({
     uuid: {
       __typename: 'Article',
       id: 27801,
@@ -101,7 +37,7 @@ test('Article', async () => {
 })
 
 test('ArticleRevision', async () => {
-  await articleRevisionQuery.shouldReturnData({
+  await entityRevisionQuery.shouldReturnData({
     uuid: {
       __typename: 'ArticleRevision',
       id: 35296,

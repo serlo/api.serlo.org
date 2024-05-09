@@ -1,8 +1,7 @@
 import gql from 'graphql-tag'
 
 import { user } from '../../../__fixtures__'
-import { Client, expectEvent } from '../../__utils__'
-import { articleQuery } from '../uuid/article'
+import { Client, expectEvent, entityQuery } from '../../__utils__'
 import { NotificationEventType } from '~/model/decoder'
 
 const input = { entityId: 1855, licenseId: 4 }
@@ -20,7 +19,7 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
 })
 
 test('Updates license of an entity', async () => {
-  await articleQuery
+  await entityQuery
     .withVariables({ id: input.entityId })
     .shouldReturnData({ uuid: { licenseId: 1 } })
 
@@ -28,7 +27,7 @@ test('Updates license of an entity', async () => {
     entity: { updateLicense: { success: true } },
   })
 
-  await articleQuery
+  await entityQuery
     .withVariables({ id: input.entityId })
     .shouldReturnData({ uuid: { licenseId: 4 } })
 
