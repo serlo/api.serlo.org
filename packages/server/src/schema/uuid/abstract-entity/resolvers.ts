@@ -185,7 +185,7 @@ export const resolvers: Resolvers = {
 
       try {
         await database.mutate(
-          `update entity set current_revision = ? where id = ?`,
+          `update entity set current_revision_id = ? where id = ?`,
           [revision.id, entity.id],
         )
 
