@@ -469,35 +469,6 @@ describe('User', () => {
   })
 
   test('property unrevisedEntities', async () => {
-    const unrevisedRevisionByUser: Model<'ArticleRevision'> = {
-      ...articleRevision,
-      id: nextUuid(article.currentRevisionId),
-      authorId: user.id,
-    }
-    const unrevisedRevisionByAnotherUser: Model<'ArticleRevision'> = {
-      ...articleRevision,
-      id: nextUuid(unrevisedRevisionByUser.id),
-      authorId: user2.id,
-    }
-    const articleByUser: Model<'Article'> = {
-      ...article,
-      id: nextUuid(article.id),
-      revisionIds: [unrevisedRevisionByUser.id, ...article.revisionIds],
-    }
-    const articleByAnotherUser: Model<'Article'> = {
-      ...article,
-      id: nextUuid(articleByUser.id),
-      revisionIds: [unrevisedRevisionByAnotherUser.id, ...article.revisionIds],
-    }
-
-    given('UuidQuery').for(
-      unrevisedRevisionByUser,
-      unrevisedRevisionByAnotherUser,
-      articleByAnotherUser,
-      articleByUser,
-    )
-    given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
-
     await client
       .prepareQuery({
         query: gql`
@@ -507,18 +478,17 @@ describe('User', () => {
                 unrevisedEntities {
                   nodes {
                     id
-                    __typename
                   }
                 }
               }
             }
           }
         `,
+        variables: { id: 299 },
       })
-      .withVariables({ id: user.id })
       .shouldReturnData({
         uuid: {
-          unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
+          unrevisedEntities: { nodes: [{ id: 26892 }] },
         },
       })
   })

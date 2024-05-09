@@ -26,11 +26,6 @@ const ForDefinitions = {
       given('EventQuery').withPayload({ id: event.id }).returns(event)
     })
   },
-  UnrevisedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
-    given('UnrevisedEntitiesQuery')
-      .withPayload({})
-      .returns({ unrevisedEntityIds: entities.map((entity) => entity.id) })
-  },
   DeletedEntitiesQuery(entities: Model<'AbstractEntity'>[]) {
     given('UuidQuery').for(
       entities.map((entity) => {

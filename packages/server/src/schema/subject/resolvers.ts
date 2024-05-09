@@ -12,6 +12,7 @@ import {
 } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { type Resolvers } from '~/types'
+import { resolveUnrevisedEntityIds } from '../uuid/abstract-entity/resolvers'
 
 export const SubjectsResolver = createCachedResolver({
   name: 'SubjectsResolver',
@@ -60,7 +61,18 @@ export const resolvers: Resolvers = {
       const filteredSubjects = subjects.filter(
         (subject) => subject.instance === payload.instance,
       )
-      return filteredSubjects
+      const unrevisedEntityIds = await resolveUnrevisedEntityIds({}, context)
+      const unreviseedEntities = await Promise.all(
+        unrevisedEntityIds.map((id) =>
+          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context),
+        ),
+      )
+      return filteredSubjects.map((subject) => ({
+        ...subject,
+        allUnrevisedEntities: unreviseedEntities.filter(
+          (entity) => entity.canonicalSubjectId === subject.taxonomyTermId,
+        ),
+      }))
     },
   },
   Subject: {
@@ -74,19 +86,9 @@ export const resolvers: Resolvers = {
         context,
       )
     },
-    async unrevisedEntities(subject, payload, context) {
-      const entitiesPerSubject =
-        await context.dataSources.model.serlo.getUnrevisedEntitiesPerSubject()
-      const entityIds =
-        entitiesPerSubject[subject.taxonomyTermId.toString()] ?? []
-      const entities = await Promise.all(
-        entityIds.map((id) =>
-          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context),
-        ),
-      )
-
+    unrevisedEntities({ allUnrevisedEntities }, payload, _) {
       return resolveConnection({
-        nodes: entities,
+        nodes: allUnrevisedEntities,
         payload,
         createCursor: (node) => node.id.toString(),
       })
