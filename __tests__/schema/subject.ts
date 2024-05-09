@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { article, emptySubjects, taxonomyTermSubject } from '../../__fixtures__'
+import { article, taxonomyTermSubject } from '../../__fixtures__'
 import { Client, given } from '../__utils__'
 import { Instance } from '~/types'
 
@@ -54,7 +54,6 @@ test('`Subject.id` returns encoded id of subject', async () => {
 
 test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () => {
   given('UuidQuery').for(taxonomyTermSubject, article)
-  given('UnrevisedEntitiesQuery').for(article)
 
   await new Client()
     .prepareQuery({
@@ -73,16 +72,34 @@ test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () =
         }
       `,
     })
-    .withVariables({ instance: article.instance })
+    .withVariables({ instance: 'de' })
     .shouldReturnData({
       subject: {
         subjects: [
           {
             unrevisedEntities: {
-              nodes: [{ __typename: 'Article', id: article.id }],
+              nodes: [{ __typename: 'Article', id: 34741 }],
             },
           },
-          ...emptySubjects,
+          { unrevisedEntities: { nodes: [] } },
+          { unrevisedEntities: { nodes: [] } },
+          { unrevisedEntities: { nodes: [] } },
+          {
+            unrevisedEntities: {
+              nodes: [
+                { __typename: 'Article', id: 34907 },
+                { __typename: 'Article', id: 35247 },
+              ],
+            },
+          },
+          {
+            unrevisedEntities: {
+              nodes: [{ __typename: 'Article', id: 26892 }],
+            },
+          },
+          { unrevisedEntities: { nodes: [] } },
+          { unrevisedEntities: { nodes: [] } },
+          { unrevisedEntities: { nodes: [] } },
         ],
       },
     })

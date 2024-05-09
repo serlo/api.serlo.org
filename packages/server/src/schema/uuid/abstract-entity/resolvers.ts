@@ -4,6 +4,7 @@ import * as t from 'io-ts'
 
 import { createSetEntityResolver } from './entity-set-handler'
 import { UuidResolver } from '../abstract-uuid/resolvers'
+import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
@@ -16,7 +17,6 @@ import {
   EntityRevisionDecoder,
   NotificationEventType,
 } from '~/model/decoder'
-import { fetchScopeOfUuid } from '~/schema/authorization/utils'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createEvent } from '~/schema/events/event'
 import { Resolvers } from '~/types'
@@ -278,6 +278,38 @@ export const resolvers: Resolvers = {
       }
     },
   },
+}
+
+export async function resolveUnrevisedEntityIds(
+  { userId = null }: { userId?: number | null },
+  { database }: Pick<Context, 'database'>,
+) {
+  const rows = await database.fetchAll<{ id: number }>(
+    `
+    select
+      entity.id
+    from entity
+    join uuid entity_uuid on entity_uuid.id = entity.id
+    join (
+      select
+        revision.repository_id as entity_id,
+        max(revision.id) as max_revision_id
+      from entity_revision revision
+      join uuid revision_uuid on revision.id = revision_uuid.id
+      where
+        revision_uuid.trashed = 0
+        and (? is null or revision.author_id = ?)
+      group by revision.repository_id
+    ) as revision on revision.entity_id = entity.id
+    where
+      entity_uuid.trashed = 0
+      and (entity.current_revision_id is null or
+        entity.current_revision_id < revision.max_revision_id)
+    `,
+    [userId, userId],
+  )
+
+  return rows.map((row) => row.id)
 }
 
 function decodeDateOfDeletion(after: string) {
