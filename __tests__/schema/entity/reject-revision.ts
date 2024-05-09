@@ -1,126 +1,85 @@
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 
 import {
-  article as baseArticle,
   articleRevision,
+  user,
   taxonomyTermSubject,
-  user as baseUser,
   emptySubjects,
 } from '../../../__fixtures__'
-import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
-import { Instance } from '~/types'
+import {
+  getTypenameAndId,
+  given,
+  Client,
+  userQuery,
+  expectEvent,
+  entityQuery,
+  entityRevisionQuery,
+} from '../../__utils__'
+import { NotificationEventType } from '~/model/decoder'
 
-const user = { ...baseUser, roles: ['de_reviewer'] }
-const article = {
-  ...baseArticle,
-  instance: Instance.De,
-  currentRevision: articleRevision.id,
-}
-const currentRevision = {
-  ...articleRevision,
-  id: nextUuid(articleRevision.id),
-  trashed: false,
-}
-
-const mutation = new Client({ userId: user.id })
-  .prepareQuery({
-    query: gql`
-      mutation ($input: RejectRevisionInput!) {
-        entity {
-          rejectRevision(input: $input) {
-            success
-          }
+const input = { revisionId: 35290, reason: 'reason' }
+const mutation = new Client({ userId: user.id }).prepareQuery({
+  query: gql`
+    mutation ($input: CheckoutRevisionInput!) {
+      entity {
+        checkoutRevision(input: $input) {
+          success
         }
       }
-    `,
-  })
-  .withInput({ revisionId: currentRevision.id, reason: 'reason' })
-
-beforeEach(() => {
-  given('UuidQuery').for(user, article, articleRevision, currentRevision)
-  given('UnrevisedEntitiesQuery').for([article])
-
-  given('EntityRejectRevisionMutation')
-    .withPayload({
-      userId: user.id,
-      reason: 'reason',
-      revisionId: currentRevision.id,
-    })
-    .isDefinedBy(() => {
-      given('UuidQuery').for({ ...currentRevision, trashed: true })
-      given('UnrevisedEntitiesQuery').for([])
-
-      return HttpResponse.json({ success: true })
-    })
+    }
+  `,
+  variables: { input },
 })
 
-test('returns "{ success: true }" when mutation could be successfully executed', async () => {
-  await mutation.shouldReturnData({
-    entity: { rejectRevision: { success: true } },
-  })
-})
-
-test('following queries for entity point to checkout revision when entity is already in the cache', async () => {
-  const revisionQuery = new Client()
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            trashed
-          }
-        }
-      `,
-    })
-    .withVariables({ id: currentRevision.id })
-
-  await revisionQuery.shouldReturnData({ uuid: { trashed: false } })
-
-  await mutation.shouldReturnData({
-    entity: { rejectRevision: { success: true } },
+test('checks out a revision', async () => {
+  await entityQuery.withVariables({ id: 35247 }).shouldReturnData({
+    uuid: { currentRevision: { id: 35248 } },
   })
 
-  await revisionQuery.shouldReturnData({ uuid: { trashed: true } })
-})
-
-test('after the reject mutation the cache is cleared for unrevisedEntities', async () => {
-  const unrevisedEntitiesQuery = new Client()
-    .prepareQuery({
-      query: gql`
-        query ($instance: Instance!) {
-          subject {
-            subjects(instance: $instance) {
-              unrevisedEntities {
-                nodes {
-                  __typename
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ instance: taxonomyTermSubject.instance })
-
-  await unrevisedEntitiesQuery.shouldReturnData({
-    subject: {
-      subjects: [
-        { unrevisedEntities: { nodes: [getTypenameAndId(article)] } },
-        ...emptySubjects,
-      ],
+  await userQuery.withVariables({ id: 26334 }).shouldReturnData({
+    uuid: {
+      unrevisedEntities: { nodes: [{ id: 34907 }, { id: 35247 }] },
     },
   })
 
   await mutation.shouldReturnData({
-    entity: { rejectRevision: { success: true } },
+    entity: { checkoutRevision: { success: true } },
   })
 
-  await unrevisedEntitiesQuery.shouldReturnData({
-    subject: {
-      subjects: [{ unrevisedEntities: { nodes: [] } }, ...emptySubjects],
-    },
+  await entityQuery.withVariables({ id: 35247 }).shouldReturnData({
+    uuid: { currentRevision: { id: 35290 } },
   })
+
+  await userQuery.withVariables({ id: 26334 }).shouldReturnData({
+    uuid: { unrevisedEntities: { nodes: [{ id: 34907 }] } },
+  })
+
+  await expectEvent({
+    __typename: NotificationEventType.CheckoutRevision,
+    objectId: input.revisionId,
+  })
+})
+
+test('checkout revision has trashed == false for following queries', async () => {
+  await database.mutate('update uuid set trashed = 1 where id = ?', [
+    input.revisionId,
+  ])
+
+  await entityRevisionQuery
+    .withVariables({ id: input.revisionId })
+    .shouldReturnData({
+      uuid: { trashed: true },
+    })
+
+  await mutation.shouldReturnData({
+    entity: { checkoutRevision: { success: true } },
+  })
+
+  await entityRevisionQuery
+    .withVariables({ id: input.revisionId })
+    .shouldReturnData({
+      uuid: { trashed: false },
+    })
 })
 
 test('fails when user is not authenticated', async () => {
@@ -129,16 +88,4 @@ test('fails when user is not authenticated', async () => {
 
 test('fails when user does not have role "reviewer"', async () => {
   await mutation.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  given('EntityRejectRevisionMutation').returnsBadRequest()
-
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('EntityRejectRevisionMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

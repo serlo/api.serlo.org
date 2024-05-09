@@ -2,13 +2,7 @@ import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import {
-  article,
-  user,
-  user2,
-  articleRevision,
-  activityByType,
-} from '../../../__fixtures__'
+import { article, user, user2, activityByType } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertNoErrorEvents,
@@ -17,9 +11,9 @@ import {
   givenSpreadheetApi,
   givenSpreadsheet,
   hasInternalServerError,
-  nextUuid,
   given,
   Client,
+  userQuery,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
@@ -469,28 +463,9 @@ describe('User', () => {
   })
 
   test('property unrevisedEntities', async () => {
-    await client
-      .prepareQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                unrevisedEntities {
-                  nodes {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: { id: 299 },
-      })
-      .shouldReturnData({
-        uuid: {
-          unrevisedEntities: { nodes: [{ id: 26892 }] },
-        },
-      })
+    await userQuery.shouldReturnData({
+      uuid: { unrevisedEntities: { nodes: [{ id: 26892 }] } },
+    })
   })
 
   describe('property lastLogin', () => {

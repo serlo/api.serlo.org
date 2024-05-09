@@ -64,6 +64,23 @@ export const entityRevisionQuery = new Client().prepareQuery({
   variables: { id: 35296 },
 })
 
+export const userQuery = new Client().prepareQuery({
+  query: gql`
+    query ($id: Int!) {
+      uuid(id: $id) {
+        ... on User {
+          unrevisedEntities {
+            nodes {
+              id
+            }
+          }
+        }
+      }
+    }
+  `,
+  variables: { id: 299 },
+})
+
 export const taxonomyTermQuery = new Client().prepareQuery({
   query: gql`
     query ($id: Int!) {
