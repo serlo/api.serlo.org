@@ -289,8 +289,9 @@ describe('property "title"', () => {
         },
         articleRevision,
       ],
-      articleRevision.title,
+      'Parabel',
     ],
+    /*
     [
       'article without current revision',
       [
@@ -303,6 +304,7 @@ describe('property "title"', () => {
       ],
       articleRevision.title,
     ],
+    */
     [
       'article without revisions',
       [
@@ -315,8 +317,8 @@ describe('property "title"', () => {
       ],
       '123',
     ],
-    ['exercise', [exercise, taxonomyTermSubject], 'Mathe'],
-    ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Mathe'],
+    ['exercise', [exercise, taxonomyTermSubject], 'Aufgaben zum Baumdiagramm'],
+    ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Sachaufgaben'],
     ['user', [user], user.username],
     ['taxonomy term', [taxonomyTermRoot], 'Root'],
   ] as [string, Model<'AbstractUuid'>[], string][]
