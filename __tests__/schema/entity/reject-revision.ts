@@ -1,14 +1,7 @@
 import gql from 'graphql-tag'
 
+import { user } from '../../../__fixtures__'
 import {
-  articleRevision,
-  user,
-  taxonomyTermSubject,
-  emptySubjects,
-} from '../../../__fixtures__'
-import {
-  getTypenameAndId,
-  given,
   Client,
   userQuery,
   expectEvent,
@@ -20,9 +13,9 @@ import { NotificationEventType } from '~/model/decoder'
 const input = { revisionId: 35290, reason: 'reason' }
 const mutation = new Client({ userId: user.id }).prepareQuery({
   query: gql`
-    mutation ($input: CheckoutRevisionInput!) {
+    mutation ($input: RejectRevisionInput!) {
       entity {
-        checkoutRevision(input: $input) {
+        rejectRevision(input: $input) {
           success
         }
       }
@@ -42,44 +35,30 @@ test('checks out a revision', async () => {
     },
   })
 
+  await entityRevisionQuery
+    .withVariables({ id: input.revisionId })
+    .shouldReturnData({ uuid: { trashed: false } })
+
   await mutation.shouldReturnData({
-    entity: { checkoutRevision: { success: true } },
+    entity: { rejectRevision: { success: true } },
   })
 
   await entityQuery.withVariables({ id: 35247 }).shouldReturnData({
-    uuid: { currentRevision: { id: 35290 } },
+    uuid: { currentRevision: { id: 35248 } },
   })
+
+  await entityRevisionQuery
+    .withVariables({ id: input.revisionId })
+    .shouldReturnData({ uuid: { trashed: true } })
 
   await userQuery.withVariables({ id: 26334 }).shouldReturnData({
     uuid: { unrevisedEntities: { nodes: [{ id: 34907 }] } },
   })
 
   await expectEvent({
-    __typename: NotificationEventType.CheckoutRevision,
+    __typename: NotificationEventType.RejectRevision,
     objectId: input.revisionId,
   })
-})
-
-test('checkout revision has trashed == false for following queries', async () => {
-  await database.mutate('update uuid set trashed = 1 where id = ?', [
-    input.revisionId,
-  ])
-
-  await entityRevisionQuery
-    .withVariables({ id: input.revisionId })
-    .shouldReturnData({
-      uuid: { trashed: true },
-    })
-
-  await mutation.shouldReturnData({
-    entity: { checkoutRevision: { success: true } },
-  })
-
-  await entityRevisionQuery
-    .withVariables({ id: input.revisionId })
-    .shouldReturnData({
-      uuid: { trashed: false },
-    })
 })
 
 test('fails when user is not authenticated', async () => {

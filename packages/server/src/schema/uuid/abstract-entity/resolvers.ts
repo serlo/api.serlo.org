@@ -210,8 +210,6 @@ export const resolvers: Resolvers = {
         await UuidResolver.removeCacheEntry({ id: entity.id }, context)
         await UuidResolver.removeCacheEntry({ id: revision.id }, context)
 
-        // TODO: UnrevisedRevisions
-
         return { success: true, query: {} }
       } finally {
         await transaction.rollback()
@@ -244,18 +242,13 @@ export const resolvers: Resolvers = {
       const transaction = await database.beginTransaction()
 
       try {
-        await database.mutate(
-          `update entity set current_revision = ? where id = ?`,
-          [revision.id, entity.id],
-        )
-
-        await database.mutate(`update uuid set trashed = 0 where id = ?`, [
+        await database.mutate(`update uuid set trashed = 1 where id = ?`, [
           revision.id,
         ])
 
         await createEvent(
           {
-            __typename: NotificationEventType.CheckoutRevision,
+            __typename: NotificationEventType.RejectRevision,
             actorId: userId,
             instance: entity.instance,
             repositoryId: entity.id,
@@ -269,8 +262,6 @@ export const resolvers: Resolvers = {
 
         await UuidResolver.removeCacheEntry({ id: entity.id }, context)
         await UuidResolver.removeCacheEntry({ id: revision.id }, context)
-
-        // TODO: UnrevisedRevisions
 
         return { success: true, query: {} }
       } finally {
