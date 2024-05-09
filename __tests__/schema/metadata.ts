@@ -72,9 +72,10 @@ describe('endpoint "resources"', () => {
 
   test('shows description when it is set', async () => {
     await global.database.mutate(`
-      update entity_revision_field
-      set value = "description for entity 2153"
-      where id = 41509 and field = "meta_description";`)
+      update entity_revision
+      join entity on entity.current_revision_id = entity_revision.id
+      set entity_revision.meta_description = "description for entity 2153"
+      where entity.id = 2153`)
 
     const after = afterForId(2153)
     const data = await query.withVariables({ first: 1, after }).getData()
