@@ -34,3 +34,19 @@ export const taxonomyTermQuery = new Client().prepareQuery({
     }
   `,
 })
+
+export const subjectQuery = new Client().prepareQuery({
+  query: gql`
+    query ($instance: Instance!) {
+      subject {
+        subjects(instance: $instance) {
+          id
+          taxonomyTerm {
+            name
+          }
+        }
+      }
+    }
+  `,
+  variables: { instance: 'de' },
+})
