@@ -3,9 +3,6 @@ import * as t from 'io-ts'
 
 import {
   CommentDecoder,
-  EntityDecoder,
-  EntityRevisionTypeDecoder,
-  EntityTypeDecoder,
   InstanceDecoder,
   NotificationEventDecoder,
   PageDecoder,
@@ -53,48 +50,6 @@ export const spec = {
         }),
       ),
     }),
-    canBeNull: false,
-  },
-  EntityAddRevisionMutation: {
-    payload: t.type({
-      userId: t.number,
-      revisionType: EntityRevisionTypeDecoder,
-      input: t.type({
-        changes: t.string,
-        entityId: t.number,
-        needsReview: t.boolean,
-        subscribeThis: t.boolean,
-        subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.union([t.string, t.undefined])),
-      }),
-    }),
-    response: t.type({
-      success: t.literal(true),
-      revisionId: t.number,
-    }),
-    canBeNull: false,
-  },
-  EntityCreateMutation: {
-    payload: t.type({
-      userId: t.number,
-      entityType: EntityTypeDecoder,
-      input: t.intersection([
-        t.type({
-          changes: t.string,
-          licenseId: t.number,
-          needsReview: t.boolean,
-          subscribeThis: t.boolean,
-          subscribeThisByEmail: t.boolean,
-          fields: t.record(t.string, t.string),
-        }),
-        // TODO: prefer union
-        t.partial({
-          parentId: t.number,
-          taxonomyTermId: t.number,
-        }),
-      ]),
-    }),
-    response: EntityDecoder,
     canBeNull: false,
   },
   EntitySortMutation: {
