@@ -421,36 +421,32 @@ export const resolvers: Resolvers = {
 
       const transaction = await database.beginTransaction()
       try {
-        await database.mutate(
-          'UPDATE comment SET author_id = ? WHERE author_id = ?',
-          [idUserDeleted, id],
-        )
-        await database.mutate(
-          'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
-          [idUserDeleted, id],
-        )
-        await database.mutate(
-          'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
-          [idUserDeleted, id],
-        )
-        await database.mutate(
-          'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
-          [idUserDeleted, id],
-        )
-        await database.mutate('DELETE FROM notification WHERE user_id = ?', [
-          id,
+        await Promise.all([
+          database.mutate(
+            'UPDATE comment SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate('DELETE FROM notification WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM role_user WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM subscription WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM subscription WHERE uuid_id = ?', [id]),
+          database.mutate(
+            "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
+            [id],
+          ),
         ])
-        await database.mutate('DELETE FROM role_user WHERE user_id = ?', [id])
-        await database.mutate('DELETE FROM subscription WHERE user_id = ?', [
-          id,
-        ])
-        await database.mutate('DELETE FROM subscription WHERE uuid_id = ?', [
-          id,
-        ])
-        await database.mutate(
-          "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
-          [id],
-        )
 
         await UuidResolver.removeCacheEntry({ id }, context)
 
