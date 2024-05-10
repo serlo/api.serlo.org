@@ -304,78 +304,6 @@ export function createSerloModel({
     },
   })
 
-  const createEntity = createMutation({
-    type: 'EntityCreateMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
-      return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
-    },
-    async updateCache({ userId, input }, newEntity) {
-      if (newEntity) {
-        const { parentId, taxonomyTermId } = input
-        if (parentId) {
-          await UuidResolver.removeCacheEntry({ id: parentId }, context)
-        }
-        if (taxonomyTermId) {
-          await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
-        }
-
-        if (input.subscribeThis) {
-          await getSubscriptions._querySpec.setCache({
-            payload: { userId },
-            getValue(current) {
-              if (!current) return
-
-              const newEntry = {
-                objectId: newEntity.id,
-                sendEmail: input.subscribeThisByEmail,
-              }
-
-              return { subscriptions: [...current.subscriptions, newEntry] }
-            },
-          })
-        }
-      }
-    },
-  })
-
-  const addEntityRevision = createMutation({
-    type: 'EntityAddRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
-      return DatabaseLayer.makeRequest('EntityAddRevisionMutation', payload)
-    },
-    updateCache: async ({ input, userId }, { success }) => {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: input.entityId }, context)
-
-        if (input.subscribeThis) {
-          await getSubscriptions._querySpec.setCache({
-            payload: { userId },
-            getValue(current) {
-              if (!current) return
-
-              const currentWithoutNew = current.subscriptions.filter(
-                ({ objectId }) => input.entityId !== objectId,
-              )
-
-              const newEntry = {
-                objectId: input.entityId,
-                sendEmail: input.subscribeThisByEmail,
-              }
-
-              return {
-                subscriptions: [...currentWithoutNew, newEntry].sort(
-                  (a, b) => a.objectId - b.objectId,
-                ),
-              }
-            },
-          })
-        }
-      }
-    },
-  })
-
   const createPage = createMutation({
     type: 'PageCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
@@ -477,13 +405,11 @@ export function createSerloModel({
   })
 
   return {
-    addEntityRevision,
     addPageRevision,
     addRole,
     archiveThread,
     checkoutPageRevision,
     createComment,
-    createEntity,
     createPage,
     createThread,
     deleteBots,

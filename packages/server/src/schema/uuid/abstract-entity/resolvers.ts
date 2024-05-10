@@ -1,12 +1,16 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope } from '@serlo/authorization'
 import * as t from 'io-ts'
+import * as R from 'ramda'
 
-import { createSetEntityResolver } from './entity-set-handler'
 import { UuidResolver } from '../abstract-uuid/resolvers'
+import { createTaxonomyTermLink } from '../taxonomy-term/resolvers'
+import { autoreviewTaxonomyIds, defaultLicenseIds } from '~/config'
 import { Context } from '~/context'
-import { UserInputError } from '~/errors'
+import { InternalServerError, UserInputError } from '~/errors'
 import {
+  Model,
+  assertStringIsNotEmpty,
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
   createNamespace,
@@ -15,12 +19,28 @@ import {
   CourseDecoder,
   EntityDecoder,
   EntityRevisionDecoder,
+  EntityType,
+  EntityTypeDecoder,
   NotificationEventType,
+  TaxonomyTermDecoder,
 } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createEvent } from '~/schema/events/event'
-import { Resolvers } from '~/types'
+import { Resolvers, SetAbstractEntityInput } from '~/types'
 import { isDateString } from '~/utils'
+
+type InputFields = keyof SetAbstractEntityInput
+
+const mandatoryFieldsLookup: Record<EntityType, InputFields[]> = {
+  [EntityType.Applet]: ['content', 'title', 'url'],
+  [EntityType.Article]: ['content', 'title'],
+  [EntityType.Course]: ['title'],
+  [EntityType.CoursePage]: ['content', 'title'],
+  [EntityType.Event]: ['content', 'title'],
+  [EntityType.Exercise]: ['content'],
+  [EntityType.ExerciseGroup]: ['content'],
+  [EntityType.Video]: ['title', 'url'],
+} as const
 
 export const resolvers: Resolvers = {
   Query: {
@@ -80,7 +100,171 @@ export const resolvers: Resolvers = {
     },
   },
   EntityMutation: {
-    setAbstractEntity: createSetEntityResolver(),
+    async setAbstractEntity(_parent, { input }, context) {
+      const { database, userId } = context
+
+      assertUserIsAuthenticated(userId)
+
+      const { entityType, changes, entityId, parentId } = input
+
+      assertStringIsNotEmpty({ changes })
+
+      if (!EntityTypeDecoder.is(entityType)) {
+        throw new UserInputError('entityType must be a valid entity type')
+      }
+
+      assertStringIsNotEmpty(R.pick(mandatoryFieldsLookup[entityType], input))
+
+      if (
+        (entityId == null && parentId == null) ||
+        (entityId != null && parentId != null)
+      ) {
+        throw new UserInputError(
+          'Exactely one of entityId and parentId must be defined',
+        )
+      }
+
+      let entity: Model<'AbstractEntity'>
+      const transaction = await database.beginTransaction()
+
+      try {
+        if (parentId != null) {
+          const parent = await UuidResolver.resolveWithDecoder(
+            TaxonomyTermDecoder,
+            { id: parentId },
+            context,
+          )
+
+          await assertUserIsAuthorized({
+            context,
+            message: 'You are not allowed to create entities',
+            guard: serloAuth.Uuid.create('Entity')(
+              instanceToScope(parent.instance),
+            ),
+          })
+
+          const { insertId: newEntityId } = await database.mutate(
+            'insert into uuid (trashed, discriminator) values (0, "entity")',
+          )
+
+          await database.mutate(
+            `
+            insert into entity (id, type_id, instance_id, license_id)
+              select ?, type.id, instance.id, ?
+              from type, instance
+              where type.name = ? and instance.subdomain = ?`,
+            [
+              newEntityId,
+              defaultLicenseIds[parent.instance],
+              toDatabaseType(entityType),
+              parent.instance,
+            ],
+          )
+
+          await createTaxonomyTermLink(
+            { entityId: newEntityId, taxonomyTermId: parent.id },
+            context,
+          )
+
+          await createEvent(
+            {
+              __typename: NotificationEventType.CreateEntity,
+              actorId: userId,
+              instance: parent.instance,
+              entityId: newEntityId,
+            },
+            context,
+          )
+
+          entity = await UuidResolver.resolveWithDecoder(
+            EntityDecoder,
+            { id: newEntityId },
+            context,
+          )
+
+          await UuidResolver.removeCacheEntry({ id: parent.id }, context)
+        } else {
+          // This should not happen due to the check above
+          if (entityId == null) throw new InternalServerError()
+
+          entity = await UuidResolver.resolveWithDecoder(
+            EntityDecoder,
+            { id: entityId },
+            context,
+          )
+        }
+
+        await assertUserIsAuthorized({
+          context,
+          message: 'You are not allowed to create entities',
+          guard: serloAuth.Uuid.create('EntityRevision')(
+            instanceToScope(entity.instance),
+          ),
+        })
+
+        const { insertId: revisionId } = await database.mutate(
+          'insert into uuid (trashed, discriminator) values (0, "entityRevision")',
+        )
+
+        await database.mutate(
+          `
+          insert into entity_revision
+            (id, author_id, repository_id, content, meta_title, meta_description,
+              title, url, changes)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            revisionId,
+            userId,
+            entity.id,
+            input.content ?? null,
+            input.metaTitle ?? null,
+            input.metaDescription ?? null,
+            input.title ?? null,
+            input.url ?? null,
+            input.changes ?? null,
+          ],
+        )
+
+        await createEvent(
+          {
+            __typename: NotificationEventType.CreateEntityRevision,
+            actorId: userId,
+            instance: entity.instance,
+            entityId: entity.id,
+            entityRevisionId: revisionId,
+          },
+          context,
+        )
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntry({ id: entity.id }, context)
+
+        const finalEntity = await UuidResolver.resolveWithDecoder(
+          EntityDecoder,
+          { id: entity.id },
+          context,
+        )
+
+        const revision = await UuidResolver.resolveWithDecoder(
+          EntityRevisionDecoder,
+          { id: revisionId },
+          context,
+        )
+
+        // TODO: Delete subscriptions for user
+
+        return {
+          success: true,
+          record: finalEntity,
+          entity: finalEntity,
+          revision,
+          query: {},
+        }
+      } finally {
+        await transaction.rollback()
+      }
+    },
 
     async sort(_parent, { input }, context) {
       const { dataSources, userId } = context
@@ -303,6 +487,17 @@ export async function resolveUnrevisedEntityIds(
   return rows.map((row) => row.id)
 }
 
+function toDatabaseType(entityType: EntityType) {
+  switch (entityType) {
+    case EntityType.CoursePage:
+      return 'course-page'
+    case EntityType.ExerciseGroup:
+      return 'exercise-group'
+    default:
+      return entityType.toLowerCase()
+  }
+}
+
 function decodeDateOfDeletion(after: string) {
   const afterParsed = JSON.parse(
     Buffer.from(after, 'base64').toString(),
@@ -323,4 +518,28 @@ function decodeDateOfDeletion(after: string) {
     )
 
   return new Date(dateOfDeletion).toISOString()
+}
+
+async function isAutoreviewEntity(
+  id: number,
+  context: Context,
+): Promise<boolean> {
+  if (autoreviewTaxonomyIds.includes(id)) return true
+
+  const uuid = await UuidResolver.resolve({ id }, context)
+
+  if (t.type({ parentId: t.number }).is(uuid)) {
+    return (
+      uuid.parentId != null &&
+      (await isAutoreviewEntity(uuid.parentId, context))
+    )
+  } else if (t.type({ taxonomyTermIds: t.array(t.number) }).is(uuid)) {
+    return (
+      await Promise.all(
+        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, context)),
+      )
+    ).every((x) => x)
+  } else {
+    return false
+  }
 }

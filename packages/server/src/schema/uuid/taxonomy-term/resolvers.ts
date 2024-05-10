@@ -23,6 +23,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
 import { isDefined } from '~/utils'
+import { Context } from '@sentry/node/types/integrations'
 
 const typesMap = {
   root: TaxonomyTermType.Root,
@@ -268,22 +269,9 @@ export const resolvers: Resolvers = {
             continue
           }
 
-          const { lastPosition } = await database.fetchOne<{
-            lastPosition: number
-          }>(
-            `
-              SELECT IFNULL(MAX(position), 0) as lastPosition
-                FROM term_taxonomy_entity
-                WHERE term_taxonomy_id = ?`,
-            [taxonomyTermId],
-          )
-
-          await database.mutate(
-            `
-            insert into term_taxonomy_entity (entity_id, term_taxonomy_id, position)
-              values (?,?,?)
-          `,
-            [entity.id, taxonomyTermId, lastPosition + 1],
+          await createTaxonomyTermLink(
+            { entityId: entity.id, taxonomyTermId },
+            context,
           )
         }
 
@@ -494,6 +482,29 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
   },
+}
+
+export async function createTaxonomyTermLink(
+  { entityId, taxonomyTermId }: { entityId: number; taxonomyTermId: number },
+  { database }: Pick<Context, 'database'>,
+) {
+  const { lastPosition } = await database.fetchOne<{
+    lastPosition: number
+  }>(
+    `
+              SELECT IFNULL(MAX(position), 0) as lastPosition
+                FROM term_taxonomy_entity
+                WHERE term_taxonomy_id = ?`,
+    [taxonomyTermId],
+  )
+
+  await database.mutate(
+    `
+            insert into term_taxonomy_entity (entity_id, term_taxonomy_id, position)
+              values (?,?,?)
+          `,
+    [entityId, taxonomyTermId, lastPosition + 1],
+  )
 }
 
 async function getParentTerms(

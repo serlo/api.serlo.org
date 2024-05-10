@@ -105,6 +105,8 @@ input SetAbstractEntityInput {
 
 type SetEntityResponse {
   record: AbstractEntity
+  entity: AbstractEntity
+  revision: AbstractEntityRevision
   success: Boolean!
   query: Query!
 }
