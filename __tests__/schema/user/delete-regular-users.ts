@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import { user as baseUser } from '../../../__fixtures__'
-import { Client, nextUuid, Query } from '../../__utils__'
+import { Client, given, nextUuid, Query } from '../../__utils__'
 
 let client: Client
 let mutation: Query
@@ -26,6 +26,17 @@ beforeEach(() => {
       `,
     })
     .withInput(R.pick(['id', 'username'], user))
+
+  given('UuidQuery').for(user)
+})
+
+test('runs successfully if mutation could be successfully executed', async () => {
+  expect(global.kratos.identities).toHaveLength(1)
+
+  await mutation.shouldReturnData({
+    user: { deleteRegularUser: { success: true } },
+  })
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
 test('fails if username does not match user', async () => {
