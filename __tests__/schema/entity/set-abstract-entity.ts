@@ -14,7 +14,7 @@ const input = {
   changes: 'my change',
   subscribeThis: true,
   subscribeThisByEmail: true,
-  needsReview: true,
+  needsReview: false,
   parentId: 5,
   entityId: null,
   content: JSON.stringify({ plugin: 'rows', state: [] }),
@@ -131,6 +131,27 @@ test('creates a new revision when "entityId" is set', async () => {
 // TODO: needsReview = false => checkout
 // TODO: autoreview with needsReview = false
 // TODO: autoreview ignored when in multiple taxonomy terms
+
+test('check outs new revision when `needsReview` is false', async () => {
+  const data = (await mutation.getData()) as {
+    entity: {
+      setAbstractEntity: { entity: { id: number }; revision: { id: number } }
+    }
+  }
+
+  expect(data).toMatchObject({
+    entity: { setAbstractEntity: { success: true } },
+  })
+
+  const entityId = data.entity.setAbstractEntity.entity.id
+  const revisionId = data.entity.setAbstractEntity.revision.id
+
+  await entityQuery.withVariables({ id: entityId }).shouldReturnData({
+    uuid: {
+      currentRevision: { id: revisionId },
+    },
+  })
+})
 
 test('fails when both "entityId" and "parentId" are defined', async () => {
   await mutation
