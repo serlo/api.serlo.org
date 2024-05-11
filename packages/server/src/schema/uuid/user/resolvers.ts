@@ -416,7 +416,7 @@ export const resolvers: Resolvers = {
         )
       }
       if (id === idUserDeleted) {
-        throw new ForbiddenError('You must not delete the user Deleted.')
+        throw new ForbiddenError('You cannot delete the user Deleted.')
       }
 
       const transaction = await database.beginTransaction()
