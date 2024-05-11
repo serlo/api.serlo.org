@@ -105,7 +105,6 @@
     "prettier": "^3.2.5",
     "prettier-plugin-packagejson": "^2.5.0",
     "prettier-plugin-sh": "^0.14.0",
-    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-unused-exports": "^10.0.1",
     "tsdx": "^0.14.1",
