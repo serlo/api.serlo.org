@@ -1,9 +1,0 @@
-type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent & InstanceAware {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-  entity: AbstractRepository!
-  entityRevision: AbstractRevision!
-}

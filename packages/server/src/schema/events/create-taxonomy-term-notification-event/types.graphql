@@ -1,8 +1,0 @@
-type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent & InstanceAware {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-  taxonomyTerm: TaxonomyTerm!
-}
