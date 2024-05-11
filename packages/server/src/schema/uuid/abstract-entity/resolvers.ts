@@ -228,6 +228,16 @@ export const resolvers: Resolvers = {
         const isAutoreview = await isAutoreviewEntity(entity, context)
 
         if (!input.needsReview || isAutoreview) {
+          if (!isAutoreview) {
+            await assertUserIsAuthorized({
+              context,
+              message: 'For needsReview = false you need review rights',
+              guard: serloAuth.Entity.checkoutRevision(
+                instanceToScope(entity.instance),
+              ),
+            })
+          }
+
           await database.mutate(
             'update entity set current_revision_id = ? where id = ?',
             [revisionId, entity.id],
