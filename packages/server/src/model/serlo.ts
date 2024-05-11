@@ -98,24 +98,6 @@ export function createSerloModel({
     },
   })
 
-  const deleteRegularUsers = createMutation({
-    type: 'UserDeleteRegularUsersMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'UserDeleteRegularUsersMutation',
-        payload,
-      )
-    },
-    async updateCache({ userId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: userId }, context)
-      }
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -635,7 +617,6 @@ export function createSerloModel({
     createPage,
     createThread,
     deleteBots,
-    deleteRegularUsers,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
