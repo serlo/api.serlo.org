@@ -4,7 +4,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import { isLegacyQuery, LegacyQuery } from './data-source-helper'
-import { type Context } from '~/context'
+import { CachedResolver } from '~/cached-resolver'
 import { createAuthServices } from '~/context/auth-services'
 import { CacheEntry, Cache, Priority } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
@@ -12,7 +12,7 @@ import { Database } from '~/database'
 import { captureErrorEvent } from '~/error-event'
 import { modelFactories } from '~/model'
 import { cachedResolvers } from '~/schema'
-import { Timer, Time, timeToSeconds, timeToMilliseconds } from '~/timer'
+import { Timer, timeToSeconds, timeToMilliseconds } from '~/timer'
 
 const INVALID_VALUE_RECEIVED =
   'SWR-Queue: Invalid value received from data source.'
@@ -161,6 +161,8 @@ export function createSwrQueueWorker({
     removeOnSuccess: true,
   })
 
+  const swrQueue = createSwrQueue({ cache, timer, database })
+
   queue.process(concurrency, async (job): Promise<string> => {
     async function processJob() {
       const { key } = job.data
@@ -184,7 +186,12 @@ export function createSwrQueueWorker({
         source: 'SWR worker',
         priority: Priority.Low,
         getValue: async () => {
-          const value = await spec.getCurrentValue(payload, { database })
+          const value = await spec.getCurrentValue(payload, {
+            database,
+            cache,
+            timer,
+            swrQueue,
+          })
 
           if (spec.decoder.is(value)) {
             return value
@@ -253,6 +260,7 @@ async function shouldProcessJob({
     for (const legacyQuery of legacyQueries) {
       if (O.isSome(legacyQuery._querySpec.getPayload(key))) {
         return {
+          name: legacyQuery._querySpec.type,
           ...legacyQuery._querySpec,
           decoder: legacyQuery._querySpec.decoder ?? t.unknown,
         }
@@ -261,7 +269,7 @@ async function shouldProcessJob({
     for (const cachedResolver of cachedResolvers) {
       if (O.isSome(cachedResolver.spec.getPayload(key))) {
         // TODO: Change types so that `as` is not needed here
-        return cachedResolver.spec as unknown as JobSpec
+        return cachedResolver.spec
       }
     }
     return null
@@ -297,18 +305,7 @@ async function shouldProcessJob({
   })
 }
 
-// TODO: Merge with CachedResolverSpec in `cached-resolver.ts`
-interface JobSpec<P = unknown> {
-  decoder: { is: (a: unknown) => a is P; name: string }
-  getPayload: (key: string) => O.Option<P>
-  getCurrentValue: (
-    payload: P,
-    context: Pick<Context, 'database'>,
-  ) => Promise<unknown>
-  maxAge?: Time
-  staleAfter?: Time
-  enableSwr: boolean
-}
+type JobSpec = CachedResolver<unknown, unknown>['spec']
 
 function reportError({
   error,

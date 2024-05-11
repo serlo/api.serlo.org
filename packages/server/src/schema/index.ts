@@ -12,6 +12,7 @@ import { notificationsSchema } from './notifications'
 import { oauthSchema } from './oauth'
 import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
+import { SubjectResolver } from './subject/resolvers'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
 import { uuidCachedResolvers, uuidSchema } from './uuid'
@@ -41,7 +42,9 @@ export const schema = mergeSchemas(
 )
 
 // TODO: Fix the following type error
-// @ts-expect-error Unfortunately typecasting does not work here
 export const cachedResolvers: Array<CachedResolver<unknown, unknown>> = [
+  // @ts-expect-error Unfortunately typecasting does not work here
   ...uuidCachedResolvers,
+  // @ts-expect-error Unfortunately typecasting does not work here
+  SubjectResolver,
 ]

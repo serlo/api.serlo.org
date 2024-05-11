@@ -10,7 +10,6 @@ import {
   NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
-  TaxonomyTermDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -198,54 +197,6 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
-  TaxonomyCreateEntityLinksMutation: {
-    payload: t.type({
-      entityIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  TaxonomyDeleteEntityLinksMutation: {
-    payload: t.type({
-      entityIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.strict({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  TaxonomyTermCreateMutation: {
-    payload: t.type({
-      taxonomyType: t.union([t.literal('topic'), t.literal('topic-folder')]),
-      name: t.string,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-      parentId: t.number,
-    }),
-    response: TaxonomyTermDecoder,
-    canBeNull: false,
-  },
-  TaxonomySortMutation: {
-    payload: t.type({
-      childrenIds: t.array(t.number),
-      taxonomyTermId: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
-  TaxonomyTermSetNameAndDescriptionMutation: {
-    payload: t.type({
-      name: t.string,
-      id: t.number,
-      userId: t.number,
-      description: t.union([t.string, t.null, t.undefined]),
-    }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
   ThreadCreateCommentMutation: {
     payload: t.type({
       content: t.string,
@@ -327,14 +278,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserDeleteRegularUsersMutation: {
-    payload: t.type({ userId: t.number }),
-    response: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
-    canBeNull: false,
-  },
   UserPotentialSpamUsersQuery: {
     payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
     response: t.type({ userIds: t.array(t.number) }),
@@ -345,20 +288,6 @@ export const spec = {
     response: t.strict({
       success: t.literal(true),
     }),
-    canBeNull: false,
-  },
-  UserSetEmailMutation: {
-    payload: t.type({ userId: t.number, email: t.string }),
-    response: t.type({ success: t.boolean, username: t.string }),
-    canBeNull: false,
-  },
-  UuidSetStateMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      trashed: t.boolean,
-    }),
-    response: t.void,
     canBeNull: false,
   },
   UuidQuery: {

@@ -32,7 +32,7 @@ extend type Mutation {
 }
 
 type TaxonomyTermMutation {
-  create(input: TaxonomyTermCreateInput!): DefaultResponse!
+  create(input: TaxonomyTermCreateInput!): TaxonomyTermCreateResponse!
   createEntityLinks(input: TaxonomyEntityLinksInput!): DefaultResponse!
   deleteEntityLinks(input: TaxonomyEntityLinksInput!): DefaultResponse!
   sort(input: TaxonomyTermSortInput!): DefaultResponse!
@@ -67,4 +67,10 @@ input TaxonomyTermSetNameAndDescriptionInput {
   id: Int!
   name: String!
   description: String
+}
+
+type TaxonomyTermCreateResponse {
+  success: Boolean!
+  record: TaxonomyTerm
+  query: Query!
 }
