@@ -1,9 +1,0 @@
-type RemoveTaxonomyLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-  parent: TaxonomyTerm!
-  child: AbstractUuid!
-}

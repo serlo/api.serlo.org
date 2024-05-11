@@ -1,0 +1,158 @@
+type CheckoutRevisionNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  repository: AbstractRepository!
+  revision: AbstractRevision!
+  reason: String!
+}
+
+type CreateEntityNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  entity: AbstractEntity!
+}
+
+type CreateCommentNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  thread: Thread!
+  comment: Comment!
+}
+
+type SetThreadStateNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  thread: Thread!
+  archived: Boolean!
+}
+
+type SetTaxonomyTermNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  taxonomyTerm: TaxonomyTerm!
+}
+
+type SetLicenseNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  repository: AbstractRepository!
+}
+
+type RemoveTaxonomyLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  parent: TaxonomyTerm!
+  child: AbstractUuid!
+}
+
+type CreateTaxonomyLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  parent: TaxonomyTerm!
+  child: AbstractUuid!
+}
+
+type SetTaxonomyParentNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  previousParent: TaxonomyTerm
+  parent: TaxonomyTerm
+  child: TaxonomyTerm!
+}
+
+type CreateEntityRevisionNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  entity: AbstractRepository!
+  entityRevision: AbstractRevision!
+}
+
+type RejectRevisionNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  repository: AbstractRepository!
+  revision: AbstractRevision!
+  reason: String!
+}
+
+type CreateThreadNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  object: AbstractUuid!
+  thread: Thread!
+}
+
+type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  taxonomyTerm: TaxonomyTerm!
+}
+
+type RemoveEntityLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  parent: AbstractEntity!
+  child: AbstractEntity!
+}
+
+type CreateEntityLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  parent: AbstractEntity!
+  child: AbstractEntity!
+}
+
+type SetUuidStateNotificationEvent implements AbstractNotificationEvent & InstanceAware {
+  id: Int!
+  instance: Instance!
+  date: DateTime!
+  actor: User!
+  objectId: Int!
+  object: AbstractUuid!
+  trashed: Boolean!
+}
