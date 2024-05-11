@@ -5,6 +5,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import * as DatabaseLayer from '../../../model/database-layer'
+import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
@@ -24,7 +25,7 @@ import {
   isGlobalRole,
 } from '~/internals/graphql'
 import { CellValues, MajorDimension } from '~/model'
-import { EntityDecoder, RevisionDecoder, UserDecoder } from '~/model/decoder'
+import { EntityDecoder, UserDecoder } from '~/model/decoder'
 import {
   getPermissionsForRole,
   getRolesWithInheritance,
@@ -34,7 +35,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
-import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 
 export const activeUserIdsQuery = createCachedResolver<
   Record<string, never>,

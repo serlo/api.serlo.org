@@ -23,7 +23,6 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { TaxonomyTermType, TaxonomyTypeCreateOptions, Resolvers } from '~/types'
 import { isDefined } from '~/utils'
-import { Context } from '@sentry/node/types/integrations'
 
 const typesMap = {
   root: TaxonomyTermType.Root,
