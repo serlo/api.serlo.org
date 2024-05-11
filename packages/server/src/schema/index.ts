@@ -10,10 +10,11 @@ import { instanceSchema } from './instance'
 import { mediaSchema } from './media'
 import { metadataSchema } from './metadata'
 import { notificationsSchema } from './notifications'
+import { NotificationsResolver } from './notifications/resolvers'
 import { oauthSchema } from './oauth'
 import { rolesSchema } from './roles'
 import { subjectsSchema } from './subject'
-import { SubjectResolver } from './subject/resolvers'
+import { SubjectResolver, SubjectsResolver } from './subject/resolvers'
 import { subscriptionSchema } from './subscription'
 import { threadSchema } from './thread'
 import { uuidCachedResolvers, uuidSchema } from './uuid'
@@ -49,4 +50,8 @@ export const cachedResolvers: Array<CachedResolver<unknown, unknown>> = [
   ...uuidCachedResolvers,
   // @ts-expect-error Unfortunately typecasting does not work here
   SubjectResolver,
+  // @ts-expect-error Unfortunately typecasting does not work here
+  NotificationsResolver,
+  // @ts-expect-error Unfortunately typecasting does not work here
+  SubjectsResolver,
 ]
