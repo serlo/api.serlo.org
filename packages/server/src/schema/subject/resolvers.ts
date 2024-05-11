@@ -2,6 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { resolveConnection } from '../connection/utils'
+import { resolveUnrevisedEntityIds } from '../uuid/abstract-entity/resolvers'
 import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { createNamespace } from '~/internals/graphql'
@@ -12,7 +13,6 @@ import {
 } from '~/model/decoder'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { type Resolvers } from '~/types'
-import { resolveUnrevisedEntityIds } from '../uuid/abstract-entity/resolvers'
 
 export const SubjectsResolver = createCachedResolver({
   name: 'SubjectsResolver',

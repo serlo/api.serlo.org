@@ -7,7 +7,6 @@ import {
   entityRevisionQuery,
   expectEvent,
 } from '../../__utils__'
-import { NodeClient } from '@sentry/node'
 import { NotificationEventType } from '~/model/decoder'
 
 const input = {
