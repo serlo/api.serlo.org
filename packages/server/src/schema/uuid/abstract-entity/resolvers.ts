@@ -225,6 +225,13 @@ export const resolvers: Resolvers = {
           ],
         )
 
+        if (!input.needsReview) {
+          await database.mutate(
+            'update entity set current_revision_id = ? where id = ?',
+            [revisionId, entity.id],
+          )
+        }
+
         await createEvent(
           {
             __typename: NotificationEventType.CreateEntityRevision,
