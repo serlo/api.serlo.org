@@ -128,6 +128,10 @@ test('creates a new revision when "entityId" is set', async () => {
   })
 })
 
+// TODO: needsReview = false => checkout
+// TODO: autoreview with needsReview = false
+// TODO: autoreview ignored when in multiple taxonomy terms
+
 test('fails when both "entityId" and "parentId" are defined', async () => {
   await mutation
     .changeInput({ entityId: null, parentId: null })
@@ -162,7 +166,7 @@ test('fails when entityType is not valid', async () => {
 
 test('fails when changes is empty', async () => {
   await mutation
-    .changeInput({ change: '' })
+    .changeInput({ change: '   ' })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
