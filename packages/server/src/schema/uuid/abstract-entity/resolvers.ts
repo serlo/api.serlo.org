@@ -225,7 +225,9 @@ export const resolvers: Resolvers = {
           ],
         )
 
-        if (!input.needsReview) {
+        const isAutoreview = await isAutoreviewEntity(entity, context)
+
+        if (!input.needsReview || isAutoreview) {
           await database.mutate(
             'update entity set current_revision_id = ? where id = ?',
             [revisionId, entity.id],
@@ -259,7 +261,10 @@ export const resolvers: Resolvers = {
           context,
         )
 
-        // TODO: Delete subscriptions for user
+        // Set subscriptions
+        await context.dataSources.model.serlo.getSubscriptions._querySpec.removeCache(
+          { payload: { userId } },
+        )
 
         return {
           success: true,
@@ -528,22 +533,23 @@ function decodeDateOfDeletion(after: string) {
 }
 
 async function isAutoreviewEntity(
-  id: number,
+  uuid: { id: number },
   context: Context,
 ): Promise<boolean> {
-  if (autoreviewTaxonomyIds.includes(id)) return true
-
-  const uuid = await UuidResolver.resolve({ id }, context)
+  if (autoreviewTaxonomyIds.includes(uuid.id)) return true
 
   if (t.type({ parentId: t.number }).is(uuid)) {
-    return (
-      uuid.parentId != null &&
-      (await isAutoreviewEntity(uuid.parentId, context))
-    )
+    if (uuid.parentId == null) return false
+    const parent = await UuidResolver.resolve({ id: uuid.parentId }, context)
+
+    return parent != null && (await isAutoreviewEntity(parent, context))
   } else if (t.type({ taxonomyTermIds: t.array(t.number) }).is(uuid)) {
     return (
       await Promise.all(
-        uuid.taxonomyTermIds.map((id) => isAutoreviewEntity(id, context)),
+        uuid.taxonomyTermIds.map(async (id) => {
+          const parent = await UuidResolver.resolve({ id }, context)
+          return parent != null && (await isAutoreviewEntity(parent, context))
+        }),
       )
     ).every((x) => x)
   } else {

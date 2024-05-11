@@ -6,11 +6,13 @@ export const entityQuery = new Client().prepareQuery({
   query: gql`
     query ($id: Int!) {
       uuid(id: $id) {
-        ... on Article {
+        ... on AbstractUuid {
+          alias
+        }
+        ... on AbstractEntity {
           __typename
           id
           instance
-          alias
           trashed
           date
           title
@@ -23,6 +25,8 @@ export const entityQuery = new Client().prepareQuery({
               id
             }
           }
+        }
+        ... on AbstractTaxonomyTermChild {
           taxonomyTerms {
             nodes {
               id
@@ -39,14 +43,16 @@ export const entityRevisionQuery = new Client().prepareQuery({
   query: gql`
     query ($id: Int!) {
       uuid(id: $id) {
-        ... on ArticleRevision {
+        ... on AbstractUuid {
+          alias
+        }
+        ... on AbstractEntityRevision {
           __typename
           id
           author {
             id
           }
           trashed
-          alias
           date
           repository {
             id

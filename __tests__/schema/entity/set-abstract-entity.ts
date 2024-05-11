@@ -14,7 +14,7 @@ const input = {
   changes: 'my change',
   subscribeThis: true,
   subscribeThisByEmail: true,
-  needsReview: false,
+  needsReview: true,
   parentId: 5,
   entityId: null,
   content: JSON.stringify({ plugin: 'rows', state: [] }),
@@ -43,7 +43,11 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
   variables: { input },
 })
 
-// test autoreview1
+beforeEach(async () => {
+  // create taxonomy Term 106082
+  await database.mutate('update uuid set id = 106082 where id = 35607')
+  await database.mutate('update term_taxonomy set id = 106082 where id = 35607')
+})
 
 test('creates a new entity when "parentId" is set', async () => {
   const data = (await mutation.getData()) as {
@@ -80,10 +84,7 @@ test('creates a new entity when "parentId" is set', async () => {
   })
 
   await expectEvent(
-    {
-      __typename: NotificationEventType.CreateEntity,
-      objectId: entityId,
-    },
+    { __typename: NotificationEventType.CreateEntity, objectId: entityId },
     3,
   )
 })
@@ -105,10 +106,7 @@ test('creates a new revision when "entityId" is set', async () => {
   const revisionId = data.entity.setAbstractEntity.revision.id
 
   await entityQuery.withVariables({ id: entityId }).shouldReturnData({
-    uuid: {
-      __typename: 'Article',
-      id: 1855,
-    },
+    uuid: { __typename: 'Article', id: 1855 },
   })
 
   await entityRevisionQuery.withVariables({ id: revisionId }).shouldReturnData({
@@ -128,12 +126,10 @@ test('creates a new revision when "entityId" is set', async () => {
   })
 })
 
-// TODO: needsReview = false => checkout
-// TODO: autoreview with needsReview = false
-// TODO: autoreview ignored when in multiple taxonomy terms
-
 test('check outs new revision when `needsReview` is false', async () => {
-  const data = (await mutation.getData()) as {
+  const data = (await mutation
+    .changeInput({ needsReview: false })
+    .getData()) as {
     entity: {
       setAbstractEntity: { entity: { id: number }; revision: { id: number } }
     }
@@ -147,9 +143,56 @@ test('check outs new revision when `needsReview` is false', async () => {
   const revisionId = data.entity.setAbstractEntity.revision.id
 
   await entityQuery.withVariables({ id: entityId }).shouldReturnData({
-    uuid: {
-      currentRevision: { id: revisionId },
-    },
+    uuid: { currentRevision: { id: revisionId } },
+  })
+})
+
+test('check outs new revision for entities in autoreview taxonomies', async () => {
+  await database.mutate(
+    'update term_taxonomy_entity set term_taxonomy_id = 106082 where entity_id = 35554',
+  )
+
+  const data = (await mutation
+    .changeInput({ entityId: 35554, parentId: null })
+    .getData()) as {
+    entity: {
+      setAbstractEntity: { entity: { id: number }; revision: { id: number } }
+    }
+  }
+
+  expect(data).toMatchObject({
+    entity: { setAbstractEntity: { success: true } },
+  })
+
+  const entityId = data.entity.setAbstractEntity.entity.id
+  const revisionId = data.entity.setAbstractEntity.revision.id
+
+  await entityQuery.withVariables({ id: entityId }).shouldReturnData({
+    uuid: { currentRevision: { id: revisionId } },
+  })
+})
+
+test('does not check out new revision for entities being in autoreview and non-autoreview taxonomies', async () => {
+  await database.mutate(
+    'insert into term_taxonomy_entity (term_taxonomy_id, entity_id) values (106082, 1855)',
+  )
+
+  const data = (await mutation
+    .changeInput({ entityId: 1855, parentId: null })
+    .getData()) as {
+    entity: {
+      setAbstractEntity: { entity: { id: number }; revision: { id: number } }
+    }
+  }
+
+  expect(data).toMatchObject({
+    entity: { setAbstractEntity: { success: true } },
+  })
+
+  const entityId = data.entity.setAbstractEntity.entity.id
+
+  await entityQuery.withVariables({ id: entityId }).shouldReturnData({
+    uuid: { currentRevision: { id: 30674 } },
   })
 })
 
