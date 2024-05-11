@@ -6,7 +6,7 @@ import { Context } from '~/context'
 import { Model } from '~/internals/graphql'
 import { InstanceDecoder, NotificationEventType } from '~/model/decoder'
 
-export enum EventType {
+enum EventType {
   ArchiveThread = 'discussion/comment/archive',
   RestoreThread = 'discussion/restore',
   CreateComment = 'discussion/comment/create',

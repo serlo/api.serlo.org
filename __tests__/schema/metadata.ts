@@ -3,7 +3,7 @@ import assert from 'assert'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { metadataExamples } from '../../__fixtures__/metadata'
+import { metadataExamples } from '../../__fixtures__'
 import { Client } from '../__utils__'
 import { encodeToBase64 } from '~/internals/graphql'
 
