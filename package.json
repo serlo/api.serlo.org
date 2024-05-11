@@ -17,7 +17,7 @@
     "_prettier": "prettier .",
     "auth": "scripts/authenticate.sh",
     "_build": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/build",
-    "_jest": "node --experimental-vm-modules --experimental-specifier-resolution=node node_modules/jest/bin/jest.js",
+    "_jest": "node --no-warnings --experimental-vm-modules --experimental-specifier-resolution=node node_modules/jest/bin/jest.js",
     "_start": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/start",
     "build:server": "yarn _build packages/server/src/server.ts server.cjs",
     "build:swr-queue-worker": "yarn _build packages/server/src/swr-queue-worker.ts swr-queue-worker.cjs",
