@@ -35,7 +35,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
-export const activeUserIdsQuery = createCachedResolver<
+export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
   number[]
 >({
@@ -201,7 +201,7 @@ export const resolvers: Resolvers = {
         : null
     },
     async isActiveAuthor(user, _args, context) {
-      const ids = await activeUserIdsQuery.resolve({}, context)
+      const ids = await ActiveUserIdsResolver.resolve({}, context)
       return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
