@@ -147,12 +147,20 @@ test('check outs new revision when `needsReview` is false', async () => {
   })
 })
 
-test('check outs new revision for entities in autoreview taxonomies', async () => {
+test('fails on review when author has no review roles', async () => {
+  await mutation
+    .forLoginUser()
+    .changeInput({ needsReview: false })
+    .shouldFailWithError('FORBIDDEN')
+})
+
+test('check outs new revision for entities in autoreview taxonomies for login users', async () => {
   await database.mutate(
     'update term_taxonomy_entity set term_taxonomy_id = 106082 where entity_id = 35554',
   )
 
   const data = (await mutation
+    .forLoginUser()
     .changeInput({ entityId: 35554, parentId: null })
     .getData()) as {
     entity: {
