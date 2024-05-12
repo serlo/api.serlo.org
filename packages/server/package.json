@@ -19,18 +19,18 @@
   },
   "dependencies": {
     "bee-queue": "^1.7.1",
-    "bull-arena": "^4.4.0"
+    "bull-arena": "^4.4.1"
   },
   "devDependencies": {
     "@apollo/server": "^4.10.4",
-    "@google-cloud/storage": "^7.10.2",
+    "@google-cloud/storage": "^7.11.0",
     "@graphql-codegen/add": "^5.0.2",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-resolvers": "^4.0.6",
     "@nmshd/connector-sdk": "^4.2.0",
     "@ory/client": "^1.9.0",
-    "@sentry/node": "^7.113.0",
+    "@sentry/node": "^7.114.0",
     "@serlo/authorization": "^0.60.0",
     "@types/basic-auth": "^1.1.8",
     "@types/bull-arena": "^3.0.10",
@@ -57,11 +57,11 @@
     "msgpack5": "^6.0.2",
     "mysql2": "^3.9.7",
     "newtype-ts": "^0.3.5",
-    "openai": "^4.41.0",
+    "openai": "^4.45.0",
     "pg": "^8.11.5",
     "ramda": "^0.30.0",
     "redlock": "^5.0.0-beta2",
-    "semver": "^7.6.0",
+    "semver": "^7.6.2",
     "ts-toolbelt": "^9.6.0",
     "uuid": "^9.0.1"
   }
