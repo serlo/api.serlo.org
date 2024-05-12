@@ -7,7 +7,6 @@ import {
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
   InstanceDecoder,
-  NotificationEventDecoder,
   PageDecoder,
   SubscriptionsDecoder,
   UuidDecoder,
@@ -119,11 +118,6 @@ export const spec = {
     payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
     response: t.type({ success: t.boolean }),
     canBeNull: false,
-  },
-  EventQuery: {
-    payload: t.type({ id: t.number }),
-    response: NotificationEventDecoder,
-    canBeNull: true,
   },
   PageAddRevisionMutation: {
     payload: t.type({
