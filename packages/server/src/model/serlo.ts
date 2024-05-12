@@ -14,7 +14,6 @@ import {
   createLegacyQuery,
   createRequest,
 } from '~/internals/data-source-helper'
-import { isSupportedEvent } from '~/schema/events/utils'
 import { isInstance } from '~/schema/instance/utils'
 import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
@@ -170,31 +169,6 @@ export function createSerloModel({
       return result
     },
   })
-
-  const getNotificationEvent = createLegacyQuery(
-    {
-      type: 'EventQuery',
-      decoder: DatabaseLayer.getDecoderFor('EventQuery'),
-      async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
-        const event = await DatabaseLayer.makeRequest('EventQuery', payload)
-
-        return isSupportedEvent(event) ? event : null
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/event/${id}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/event/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
-    },
-    context,
-  )
 
   const getSubscriptions = createLegacyQuery(
     {
@@ -622,7 +596,6 @@ export function createSerloModel({
     getActivityByType,
     getAlias,
     getDeletedEntities,
-    getNotificationEvent,
     getPotentialSpamUsers,
     getSubscriptions,
     getThreadIds,
