@@ -7,7 +7,6 @@ extend type Query {
     unread: Boolean
     userId: Int
   ): NotificationConnection!
-  notificationEvent(id: Int!): AbstractNotificationEvent
 }
 
 extend type Mutation {

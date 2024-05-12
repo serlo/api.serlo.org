@@ -133,9 +133,6 @@ export const resolvers: Resolvers = {
         createCursor: (node) => `${node.id}`,
       })
     },
-    notificationEvent(_parent, payload, { dataSources }) {
-      return dataSources.model.serlo.getNotificationEvent(payload)
-    },
   },
   Mutation: {
     notification: createNamespace(),
