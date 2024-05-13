@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
 
@@ -14,6 +15,7 @@ import {
 let client: Client
 const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
+const emailHash = createHash('md5').update(`admin@localhost`).digest('hex')
 let mailchimpEmails: string[]
 let mutation: Query
 
@@ -33,7 +35,7 @@ beforeEach(() => {
     })
     .withInput({ botIds: [user.id] })
 
-  mailchimpEmails = [emailHash(user)]
+  mailchimpEmails = [emailHash]
 
   for (const user of users) {
     given('ActivityByTypeQuery')
@@ -180,7 +182,7 @@ describe('mailchimp', () => {
 
     await assertErrorEvent({
       message: 'Cannot delete user from mailchimp',
-      errorContext: { emailHash: emailHash(user) },
+      errorContext: { emailHash },
     })
   })
 })
@@ -234,7 +236,3 @@ function givenMailchimpDeleteEmailEndpoint(
 type MailchimpResponseResolver = ResponseResolver<{
   params: { emailHash: string }
 }>
-
-function emailHash(user: { id: number }) {
-  return `${user.id}@example.org`
-}
