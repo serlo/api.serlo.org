@@ -76,7 +76,7 @@ Happy coding!
 
 ### Stop
 
-Interrupt the `yarn start` command to stop the dev server and run `yarn down` to remove all containers.
+Interrupt the `yarn start` command to stop the dev server and run `yarn stop:redis` to stop Redis.
 
 ### Automatically check your codebase before pushing
 
@@ -88,6 +88,17 @@ chmod +x .git/hooks/pre-push
 ```
 
 With `git push --no-verify` you can bypass the automatic checks.
+
+### Repository structure
+
+- `__fixtures__` contains test data (used by both unit and contract tests).
+- `__tests__` contains the unit tests.
+- `__tests-pacts__` contains the contract test.
+- `src/internals` contains a couple of internal data structures. In most cases, you won't need to touch this. Here we hide complexity that isn't needed for typical development tasks.
+- `src/model` defines the model.
+- `src/schema` defines the GraphQL schema.
+
+We have `~` as an absolute path alias for `./src` in place, e.g. `~/internals` refers to `./src/internals`.
 
 ### Other commands
 
@@ -118,17 +129,14 @@ For more info about it see its [documentation](https://www.ory.sh/docs/kratos).
 
 ### Integrating Keycloak
 
-First of all add `nbp` and `vidis` as host  
+First of all add `nbp` as host  
 `sudo bash -c "echo '127.0.0.1	nbp'" >> /etc/hosts`
-`sudo bash -c "echo '127.0.0.1	vidis'" >> /etc/hosts`
 
-_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. These DNSs are discoverable for the kratos container, so the host can also use it._
+_why do I need it? Kratos makes a request to the url of the oauth2 provider, but since it is running inside a container, it cannot easily use the host port. nbp is a dns that is discoverable for the kratos container, so the host can also use it._
 
-Run `yarn start:sso`.  
-_Make sure you already run `yarn start:kratos` before._
+Run `yarn start:nbp`.
 
-Keycloak UI is available on `nbp:11111` and `vidis:11112`.  
-Username: admin, pw: admin.  
+Keycloak UI is available on `nbp:11111` (username: admin, pw: admin).  
 There you have to configure Serlo as a client.
 
 > Client -> Create Client
@@ -137,7 +145,6 @@ There you have to configure Serlo as a client.
 > id: serlo
 > home and root url: http://localhost:3000
 > redirect uri: http://localhost:4433/self-service/methods/oidc/callback/nbp
-> // OR redirect uri: http://localhost:4433/self-service/methods/oidc/callback/vidis
 > ```
 
 Get the credentials and go to `kratos/config.yml`:
@@ -149,15 +156,13 @@ selfservice:
       enabled: true
       config:
         providers:
-          - id: nbp # or vidis
+          - id: nbp
             provider: generic
             client_id: serlo
             client_secret: <put secret here>
 ```
 
 Run the local frontend (not forgetting to change environment in its `.env` to local) to test.
-
-Hint: you may want to create some users in Keycloak in order to test.
 
 ### Email templates
 

@@ -6,9 +6,9 @@ import {
   articleRevision,
   taxonomyTermSubject,
   user as baseUser,
-  emptySubjects,
 } from '../../../__fixtures__'
 import { given, getTypenameAndId, nextUuid, Client } from '../../__utils__'
+import { emptySubjects } from '../subject'
 import { Instance } from '~/types'
 
 const user = { ...baseUser, roles: ['de_reviewer'] }

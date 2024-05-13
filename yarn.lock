@@ -4097,7 +4097,7 @@ __metadata:
     apollo-datasource-rest: ^3.7.0
     basic-auth: ^2.0.1
     bee-queue: ^1.7.1
-    bull-arena: ^4.4.1
+    bull-arena: ^4.4.0
     default-import: ^1.1.5
     dotenv: ^16.4.5
     express: ^4.19.2
@@ -6455,7 +6455,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bull-arena@npm:^4.4.1":
+"bull-arena@npm:^4.4.0":
   version: 4.4.1
   resolution: "bull-arena@npm:4.4.1"
   dependencies:

@@ -48,7 +48,7 @@ export function getEsbuildOptions(source: string, outfile: string) {
     //    type of "undefined".
     //
     // We rather install it seperately.
-    external: ['bee-queue', 'bull-arena'],
+    external: ['bee-queue'],
     outfile,
     plugins: [graphqlLoaderPlugin()],
   } as esbuild.BuildOptions

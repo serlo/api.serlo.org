@@ -322,8 +322,11 @@ testCases.forEach((testCase) => {
       await mutationWithEntityId.shouldFailWithError('INTERNAL_SERVER_ERROR')
     })
 
-    // TODO: Make it a proper test when doing the migration
-    test.skip('fails when parent does not exists', async () => {
+    test('fails when parent does not exists', async () => {
+      given('UuidQuery')
+        .withPayload({ id: testCase.parent.id })
+        .returnsNotFound()
+
       await mutationWithParentId.shouldFailWithError('BAD_USER_INPUT')
     })
 

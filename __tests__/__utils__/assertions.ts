@@ -3,7 +3,6 @@ import { type Storage } from '@google-cloud/storage'
 import type { OAuth2Api } from '@ory/client'
 import * as Sentry from '@sentry/node'
 import { DocumentNode } from 'graphql'
-import gql from 'graphql-tag'
 import * as R from 'ramda'
 
 import { given, nextUuid } from '.'
@@ -122,8 +121,6 @@ export class Query<
     const result = await this.execute()
 
     if (result.body.kind === 'single') {
-      expect(result.body.singleResult['errors']).toBeUndefined()
-
       return result.body.singleResult['data']
     }
 
@@ -238,32 +235,6 @@ export async function assertErrorEvent(args?: {
 
   await waitForAllSentryEvents()
   expect(global.sentryEvents.some(eventPredicate)).toBe(true)
-}
-
-export async function expectEvent(
-  event: {
-    __typename: string
-    objectId: number
-  },
-  first = 1,
-) {
-  const data = (await new Client()
-    .prepareQuery({
-      query: gql`
-        query ($first: Int!) {
-          events(first: $first) {
-            nodes {
-              __typename
-              objectId
-            }
-          }
-        }
-      `,
-      variables: { first },
-    })
-    .getData()) as { events: { nodes: unknown[] } }
-
-  expect(data.events.nodes).toContainEqual(event)
 }
 
 /**

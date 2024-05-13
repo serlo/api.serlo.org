@@ -315,10 +315,14 @@ describe('property "title"', () => {
       ],
       '123',
     ],
-    ['exercise', [exercise, taxonomyTermSubject], 'Mathe'],
-    ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Mathe'],
+    ['exercise', [exercise, taxonomyTermSubject], taxonomyTermSubject.name],
+    [
+      'exercise group',
+      [exerciseGroup, taxonomyTermSubject],
+      taxonomyTermSubject.name,
+    ],
     ['user', [user], user.username],
-    ['taxonomy term', [taxonomyTermRoot], 'Root'],
+    ['taxonomy term', [taxonomyTermRoot], taxonomyTermRoot.name],
   ] as [string, Model<'AbstractUuid'>[], string][]
 
   test.each(testCases)('%s', async (_, uuids, title) => {
