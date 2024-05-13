@@ -8,7 +8,6 @@ const allowedUserIds = [
   32543, // botho
   178807, // HugoBT
   245844, // MoeHome
-  269930, // MikeySerlo
 ]
 
 export const resolvers: Resolvers = {

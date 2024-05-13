@@ -1,70 +1,123 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
-import { Client, expectEvent } from '../../__utils__'
-import { NotificationEventType } from '~/model/decoder'
+import {
+  taxonomyTermCurriculumTopic,
+  user as baseUser,
+} from '../../../__fixtures__'
+import { Client, given } from '../../__utils__'
 
-const input = {
-  description: 'a description',
-  name: 'a name',
-  id: 5,
-}
+describe('TaxonomyTermSetNameAndDescriptionMutation', () => {
+  const user = { ...baseUser, roles: ['de_architect'] }
 
-const mutation = new Client({ userId: 1 })
-  .prepareQuery({
-    query: gql`
-      mutation set($input: TaxonomyTermSetNameAndDescriptionInput!) {
-        taxonomyTerm {
-          setNameAndDescription(input: $input) {
-            success
+  const input = {
+    description: 'a description',
+    name: 'a name',
+    id: taxonomyTermCurriculumTopic.id,
+  }
+
+  const mutation = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        mutation set($input: TaxonomyTermSetNameAndDescriptionInput!) {
+          taxonomyTerm {
+            setNameAndDescription(input: $input) {
+              success
+            }
           }
         }
-      }
-    `,
-  })
-  .withVariables({ input })
+      `,
+    })
+    .withVariables({ input })
 
-const query = new Client().prepareQuery({
-  query: gql`
-    query ($id: Int!) {
-      uuid(id: $id) {
-        ... on TaxonomyTerm {
-          name
-          description
-        }
-      }
-    }
-  `,
-  variables: { id: input.id },
-})
-
-test('updates name and description', async () => {
-  await query.shouldReturnData({ uuid: { name: 'Mathe', description: null } })
-
-  await mutation.shouldReturnData({
-    taxonomyTerm: { setNameAndDescription: { success: true } },
+  beforeEach(() => {
+    given('UuidQuery').for(user, taxonomyTermCurriculumTopic)
   })
 
-  await query.shouldReturnData({
-    uuid: { name: input.name, description: input.description },
+  test('returns "{ success: true }" when mutation could be successfully executed', async () => {
+    given('TaxonomyTermSetNameAndDescriptionMutation')
+      .withPayload({ ...input, userId: user.id })
+      .returns({ success: true })
+
+    await mutation.shouldReturnData({
+      taxonomyTerm: { setNameAndDescription: { success: true } },
+    })
   })
-  await expectEvent({
-    __typename: NotificationEventType.SetTaxonomyTerm,
-    objectId: input.id,
+
+  test('fails when user is not authenticated', async () => {
+    await mutation
+      .forUnauthenticatedUser()
+      .shouldFailWithError('UNAUTHENTICATED')
   })
-})
 
-test('fails when user is not authenticated', async () => {
-  await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-})
+  test('fails when user does not have role "architect"', async () => {
+    await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
+  })
 
-test('fails when user does not have role "architect"', async () => {
-  await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
-})
+  test('fails when `name` is empty', async () => {
+    await mutation
+      .withInput({ ...input, name: '' })
+      .shouldFailWithError('BAD_USER_INPUT')
+  })
 
-test('fails when `name` is empty', async () => {
-  await mutation.changeInput({ name: '' }).shouldFailWithError('BAD_USER_INPUT')
-})
+  test('fails when database layer returns a 400er response', async () => {
+    given('TaxonomyTermSetNameAndDescriptionMutation').returnsBadRequest()
 
-test('fails when `id` does not belong to a taxonomy term', async () => {
-  await mutation.changeInput({ id: 1 }).shouldFailWithError('BAD_USER_INPUT')
+    await mutation.shouldFailWithError('BAD_USER_INPUT')
+  })
+
+  test('fails when database layer has an internal error', async () => {
+    given('TaxonomyTermSetNameAndDescriptionMutation').hasInternalServerError()
+
+    await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  })
+
+  test('updates the cache', async () => {
+    const query = new Client({ userId: user.id })
+      .prepareQuery({
+        query: gql`
+          query ($id: Int!) {
+            uuid(id: $id) {
+              ... on TaxonomyTerm {
+                name
+                description
+              }
+            }
+          }
+        `,
+      })
+      .withVariables({ id: taxonomyTermCurriculumTopic.id })
+
+    await query.shouldReturnData({
+      uuid: {
+        name: taxonomyTermCurriculumTopic.name,
+        description: taxonomyTermCurriculumTopic.description,
+      },
+    })
+
+    given('TaxonomyTermSetNameAndDescriptionMutation')
+      .withPayload({
+        ...input,
+        userId: user.id,
+      })
+      .isDefinedBy(async ({ request }) => {
+        const body = await request.json()
+        const { name, description } = body.payload
+
+        given('UuidQuery').for({
+          ...taxonomyTermCurriculumTopic,
+          name,
+          description,
+        })
+
+        return HttpResponse.json({ success: true })
+      })
+    await mutation.shouldReturnData({
+      taxonomyTerm: { setNameAndDescription: { success: true } },
+    })
+
+    await query.shouldReturnData({
+      uuid: { name: 'a name', description: 'a description' },
+    })
+  })
 })

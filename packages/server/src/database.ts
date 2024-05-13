@@ -112,10 +112,10 @@ export class Database {
   public async fetchOptional<T = unknown>(
     sql: string,
     params?: unknown[],
-  ): Promise<T | null> {
+  ): Promise<T> {
     const [result] = await this.execute<(T & RowDataPacket)[]>(sql, params)
 
-    return result ?? null
+    return result
   }
 
   public async fetchOne<T = unknown>(
