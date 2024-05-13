@@ -28,7 +28,9 @@ export function createCachedResolver<P, R>(
             await context.swrQueue.queue({ key, cacheEntry: cacheValue })
           }
 
-          return cacheEntry.value
+          if (cacheEntry.value !== null) {
+            return cacheEntry.value
+          }
         }
       }
 
