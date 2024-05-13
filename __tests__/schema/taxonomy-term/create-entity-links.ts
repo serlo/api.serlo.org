@@ -1,37 +1,66 @@
 import gql from 'graphql-tag'
+import { HttpResponse } from 'msw'
 
-import { exercise } from '../../../__fixtures__'
-import { Client, taxonomyTermQuery } from '../../__utils__'
+import {
+  article,
+  exercise,
+  user as baseUser,
+  taxonomyTermCurriculumTopic,
+  taxonomyTermSubject,
+  video,
+} from '../../../__fixtures__'
+import { Client, given } from '../../__utils__'
+
+const user = { ...baseUser, roles: ['de_architect'] }
 
 const input = {
-  entityIds: [32321, 1855],
-  taxonomyTermId: 1314,
+  entityIds: [video.id, exercise.id],
+  taxonomyTermId: taxonomyTermCurriculumTopic.id,
 }
 
-const mutation = new Client({ userId: 1 }).prepareQuery({
-  query: gql`
-    mutation ($input: TaxonomyEntityLinksInput!) {
-      taxonomyTerm {
-        createEntityLinks(input: $input) {
-          success
+const mutation = new Client({ userId: user.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: TaxonomyEntityLinksInput!) {
+        taxonomyTerm {
+          createEntityLinks(input: $input) {
+            success
+          }
         }
       }
-    }
-  `,
-  variables: { input },
+    `,
+  })
+  .withInput(input)
+
+beforeEach(() => {
+  given('UuidQuery').for(
+    article,
+    exercise,
+    video,
+    taxonomyTermSubject,
+    taxonomyTermCurriculumTopic,
+    user,
+  )
+
+  given('TaxonomyCreateEntityLinksMutation')
+    .withPayload({ ...input, userId: user.id })
+    .isDefinedBy(() => {
+      given('UuidQuery').for({
+        ...exercise,
+        taxonomyTermIds: [
+          ...exercise.taxonomyTermIds,
+          taxonomyTermCurriculumTopic.id,
+        ],
+      })
+      given('UuidQuery').for({
+        ...taxonomyTermCurriculumTopic,
+        childrenIds: [...taxonomyTermCurriculumTopic.childrenIds, exercise.id],
+      })
+      return HttpResponse.json({ success: true })
+    })
 })
 
-test('adds links to taxonomies', async () => {
-  await taxonomyTermQuery
-    .withVariables({ id: input.taxonomyTermId })
-    .shouldReturnData({
-      uuid: {
-        children: {
-          nodes: [{ id: 25614 }, { id: 1501 }, { id: 1589 }, { id: 29910 }],
-        },
-      },
-    })
-
+test('returns { success, record } when mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
     taxonomyTerm: {
       createEntityLinks: {
@@ -39,55 +68,84 @@ test('adds links to taxonomies', async () => {
       },
     },
   })
+})
 
-  await taxonomyTermQuery
-    .withVariables({ id: input.taxonomyTermId })
-    .shouldReturnData({
-      uuid: {
-        children: {
-          nodes: [
-            { id: 25614 },
-            { id: 1501 },
-            { id: 1589 },
-            { id: 29910 },
-            { id: 32321 },
-            { id: 1855 },
-          ],
-        },
-      },
+test('updates the cache', async () => {
+  const childQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on Exercise {
+              taxonomyTerms {
+                nodes {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
     })
-})
+    .withVariables({ id: exercise.id })
 
-test('fails when instance does not match', async () => {
-  const englishEntityId = 35598
+  await childQuery.shouldReturnData({
+    uuid: {
+      taxonomyTerms: {
+        nodes: [{ id: exercise.taxonomyTermIds[0] }],
+      },
+    },
+  })
 
-  await mutation
-    .changeInput({ entityIds: [englishEntityId] })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
+  const parentQuery = new Client({ userId: user.id })
+    .prepareQuery({
+      query: gql`
+        query ($id: Int!) {
+          uuid(id: $id) {
+            ... on TaxonomyTerm {
+              children {
+                nodes {
+                  id
+                }
+              }
+            }
+          }
+        }
+      `,
+    })
+    .withVariables({ id: taxonomyTermCurriculumTopic.id })
 
-test('fails when exercise shall be added to non exercise folders', async () => {
-  await mutation
-    .changeInput({ entityIds: [exercise.id] })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
+  await parentQuery.shouldReturnData({
+    uuid: {
+      children: {
+        nodes: [{ id: taxonomyTermCurriculumTopic.childrenIds[0] }],
+      },
+    },
+  })
 
-test('fails when non exercise shall be added to exercise folders', async () => {
-  await mutation
-    .changeInput({ taxonomyIds: [35562] })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
+  await mutation.execute()
 
-test('fails when taxonomyTermId does not belong to taxonomy', async () => {
-  await mutation
-    .changeInput({ taxonomyId: input.entityIds[1] })
-    .shouldFailWithError('BAD_USER_INPUT')
-})
+  await childQuery.shouldReturnData({
+    uuid: {
+      taxonomyTerms: {
+        nodes: [
+          { id: exercise.taxonomyTermIds[0] },
+          { id: taxonomyTermCurriculumTopic.id },
+        ],
+      },
+    },
+  })
 
-test('fails when one child is no entity', async () => {
-  await mutation
-    .changeInput({ entityIds: [1] })
-    .shouldFailWithError('BAD_USER_INPUT')
+  await parentQuery.shouldReturnData({
+    uuid: {
+      children: {
+        nodes: [
+          { id: taxonomyTermCurriculumTopic.childrenIds[0] },
+          { id: exercise.id },
+        ],
+      },
+    },
+  })
 })
 
 test('fails when user is not authenticated', async () => {
@@ -96,4 +154,16 @@ test('fails when user is not authenticated', async () => {
 
 test('fails when user does not have role "architect"', async () => {
   await mutation.forLoginUser().shouldFailWithError('FORBIDDEN')
+})
+
+test('fails when database layer returns a 400er response', async () => {
+  given('TaxonomyCreateEntityLinksMutation').returnsBadRequest()
+
+  await mutation.shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when database layer has an internal error', async () => {
+  given('TaxonomyCreateEntityLinksMutation').hasInternalServerError()
+
+  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

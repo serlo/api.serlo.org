@@ -32,12 +32,6 @@ selfservice:
             client_secret: H8t6WKWtGwFjqNfuAjqxrwCfsdznMAfj
             issuer_url: http://nbp:11111/realms/master
             mapper_url: file:///etc/config/kratos/user_mapper.jsonnet
-          - id: vidis
-            provider: generic
-            client_id: serlo
-            client_secret: H8t6WKWtGwFjqNfuAjqxrwCfsdznMAfj
-            issuer_url: http://vidis:11112/realms/master
-            mapper_url: file:///etc/config/kratos/user_mapper.jsonnet
 
   flows:
     error:

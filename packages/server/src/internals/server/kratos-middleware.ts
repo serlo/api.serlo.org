@@ -37,11 +37,7 @@ export function applyKratosMiddleware({
   ) {
     app.post(
       `${basePath}/single-logout`,
-      createKratosRevokeSessionsHandler(kratos, 'nbp'),
-    )
-    app.post(
-      `${basePath}/single-logout-vidis`,
-      createKratosRevokeSessionsHandler(kratos, 'vidis'),
+      createKratosRevokeSessionsHandler(kratos),
     )
   }
   return basePath
@@ -141,10 +137,7 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
   }
 }
 
-function createKratosRevokeSessionsHandler(
-  kratos: Kratos,
-  provider: 'nbp' | 'vidis',
-): RequestHandler {
+function createKratosRevokeSessionsHandler(kratos: Kratos): RequestHandler {
   function sendErrorResponse(response: Response, message: string) {
     // see https://openid.net/specs/openid-connect-backchannel-1_0.html#BCResponse
     response.set('Cache-Control', 'no-store').status(400).send(message)
@@ -165,9 +158,7 @@ function createKratosRevokeSessionsHandler(
         return
       }
 
-      const id = await kratos.db.getIdByCredentialIdentifier(
-        `${provider}:${sub}`,
-      )
+      const id = await kratos.db.getIdByCredentialIdentifier(`nbp:${sub}`)
 
       if (!id) {
         sendErrorResponse(response, 'user not found or not valid')
