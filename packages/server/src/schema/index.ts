@@ -47,13 +47,4 @@ export const schema = mergeSchemas(
 // @ts-expect-error Unfortunately typecasting does not work here
 export const cachedResolvers: Array<CachedResolver<unknown, unknown>> = [
   ...uuidCachedResolvers,
-<<<<<<< HEAD
-  // @ts-expect-error Unfortunately typecasting does not work here
-  SubjectResolver,
-  // @ts-expect-error Unfortunately typecasting does not work here
-  NotificationsResolver,
-  // @ts-expect-error Unfortunately typecasting does not work here
-  SubjectsResolver,
-=======
->>>>>>> production
 ]
