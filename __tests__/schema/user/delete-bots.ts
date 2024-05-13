@@ -92,7 +92,7 @@ beforeEach(() => {
   })
 })
 
-test('runs successfully when mutation could be successfully executed', async () => {
+test('runs successfully if mutation could be successfully executed', async () => {
   expect(global.kratos.identities).toHaveLength(users.length)
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
@@ -131,14 +131,14 @@ describe('community chat', () => {
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the community chat', async () => {
+  test('does not sent a sentry event if the user is not in the community chat', async () => {
     await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
-  test('send a sentry event when the user cannot be deleted from the community chat', async () => {
+  test('send a sentry event if the user cannot be deleted from the community chat', async () => {
     givenChatDeleteUserEndpoint(
       returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
@@ -164,14 +164,14 @@ describe('mailchimp', () => {
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the newsletter', async () => {
+  test('does not sent a sentry event if the user is not in the newsletter', async () => {
     await mutation.withInput({ botIds: [user2.id] }).execute()
 
     expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
-  test('send a sentry event when the user cannot be deleted', async () => {
+  test('send a sentry event if the user cannot be deleted', async () => {
     givenMailchimpDeleteEmailEndpoint(
       returnsJson({ status: 405, json: { errorType: 'unknown' } }),
     )
@@ -185,13 +185,13 @@ describe('mailchimp', () => {
   })
 })
 
-test('fails when one of the given bot ids is not a user', async () => {
+test('fails if one of the given bot ids is not a user', async () => {
   await mutation
     .withInput({ botIds: [article.id] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('fails when one given bot id has more than 4 edits', async () => {
+test('fails if one given bot id has more than 4 edits', async () => {
   given('ActivityByTypeQuery')
     .withPayload({ userId: user.id })
     .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
@@ -199,15 +199,15 @@ test('fails when one given bot id has more than 4 edits', async () => {
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('fails when user is not authenticated', async () => {
+test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails when user does not have role "sysadmin"', async () => {
+test('fails if user does not have role "sysadmin"', async () => {
   await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
 })
 
-test('fails when kratos has an error', async () => {
+test('fails if kratos has an error', async () => {
   global.kratos.admin.deleteIdentity = () => {
     throw new Error('Error in kratos')
   }
