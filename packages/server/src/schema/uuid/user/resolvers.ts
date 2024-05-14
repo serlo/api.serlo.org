@@ -397,7 +397,7 @@ export const resolvers: Resolvers = {
 
             await deleteKratosUser(botId, authServices)
 
-            transaction.commit()
+            await transaction.commit()
           } catch(error) {
             await transaction.rollback()
             throw error
