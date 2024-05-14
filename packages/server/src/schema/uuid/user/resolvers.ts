@@ -376,33 +376,33 @@ export const resolvers: Resolvers = {
       }
 
       for (const botId of botIds) {
-          const transaction = await database.beginTransaction()
-          try {
-            const user: User | null = await database.fetchOptional(
-              `SELECT email FROM user WHERE id = ?`,
-              [botId],
-            )
+        const transaction = await database.beginTransaction()
+        try {
+          const user: User | null = await database.fetchOptional(
+            `SELECT email FROM user WHERE id = ?`,
+            [botId],
+          )
 
-            if (user) {
-              const hash = createHash('md5').update(user.email).digest('hex')
-              emailHashes.push(hash)
-            }
-
-            await database.mutate(
-              `DELETE FROM uuid WHERE id = ? AND discriminator = 'user'`,
-              [botId],
-            )
-
-            await UuidResolver.removeCacheEntry({ id: botId }, context)
-
-            await deleteKratosUser(botId, authServices)
-
-            await transaction.commit()
-          } catch(error) {
-            await transaction.rollback()
-            throw error
+          if (user) {
+            const hash = createHash('md5').update(user.email).digest('hex')
+            emailHashes.push(hash)
           }
+
+          await database.mutate(
+            `DELETE FROM uuid WHERE id = ? AND discriminator = 'user'`,
+            [botId],
+          )
+
+          await UuidResolver.removeCacheEntry({ id: botId }, context)
+
+          await deleteKratosUser(botId, authServices)
+
+          await transaction.commit()
+        } catch (error) {
+          await transaction.rollback()
+          throw error
         }
+      }
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
