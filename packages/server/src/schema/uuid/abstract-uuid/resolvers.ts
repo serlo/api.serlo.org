@@ -201,7 +201,6 @@ const BaseUser = t.intersection([
     discriminator: t.literal('user'),
     userUsername: t.string,
     userDate: date,
-    userLastLogin: date,
     userDescription: t.string,
     userRoles: t.array(t.string),
   }),
@@ -233,7 +232,7 @@ async function resolveUuidFromDatabase(
         WHEN comment_status.name = 'no_status' THEN 'noStatus'
         ELSE comment_status.name
       END AS commentStatus,
-      
+
       taxonomy_type.name AS taxonomyType,
       taxonomy_instance.subdomain AS taxonomyInstance,
       term.name AS taxonomyName,
@@ -252,10 +251,9 @@ async function resolveUuidFromDatabase(
 
       user.username AS userUsername,
       user.date AS userDate,
-      user.last_login AS userLastLogin,
       user.description AS userDescription,
       JSON_ARRAYAGG(role.name) AS userRoles
-      
+
     FROM uuid
  
     LEFT JOIN comment ON comment.id = uuid.id
@@ -335,7 +333,6 @@ async function resolveUuidFromDatabase(
         alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        lastLogin: baseUuid.userLastLogin.toISOString(),
         roles: baseUuid.userRoles,
         username: baseUuid.userUsername,
       }
