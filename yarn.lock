@@ -4088,6 +4088,7 @@ __metadata:
     "@serlo/authorization": ^0.60.0
     "@types/basic-auth": ^1.1.8
     "@types/bull-arena": ^3.0.10
+    "@types/cors": ^2.8.17
     "@types/jsonwebtoken": ^9.0.6
     "@types/pg": ^8.11.6
     "@types/ramda": ^0.30.0
@@ -4098,6 +4099,7 @@ __metadata:
     basic-auth: ^2.0.1
     bee-queue: ^1.7.1
     bull-arena: ^4.4.1
+    cors: ^2.8.5
     default-import: ^1.1.5
     dotenv: ^16.4.5
     express: ^4.19.2
@@ -4400,6 +4402,15 @@ __metadata:
   version: 0.6.0
   resolution: "@types/cookie@npm:0.6.0"
   checksum: 5edce7995775b0b196b142883e4d4f71fd93c294eaec973670f1fa2540b70ea7390408ed513ddefef5fcb12a578100c76596e8f2a714b0c2ae9f70ee773f4510
+  languageName: node
+  linkType: hard
+
+"@types/cors@npm:^2.8.17":
+  version: 2.8.17
+  resolution: "@types/cors@npm:2.8.17"
+  dependencies:
+    "@types/node": "*"
+  checksum: 469bd85e29a35977099a3745c78e489916011169a664e97c4c3d6538143b0a16e4cc72b05b407dc008df3892ed7bf595f9b7c0f1f4680e169565ee9d64966bde
   languageName: node
   linkType: hard
 
