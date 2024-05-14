@@ -375,8 +375,7 @@ export const resolvers: Resolvers = {
         email: string
       }
 
-      await Promise.all(
-        botIds.map(async (botId) => {
+      for (const botId of botIds) {
           const transaction = await database.beginTransaction()
           try {
             const user: User | null = await database.fetchOptional(
@@ -403,8 +402,7 @@ export const resolvers: Resolvers = {
             await transaction.rollback()
             throw error
           }
-        }),
-      )
+        }
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
