@@ -377,7 +377,7 @@ export const resolvers: Resolvers = {
 
       await Promise.all(
         botIds.map(async (botId) => {
-          const user: User | null = await database.fetchOne(
+          const user: User | null = await database.fetchOptional(
             `SELECT email FROM user WHERE id = ?`,
             [botId],
           )
