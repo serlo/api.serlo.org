@@ -201,7 +201,7 @@ const BaseUser = t.intersection([
     discriminator: t.literal('user'),
     userUsername: t.string,
     userDate: date,
-    userDescription: t.string,
+    userDescription: t.union([t.string, t.null]),
     userRoles: t.array(t.string),
   }),
 ])
