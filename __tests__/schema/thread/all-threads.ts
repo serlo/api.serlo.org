@@ -102,7 +102,7 @@ describe('allThreads', () => {
 
   test('parameter "instance"', async () => {
     // temporary solution because all comments in dump are German
-    await global.database.mutate(
+    await global.databaseForTests.mutate(
       `UPDATE comment SET instance_id = 2 WHERE id = ${comment1.id}`,
     )
 
@@ -115,7 +115,7 @@ describe('allThreads', () => {
         thread: { allThreads: { nodes: [comment1].map(getThreadData) } },
       })
 
-    await database.mutate(
+    await databaseForTests.mutate(
       `UPDATE comment SET instance_id = 1 WHERE id = ${comment1.id}`,
     )
   })
