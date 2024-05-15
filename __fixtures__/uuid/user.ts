@@ -18,7 +18,7 @@ export const user2: Model<'User'> = {
   id: 23,
   trashed: false,
   alias: '/user/23/sandra',
-  username: 'sandra',
+  username: '1229902f',
   date: '2015-02-01T20:35:21Z',
   lastLogin: '2019-03-23T09:20:55Z',
   description: null,
