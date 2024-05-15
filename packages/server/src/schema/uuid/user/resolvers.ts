@@ -322,8 +322,9 @@ export const resolvers: Resolvers = {
         WHERE user.username = ? AND role.name = ?
         AND NOT EXISTS (
           SELECT 1
-          FROM role_user ru
-          WHERE ru.user_id = u.id AND ru.role_id = r.id
+          FROM role_user
+          WHERE role_user.user_id = user.id
+          AND role_user.role_id = role.id
         )
         `,
         [
