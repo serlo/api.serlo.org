@@ -385,7 +385,7 @@ export const resolvers: Resolvers = {
       }
     },
     async setCommentState(_parent, payload, context) {
-      const { userId } = context
+      const { database, userId } = context
       const { id: ids, trashed } = payload.input
 
       const scopes = await Promise.all(
