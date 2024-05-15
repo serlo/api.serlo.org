@@ -246,13 +246,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserAddRoleMutation: {
-    payload: t.type({ username: t.string, roleName: t.string }),
-    response: t.strict({
-      success: t.literal(true),
-    }),
-    canBeNull: false,
-  },
   UsersByRoleQuery: {
     payload: t.type({
       roleName: t.string,

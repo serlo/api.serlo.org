@@ -296,7 +296,7 @@ export const resolvers: Resolvers = {
   },
   UserMutation: {
     async addRole(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -314,10 +314,29 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.addRole({
-        username,
-        roleName: generateRole(role, instance),
-      })
+      await database.mutate(
+        `
+        INSERT INTO role_user (user_id, role_id)
+        SELECT user.id, role.id
+        FROM user, role
+        WHERE user.username = ? AND role.name = ?
+        AND NOT EXISTS (
+          SELECT 1
+          FROM role_user ru
+          WHERE ru.user_id = u.id AND ru.role_id = r.id
+        )
+        `,
+        [
+          username,
+          generateRole(role, instance),
+        ]
+      )
+
+      const { id } = await database.fetchOne<{id: number}>(
+        `SELECT id FROM user WHERE username = ?`, 
+        [username,],
+      )
+      await UuidResolver.removeCacheEntry({id}, context)
 
       return { success: true, query: {} }
     },

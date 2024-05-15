@@ -553,24 +553,6 @@ export function createSerloModel({
     },
   })
 
-  const addRole = createMutation({
-    type: 'UsersByRoleQuery',
-    decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
-      return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
-    },
-    async updateCache({ username }, { success }) {
-      if (success) {
-        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
-          instance: Instance.De,
-          path: `user/profile/${username}`,
-        })) as { id: number }
-
-        await UuidResolver.removeCacheEntry({ id: alias.id }, context)
-      }
-    },
-  })
-
   const getUsersByRole = createRequest({
     type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
@@ -582,7 +564,6 @@ export function createSerloModel({
   return {
     addEntityRevision,
     addPageRevision,
-    addRole,
     archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
