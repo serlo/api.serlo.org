@@ -81,7 +81,7 @@ export const resolvers: Resolvers = {
   },
   UuidMutation: {
     async setState(_parent, payload, context) {
-      const { userId } = context
+      const { database, userId } = context
       const { id, trashed } = payload.input
       const ids = id
 
