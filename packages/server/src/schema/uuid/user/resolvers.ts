@@ -327,17 +327,14 @@ export const resolvers: Resolvers = {
           AND role_user.role_id = role.id
         )
         `,
-        [
-          username,
-          generateRole(role, instance),
-        ]
+        [username, generateRole(role, instance)],
       )
 
-      const { id } = await database.fetchOne<{id: number}>(
-        `SELECT id FROM user WHERE username = ?`, 
-        [username,],
+      const { id } = await database.fetchOne<{ id: number }>(
+        `SELECT id FROM user WHERE username = ?`,
+        [username],
       )
-      await UuidResolver.removeCacheEntry({id}, context)
+      await UuidResolver.removeCacheEntry({ id }, context)
 
       return { success: true, query: {} }
     },
