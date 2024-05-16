@@ -7,7 +7,7 @@ export const user: Model<'User'> = {
   trashed: false,
   alias: '/user/1/admin',
   username: 'admin',
-  date: '2014-03-01T20:36:21Z',
+  date: '2014-03-01T20:36:21.000Z',
   lastLogin: '2020-03-24T09:40:55Z',
   description: null,
   roles: ['login', 'german_horizonhelper', 'sysadmin'],
