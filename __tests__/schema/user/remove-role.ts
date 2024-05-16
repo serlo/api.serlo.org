@@ -122,5 +122,5 @@ test('fails if user is not authenticated', async () => {
 })
 
 test('fails if user does not have role "admin"', async () => {
-  await mutation.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
+  await mutation.forLoginUser('de_reviewer').shouldFailWithError('FORBIDDEN')
 })
