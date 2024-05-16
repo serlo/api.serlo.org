@@ -65,8 +65,6 @@ describe('User', () => {
   })
 
   test('by alias /user/profile/:id returns null when user does not exist', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
-
     await client
       .prepareQuery({
         query: gql`
@@ -80,7 +78,7 @@ describe('User', () => {
       .withVariables({
         alias: {
           instance: Instance.De,
-          path: `/user/profile/${user.id}`,
+          path: `/user/profile/3`,
         },
       })
       .shouldReturnData({ uuid: null })
@@ -171,11 +169,6 @@ describe('User', () => {
   })
 
   test('property "roles"', async () => {
-    given('UuidQuery').for({
-      ...user,
-      roles: ['login', 'en_moderator', 'de_reviewer'],
-    })
-
     await client
       .prepareQuery({
         query: gql`
@@ -193,14 +186,13 @@ describe('User', () => {
           }
         `,
       })
-      .withVariables({ id: user.id })
+      .withVariables({ id: 6 })
       .shouldReturnData({
         uuid: {
           roles: {
             nodes: [
               { role: 'login', scope: Scope.Serlo },
-              { role: 'moderator', scope: Scope.Serlo_En },
-              { role: 'reviewer', scope: Scope.Serlo_De },
+              { role: 'sysadmin', scope: Scope.Serlo },
             ],
           },
         },
@@ -344,22 +336,22 @@ describe('User', () => {
     beforeEach(() => {
       givenMotivationsSpreadsheet([
         ['Motivation', 'Username', 'Can be published?'],
-        ['Serlo is gre', 'foo', 'yes'],
-        ['Serlo is great!', 'foo', 'yes'],
-        ['Serlo is awesome!', 'bar', 'no'],
+        ['Serlo is gre', 'admin', 'yes'],
+        ['Serlo is great!', 'admin', 'yes'],
+        ['Serlo is awesome!', 'login', 'no'],
       ])
     })
 
     test('returns last approved motivation of motivation spreadsheet', async () => {
       await assertSuccessfulMotivationQuery({
-        username: 'foo',
+        userId: 1,
         motivation: 'Serlo is great!',
       })
     })
 
     test('returns null when motivation was not reviewed', async () => {
       await assertSuccessfulMotivationQuery({
-        username: 'bar',
+        userId: 9,
         motivation: null,
       })
     })
@@ -368,14 +360,14 @@ describe('User', () => {
       // See also https://sentry.io/organizations/serlo/issues/2511560095/events/3f43e678ba524ffa8014811c8e116f78/
       givenMotivationsSpreadsheet([
         ['Motivation', 'Username', 'Can be published?'],
-        ['Serlo is awesome!', 'bar', 'no'],
-        ['Serlo is awesome!', 'bar'],
+        ['Serlo is awesome!', 'login', 'no'],
+        ['Serlo is awesome!', 'login'],
         ['Serlo is awesome!'],
         [],
       ])
 
       await assertSuccessfulMotivationQuery({
-        username: 'bar',
+        userId: 9,
         motivation: null,
       })
 
@@ -384,7 +376,7 @@ describe('User', () => {
 
     test('returns null when user is not in spreadsheet with motivations', async () => {
       await assertSuccessfulMotivationQuery({
-        username: 'war',
+        userId: 9,
         motivation: null,
       })
     })
@@ -392,19 +384,17 @@ describe('User', () => {
     test('returns null when there is an error in the google spreadsheet api + report to sentry', async () => {
       givenSpreadheetApi(hasInternalServerError())
 
-      await assertSuccessfulMotivationQuery({ motivation: null })
+      await assertSuccessfulMotivationQuery({ userId: 1, motivation: null })
       await assertErrorEvent({ location: 'motivationSpreadsheet' })
     })
 
     async function assertSuccessfulMotivationQuery({
       motivation,
-      username = 'foo',
+      userId
     }: {
       motivation: string | null
-      username?: string
+      userId: number
     }) {
-      given('UuidQuery').for({ ...user, username })
-
       await client
         .prepareQuery({
           query: gql`
@@ -417,7 +407,7 @@ describe('User', () => {
             }
           `,
         })
-        .withVariables({ id: user.id })
+        .withVariables({ id: userId })
         .shouldReturnData({ uuid: { motivation } })
     }
   })
