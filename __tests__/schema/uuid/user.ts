@@ -390,7 +390,7 @@ describe('User', () => {
 
     async function assertSuccessfulMotivationQuery({
       motivation,
-      userId
+      userId,
     }: {
       motivation: string | null
       userId: number
