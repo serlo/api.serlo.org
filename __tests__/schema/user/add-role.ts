@@ -80,10 +80,7 @@ describe('add global role', () => {
   })
 
   test('fails when only scoped admin', async () => {
-    const idUserEnglishAdmin = 23
-    await mutation
-      .withContext({ userId: idUserEnglishAdmin })
-      .shouldFailWithError('FORBIDDEN')
+    await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
   })
 })
 
@@ -110,14 +107,13 @@ describe('add scoped role', () => {
   })
 
   test('fails when admin in wrong scope', async () => {
-    const idUserEnglishAdmin = 23
     await mutation
       .withInput({
         username: regularUser.username,
         role: scopedRole,
         instance,
       })
-      .withContext({ userId: idUserEnglishAdmin })
+      .forLoginUser('en_admin')
       .shouldFailWithError('FORBIDDEN')
   })
 
@@ -157,8 +153,5 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "admin"', async () => {
-  const idUserGermanReviewer = 266
-  await mutation
-    .withContext({ userId: idUserGermanReviewer })
-    .shouldFailWithError('FORBIDDEN')
+  await mutation.forLoginUser('de_reviewer').shouldFailWithError('FORBIDDEN')
 })

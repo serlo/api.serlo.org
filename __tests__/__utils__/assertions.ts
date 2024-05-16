@@ -6,8 +6,6 @@ import { DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { given, nextUuid } from '.'
-import { user } from '../../__fixtures__'
 import { Context } from '~/context'
 import { Service } from '~/context/service'
 import { ModelDataSource } from '~/internals/data-source'
@@ -99,15 +97,21 @@ export class Query<
   }
 
   forLoginUser(...additionalRoles: string[]) {
-    const loginUser = {
-      ...user,
-      id: nextUuid(user.id),
-      roles: [...additionalRoles, 'login'],
+    const roleToUserId: Record<string, number> = {
+      de_admin: 270,
+      de_moderator: 33931,
+      de_reviewer: 670,
+      en_admin: 23,
     }
 
-    given('UuidQuery').for(loginUser)
+    const loginUser = 9
 
-    return this.withContext({ userId: loginUser.id })
+    const userId =
+      additionalRoles.length === 0
+        ? loginUser
+        : roleToUserId[additionalRoles[0]]
+
+    return this.withContext({ userId })
   }
 
   forUnauthenticatedUser() {

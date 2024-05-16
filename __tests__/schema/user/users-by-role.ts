@@ -141,7 +141,7 @@ describe('get users by role tests', () => {
   })
 
   test('fails when user does not have role "admin"', async () => {
-    await query.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
+    await query.forLoginUser('de_reviewer').shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer has an internal error', async () => {
