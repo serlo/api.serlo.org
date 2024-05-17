@@ -26,6 +26,8 @@ import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
 
 const client = new Client()
+const adminUserId = 1
+const loginUserId = 9
 
 beforeEach(() => {
   given('UuidQuery').for(user)
@@ -344,14 +346,14 @@ describe('User', () => {
 
     test('returns last approved motivation of motivation spreadsheet', async () => {
       await assertSuccessfulMotivationQuery({
-        userId: 1,
+        userId: adminUserId,
         motivation: 'Serlo is great!',
       })
     })
 
     test('returns null when motivation was not reviewed', async () => {
       await assertSuccessfulMotivationQuery({
-        userId: 9,
+        userId: loginUserId,
         motivation: null,
       })
     })
@@ -367,7 +369,7 @@ describe('User', () => {
       ])
 
       await assertSuccessfulMotivationQuery({
-        userId: 9,
+        userId: loginUserId,
         motivation: null,
       })
 
@@ -376,7 +378,7 @@ describe('User', () => {
 
     test('returns null when user is not in spreadsheet with motivations', async () => {
       await assertSuccessfulMotivationQuery({
-        userId: 9,
+        userId: loginUserId,
         motivation: null,
       })
     })
