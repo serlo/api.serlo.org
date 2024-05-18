@@ -163,6 +163,7 @@ export const resolvers: Resolvers = {
           join type on taxonomy.type_id = type.id
           join instance on taxonomy.instance_id = instance.id
           where type.name = ? and instance.subdomain = ?
+          limit 1
         `,
           [
             taxonomyId,
