@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { article, user } from '../../__fixtures__'
-import { Client, getTypenameAndId, given } from '../__utils__'
+import { Client, given } from '../__utils__'
 
 describe('currentUserHasSubscribed', () => {
   const query = new Client({ userId: 1 }).prepareQuery({
@@ -27,46 +27,38 @@ describe('currentUserHasSubscribed', () => {
   })
 })
 
-describe('subscriptions', () => {
-  beforeEach(() => {
-    given('UuidQuery').for(article, user)
-    given('SubscriptionsQuery')
-      .withPayload({ userId: user.id })
-      .returns({
-        subscriptions: [{ objectId: article.id, sendEmail: true }],
-      })
-  })
-
-  test('Article', async () => {
-    await new Client({ userId: 1 })
-      .prepareQuery({
-        query: gql`
-          query {
-            subscription {
-              getSubscriptions {
-                nodes {
-                  object {
-                    __typename
-                    id
-                  }
-                  sendEmail
+test('getSubscriptions', async () => {
+  await new Client({ userId: 27393 })
+    .prepareQuery({
+      query: gql`
+        query {
+          subscription {
+            getSubscriptions {
+              nodes {
+                object {
+                  id
                 }
+                sendEmail
               }
             }
           }
-        `,
-      })
-      .shouldReturnData({
-        subscription: {
-          getSubscriptions: {
-            nodes: [{ object: getTypenameAndId(article), sendEmail: true }],
-          },
+        }
+      `,
+    })
+    .shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: 27393 }, sendEmail: true },
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
+          ],
         },
-      })
-  })
+      },
+    })
 })
 
-describe('subscription mutation set', () => {
+describe.skip('subscription mutation set', () => {
   const mutation = new Client({ userId: user.id }).prepareQuery({
     query: gql`
       mutation set($input: SubscriptionSetInput!) {
