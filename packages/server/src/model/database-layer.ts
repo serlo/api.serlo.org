@@ -175,16 +175,6 @@ export const spec = {
     response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
-  SubscriptionSetMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
   ThreadCreateCommentMutation: {
     payload: t.type({
       content: t.string,

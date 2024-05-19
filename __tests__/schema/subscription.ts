@@ -1,7 +1,23 @@
 import gql from 'graphql-tag'
 
-import { article, user } from '../../__fixtures__'
-import { Client, given } from '../__utils__'
+import { Client } from '../__utils__'
+
+const subscriptionQuery = new Client({ userId: 27393 }).prepareQuery({
+  query: gql`
+    query {
+      subscription {
+        getSubscriptions {
+          nodes {
+            object {
+              id
+            }
+            sendEmail
+          }
+        }
+      }
+    }
+  `,
+})
 
 describe('currentUserHasSubscribed', () => {
   const query = new Client({ userId: 1 }).prepareQuery({
@@ -28,38 +44,21 @@ describe('currentUserHasSubscribed', () => {
 })
 
 test('getSubscriptions', async () => {
-  await new Client({ userId: 27393 })
-    .prepareQuery({
-      query: gql`
-        query {
-          subscription {
-            getSubscriptions {
-              nodes {
-                object {
-                  id
-                }
-                sendEmail
-              }
-            }
-          }
-        }
-      `,
-    })
-    .shouldReturnData({
-      subscription: {
-        getSubscriptions: {
-          nodes: [
-            { object: { id: 27393 }, sendEmail: true },
-            { object: { id: 27781 }, sendEmail: false },
-            { object: { id: 27998 }, sendEmail: true },
-          ],
-        },
+  await subscriptionQuery.shouldReturnData({
+    subscription: {
+      getSubscriptions: {
+        nodes: [
+          { object: { id: 27393 }, sendEmail: true },
+          { object: { id: 27781 }, sendEmail: false },
+          { object: { id: 27998 }, sendEmail: true },
+        ],
       },
-    })
+    },
+  })
 })
 
-describe.skip('subscription mutation set', () => {
-  const mutation = new Client({ userId: user.id }).prepareQuery({
+describe('subscription mutation set', () => {
+  const mutation = new Client({ userId: 27393 }).prepareQuery({
     query: gql`
       mutation set($input: SubscriptionSetInput!) {
         subscription {
@@ -71,72 +70,62 @@ describe.skip('subscription mutation set', () => {
     `,
   })
 
-  const getSubscriptionsQuery = new Client({ userId: user.id }).prepareQuery({
-    query: gql`
-      query {
-        subscription {
-          getSubscriptions {
-            nodes {
-              object {
-                id
-              }
-              sendEmail
-            }
-          }
-        }
-      }
-    `,
-  })
-
-  beforeEach(async () => {
-    given('UuidQuery').for(
-      user,
-      article,
-      { ...article, id: 1555 },
-      { ...article, id: 1565 },
-    )
-    given('SubscriptionsQuery')
-      .withPayload({ userId: user.id })
-      .returns({
-        subscriptions: [
-          { objectId: article.id, sendEmail: false },
-          { objectId: 1555, sendEmail: false },
-        ],
-      })
-
-    await getSubscriptionsQuery.shouldReturnData({
+  test('when subscribe=true and sendEmail=true', async () => {
+    await subscriptionQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
-            { object: { id: article.id }, sendEmail: false },
-            { object: { id: 1555 }, sendEmail: false },
+            { object: { id: 27393 }, sendEmail: true },
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
+          ],
+        },
+      },
+    })
+
+    await mutation
+      .withInput({ id: [27781, 1555], subscribe: true, sendEmail: true })
+      .shouldReturnData({ subscription: { set: { success: true } } })
+
+    await subscriptionQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: 1555 }, sendEmail: true },
+            { object: { id: 27393 }, sendEmail: true },
+            { object: { id: 27781 }, sendEmail: true },
+            { object: { id: 27998 }, sendEmail: true },
           ],
         },
       },
     })
   })
 
-  test('when subscribe=true', async () => {
-    given('SubscriptionSetMutation')
-      .withPayload({
-        ids: [1565, 1555],
-        userId: user.id,
-        subscribe: true,
-        sendEmail: true,
-      })
-      .returns()
-
-    await mutation
-      .withInput({ id: [1565, 1555], subscribe: true, sendEmail: true })
-      .shouldReturnData({ subscription: { set: { success: true } } })
-
-    await getSubscriptionsQuery.shouldReturnData({
+  test('when subscribe=true and sendEmail=false', async () => {
+    await subscriptionQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
-            { object: { id: 1555 }, sendEmail: true },
-            { object: { id: 1565 }, sendEmail: true },
-            { object: { id: article.id }, sendEmail: false },
+            { object: { id: 27393 }, sendEmail: true },
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
+          ],
+        },
+      },
+    })
+
+    await mutation
+      .withInput({ id: [27393, 1555], subscribe: true, sendEmail: false })
+      .shouldReturnData({ subscription: { set: { success: true } } })
+
+    await subscriptionQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: 1555 }, sendEmail: false },
+            { object: { id: 27393 }, sendEmail: false },
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
           ],
         },
       },
@@ -144,23 +133,29 @@ describe.skip('subscription mutation set', () => {
   })
 
   test('when subscribe=false', async () => {
-    given('SubscriptionSetMutation')
-      .withPayload({
-        ids: [article.id],
-        userId: user.id,
-        subscribe: false,
-        sendEmail: false,
-      })
-      .returns()
-
-    await mutation
-      .withInput({ id: [article.id], subscribe: false, sendEmail: false })
-      .shouldReturnData({ subscription: { set: { success: true } } })
-
-    await getSubscriptionsQuery.shouldReturnData({
+    await subscriptionQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
-          nodes: [{ object: { id: 1555 }, sendEmail: false }],
+          nodes: [
+            { object: { id: 27393 }, sendEmail: true },
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
+          ],
+        },
+      },
+    })
+
+    await mutation
+      .withInput({ id: [27393, 1555], subscribe: false, sendEmail: false })
+      .shouldReturnData({ subscription: { set: { success: true } } })
+
+    await subscriptionQuery.shouldReturnData({
+      subscription: {
+        getSubscriptions: {
+          nodes: [
+            { object: { id: 27781 }, sendEmail: false },
+            { object: { id: 27998 }, sendEmail: true },
+          ],
         },
       },
     })
@@ -169,11 +164,7 @@ describe.skip('subscription mutation set', () => {
   test('unauthenticated', async () => {
     await mutation
       .forUnauthenticatedUser()
-      .withInput({
-        id: 1565,
-        subscribe: true,
-        sendEmail: false,
-      })
+      .withInput({ id: 1565, subscribe: true, sendEmail: false })
       .shouldFailWithError('UNAUTHENTICATED')
   })
 })

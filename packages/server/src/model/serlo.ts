@@ -170,14 +170,6 @@ export function createSerloModel({
     },
   })
 
-  const setSubscription = createMutation({
-    type: 'SubscriptionSetMutation',
-    decoder: DatabaseLayer.getDecoderFor('SubscriptionSetMutation'),
-    async mutate(payload: DatabaseLayer.Payload<'SubscriptionSetMutation'>) {
-      await DatabaseLayer.makeRequest('SubscriptionSetMutation', payload)
-    },
-  })
-
   const getThreadIds = createLegacyQuery(
     {
       type: 'ThreadsQuery',
@@ -514,7 +506,6 @@ export function createSerloModel({
     getPages,
     rejectEntityRevision,
     setEntityLicense,
-    setSubscription,
     sortEntity,
   }
 }
