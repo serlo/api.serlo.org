@@ -1,7 +1,31 @@
 import gql from 'graphql-tag'
 
 import { article, user } from '../../__fixtures__'
-import { Client, getTypenameAndId, given, nextUuid } from '../__utils__'
+import { Client, getTypenameAndId, given } from '../__utils__'
+
+describe('currentUserHasSubscribed', () => {
+  const query = new Client({ userId: 1 }).prepareQuery({
+    query: gql`
+      query ($id: Int!) {
+        subscription {
+          currentUserHasSubscribed(id: $id)
+        }
+      }
+    `,
+  })
+
+  test('when user has subscribed', async () => {
+    await query.withVariables({ id: 35564 }).shouldReturnData({
+      subscription: { currentUserHasSubscribed: true },
+    })
+  })
+
+  test('when user has not subscribed', async () => {
+    await query.withVariables({ id: 1855 }).shouldReturnData({
+      subscription: { currentUserHasSubscribed: false },
+    })
+  })
+})
 
 describe('subscriptions', () => {
   beforeEach(() => {
@@ -39,36 +63,6 @@ describe('subscriptions', () => {
           },
         },
       })
-  })
-
-  test('currentUserHasSubscribed (true case)', async () => {
-    await new Client({ userId: user.id })
-      .prepareQuery({
-        query: gql`
-          query subscription($id: Int!) {
-            subscription {
-              currentUserHasSubscribed(id: $id)
-            }
-          }
-        `,
-      })
-      .withVariables({ id: article.id })
-      .shouldReturnData({ subscription: { currentUserHasSubscribed: true } })
-  })
-
-  test('currentUserHasSubscribed (false case)', async () => {
-    await new Client({ userId: user.id })
-      .prepareQuery({
-        query: gql`
-          query subscription($id: Int!) {
-            subscription {
-              currentUserHasSubscribed(id: $id)
-            }
-          }
-        `,
-      })
-      .withVariables({ id: nextUuid(article.id) })
-      .shouldReturnData({ subscription: { currentUserHasSubscribed: false } })
   })
 })
 
