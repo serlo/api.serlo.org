@@ -38,18 +38,27 @@ export const resolvers: Resolvers = {
 
       return subscription !== null
     },
-    async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
+    async getSubscriptions(_parent, cursorPayload, { database, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
+      const subscriptions = await database.fetchAll<Subscription>(
+        `select uuid_id as objectId, notify_mailman as sendEmail from subscription where user_id = ?`,
+        [userId],
+      )
 
       return resolveConnection({
-        nodes: subscriptions,
+        nodes: subscriptions.map(({ objectId, sendEmail }) => ({
+          objectId,
+          sendEmail: Boolean(sendEmail),
+        })),
         payload: cursorPayload,
         createCursor: (node) => node.objectId.toString(),
       })
+
+      interface Subscription {
+        objectId: number
+        sendEmail: 0 | 1
+      }
     },
   },
   SubscriptionMutation: {
