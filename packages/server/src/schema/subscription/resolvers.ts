@@ -42,7 +42,13 @@ export const resolvers: Resolvers = {
       assertUserIsAuthenticated(userId)
 
       const subscriptions = await database.fetchAll<Subscription>(
-        `select uuid_id as objectId, notify_mailman as sendEmail from subscription where user_id = ?`,
+        `
+        select
+          uuid_id as objectId,
+          notify_mailman as sendEmail
+        from subscription
+        where user_id = ?
+        order by objectId`,
         [userId],
       )
 
@@ -63,7 +69,7 @@ export const resolvers: Resolvers = {
   },
   SubscriptionMutation: {
     async set(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const { subscribe, sendEmail } = payload.input
       const ids = payload.input.id
 
@@ -78,13 +84,38 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.setSubscription({
-        ids,
-        userId,
-        subscribe,
-        sendEmail,
-      })
-      return { success: true, query: {} }
+      const transaction = await database.beginTransaction()
+
+      try {
+        if (subscribe) {
+          for (const id of ids) {
+            const { affectedRows } = await database.mutate(
+              'update subscription set notify_mailman = ? where user_id = ? and uuid_id = ?',
+              [sendEmail ? 1 : 0, userId, id],
+            )
+
+            if (affectedRows === 0) {
+              await database.mutate(
+                'insert into subscription (uuid_id, user_id, notify_mailman) values (?, ?, ?)',
+                [id, userId, sendEmail ? 1 : 0],
+              )
+            }
+          }
+        } else {
+          for (const id of ids) {
+            await database.mutate(
+              `delete from subscription where user_id = ? and uuid_id = ?`,
+              [userId, id],
+            )
+          }
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
   },
 }
