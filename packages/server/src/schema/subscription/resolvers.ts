@@ -28,14 +28,15 @@ export const resolvers: Resolvers = {
     subscription: createNamespace(),
   },
   SubscriptionQuery: {
-    async currentUserHasSubscribed(_parent, { id }, { dataSources, userId }) {
+    async currentUserHasSubscribed(_parent, { id }, { database, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const subscriptions = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
+      const subscription = await database.fetchOptional(
+        `select id from subscription where user_id = ? and uuid_id = ?`,
+        [userId, id],
+      )
 
-      return subscriptions.subscriptions.some((sub) => sub.objectId === id)
+      return subscription !== null
     },
     async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
       assertUserIsAuthenticated(userId)
