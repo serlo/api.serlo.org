@@ -4,27 +4,27 @@ import * as R from 'ramda'
 
 import {
   applet,
+  appletRevision,
   article,
+  articleRevision,
   course,
   coursePage,
+  coursePageRevision,
+  courseRevision,
   event,
+  eventRevision,
   exercise,
   exerciseGroup,
-  taxonomyTermSubject,
+  exerciseGroupRevision,
+  exerciseRevision,
+  licenseId,
   taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
-  appletRevision,
-  articleRevision,
-  courseRevision,
-  coursePageRevision,
-  eventRevision,
-  exerciseRevision,
-  exerciseGroupRevision,
   videoRevision,
-  licenseId,
 } from '../../../__fixtures__'
-import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
+import { Client, given, nextUuid } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
