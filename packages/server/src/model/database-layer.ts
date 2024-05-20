@@ -186,19 +186,6 @@ export const spec = {
     response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
-  ThreadCreateThreadMutation: {
-    payload: t.type({
-      content: t.string,
-      objectId: t.number,
-      sendEmail: t.boolean,
-      subscribe: t.boolean,
-      title: t.string,
-      userId: t.number,
-    }),
-    // TODO: See whether it can be just CommentDecoder
-    response: t.union([CommentDecoder, t.null]),
-    canBeNull: false,
-  },
   UnrevisedEntitiesQuery: {
     payload: t.type({}),
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
@@ -277,8 +264,6 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
-    if (spec[type].response._tag === 'VoidType') return
-
     return await response.json()
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to
