@@ -8,6 +8,7 @@ import {
   resolveThreads,
 } from './utils'
 import { createEvent } from '../events/event'
+import { setSubscription } from '../subscription/resolvers'
 import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
@@ -206,7 +207,7 @@ export const resolvers: Resolvers = {
   ThreadMutation: {
     async createThread(_parent, payload, context) {
       const { database, userId } = context
-      const { objectId, title, content } = payload.input
+      const { objectId, title, content, subscribe, sendEmail } = payload.input
 
       const object = await UuidResolver.resolveWithDecoder(
         EntityDecoder,
@@ -236,6 +237,11 @@ export const resolvers: Resolvers = {
           from instance where instance.subdomain = ?
           `,
           [threadId, userId, objectId, title, content, object.instance],
+        )
+
+        await setSubscription(
+          { objectId: threadId, subscribe, sendEmail, userId },
+          context,
         )
 
         await transaction.commit()

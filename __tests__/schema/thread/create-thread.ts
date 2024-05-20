@@ -1,16 +1,15 @@
 import gql from 'graphql-tag'
 
-import { user } from '../../../__fixtures__'
-import { Client, threadsQuery } from '../../__utils__'
+import { Client, subscriptionsQuery, threadsQuery } from '../../__utils__'
 
 const input = {
   title: 'My new thread',
   content: 'brand new!',
-  objectId: 31702,
+  objectId: 28009,
   subscribe: true,
   sendEmail: false,
 }
-const mutation = new Client({ userId: user.id }).prepareQuery({
+const mutation = new Client({ userId: 15491 }).prepareQuery({
   query: gql`
     mutation createThread($input: ThreadCreateThreadInput!) {
       thread {
@@ -24,15 +23,19 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
 })
 
 test('should create a new thread', async () => {
-  await threadsQuery.withVariables({ id: 31702 }).shouldReturnData({
-    uuid: { threads: { nodes: [{ id: 'dDMxNzEw' }] } },
+  await threadsQuery.withVariables({ id: input.objectId }).shouldReturnData({
+    uuid: { threads: { nodes: [{ id: 'dDMwMzIy' }] } },
+  })
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: { getSubscriptions: { nodes: [] } },
   })
 
   await mutation.shouldReturnData({
     thread: { createThread: { success: true } },
   })
 
-  await threadsQuery.withVariables({ id: 31702 }).shouldReturnData({
+  await threadsQuery.withVariables({ id: input.objectId }).shouldReturnData({
     uuid: {
       threads: {
         nodes: [
@@ -40,7 +43,17 @@ test('should create a new thread', async () => {
             title: input.title,
             comments: { nodes: [{ content: input.content }] },
           },
-          { id: 'dDMxNzEw' },
+          { id: 'dDMwMzIy' },
+        ],
+      },
+    },
+  })
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: {
+      getSubscriptions: {
+        nodes: [
+          { object: { id: expect.any(Number) as number }, sendEmail: false },
         ],
       },
     },
