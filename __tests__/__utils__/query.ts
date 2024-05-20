@@ -83,3 +83,20 @@ export const subjectQuery = new Client().prepareQuery({
   `,
   variables: { instance: 'de' },
 })
+
+export const subscriptionsQuery = new Client({ userId: 27393 }).prepareQuery({
+  query: gql`
+    query {
+      subscription {
+        getSubscriptions {
+          nodes {
+            object {
+              id
+            }
+            sendEmail
+          }
+        }
+      }
+    }
+  `,
+})

@@ -1,23 +1,6 @@
 import gql from 'graphql-tag'
 
-import { Client } from '../__utils__'
-
-const subscriptionQuery = new Client({ userId: 27393 }).prepareQuery({
-  query: gql`
-    query {
-      subscription {
-        getSubscriptions {
-          nodes {
-            object {
-              id
-            }
-            sendEmail
-          }
-        }
-      }
-    }
-  `,
-})
+import { Client, subscriptionsQuery } from '../__utils__'
 
 describe('currentUserHasSubscribed', () => {
   const query = new Client({ userId: 1 }).prepareQuery({
@@ -44,7 +27,7 @@ describe('currentUserHasSubscribed', () => {
 })
 
 test('getSubscriptions', async () => {
-  await subscriptionQuery.shouldReturnData({
+  await subscriptionsQuery.shouldReturnData({
     subscription: {
       getSubscriptions: {
         nodes: [
@@ -71,7 +54,7 @@ describe('subscription mutation set', () => {
   })
 
   test('when subscribe=true and sendEmail=true', async () => {
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
@@ -87,7 +70,7 @@ describe('subscription mutation set', () => {
       .withInput({ id: [27781, 1555], subscribe: true, sendEmail: true })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
@@ -102,7 +85,7 @@ describe('subscription mutation set', () => {
   })
 
   test('when subscribe=true and sendEmail=false', async () => {
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
@@ -118,7 +101,7 @@ describe('subscription mutation set', () => {
       .withInput({ id: [27393, 1555], subscribe: true, sendEmail: false })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
@@ -133,7 +116,7 @@ describe('subscription mutation set', () => {
   })
 
   test('when subscribe=false', async () => {
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [
@@ -149,7 +132,7 @@ describe('subscription mutation set', () => {
       .withInput({ id: [27393, 1555], subscribe: false, sendEmail: false })
       .shouldReturnData({ subscription: { set: { success: true } } })
 
-    await subscriptionQuery.shouldReturnData({
+    await subscriptionsQuery.shouldReturnData({
       subscription: {
         getSubscriptions: {
           nodes: [

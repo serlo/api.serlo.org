@@ -1,6 +1,7 @@
 import * as auth from '@serlo/authorization'
 
 import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
+import { Context } from '~/context'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -87,27 +88,11 @@ export const resolvers: Resolvers = {
       const transaction = await database.beginTransaction()
 
       try {
-        if (subscribe) {
-          for (const id of ids) {
-            const { affectedRows } = await database.mutate(
-              'update subscription set notify_mailman = ? where user_id = ? and uuid_id = ?',
-              [sendEmail ? 1 : 0, userId, id],
-            )
-
-            if (affectedRows === 0) {
-              await database.mutate(
-                'insert into subscription (uuid_id, user_id, notify_mailman) values (?, ?, ?)',
-                [id, userId, sendEmail ? 1 : 0],
-              )
-            }
-          }
-        } else {
-          for (const id of ids) {
-            await database.mutate(
-              `delete from subscription where user_id = ? and uuid_id = ?`,
-              [userId, id],
-            )
-          }
+        for (const id of ids) {
+          await setSubscription(
+            { subscribe, userId, objectId: id, sendEmail },
+            context,
+          )
         }
 
         await transaction.commit()
@@ -118,4 +103,41 @@ export const resolvers: Resolvers = {
       }
     },
   },
+}
+
+export async function setSubscription(
+  args: {
+    subscribe: boolean
+    userId: number
+    objectId: number
+    sendEmail: boolean
+  },
+  { database }: Pick<Context, 'database'>,
+) {
+  const { subscribe, userId, objectId, sendEmail } = args
+  const transaction = await database.beginTransaction()
+
+  try {
+    if (subscribe) {
+      const { affectedRows } = await database.mutate(
+        'update subscription set notify_mailman = ? where user_id = ? and uuid_id = ?',
+        [sendEmail ? 1 : 0, userId, objectId],
+      )
+
+      if (affectedRows === 0) {
+        await database.mutate(
+          'insert into subscription (uuid_id, user_id, notify_mailman) values (?, ?, ?)',
+          [objectId, userId, sendEmail ? 1 : 0],
+        )
+      }
+    } else {
+      await database.mutate(
+        `delete from subscription where user_id = ? and uuid_id = ?`,
+        [userId, objectId],
+      )
+    }
+    await transaction.commit()
+  } finally {
+    await transaction.rollback()
+  }
 }
