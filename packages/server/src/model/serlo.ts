@@ -170,22 +170,6 @@ export function createSerloModel({
     },
   })
 
-  const createComment = createMutation({
-    type: 'ThreadCreateCommentMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
-    },
-    async updateCache(payload, value) {
-      if (value !== null) {
-        await UuidResolver.removeCacheEntry({ id: value.id }, context)
-        await UuidResolver.removeCacheEntry({ id: payload.threadId }, context)
-      }
-    },
-  })
-
   const createEntity = createMutation({
     type: 'EntityCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
@@ -424,7 +408,6 @@ export function createSerloModel({
     addRole,
     checkoutEntityRevision,
     checkoutPageRevision,
-    createComment,
     createEntity,
     createPage,
     deleteBots,
