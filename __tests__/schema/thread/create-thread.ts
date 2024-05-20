@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { article, comment, comment1, user } from '../../../__fixtures__'
-import { Client, given, givenThreads } from '../../__utils__'
+import { Client, given } from '../../__utils__'
 import { DiscriminatorType } from '~/model/decoder'
 
 const mutation = new Client({ userId: user.id })
@@ -23,11 +23,6 @@ const mutation = new Client({ userId: user.id })
     subscribe: true,
     sendEmail: false,
   })
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-  givenThreads({ uuid: article, threads: [[comment]] })
-})
 
 // TODO: Enable once the mutation is migrated into the API
 test.skip('thread gets created, cache mutated as expected', async () => {

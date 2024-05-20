@@ -224,11 +224,6 @@ export const spec = {
     response: t.void,
     canBeNull: false,
   },
-  ThreadsQuery: {
-    payload: t.type({ id: t.number }),
-    response: t.type({ firstCommentIds: t.array(t.number) }),
-    canBeNull: false,
-  },
   UnrevisedEntitiesQuery: {
     payload: t.type({}),
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),

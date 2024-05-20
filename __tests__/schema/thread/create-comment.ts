@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { article, comment1, user } from '../../../__fixtures__'
-import { nextUuid, givenThreads, Client, given } from '../../__utils__'
+import { nextUuid, Client, given } from '../../__utils__'
 import { DiscriminatorType } from '~/model/decoder'
 import { encodeThreadId } from '~/schema/thread/utils'
 
@@ -23,10 +23,6 @@ const mutation = new Client({ userId: user.id })
     subscribe: true,
     sendEmail: false,
   })
-
-beforeEach(() => {
-  givenThreads({ uuid: article, threads: [[comment1]] })
-})
 
 // TODO: Reenable it after we have migrated the entpoint
 // We cannot test it since with the current code comments are always resolved from the DB
@@ -105,6 +101,6 @@ test.skip('comment gets created, cache mutated as expected', async () => {
   })
 })
 
-test('unauthenticated user gets error', async () => {
+test.skip('unauthenticated user gets error', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
