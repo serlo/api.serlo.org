@@ -19,6 +19,7 @@ import {
 import {
   CommentDecoder,
   DiscriminatorType,
+  EntityDecoder,
   NotificationEventType,
   UserDecoder,
   UuidDecoder,
@@ -204,29 +205,44 @@ export const resolvers: Resolvers = {
   },
   ThreadMutation: {
     async createThread(_parent, payload, context) {
-      const { dataSources, userId } = context
-      const { objectId } = payload.input
-      const scope = await fetchScopeOfUuid({ id: objectId }, context)
+      const { database, userId } = context
+      const { objectId, title, content } = payload.input
+
+      const object = await UuidResolver.resolveWithDecoder(
+        EntityDecoder,
+        { id: objectId },
+        context,
+      )
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        guard: auth.Thread.createThread(scope),
+        guard: auth.Thread.createThread(auth.instanceToScope(object.instance)),
         message: 'You are not allowed to create a thread on this object.',
         context,
       })
 
-      const commentPayload = await dataSources.model.serlo.createThread({
-        ...payload.input,
-        userId,
-      })
-      const success = commentPayload !== null
-      return {
-        record:
-          commentPayload !== null
-            ? { __typename: 'Thread', commentPayloads: [commentPayload] }
-            : null,
-        success,
-        query: {},
+      const transaction = await database.beginTransaction()
+
+      try {
+        const { insertId: threadId } = await database.mutate(
+          "insert into uuid (discriminator) values ('comment')",
+        )
+
+        await database.mutate(
+          `
+          insert into comment 
+          (id, instance_id, author_id, uuid_id, title, content)
+          select ?, instance.id, ?, ?, ?, ?
+          from instance where instance.subdomain = ?
+          `,
+          [threadId, userId, objectId, title, content, object.instance],
+        )
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
       }
     },
     async createComment(_parent, { input }, context) {
