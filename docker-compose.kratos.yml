@@ -2,7 +2,7 @@ services:
   kratos-migrate:
     depends_on:
       - postgres
-    image: oryd/kratos:v1.0.0
+    image: oryd/kratos:v1.1.0
     volumes:
       - ./kratos:/etc/config/kratos:z
     command: -c /etc/config/kratos/config.yml migrate sql -e --yes
@@ -10,7 +10,7 @@ services:
   kratos:
     depends_on:
       - kratos-migrate
-    image: oryd/kratos:v1.0.0
+    image: oryd/kratos:v1.1.0
     ports:
       - '4433:4433' # public
       - '4434:4434' # admin

@@ -21,7 +21,7 @@ const query = new Client({ userId: user.id })
 test('returns "{ success: true }" when mutation could be successfully executed', async () => {
   await query.shouldReturnData({ user: { setEmail: { success: true } } })
 
-  const { email } = await database.fetchOne<{ email: string }>(
+  const { email } = await databaseForTests.fetchOne<{ email: string }>(
     'select email from user where id = ?',
     [input.userId],
   )

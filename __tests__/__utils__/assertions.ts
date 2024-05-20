@@ -42,7 +42,7 @@ export class Client {
             swrQueue: emptySwrQueue,
             authServices,
             timer: global.timer,
-            database: global.database,
+            database: global.databaseForTests,
           }),
         },
         service: this.context?.service ?? Service.SerloCloudflareWorker,
@@ -60,7 +60,7 @@ export class Client {
             }
           },
         } as unknown as Storage,
-        database: global.database,
+        database: global.databaseForTests,
         cache: global.cache,
         swrQueue: emptySwrQueue,
         authServices,

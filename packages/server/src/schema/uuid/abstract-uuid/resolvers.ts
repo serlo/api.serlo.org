@@ -84,7 +84,7 @@ export const resolvers: Resolvers = {
   },
   UuidMutation: {
     async setState(_parent, payload, context) {
-      const { userId } = context
+      const { database, userId } = context
       const { id, trashed } = payload.input
       const ids = id
 
@@ -250,7 +250,6 @@ const BaseUser = t.intersection([
     discriminator: t.literal('user'),
     userUsername: t.string,
     userDate: date,
-    userLastLogin: date,
     userDescription: t.string,
     userRoles: t.array(t.string),
   }),
@@ -332,7 +331,6 @@ async function resolveUuidFromDatabase(
 
       user.username AS userUsername,
       user.date AS userDate,
-      user.last_login AS userLastLogin,
       user.description AS userDescription,
       JSON_ARRAYAGG(role.name) AS userRoles
 
@@ -530,7 +528,6 @@ async function resolveUuidFromDatabase(
         alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        lastLogin: baseUuid.userLastLogin.toISOString(),
         roles: baseUuid.userRoles,
         username: baseUuid.userUsername,
       }

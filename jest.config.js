@@ -14,7 +14,7 @@ export default {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/__tests__\\/__utils__/'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true, isolatedModules: true }],
+    '^.+\\.tsx?$': '<rootDir>/esbuildTransformer.js',
     '^.+\\.graphql$': './transform-graphql-jest-28-shim.cjs',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts'],

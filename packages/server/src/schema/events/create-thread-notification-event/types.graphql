@@ -1,9 +1,0 @@
-type CreateThreadNotificationEvent implements AbstractNotificationEvent & InstanceAware {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-  object: AbstractUuid!
-  thread: Thread!
-}
