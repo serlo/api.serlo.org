@@ -4152,7 +4152,7 @@ __metadata:
     msgpack5: ^6.0.2
     mysql2: ^3.9.7
     newtype-ts: ^0.3.5
-    openai: ^4.45.0
+    openai: ^4.47.1
     pg: ^8.11.5
     ramda: ^0.30.0
     redlock: ^5.0.0-beta2
@@ -14950,9 +14950,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.45.0":
-  version: 4.45.0
-  resolution: "openai@npm:4.45.0"
+"openai@npm:^4.47.1":
+  version: 4.47.1
+  resolution: "openai@npm:4.47.1"
   dependencies:
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.4
@@ -14964,7 +14964,7 @@ __metadata:
     web-streams-polyfill: ^3.2.1
   bin:
     openai: bin/cli
-  checksum: 24c491f5bf859b1b135a6966f86cde09d9f02f5d4749c3390cbfd3809f01bed9c7d209de3279780b83a17a55c3dd98ae8215a6089acaf07b2338758281b7e45b
+  checksum: 746aa39479f7bc62b1536582bd2f068870715a3a1ae372a187ec5fd1a6cf70c6e49b94a5a8b408186ec52aca886ed47b52fccf6010993fcf16915ab11f96b3b9
   languageName: node
   linkType: hard
 
