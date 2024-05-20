@@ -38,8 +38,8 @@ beforeAll(() => {
 })
 
 beforeEach(async () => {
-  global.database = new Database(global.pool)
-  await global.database.beginTransaction()
+  global.databaseForTests = new Database(global.pool)
+  await global.databaseForTests.beginTransaction()
 
   const baseCache = createCache({ timer: global.timer })
   global.cache = createNamespacedCache(baseCache, generateRandomString(10))
@@ -66,7 +66,7 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  await global.database.rollbackAllTransactions()
+  await global.databaseForTests.rollbackAllTransactions()
 
   await flushSentry()
   global.server.resetHandlers()
@@ -78,7 +78,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   global.server.close()
-  await global.database.close()
+  await global.databaseForTests.close()
 })
 
 class MockTimer implements Timer {
@@ -118,5 +118,5 @@ declare global {
   var sentryEvents: Event[]
   var kratos: MockKratos
   var pool: Pool
-  var database: Database
+  var databaseForTests: Database
 }

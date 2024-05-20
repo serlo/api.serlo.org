@@ -16,7 +16,7 @@ import {
   consumeErrorEvent,
   ErrorEvent,
 } from '~/error-event'
-import { UserInputError } from '~/errors'
+import { ForbiddenError, UserInputError } from '~/errors'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -36,7 +36,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
-export const activeUserIdsQuery = createCachedResolver<
+export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
   number[]
 >({
@@ -202,7 +202,7 @@ export const resolvers: Resolvers = {
         : null
     },
     async isActiveAuthor(user, _args, context) {
-      const ids = await activeUserIdsQuery.resolve({}, context)
+      const ids = await ActiveUserIdsResolver.resolve({}, context)
       return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
@@ -376,7 +376,7 @@ export const resolvers: Resolvers = {
     },
 
     async deleteRegularUser(_parent, { input }, context) {
-      const { dataSources, authServices, userId } = context
+      const { database, authServices, userId } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         guard: serloAuth.User.deleteRegularUser(serloAuth.Scope.Serlo),
@@ -386,19 +386,56 @@ export const resolvers: Resolvers = {
 
       const { id, username } = input
       const user = await UuidResolver.resolve({ id: input.id }, context)
+      const idUserDeleted = 4
 
       if (!UserDecoder.is(user) || user.username !== username) {
         throw new UserInputError(
           '`id` does not belong to a user or `username` does not match the `user`',
         )
       }
+      if (id === idUserDeleted) {
+        throw new ForbiddenError('You cannot delete the user Deleted.')
+      }
 
-      const result = await dataSources.model.serlo.deleteRegularUsers({
-        userId: id,
-      })
+      const transaction = await database.beginTransaction()
+      try {
+        await Promise.all([
+          database.mutate(
+            'UPDATE comment SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate(
+            'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
+            [idUserDeleted, id],
+          ),
+          database.mutate('DELETE FROM notification WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM role_user WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM subscription WHERE user_id = ?', [id]),
+          database.mutate('DELETE FROM subscription WHERE uuid_id = ?', [id]),
+          database.mutate(
+            "DELETE FROM uuid WHERE id = ? and discriminator = 'user'",
+            [id],
+          ),
+        ])
 
-      if (result.success) await deleteKratosUser(id, authServices)
-      return { success: result.success, query: {} }
+        await UuidResolver.removeCacheEntry({ id }, context)
+
+        await deleteKratosUser(id, authServices)
+
+        await transaction.commit()
+      } finally {
+        await transaction.rollback()
+      }
+
+      return { success: true, query: {} }
     },
 
     async removeRole(_parent, { input }, context) {

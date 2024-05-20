@@ -271,11 +271,6 @@ export const resolvers: Resolvers = {
           context,
         )
 
-        // Set subscriptions
-        await context.dataSources.model.serlo.getSubscriptions._querySpec.removeCache(
-          { payload: { userId } },
-        )
-
         return {
           success: true,
           record: finalEntity,

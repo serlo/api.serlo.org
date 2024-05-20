@@ -4,9 +4,7 @@ import * as t from 'io-ts'
 import {
   CommentDecoder,
   InstanceDecoder,
-  NotificationEventDecoder,
   PageDecoder,
-  SubscriptionsDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -57,11 +55,6 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
-  EventQuery: {
-    payload: t.type({ id: t.number }),
-    response: NotificationEventDecoder,
-    canBeNull: true,
-  },
   PageAddRevisionMutation: {
     payload: t.type({
       content: t.string,
@@ -108,21 +101,6 @@ export const spec = {
     response: t.type({
       pages: t.array(t.number),
     }),
-    canBeNull: false,
-  },
-  SubscriptionsQuery: {
-    payload: t.type({ userId: t.number }),
-    response: SubscriptionsDecoder,
-    canBeNull: false,
-  },
-  SubscriptionSetMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.void,
     canBeNull: false,
   },
   ThreadCreateCommentMutation: {
@@ -199,14 +177,6 @@ export const spec = {
       success: t.literal(true),
       emailHashes: t.array(t.string),
     }),
-    canBeNull: false,
-  },
-  UserDeleteRegularUsersMutation: {
-    payload: t.type({ userId: t.number }),
-    response: t.union([
-      t.type({ success: t.literal(true) }),
-      t.type({ success: t.literal(false), reason: t.string }),
-    ]),
     canBeNull: false,
   },
   UserPotentialSpamUsersQuery: {

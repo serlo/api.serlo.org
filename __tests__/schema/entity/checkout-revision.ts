@@ -54,7 +54,7 @@ test('checks out a revision', async () => {
 })
 
 test('checkout revision has trashed == false for following queries', async () => {
-  await database.mutate('update uuid set trashed = 1 where id = ?', [
+  await databaseForTests.mutate('update uuid set trashed = 1 where id = ?', [
     input.revisionId,
   ])
 

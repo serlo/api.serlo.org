@@ -14,7 +14,7 @@ import { exerciseGroupSchema } from './exercise-group'
 import { pageSchema } from './page'
 import { taxonomyTermSchema } from './taxonomy-term'
 import { userSchema } from './user'
-import { activeUserIdsQuery } from './user/resolvers'
+import { ActiveUserIdsResolver } from './user/resolvers'
 import { videoSchema } from './video'
 import { mergeSchemas } from '~/internals/graphql'
 
@@ -37,4 +37,4 @@ export const uuidSchema = mergeSchemas(
   videoSchema,
 )
 
-export const uuidCachedResolvers = [UuidResolver, activeUserIdsQuery]
+export const uuidCachedResolvers = [UuidResolver, ActiveUserIdsResolver]

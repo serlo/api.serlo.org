@@ -9,7 +9,6 @@ import {
   createLegacyQuery,
   createRequest,
 } from '~/internals/data-source-helper'
-import { isSupportedEvent } from '~/schema/events/utils'
 import { isInstance } from '~/schema/instance/utils'
 import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
@@ -93,24 +92,6 @@ export function createSerloModel({
     },
   })
 
-  const deleteRegularUsers = createMutation({
-    type: 'UserDeleteRegularUsersMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserDeleteRegularUsersMutation'),
-    mutate: (
-      payload: DatabaseLayer.Payload<'UserDeleteRegularUsersMutation'>,
-    ) => {
-      return DatabaseLayer.makeRequest(
-        'UserDeleteRegularUsersMutation',
-        payload,
-      )
-    },
-    async updateCache({ userId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: userId }, context)
-      }
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -141,89 +122,6 @@ export function createSerloModel({
     },
     context,
   )
-
-  const getNotificationEvent = createLegacyQuery(
-    {
-      type: 'EventQuery',
-      decoder: DatabaseLayer.getDecoderFor('EventQuery'),
-      async getCurrentValue(payload: DatabaseLayer.Payload<'EventQuery'>) {
-        const event = await DatabaseLayer.makeRequest('EventQuery', payload)
-
-        return isSupportedEvent(event) ? event : null
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/event/${id}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/event/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
-    },
-    context,
-  )
-
-  const getSubscriptions = createLegacyQuery(
-    {
-      type: 'SubscriptionsQuery',
-      decoder: DatabaseLayer.getDecoderFor('SubscriptionsQuery'),
-      enableSwr: true,
-      getCurrentValue: (
-        payload: DatabaseLayer.Payload<'SubscriptionsQuery'>,
-      ) => {
-        return DatabaseLayer.makeRequest('SubscriptionsQuery', payload)
-      },
-      staleAfter: { hours: 1 },
-      getKey: ({ userId }) => {
-        return `de.serlo.org/api/subscriptions/${userId}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/subscriptions/'
-        return key.startsWith(prefix)
-          ? O.some({ userId: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { userId: 1 },
-    },
-    context,
-  )
-
-  const setSubscription = createMutation({
-    type: 'SubscriptionSetMutation',
-    decoder: DatabaseLayer.getDecoderFor('SubscriptionSetMutation'),
-    async mutate(payload: DatabaseLayer.Payload<'SubscriptionSetMutation'>) {
-      await DatabaseLayer.makeRequest('SubscriptionSetMutation', payload)
-    },
-    updateCache: async ({ ids, sendEmail, userId, subscribe }) => {
-      await getSubscriptions._querySpec.setCache({
-        payload: { userId },
-        getValue(current) {
-          if (!current) return
-
-          const currentWithoutNew = current.subscriptions.filter(
-            ({ objectId }) => !ids.includes(objectId),
-          )
-
-          // remove
-          if (!subscribe) {
-            return { subscriptions: currentWithoutNew }
-          }
-
-          // merge
-          const newEntries = ids.map((objectId) => ({ objectId, sendEmail }))
-          return {
-            subscriptions: newEntries
-              .concat(currentWithoutNew)
-              .sort((a, b) => a.objectId - b.objectId),
-          }
-        },
-      })
-    },
-  })
 
   const getThreadIds = createLegacyQuery(
     {
@@ -413,19 +311,15 @@ export function createSerloModel({
     createPage,
     createThread,
     deleteBots,
-    deleteRegularUsers,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
     getDeletedEntities,
-    getNotificationEvent,
     getPotentialSpamUsers,
-    getSubscriptions,
     getThreadIds,
     getUsersByRole,
     getPages,
-    setSubscription,
     sortEntity,
   }
 }

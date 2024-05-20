@@ -45,8 +45,10 @@ const mutation = new Client({ userId: user.id }).prepareQuery({
 
 beforeEach(async () => {
   // create taxonomy Term 106082
-  await database.mutate('update uuid set id = 106082 where id = 35607')
-  await database.mutate('update term_taxonomy set id = 106082 where id = 35607')
+  await databaseForTests.mutate('update uuid set id = 106082 where id = 35607')
+  await databaseForTests.mutate(
+    'update term_taxonomy set id = 106082 where id = 35607',
+  )
 })
 
 test('creates a new entity when "parentId" is set', async () => {
@@ -155,7 +157,7 @@ test('fails on review when author has no review roles', async () => {
 })
 
 test('check outs new revision for entities in autoreview taxonomies for login users', async () => {
-  await database.mutate(
+  await databaseForTests.mutate(
     'update term_taxonomy_entity set term_taxonomy_id = 106082 where entity_id = 35554',
   )
 
@@ -181,7 +183,7 @@ test('check outs new revision for entities in autoreview taxonomies for login us
 })
 
 test('does not check out new revision for entities being in autoreview and non-autoreview taxonomies', async () => {
-  await database.mutate(
+  await databaseForTests.mutate(
     'insert into term_taxonomy_entity (term_taxonomy_id, entity_id) values (106082, 1855)',
   )
 

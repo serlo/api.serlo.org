@@ -1,3 +1,4 @@
+import cors from 'cors'
 import dotenv from 'dotenv'
 import createApp from 'express'
 import { Pool, createPool } from 'mysql2/promise'
@@ -51,6 +52,13 @@ async function initializeServer({
 }) {
   const app = createApp()
   const healthPath = '/health'
+
+  // Allow CORS in local environment since frontend is running on a different port
+  // This allows us to test the frontend in a local environment with the API
+  if (process.env.ENVIRONMENT === 'local') {
+    app.use(cors())
+  }
+
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const graphqlPath = await applyGraphQLMiddleware({
     app,

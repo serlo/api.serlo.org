@@ -3,7 +3,7 @@ import assert from 'assert'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { metadataExamples } from '../../__fixtures__/metadata'
+import { metadataExamples } from '../../__fixtures__'
 import { Client } from '../__utils__'
 import { encodeToBase64 } from '~/internals/graphql'
 
@@ -71,7 +71,7 @@ describe('endpoint "resources"', () => {
   })
 
   test('shows description when it is set', async () => {
-    await global.database.mutate(`
+    await global.databaseForTests.mutate(`
       update entity_revision
       join entity on entity.current_revision_id = entity_revision.id
       set entity_revision.meta_description = "description for entity 2153"
