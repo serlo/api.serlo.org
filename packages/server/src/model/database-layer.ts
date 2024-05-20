@@ -8,7 +8,6 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   PageDecoder,
-  SubscriptionsDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -174,21 +173,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  SubscriptionsQuery: {
-    payload: t.type({ userId: t.number }),
-    response: SubscriptionsDecoder,
-    canBeNull: false,
-  },
-  SubscriptionSetMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.void,
     canBeNull: false,
   },
   ThreadCreateCommentMutation: {
