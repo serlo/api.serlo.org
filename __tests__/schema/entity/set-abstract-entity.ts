@@ -1,11 +1,11 @@
 import gql from 'graphql-tag'
 
-import { user } from '../../../__fixtures__'
 import {
   Client,
   entityQuery,
   entityRevisionQuery,
   expectEvent,
+  subscriptionsQuery,
 } from '../../__utils__'
 import { NotificationEventType } from '~/model/decoder'
 
@@ -24,7 +24,7 @@ const input = {
   url: 'url',
 }
 
-const mutation = new Client({ userId: user.id }).prepareQuery({
+const mutation = new Client({ userId: 1 }).prepareQuery({
   query: gql`
     mutation ($input: SetAbstractEntityInput!) {
       entity {
@@ -89,6 +89,35 @@ test('creates a new entity when "parentId" is set', async () => {
     { __typename: NotificationEventType.CreateEntity, objectId: entityId },
     3,
   )
+})
+
+test('creates a subscription', async () => {
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: { getSubscriptions: { nodes: [] } },
+  })
+
+  const data = (await mutation
+    .withContext({ userId: 15491 })
+    .changeInput({ needsReview: true })
+    .getData()) as {
+    entity: {
+      setAbstractEntity: { entity: { id: number }; revision: { id: number } }
+    }
+  }
+
+  expect(data).toMatchObject({
+    entity: { setAbstractEntity: { success: true } },
+  })
+
+  const entityId = data.entity.setAbstractEntity.entity.id
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: {
+      getSubscriptions: {
+        nodes: [{ object: { id: entityId }, sendEmail: true }],
+      },
+    },
+  })
 })
 
 test('creates a new revision when "entityId" is set', async () => {
