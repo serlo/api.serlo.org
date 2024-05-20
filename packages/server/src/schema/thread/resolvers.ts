@@ -252,8 +252,9 @@ export const resolvers: Resolvers = {
       }
     },
     async createComment(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const threadId = decodeThreadId(input.threadId)
+      const { content, subscribe, sendEmail } = input
       const scope = await fetchScopeOfUuid({ id: threadId }, context)
 
       assertUserIsAuthenticated(userId)
@@ -263,16 +264,35 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const commentPayload = await dataSources.model.serlo.createComment({
-        ...input,
-        threadId,
-        userId,
-      })
+      const transaction = await database.beginTransaction()
 
-      return {
-        record: commentPayload,
-        success: commentPayload !== null,
-        query: {},
+      try {
+        const { insertId: commentId } = await database.mutate(
+          "insert into uuid (discriminator) values ('comment')",
+        )
+
+        await database.mutate(
+          `
+          insert into comment
+          (id, instance_id, author_id, parent_id, content)
+          select ?, parent.instance_id, ?, ?, ?
+          from comment parent where parent.id = ?
+          `,
+          [commentId, userId, threadId, content, threadId],
+        )
+
+        await setSubscription(
+          { objectId: threadId, subscribe, sendEmail, userId },
+          context,
+        )
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntry({ id: threadId }, context)
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
       }
     },
     async editComment(_parent, { input }, context) {
