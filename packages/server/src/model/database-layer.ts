@@ -1,4 +1,4 @@
-import { option as O, function as F } from 'fp-ts'
+import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import {
@@ -213,15 +213,6 @@ export const spec = {
     }),
     // TODO: See whether it can be just CommentDecoder
     response: t.union([CommentDecoder, t.null]),
-    canBeNull: false,
-  },
-  ThreadSetThreadArchivedMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      archived: t.boolean,
-      userId: t.number,
-    }),
-    response: t.void,
     canBeNull: false,
   },
   UnrevisedEntitiesQuery: {

@@ -257,25 +257,6 @@ export function createSerloModel({
     },
   })
 
-  const archiveThread = createMutation({
-    type: 'ThreadSetThreadArchivedMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest(
-        'ThreadSetThreadArchivedMutation',
-        payload,
-      )
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
   const createEntity = createMutation({
     type: 'EntityCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
@@ -552,7 +533,6 @@ export function createSerloModel({
     addEntityRevision,
     addPageRevision,
     addRole,
-    archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
