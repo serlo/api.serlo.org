@@ -75,12 +75,12 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  server.resetHandlers()
+  global.server.resetHandlers()
 })
 
 // set it back to 'bypass' as defined in our 'sjest.setup.ts
 afterAll(() => {
-  server.listen({ onUnhandledRequest: 'bypass' })
+  global.server.listen({ onUnhandledRequest: 'bypass' })
 })
 
 test('successfully generate content for reviewer', async () => {
