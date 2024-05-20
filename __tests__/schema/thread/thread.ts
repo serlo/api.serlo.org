@@ -1,42 +1,7 @@
-import gql from 'graphql-tag'
-
-import { Client } from '../../__utils__'
-
-const query = new Client().prepareQuery({
-  query: gql`
-    query thread($id: Int!, $archived: Boolean) {
-      uuid(id: $id) {
-        ... on ThreadAware {
-          threads(archived: $archived) {
-            nodes {
-              id
-              title
-              createdAt
-              archived
-              object {
-                id
-              }
-              comments {
-                nodes {
-                  id
-                  content
-                  createdAt
-                  archived
-                  legacyObject {
-                    id
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `,
-})
+import { threadsQuery } from '../../__utils__'
 
 test('should return threads', async () => {
-  await query.withVariables({ id: 1327 }).shouldReturnData({
+  await threadsQuery.withVariables({ id: 1327 }).shouldReturnData({
     uuid: {
       threads: {
         nodes: [
@@ -85,21 +50,27 @@ test('should return threads', async () => {
 })
 
 test('when archived is true, should return only archived threads and comments', async () => {
-  await query.withVariables({ id: 1327, archived: true }).shouldReturnData({
-    uuid: {
-      threads: {
-        nodes: [{ id: 'dDI1MTcw', title: 'Fehlende Lösungen', archived: true }],
+  await threadsQuery
+    .withVariables({ id: 1327, archived: true })
+    .shouldReturnData({
+      uuid: {
+        threads: {
+          nodes: [
+            { id: 'dDI1MTcw', title: 'Fehlende Lösungen', archived: true },
+          ],
+        },
       },
-    },
-  })
+    })
 })
 
 test('when archived is false, should return only non archived threads and comments', async () => {
-  await query.withVariables({ id: 1327, archived: false }).shouldReturnData({
-    uuid: {
-      threads: {
-        nodes: [{ id: 'dDMxOTMw', archived: false }],
+  await threadsQuery
+    .withVariables({ id: 1327, archived: false })
+    .shouldReturnData({
+      uuid: {
+        threads: {
+          nodes: [{ id: 'dDMxOTMw', archived: false }],
+        },
       },
-    },
-  })
+    })
 })
