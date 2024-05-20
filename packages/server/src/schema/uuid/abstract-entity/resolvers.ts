@@ -26,6 +26,7 @@ import {
 } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
 import { createEvent } from '~/schema/events/event'
+import { setSubscription } from '~/schema/subscription/resolvers'
 import { Resolvers, SetAbstractEntityInput } from '~/types'
 import { isDateString } from '~/utils'
 
@@ -243,6 +244,16 @@ export const resolvers: Resolvers = {
             [revisionId, entity.id],
           )
         }
+
+        await setSubscription(
+          {
+            subscribe: input.subscribeThis,
+            sendEmail: input.subscribeThisByEmail,
+            objectId: entity.id,
+            userId,
+          },
+          context,
+        )
 
         await createEvent(
           {
