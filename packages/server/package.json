@@ -30,7 +30,7 @@
     "@graphql-codegen/typescript-resolvers": "^4.0.6",
     "@nmshd/connector-sdk": "^4.2.0",
     "@ory/client": "^1.9.0",
-    "@sentry/node": "^7.114.0",
+    "@sentry/node": "^8.2.1",
     "@serlo/authorization": "^0.60.0",
     "@types/basic-auth": "^1.1.8",
     "@types/bull-arena": "^3.0.10",
