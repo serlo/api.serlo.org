@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.60.0",
+  "version": "0.60.1",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
