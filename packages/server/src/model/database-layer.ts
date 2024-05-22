@@ -257,14 +257,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserDeleteBotsMutation: {
-    payload: t.type({ botIds: t.array(t.number) }),
-    response: t.strict({
-      success: t.literal(true),
-      emailHashes: t.array(t.string),
-    }),
-    canBeNull: false,
-  },
   UserPotentialSpamUsersQuery: {
     payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
     response: t.type({ userIds: t.array(t.number) }),

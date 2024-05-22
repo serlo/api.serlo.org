@@ -168,7 +168,7 @@ const BaseComment = t.intersection([
   t.type({
     discriminator: t.literal('comment'),
     commentAuthorId: t.number,
-    commentTitle: t.string,
+    commentTitle: t.union([t.string, t.null]),
     commentDate: date,
     commentArchived: Tinyint,
     commentContent: t.string,

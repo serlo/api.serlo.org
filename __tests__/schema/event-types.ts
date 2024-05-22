@@ -80,7 +80,7 @@ test('adds a notification', async () => {
   const lastEvent = await getLastEvent()
 
   expect(
-    await database.fetchAll(
+    await databaseForTests.fetchAll(
       'select * from notification_event where event_log_id = ?',
       [lastEvent.id],
     ),
@@ -103,7 +103,7 @@ test('fails if object does not exist', async () => {
 test('fails if name from parameters is invalid', async () => {
   const initialEventsNumber = await getEventsNumber()
 
-  await global.database.mutate(
+  await global.databaseForTests.mutate(
     'delete from event_parameter_name where name = "discussion"',
   )
 
@@ -308,12 +308,12 @@ function getApiResult(event: Record<string, unknown>): Record<string, unknown> {
 
 async function getEventsNumber() {
   return (
-    await global.database.fetchOne<{ n: number }>(
+    await global.databaseForTests.fetchOne<{ n: number }>(
       'SELECT count(*) AS n FROM event_log',
     )
   ).n
 }
 
 function getContext() {
-  return { database: global.database }
+  return { database: global.databaseForTests }
 }
