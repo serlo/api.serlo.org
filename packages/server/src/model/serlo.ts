@@ -83,20 +83,6 @@ export function createSerloModel({
     },
   })
 
-  const deleteBots = createMutation({
-    type: 'UserDeleteBotsMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserDeleteBotsMutation'),
-    mutate(payload: DatabaseLayer.Payload<'UserDeleteBotsMutation'>) {
-      return DatabaseLayer.makeRequest('UserDeleteBotsMutation', payload)
-    },
-    async updateCache({ botIds }) {
-      await UuidResolver.removeCacheEntries(
-        botIds.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -571,7 +557,6 @@ export function createSerloModel({
     createEntity,
     createPage,
     createThread,
-    deleteBots,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,

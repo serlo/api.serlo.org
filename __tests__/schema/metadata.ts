@@ -71,7 +71,7 @@ describe('endpoint "resources"', () => {
   })
 
   test('shows description when it is set', async () => {
-    await global.database.mutate(`
+    await global.databaseForTests.mutate(`
       update entity_revision_field
       set value = "description for entity 2153"
       where id = 41509 and field = "meta_description";`)

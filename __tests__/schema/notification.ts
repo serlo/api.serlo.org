@@ -31,7 +31,7 @@ const query = new Client({ userId: 1194 }).prepareQuery({
 
 describe('notifications', () => {
   beforeEach(async () => {
-    await global.database.mutate(`
+    await global.databaseForTests.mutate(`
       update notification set seen = 1, email = 1,
       email_sent = 1 where id = 11599
     `)

@@ -1,5 +1,6 @@
 import * as serloAuth from '@serlo/authorization'
 import { instanceToScope, Scope } from '@serlo/authorization'
+import { createHash } from 'crypto'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
@@ -340,7 +341,7 @@ export const resolvers: Resolvers = {
     },
 
     async deleteBots(_parent, { input }, context) {
-      const { dataSources, userId, authServices } = context
+      const { database, dataSources, userId, authServices } = context
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
         guard: serloAuth.User.deleteBot(serloAuth.Scope.Serlo),
@@ -385,14 +386,40 @@ export const resolvers: Resolvers = {
         }
       }
 
-      const { success, emailHashes } = await dataSources.model.serlo.deleteBots(
-        { botIds },
-      )
-      await Promise.all(
-        botIds.map(
-          async (botId) => await deleteKratosUser(botId, authServices),
-        ),
-      )
+      const emailHashes: string[] = []
+
+      interface User {
+        email: string
+      }
+
+      for (const botId of botIds) {
+        const transaction = await database.beginTransaction()
+        try {
+          const user: User | null = await database.fetchOptional(
+            `SELECT email FROM user WHERE id = ?`,
+            [botId],
+          )
+
+          if (user) {
+            const hash = createHash('md5').update(user.email).digest('hex')
+            emailHashes.push(hash)
+          }
+
+          await database.mutate(
+            `DELETE FROM uuid WHERE id = ? AND discriminator = 'user'`,
+            [botId],
+          )
+
+          await UuidResolver.removeCacheEntry({ id: botId }, context)
+
+          await deleteKratosUser(botId, authServices)
+
+          await transaction.commit()
+        } catch (error) {
+          await transaction.rollback()
+          throw error
+        }
+      }
       if (process.env.ENVIRONMENT === 'production') {
         for (const emailHash of emailHashes) {
           const result =
@@ -411,7 +438,7 @@ export const resolvers: Resolvers = {
         }
       }
 
-      return { success, query: {} }
+      return { success: true, query: {} }
     },
 
     async deleteRegularUser(_parent, { input }, context) {
