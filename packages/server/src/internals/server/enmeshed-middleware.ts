@@ -26,20 +26,26 @@ import {
   ConnectorRelationshipChangeType,
   ConnectorRequestContent,
 } from '@nmshd/connector-sdk'
-import express, { Express, RequestHandler, Request, Response } from 'express'
+import express, { Express, Request, RequestHandler, Response } from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
+import { createCache, createEmptyCache } from '~/cache'
 import { Cache } from '~/context/cache'
 import { captureErrorEvent } from '~/error-event'
+import { Timer } from '~/timer'
 
 export function applyEnmeshedMiddleware({
   app,
-  cache,
+  timer,
 }: {
   app: Express
-  cache: Cache
+  timer: Timer
 }) {
+  const cache =
+    process.env.CACHE_TYPE === 'empty'
+      ? createEmptyCache()
+      : createCache({ timer })
   if (process.env.ENVIRONMENT === 'production') return null
 
   const basePath = '/enmeshed'
