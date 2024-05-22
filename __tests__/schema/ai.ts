@@ -152,7 +152,7 @@ test('fails for unauthenticated user in production', async () => {
 test('fails for unauthorized user (wrong role) in production', async () => {
   const previousEnvironment = process.env.ENVIRONMENT
   process.env.ENVIRONMENT = 'production'
-  await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
+  await query.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
   process.env.ENVIRONMENT = previousEnvironment
 })
 
