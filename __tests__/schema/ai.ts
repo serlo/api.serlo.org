@@ -78,7 +78,7 @@ test('fails for unauthenticated user', async () => {
 })
 
 test('fails for unauthorized user (wrong roles)', async () => {
-  await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
+  await query.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when internal server error open ai api occurs', async () => {
