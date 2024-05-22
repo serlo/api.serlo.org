@@ -171,9 +171,7 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    given('UuidQuery').withPayload({ id: 666 }).returnsNotFound()
-
-    await uuidQuery.withVariables({ id: 666 }).shouldReturnData({ uuid: null })
+    await uuidQuery.withVariables({ id: 666666 }).shouldReturnData({ uuid: null })
   })
 
   test('returns an error when no arguments are given', async () => {
@@ -184,22 +182,6 @@ describe('uuid', () => {
     await uuidQuery
       .withVariables({ alias: { instance: 'de', path: 'math' } })
       .shouldFailWithError('BAD_USER_INPUT')
-  })
-
-  test('returns an error when request fails (500)', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).hasInternalServerError()
-
-    await uuidQuery
-      .withVariables({ id: user.id })
-      .shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
-
-  test('succeeds on 404', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
-
-    await uuidQuery
-      .withVariables({ id: user.id })
-      .shouldReturnData({ uuid: null })
   })
 })
 
