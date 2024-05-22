@@ -22,9 +22,7 @@ describe('authorization', () => {
   })
 
   test('Authenticated Users (no special roles)', async () => {
-    given('UuidQuery').for({ ...user, roles: ['login'] })
-
-    await new Client({ userId: user.id })
+    await new Client({ userId: 20 })
       .prepareQuery({
         query: gql`
           {
@@ -38,9 +36,7 @@ describe('authorization', () => {
   })
 
   test('Authenticated Users (filter old legacy roles)', async () => {
-    given('UuidQuery').for({ ...user, roles: ['login', 'german_moderator'] })
-
-    await new Client({ userId: user.id })
+    await new Client({ userId: 33931 })
       .prepareQuery({
         query: gql`
           {
@@ -64,6 +60,7 @@ describe('authorization', () => {
           }
         `,
       })
+      .forLoginUser('de_moderator')
       .shouldReturnData({
         authorization: resolveRolesPayload({
           [Scope.Serlo]: [Role.Login],
