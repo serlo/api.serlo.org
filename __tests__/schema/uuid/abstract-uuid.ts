@@ -171,7 +171,9 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    await uuidQuery.withVariables({ id: 666666 }).shouldReturnData({ uuid: null })
+    await uuidQuery
+      .withVariables({ id: 666666 })
+      .shouldReturnData({ uuid: null })
   })
 
   test('returns an error when no arguments are given', async () => {
