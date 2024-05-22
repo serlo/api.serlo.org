@@ -6,12 +6,7 @@ import { Pool, createPool } from 'mysql2/promise'
 import { applyGraphQLMiddleware } from './graphql-middleware'
 import { applySwrQueueDashboardMiddleware } from './swr-queue-dashboard-middleware'
 import { initializeSentry } from '../sentry'
-import { createSwrQueue } from '../swr-queue'
-import { createCache, createEmptyCache } from '~/cache'
-import { createAuthServices, AuthServices } from '~/context/auth-services'
-import { Cache } from '~/context/cache'
-import { SwrQueue } from '~/context/swr-queue'
-import { Database } from '~/database'
+import { AuthServices, createAuthServices } from '~/context/auth-services'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 import { Timer, createTimer } from '~/timer'
@@ -23,29 +18,16 @@ export async function start() {
 
   initializeSentry({ context: 'server' })
   const timer = createTimer()
-  const cache =
-    process.env.CACHE_TYPE === 'empty'
-      ? createEmptyCache()
-      : createCache({ timer })
   const pool = createPool(process.env.MYSQL_URI)
-  const swrQueue = createSwrQueue({
-    cache,
-    timer,
-    database: new Database(pool),
-  })
   const authServices = createAuthServices()
-  await initializeServer({ cache, swrQueue, authServices, pool, timer })
+  await initializeServer({ authServices, pool, timer })
 }
 
 async function initializeServer({
-  cache,
-  swrQueue,
   authServices,
   pool,
   timer,
 }: {
-  cache: Cache
-  swrQueue: SwrQueue
   authServices: AuthServices
   pool: Pool
   timer: Timer
@@ -62,8 +44,6 @@ async function initializeServer({
   const dashboardPath = applySwrQueueDashboardMiddleware({ app })
   const graphqlPath = await applyGraphQLMiddleware({
     app,
-    cache,
-    swrQueue,
     authServices,
     pool,
     timer,
@@ -72,7 +52,7 @@ async function initializeServer({
     app,
     kratos: authServices.kratos,
   })
-  const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
+  const enmeshedPath = applyEnmeshedMiddleware({ app, timer })
 
   app.get(healthPath, (_req, res) => {
     res.status(200).send('Okay!')
