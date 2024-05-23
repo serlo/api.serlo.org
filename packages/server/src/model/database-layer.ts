@@ -269,8 +269,6 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
-    if (spec[type].response._tag === 'VoidType') return
-
     return await response.json()
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to
