@@ -1,4 +1,4 @@
-import { option as O, function as F } from 'fp-ts'
+import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import {
@@ -199,20 +199,6 @@ export const spec = {
     response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
-  ThreadSetThreadArchivedMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      archived: t.boolean,
-      userId: t.number,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
-  ThreadsQuery: {
-    payload: t.type({ id: t.number }),
-    response: t.type({ firstCommentIds: t.array(t.number) }),
-    canBeNull: false,
-  },
   UnrevisedEntitiesQuery: {
     payload: t.type({}),
     response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
@@ -283,8 +269,6 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
-    if (spec[type].response._tag === 'VoidType') return
-
     return await response.json()
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to
