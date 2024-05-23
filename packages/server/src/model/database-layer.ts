@@ -8,7 +8,6 @@ import {
   EntityTypeDecoder,
   InstanceDecoder,
   PageDecoder,
-  SubscriptionsDecoder,
   UuidDecoder,
 } from './decoder'
 import { UserInputError } from '~/errors'
@@ -176,21 +175,6 @@ export const spec = {
     response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
-  SubscriptionsQuery: {
-    payload: t.type({ userId: t.number }),
-    response: SubscriptionsDecoder,
-    canBeNull: false,
-  },
-  SubscriptionSetMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
   ThreadCreateCommentMutation: {
     payload: t.type({
       content: t.string,
@@ -247,14 +231,6 @@ export const spec = {
     }),
     response: t.strict({
       usersByRole: t.array(t.number),
-    }),
-    canBeNull: false,
-  },
-  UserDeleteBotsMutation: {
-    payload: t.type({ botIds: t.array(t.number) }),
-    response: t.strict({
-      success: t.literal(true),
-      emailHashes: t.array(t.string),
     }),
     canBeNull: false,
   },
