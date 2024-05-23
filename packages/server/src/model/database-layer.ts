@@ -2,7 +2,6 @@ import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import {
-  CommentDecoder,
   EntityDecoder,
   EntityRevisionTypeDecoder,
   EntityTypeDecoder,
@@ -173,30 +172,6 @@ export const spec = {
       userId: t.number,
     }),
     response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  ThreadCreateCommentMutation: {
-    payload: t.type({
-      content: t.string,
-      threadId: t.number,
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.union([CommentDecoder, t.null]),
-    canBeNull: false,
-  },
-  ThreadCreateThreadMutation: {
-    payload: t.type({
-      content: t.string,
-      objectId: t.number,
-      sendEmail: t.boolean,
-      subscribe: t.boolean,
-      title: t.string,
-      userId: t.number,
-    }),
-    // TODO: See whether it can be just CommentDecoder
-    response: t.union([CommentDecoder, t.null]),
     canBeNull: false,
   },
   UnrevisedEntitiesQuery: {
