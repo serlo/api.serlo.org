@@ -10,8 +10,8 @@ import {
 } from './decoder'
 import { Context } from '~/context'
 import {
-  createMutation,
   createLegacyQuery,
+  createMutation,
   createRequest,
 } from '~/internals/data-source-helper'
 import { isInstance } from '~/schema/instance/utils'
@@ -156,46 +156,15 @@ export function createSerloModel({
     },
   })
 
-  const getThreadIds = createLegacyQuery(
-    {
-      type: 'ThreadsQuery',
-      decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
-      async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
-        return DatabaseLayer.makeRequest('ThreadsQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/threads/${id}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/threads/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
-    },
-    context,
-  )
-
   const createThread = createMutation({
     type: 'ThreadCreateThreadMutation',
     decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
     async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
       return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
     },
-    updateCache: async (payload, value) => {
+    updateCache: async (_payload, value) => {
       if (value !== null) {
         await UuidResolver.removeCacheEntry({ id: value.id }, context)
-        await getThreadIds._querySpec.setCache({
-          payload: { id: payload.objectId },
-          getValue(current) {
-            if (!current) return
-            current.firstCommentIds.unshift(value.id) //new thread on first pos
-            return current
-          },
-        })
       }
     },
   })
@@ -213,25 +182,6 @@ export function createSerloModel({
         await UuidResolver.removeCacheEntry({ id: value.id }, context)
         await UuidResolver.removeCacheEntry({ id: payload.threadId }, context)
       }
-    },
-  })
-
-  const archiveThread = createMutation({
-    type: 'ThreadSetThreadArchivedMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest(
-        'ThreadSetThreadArchivedMutation',
-        payload,
-      )
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
     },
   })
 
@@ -471,7 +421,6 @@ export function createSerloModel({
     addEntityRevision,
     addPageRevision,
     addRole,
-    archiveThread,
     checkoutEntityRevision,
     checkoutPageRevision,
     createComment,
@@ -484,7 +433,6 @@ export function createSerloModel({
     getAlias,
     getDeletedEntities,
     getPotentialSpamUsers,
-    getThreadIds,
     getUnrevisedEntities,
     getUnrevisedEntitiesPerSubject,
     getUsersByRole,

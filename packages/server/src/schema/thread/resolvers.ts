@@ -307,7 +307,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadArchived(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)
 
@@ -322,12 +322,24 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.archiveThread({
-        ids,
-        archived,
-        userId,
-      })
-      return { success: true, query: {} }
+      const transaction = await database.beginTransaction()
+
+      try {
+        for (const id of ids) {
+          await database.mutate(
+            `update comment set archived = ? where id = ?`,
+            [archived ? 1 : 0, id],
+          )
+
+          await UuidResolver.removeCacheEntry({ id }, context)
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async setThreadState(_parent, payload, context) {
       const { database, userId } = context
