@@ -156,35 +156,6 @@ export function createSerloModel({
     },
   })
 
-  const createThread = createMutation({
-    type: 'ThreadCreateThreadMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
-    async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
-      return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
-    },
-    updateCache: async (_payload, value) => {
-      if (value !== null) {
-        await UuidResolver.removeCacheEntry({ id: value.id }, context)
-      }
-    },
-  })
-
-  const createComment = createMutation({
-    type: 'ThreadCreateCommentMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
-    },
-    async updateCache(payload, value) {
-      if (value !== null) {
-        await UuidResolver.removeCacheEntry({ id: value.id }, context)
-        await UuidResolver.removeCacheEntry({ id: payload.threadId }, context)
-      }
-    },
-  })
-
   const createEntity = createMutation({
     type: 'EntityCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
@@ -423,10 +394,8 @@ export function createSerloModel({
     addRole,
     checkoutEntityRevision,
     checkoutPageRevision,
-    createComment,
     createEntity,
     createPage,
-    createThread,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
