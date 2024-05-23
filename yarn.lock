@@ -4206,7 +4206,7 @@ __metadata:
     msgpack5: ^6.0.2
     mysql2: ^3.9.7
     newtype-ts: ^0.3.5
-    openai: ^4.45.0
+    openai: ^4.47.1
     pg: ^8.11.5
     ramda: ^0.30.0
     redlock: ^5.0.0-beta2
@@ -14903,7 +14903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.45.0":
+"openai@npm:^4.47.1":
   version: 4.47.1
   resolution: "openai@npm:4.47.1"
   dependencies:
