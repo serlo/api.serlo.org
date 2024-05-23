@@ -1,6 +1,6 @@
 {
   "name": "@serlo/api.serlo.org",
-  "version": "0.60.0",
+  "version": "0.60.1",
   "private": true,
   "repository": "serlo/api.serlo.org",
   "license": "Apache-2.0",
@@ -59,7 +59,7 @@
     "msgpack5": "^6.0.2",
     "mysql2": "^3.9.7",
     "newtype-ts": "^0.3.5",
-    "openai": "^4.45.0",
+    "openai": "^4.47.1",
     "pg": "^8.11.5",
     "ramda": "^0.30.0",
     "redlock": "^5.0.0-beta2",
