@@ -12,15 +12,18 @@ export function initializeSentry({
   dsn = process.env.SENTRY_DSN,
   environment = process.env.ENVIRONMENT,
   context,
+  testTransport,
 }: {
   context: string
   dsn?: string
   environment?: string
+  testTransport?: typeof Sentry.makeNodeTransport
 }) {
   Sentry.init({
     dsn,
     environment,
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
+    ...(testTransport ? { transport: testTransport } : {}),
   })
 
   Sentry.addEventProcessor((event) => {
