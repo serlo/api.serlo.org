@@ -11,11 +11,11 @@ import jwt from 'jsonwebtoken'
 import { type Pool } from 'mysql2/promise'
 import * as R from 'ramda'
 
+import { createSwrQueue } from '../swr-queue'
+import { createCache, createEmptyCache } from '~/cache'
 import { Context } from '~/context'
 import { AuthServices, IdentityDecoder } from '~/context/auth-services'
-import { Cache } from '~/context/cache'
 import { Service } from '~/context/service'
-import { SwrQueue } from '~/context/swr-queue'
 import { Database } from '~/database'
 import { handleAuthentication } from '~/internals/authentication'
 import { ModelDataSource } from '~/internals/data-source'
@@ -29,27 +29,16 @@ const SessionDecoder = t.type({
 
 export async function applyGraphQLMiddleware({
   app,
-  cache,
-  swrQueue,
   authServices,
   pool,
   timer,
 }: {
   app: Express
-  cache: Cache
-  swrQueue: SwrQueue
   authServices: AuthServices
   pool: Pool
   timer: Timer
 }) {
   const graphQLPath = '/graphql'
-  const environment = {
-    cache,
-    swrQueue,
-    authServices,
-    database: new Database(pool),
-    timer,
-  }
   const server = new ApolloServer<Context>(getGraphQLOptions())
   const createPlayground = defaultImport(createPlayground_)
   await server.start()
@@ -59,8 +48,14 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
+        const cache =
+          process.env.CACHE_TYPE === 'empty'
+            ? createEmptyCache()
+            : createCache({ timer })
         const googleStorage = new Storage()
         const database = new Database(pool)
+        const swrQueue = createSwrQueue({ cache, timer, database })
+        const environment = { cache, swrQueue, authServices, database, timer }
         const dataSources = {
           model: new ModelDataSource(environment),
         }

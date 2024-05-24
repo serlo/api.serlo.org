@@ -12,17 +12,14 @@ import { isDefined } from '~/utils'
 export function createThreadResolvers(): Pick<ThreadAwareResolvers, 'threads'> {
   return {
     async threads(parent, payload, context) {
-      const { firstCommentIds } =
-        await context.dataSources.model.serlo.getThreadIds({ id: parent.id })
+      const result = await context.database.fetchAll<{ id: number }>(
+        'select id from comment where uuid_id = ? order by id desc',
+        [parent.id],
+      )
+      const firstCommentIds = result.map((row) => row.id)
 
       return resolveConnection({
-        nodes: await resolveThreads(
-          {
-            ...payload,
-            firstCommentIds: firstCommentIds.sort((a, b) => b - a),
-          },
-          context,
-        ),
+        nodes: await resolveThreads({ ...payload, firstCommentIds }, context),
         payload: payload,
         createCursor(node) {
           return node.commentPayloads[0].id.toString()

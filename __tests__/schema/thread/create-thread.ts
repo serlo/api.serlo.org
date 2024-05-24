@@ -1,115 +1,59 @@
 import gql from 'graphql-tag'
 
-import { article, comment, comment1, user } from '../../../__fixtures__'
-import { Client, given, givenThreads } from '../../__utils__'
-import { DiscriminatorType } from '~/model/decoder'
+import { Client, subscriptionsQuery, threadsQuery } from '../../__utils__'
 
-const mutation = new Client({ userId: user.id })
-  .prepareQuery({
-    query: gql`
-      mutation createThread($input: ThreadCreateThreadInput!) {
-        thread {
-          createThread(input: $input) {
-            success
-          }
+const input = {
+  title: 'My new thread',
+  content: 'brand new!',
+  objectId: 28009,
+  subscribe: true,
+  sendEmail: false,
+}
+const mutation = new Client({ userId: 15491 }).prepareQuery({
+  query: gql`
+    mutation createThread($input: ThreadCreateThreadInput!) {
+      thread {
+        createThread(input: $input) {
+          success
         }
       }
-    `,
-  })
-  .withInput({
-    title: 'My new thread',
-    content: '🔥 brand new!',
-    objectId: article.id,
-    subscribe: true,
-    sendEmail: false,
-  })
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-  givenThreads({ uuid: article, threads: [[comment]] })
+    }
+  `,
+  variables: { input },
 })
 
-// TODO: Enable once the mutation is migrated into the API
-test.skip('thread gets created, cache mutated as expected', async () => {
-  const queryComments = new Client()
-    .prepareQuery({
-      query: gql`
-        query ($id: Int) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                nodes {
-                  comments {
-                    nodes {
-                      title
-                      content
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-
-  await queryComments.shouldReturnData({
-    uuid: {
-      threads: {
-        nodes: [
-          {
-            comments: {
-              nodes: [{ title: comment.title, content: comment.content }],
-            },
-          },
-        ],
-      },
-    },
+test('should create a new thread', async () => {
+  await threadsQuery.withVariables({ id: input.objectId }).shouldReturnData({
+    uuid: { threads: { nodes: [{ id: 'dDMwMzIy' }] } },
   })
 
-  given('ThreadCreateThreadMutation')
-    .withPayload({
-      title: 'My new thread',
-      content: '🔥 brand new!',
-      objectId: article.id,
-      subscribe: true,
-      sendEmail: false,
-      userId: user.id,
-    })
-    .returns({
-      __typename: DiscriminatorType.Comment,
-      id: comment1.id,
-      trashed: false,
-      alias: `/mathe/${comment1.id}/`,
-      authorId: user.id,
-      title: 'My new thread',
-      date: '2014-08-25T12:51:02+02:00',
-      archived: false,
-      content: '🔥 brand new!',
-      parentId: article.id,
-      childrenIds: [],
-      status: 'open',
-    })
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: { getSubscriptions: { nodes: [] } },
+  })
 
   await mutation.shouldReturnData({
     thread: { createThread: { success: true } },
   })
 
-  await queryComments.shouldReturnData({
+  await threadsQuery.withVariables({ id: input.objectId }).shouldReturnData({
     uuid: {
       threads: {
         nodes: [
           {
-            comments: {
-              nodes: [{ title: 'My new thread', content: '🔥 brand new!' }],
-            },
+            title: input.title,
+            comments: { nodes: [{ content: input.content }] },
           },
-          {
-            comments: {
-              nodes: [{ title: comment.title, content: comment.content }],
-            },
-          },
+          { id: 'dDMwMzIy' },
+        ],
+      },
+    },
+  })
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: {
+      getSubscriptions: {
+        nodes: [
+          { object: { id: expect.any(Number) as number }, sendEmail: false },
         ],
       },
     },
