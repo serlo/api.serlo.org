@@ -424,6 +424,16 @@ async function resolveIdFromAlias(
 function toSlug(name: string) {
   return name
     .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/á/g, 'a')
+    .replace(/é/g, 'e')
+    .replace(/í/g, 'i')
+    .replace(/ó/g, 'o')
+    .replace(/ú/g, 'u')
+    .replace(/ñ/g, 'n')
     .replace(/ /g, '-') // replace spaces with hyphens
     .replace(/[^\w-]+/g, '') // remove all non-word chars including _
     .replace(/--+/g, '-') // replace multiple hyphens
