@@ -24,18 +24,20 @@ beforeAll(() => {
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
     context: 'testing',
-    testTransport: {
-      send: async (envelope: unknown) => {
-        const [, items] = envelope as unknown[][]
+    testTransport: () => {
+      return {
+        send: async (envelope: unknown) => {
+          const [, items] = envelope as unknown[][]
 
-        ;(items as Sentry.Event[][]).forEach(([_, data]) => {
-          global.sentryEvents.push(data)
-        })
+          ;(items as Sentry.Event[][]).forEach(([_, data]) => {
+            global.sentryEvents.push(data)
+          })
 
-        return Promise.resolve()
-      },
-      flush: async () => Promise.resolve(true),
-    } as unknown as typeof makeNodeTransport,
+          return Promise.resolve({})
+        },
+        flush: async () => Promise.resolve(true),
+      }
+    },
   })
 
   const timer = new MockTimer()
