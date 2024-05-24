@@ -83,7 +83,6 @@
   },
   "devDependencies": {
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
-    "@sentry/node": "^7.114.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.33",
