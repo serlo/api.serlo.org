@@ -23,7 +23,7 @@ export function initializeSentry({
     release: `api.serlo.org-${context}@${process.env.SENTRY_RELEASE || ''}`,
   })
 
-  Sentry.addGlobalEventProcessor((event) => {
+  Sentry.addEventProcessor((event) => {
     if (event.contexts) {
       event.contexts = stringifyContexts(event.contexts)
     }
