@@ -18,7 +18,7 @@ import { timeToMilliseconds, Time, Timer } from '~/timer'
 
 beforeAll(() => {
   initializeSentry({
-    dsn: 'https://public@127.0.0.1/0',
+    dsn: 'https://public@127.0.0.1/',
     environment: 'testing',
     context: 'testing',
   })
