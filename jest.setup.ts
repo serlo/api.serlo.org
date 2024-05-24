@@ -1,8 +1,4 @@
-import {
-  flush as flushSentry,
-  type Event,
-  type makeNodeTransport,
-} from '@sentry/node'
+import { flush as flushSentry, type Event } from '@sentry/node'
 import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
 import { setupServer } from 'msw/node'
