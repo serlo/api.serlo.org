@@ -35,6 +35,39 @@ export const taxonomyTermQuery = new Client().prepareQuery({
   `,
 })
 
+export const threadsQuery = new Client().prepareQuery({
+  query: gql`
+    query thread($id: Int!, $archived: Boolean) {
+      uuid(id: $id) {
+        ... on ThreadAware {
+          threads(archived: $archived) {
+            nodes {
+              id
+              title
+              createdAt
+              archived
+              object {
+                id
+              }
+              comments {
+                nodes {
+                  id
+                  content
+                  createdAt
+                  archived
+                  legacyObject {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+})
+
 export const subjectQuery = new Client().prepareQuery({
   query: gql`
     query ($instance: Instance!) {
@@ -49,4 +82,21 @@ export const subjectQuery = new Client().prepareQuery({
     }
   `,
   variables: { instance: 'de' },
+})
+
+export const subscriptionsQuery = new Client({ userId: 27393 }).prepareQuery({
+  query: gql`
+    query {
+      subscription {
+        getSubscriptions {
+          nodes {
+            object {
+              id
+            }
+            sendEmail
+          }
+        }
+      }
+    }
+  `,
 })

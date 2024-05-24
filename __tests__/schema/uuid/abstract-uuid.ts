@@ -7,7 +7,6 @@ import {
   article,
   articleRevision,
   comment,
-  comment1,
   course,
   coursePage,
   coursePageRevision,
@@ -26,12 +25,12 @@ import {
   video,
   videoRevision,
 } from '../../../__fixtures__'
-import { getTypenameAndId, given, Client, givenThreads } from '../../__utils__'
+import { Client, getTypenameAndId, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import {
+  DiscriminatorType,
   EntityRevisionType,
   EntityType,
-  DiscriminatorType,
   UuidType,
 } from '~/model/decoder'
 import { Instance } from '~/types'
@@ -364,15 +363,6 @@ describe('property "title"', () => {
   // TODO: This property is not used and thus can be deleted
   // See https://serlo.github.io/unused-graphql-properties/#Comment.title
   test.skip('"title" for comments without title in thread', async () => {
-    givenThreads({
-      uuid: article,
-      threads: [
-        [
-          { ...comment, title: null },
-          { ...comment1, title: null },
-        ],
-      ],
-    })
     given('UuidQuery').for(articleRevision)
 
     await client

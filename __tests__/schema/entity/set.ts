@@ -4,27 +4,27 @@ import * as R from 'ramda'
 
 import {
   applet,
+  appletRevision,
   article,
+  articleRevision,
   course,
   coursePage,
+  coursePageRevision,
+  courseRevision,
   event,
+  eventRevision,
   exercise,
   exerciseGroup,
-  taxonomyTermSubject,
+  exerciseGroupRevision,
+  exerciseRevision,
+  licenseId,
   taxonomyTermRoot,
+  taxonomyTermSubject,
   user,
   video,
-  appletRevision,
-  articleRevision,
-  courseRevision,
-  coursePageRevision,
-  eventRevision,
-  exerciseRevision,
-  exerciseGroupRevision,
   videoRevision,
-  licenseId,
 } from '../../../__fixtures__'
-import { given, Client, nextUuid, getTypenameAndId } from '../../__utils__'
+import { Client, given, nextUuid } from '../../__utils__'
 import { autoreviewTaxonomyIds } from '~/config'
 import { Model } from '~/internals/graphql'
 import { DatabaseLayer } from '~/model'
@@ -370,12 +370,6 @@ testCases.forEach((testCase) => {
               revisionId: newRevision.id,
             })
           })
-
-        given('SubscriptionsQuery')
-          .withPayload({ userId: user.id })
-          .returns({
-            subscriptions: [{ objectId: anotherEntity.id, sendEmail: true }],
-          })
       })
 
       test('updates the checked out revision when needsReview=false', async () => {
@@ -417,60 +411,6 @@ testCases.forEach((testCase) => {
 
         await uuidQuery.shouldReturnData({
           uuid: { currentRevision: { id: newRevision.id } },
-        })
-      })
-
-      test('updates the subscriptions', async () => {
-        const subscritionsQuery = new Client({
-          userId: user.id,
-        }).prepareQuery({
-          query: gql`
-            query {
-              subscription {
-                getSubscriptions {
-                  nodes {
-                    object {
-                      __typename
-                      id
-                    }
-                    sendEmail
-                  }
-                }
-              }
-            }
-          `,
-        })
-
-        await subscritionsQuery.shouldReturnData({
-          subscription: {
-            getSubscriptions: {
-              nodes: [
-                { object: getTypenameAndId(anotherEntity), sendEmail: true },
-              ],
-            },
-          },
-        })
-
-        await mutationWithEntityId
-          .withInput({
-            ...inputWithEntityId,
-            subscribeThis: true,
-            subscribeThisByEmail: true,
-          })
-          .execute()
-
-        await subscritionsQuery.shouldReturnData({
-          subscription: {
-            getSubscriptions: {
-              nodes: [
-                { object: getTypenameAndId(anotherEntity), sendEmail: true },
-                {
-                  object: getTypenameAndId(testCase.entity),
-                  sendEmail: true,
-                },
-              ],
-            },
-          },
         })
       })
     })

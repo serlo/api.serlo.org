@@ -1,6 +1,7 @@
 import * as auth from '@serlo/authorization'
 
 import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
+import { Context } from '~/context'
 import {
   assertUserIsAuthenticated,
   assertUserIsAuthorized,
@@ -28,32 +29,48 @@ export const resolvers: Resolvers = {
     subscription: createNamespace(),
   },
   SubscriptionQuery: {
-    async currentUserHasSubscribed(_parent, { id }, { dataSources, userId }) {
+    async currentUserHasSubscribed(_parent, { id }, { database, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const subscriptions = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
+      const subscription = await database.fetchOptional(
+        `select id from subscription where user_id = ? and uuid_id = ?`,
+        [userId, id],
+      )
 
-      return subscriptions.subscriptions.some((sub) => sub.objectId === id)
+      return subscription !== null
     },
-    async getSubscriptions(_parent, cursorPayload, { dataSources, userId }) {
+    async getSubscriptions(_parent, cursorPayload, { database, userId }) {
       assertUserIsAuthenticated(userId)
 
-      const { subscriptions } = await dataSources.model.serlo.getSubscriptions({
-        userId,
-      })
+      const subscriptions = await database.fetchAll<Subscription>(
+        `
+        select
+          uuid_id as objectId,
+          notify_mailman as sendEmail
+        from subscription
+        where user_id = ?
+        order by objectId`,
+        [userId],
+      )
 
       return resolveConnection({
-        nodes: subscriptions,
+        nodes: subscriptions.map(({ objectId, sendEmail }) => ({
+          objectId,
+          sendEmail: Boolean(sendEmail),
+        })),
         payload: cursorPayload,
         createCursor: (node) => node.objectId.toString(),
       })
+
+      interface Subscription {
+        objectId: number
+        sendEmail: 0 | 1
+      }
     },
   },
   SubscriptionMutation: {
     async set(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const { subscribe, sendEmail } = payload.input
       const ids = payload.input.id
 
@@ -68,13 +85,59 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.setSubscription({
-        ids,
-        userId,
-        subscribe,
-        sendEmail,
-      })
-      return { success: true, query: {} }
+      const transaction = await database.beginTransaction()
+
+      try {
+        for (const id of ids) {
+          await setSubscription(
+            { subscribe, userId, objectId: id, sendEmail },
+            context,
+          )
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
   },
+}
+
+export async function setSubscription(
+  args: {
+    subscribe: boolean
+    userId: number
+    objectId: number
+    sendEmail: boolean
+  },
+  { database }: Pick<Context, 'database'>,
+) {
+  const { subscribe, userId, objectId, sendEmail } = args
+  const transaction = await database.beginTransaction()
+
+  try {
+    if (subscribe) {
+      const { affectedRows } = await database.mutate(
+        'update subscription set notify_mailman = ? where user_id = ? and uuid_id = ?',
+        [sendEmail ? 1 : 0, userId, objectId],
+      )
+
+      if (affectedRows === 0) {
+        await database.mutate(
+          'insert into subscription (uuid_id, user_id, notify_mailman) values (?, ?, ?)',
+          [objectId, userId, sendEmail ? 1 : 0],
+        )
+      }
+    } else {
+      await database.mutate(
+        `delete from subscription where user_id = ? and uuid_id = ?`,
+        [userId, objectId],
+      )
+    }
+    await transaction.commit()
+  } finally {
+    await transaction.rollback()
+  }
 }

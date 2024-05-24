@@ -1,104 +1,62 @@
 import gql from 'graphql-tag'
 
-import { article, comment1, user } from '../../../__fixtures__'
-import { nextUuid, givenThreads, Client, given } from '../../__utils__'
-import { DiscriminatorType } from '~/model/decoder'
-import { encodeThreadId } from '~/schema/thread/utils'
+import { Client, subscriptionsQuery, threadsQuery } from '../../__utils__'
 
-const mutation = new Client({ userId: user.id })
-  .prepareQuery({
-    query: gql`
-      mutation ($input: ThreadCreateCommentInput!) {
-        thread {
-          createComment(input: $input) {
-            success
-          }
+const input = {
+  content: 'Hello',
+  threadId: 'dDMwMTc3',
+  subscribe: true,
+  sendEmail: false,
+}
+
+const mutation = new Client({ userId: 15491 }).prepareQuery({
+  query: gql`
+    mutation ($input: ThreadCreateCommentInput!) {
+      thread {
+        createComment(input: $input) {
+          success
         }
       }
-    `,
-  })
-  .withInput({
-    content: 'Hello',
-    threadId: encodeThreadId(comment1.id),
-    subscribe: true,
-    sendEmail: false,
-  })
-
-beforeEach(() => {
-  givenThreads({ uuid: article, threads: [[comment1]] })
+    }
+  `,
+  variables: { input },
 })
 
-// TODO: Reenable it after we have migrated the entpoint
-// We cannot test it since with the current code comments are always resolved from the DB
-// Currently we have no code to change the DB
-test.skip('comment gets created, cache mutated as expected', async () => {
-  given('UuidQuery').for(user)
-  given('ThreadCreateCommentMutation')
-    .withPayload({
-      userId: user.id,
-      content: 'Hello',
-      threadId: comment1.id,
-      subscribe: true,
-      sendEmail: false,
-    })
-    .returns({
-      __typename: DiscriminatorType.Comment,
-      id: nextUuid(comment1.id),
-      trashed: false,
-      alias: `/mathe/${nextUuid(comment1.id)}/`,
-      authorId: user.id,
-      title: null,
-      date: '2014-03-01T20:45:56Z',
-      archived: false,
-      content: 'Hello',
-      parentId: comment1.id,
-      childrenIds: [],
-      status: 'open',
-    })
-
-  const queryComments = new Client()
-    .prepareQuery({
-      query: gql`
-        query ($id: Int) {
-          uuid(id: $id) {
-            ... on ThreadAware {
-              threads {
-                nodes {
-                  comments {
-                    nodes {
-                      content
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: article.id })
-
-  await queryComments.shouldReturnData({
+test('comment gets created', async () => {
+  await threadsQuery.withVariables({ id: 29921 }).shouldReturnData({
     uuid: {
       threads: {
-        nodes: [{ comments: { nodes: [{ content: comment1.content }] } }],
+        nodes: [{ id: input.threadId, comments: { nodes: [{ id: 30177 }] } }],
       },
     },
+  })
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: { getSubscriptions: { nodes: [] } },
   })
 
   await mutation.shouldReturnData({
     thread: { createComment: { success: true } },
   })
 
-  await queryComments.shouldReturnData({
+  await threadsQuery.withVariables({ id: 29921 }).shouldReturnData({
     uuid: {
       threads: {
         nodes: [
           {
-            comments: {
-              nodes: [{ content: comment1.content }, { content: 'Hello' }],
-            },
+            id: input.threadId,
+            comments: { nodes: [{ id: 30177 }, { content: input.content }] },
           },
+        ],
+      },
+    },
+  })
+
+  await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
+    subscription: {
+      getSubscriptions: {
+        nodes: [
+          { object: { id: expect.any(Number) as number }, sendEmail: false },
         ],
       },
     },
