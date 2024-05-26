@@ -10,6 +10,7 @@ async function processAsync(src, filename) {
     format: 'esm',
     target: 'node20',
     sourcemap: true,
+    sourcefile: filename,
   })
   return {
     code: result.code,
