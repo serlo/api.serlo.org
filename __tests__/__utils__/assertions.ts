@@ -96,22 +96,37 @@ export class Query<
     return new Query(new Client(context), this.query)
   }
 
-  forLoginUser(...additionalRoles: string[]) {
-    const roleToUserId: Record<string, number> = {
-      de_admin: 270,
-      de_moderator: 33931,
-      de_reviewer: 670,
-      en_admin: 23,
+  async forUser(...additionalRoles: string[]) {
+    const userWithoutRolesId = 35478
+
+    for (const role of additionalRoles) {
+      const result = await databaseForTests.fetchOptional<{ id: number }>(
+        'select id from role where name = ?',
+        [role],
+      )
+
+      let roleId = result?.id
+
+      if (roleId == null) {
+        const result = await databaseForTests.mutate(
+          'insert into role (name) values (?)',
+          [role],
+        )
+
+        roleId = result.insertId
+      }
+
+      await databaseForTests.mutate(
+        'insert into role_user (user_id, role_id) values (?, ?)',
+        [userWithoutRolesId, roleId],
+      )
     }
 
-    const loginUser = 9
+    return this.withContext({ userId: userWithoutRolesId })
+  }
 
-    const userId =
-      additionalRoles.length === 0
-        ? loginUser
-        : roleToUserId[additionalRoles[0]]
-
-    return this.withContext({ userId })
+  forLoginUser() {
+    return this.withContext({ userId: 9 })
   }
 
   forUnauthenticatedUser() {

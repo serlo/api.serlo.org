@@ -118,7 +118,8 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "static_pages_builder"', async () => {
-  await mutation.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_moderator')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails when database layer returns a 400er response', async () => {

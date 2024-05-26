@@ -81,7 +81,8 @@ test('fails if user is not authenticated', async () => {
 })
 
 test('fails if user does not have role "sysadmin"', async () => {
-  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_admin')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails if kratos has an error', async () => {
