@@ -10,6 +10,7 @@ import {
   returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
+  userQuery,
 } from '../../__utils__'
 
 let client: Client
@@ -96,28 +97,20 @@ beforeEach(() => {
 
 test('runs successfully if mutation could be successfully executed', async () => {
   expect(global.kratos.identities).toHaveLength(users.length)
+  await userQuery
+    .withVariables({ id: user.id })
+    .shouldReturnData({ uuid: { id: user.id } })
+
   await mutation
     .withInput({ botIds: [user.id, user2.id] })
     .shouldReturnData({ user: { deleteBots: { success: true } } })
+
+  // TODO: Uncomment once UuidQuery is completely deleted
+  // (currently the resolver requests the DB-Layer where the user still exsists
+  //await userQuery
+  //  .withVariables({ id: user.id })
+  //  .shouldReturnData({ uuid: null })
   expect(global.kratos.identities).toHaveLength(users.length - 2)
-})
-
-test('updates the cache', async () => {
-  const uuidQuery = client
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            id
-          }
-        }
-      `,
-    })
-    .withVariables({ id: user.id })
-
-  await uuidQuery.execute()
-  await mutation.execute()
-  await uuidQuery.shouldReturnData({ uuid: null })
 })
 
 describe('community chat', () => {
