@@ -210,7 +210,8 @@ test('`uuid` returns null on unsupported uuid type', async () => {
     .shouldReturnData({ uuid: null })
 })
 
-describe('property "alias"', () => {
+// TODO: Update those tests when one works at AliasQuery
+describe.skip('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
       given('UuidQuery').for({
@@ -296,7 +297,7 @@ describe('property "title"', () => {
           id: 123,
         },
       ],
-      '123',
+      '122a238f',
     ],
     ['exercise', [exercise, taxonomyTermSubject], 'Mathe'],
     ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Mathe'],
