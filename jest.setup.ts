@@ -1,7 +1,6 @@
 import { flush as flushSentry, type Event } from '@sentry/node'
 import * as Sentry from '@sentry/node'
 import crypto from 'crypto'
-import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { createPool, type Pool } from 'mysql2/promise'
 
@@ -21,6 +20,20 @@ beforeAll(() => {
     dsn: 'https://public@127.0.0.1/0',
     environment: 'testing',
     context: 'testing',
+    testTransport: () => {
+      return {
+        send: async (envelope: unknown) => {
+          const [, items] = envelope as unknown[][]
+
+          ;(items as Sentry.Event[][]).forEach(([_, data]) => {
+            global.sentryEvents.push(data)
+          })
+
+          return Promise.resolve({})
+        },
+        flush: async () => Promise.resolve(true),
+      }
+    },
   })
 
   const timer = new MockTimer()
@@ -47,16 +60,6 @@ beforeEach(async () => {
   await global.cache.ready()
 
   givenSpreadheetApi(defaultSpreadsheetApi())
-
-  global.server.use(
-    http.post('https://127.0.0.1/api/0/envelope/', async ({ request }) => {
-      const text = await request.text()
-      global.sentryEvents.push(
-        ...text.split('\n').map((x) => JSON.parse(x) as Sentry.Event),
-      )
-      return new HttpResponse()
-    }),
-  )
 
   global.timer.flush()
   global.sentryEvents = []
