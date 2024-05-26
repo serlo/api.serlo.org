@@ -80,7 +80,8 @@ describe('add global role', () => {
   })
 
   test('fails when only scoped admin', async () => {
-    await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
+    const newMutation = await mutation.forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 })
 
@@ -96,25 +97,25 @@ describe('add scoped role', () => {
   })
 
   test('adds a role successfully when scoped admin', async () => {
-    await mutation
-      .forLoginUser('de_admin')
+    const newMutation = await mutation
       .withInput({
         username: regularUser.username,
         role: scopedRole,
         instance,
       })
-      .shouldReturnData({ user: { addRole: { success: true } } })
+      .forUser('de_admin')
+    await newMutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
 
   test('fails when admin in wrong scope', async () => {
-    await mutation
+    const newMutation = await mutation
       .withInput({
         username: regularUser.username,
         role: scopedRole,
         instance,
       })
-      .forLoginUser('en_admin')
-      .shouldFailWithError('FORBIDDEN')
+      .forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when not given an instance', async () => {
@@ -153,5 +154,6 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "admin"', async () => {
-  await mutation.forLoginUser('de_reviewer').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_reviewer')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })

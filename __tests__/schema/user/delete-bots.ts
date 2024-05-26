@@ -117,8 +117,7 @@ test('updates the cache', async () => {
 
   await uuidQuery.execute()
   await mutation.execute()
-  // TODO: uncomment once UUID query does not call the database-layer any more if the UUID SQL query here is null
-  // await uuidQuery.shouldReturnData({ uuid: null })
+  await uuidQuery.shouldReturnData({ uuid: null })
 })
 
 describe('community chat', () => {
@@ -206,7 +205,8 @@ test('fails if user is not authenticated', async () => {
 })
 
 test('fails if user does not have role "sysadmin"', async () => {
-  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_admin')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails if kratos has an error', async () => {
