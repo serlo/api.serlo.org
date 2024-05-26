@@ -39,6 +39,7 @@ export const userQuery = new Client().prepareQuery({
   query: gql`
     query ($id: Int!) {
       uuid(id: $id) {
+        id
         __typename
         ... on User {
           roles {
