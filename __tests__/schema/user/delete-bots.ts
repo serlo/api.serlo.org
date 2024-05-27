@@ -13,40 +13,40 @@ import {
   userQuery,
 } from '../../__utils__'
 
+const input = { botIds: [24034, 24139] }
 let client: Client
-const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
-const emailHash = createHash('md5').update(`admin@localhost`).digest('hex')
+const emailHash = createHash('md5').update(`126012bd@localhost`).digest('hex')
 let mailchimpEmails: string[]
 let mutation: Query
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-  mutation = client
-    .prepareQuery({
-      query: gql`
-        mutation ($input: UserDeleteBotsInput!) {
-          user {
-            deleteBots(input: $input) {
-              success
-            }
+  mutation = client.prepareQuery({
+    query: gql`
+      mutation ($input: UserDeleteBotsInput!) {
+        user {
+          deleteBots(input: $input) {
+            success
           }
         }
-      `,
-    })
-    .withInput({ botIds: [user.id] })
+      }
+    `,
+    variables: { input },
+  })
 
   mailchimpEmails = [emailHash]
 
-  for (const user of users) {
+  for (const botId of input.botIds) {
     given('ActivityByTypeQuery')
-      .withPayload({ userId: user.id })
+      .withPayload({ userId: botId })
       .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
+    given('UuidQuery').for({ ...user, id: botId })
   }
 
-  given('UuidQuery').for(users, article)
+  given('UuidQuery').for(article)
 
-  chatUsers = [user.username]
+  chatUsers = ['126012d3']
 
   givenChatDeleteUserEndpoint(async ({ request }) => {
     const body = (await request.json()) as {
@@ -96,21 +96,19 @@ beforeEach(() => {
 })
 
 test('runs successfully if mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(users.length)
+  expect(global.kratos.identities).toHaveLength(input.botIds.length)
   await userQuery
-    .withVariables({ id: user.id })
-    .shouldReturnData({ uuid: { id: user.id } })
+    .withVariables({ id: input.botIds[0] })
+    .shouldReturnData({ uuid: { id: input.botIds[0] } })
 
-  await mutation
-    .withInput({ botIds: [user.id, user2.id] })
-    .shouldReturnData({ user: { deleteBots: { success: true } } })
+  await mutation.shouldReturnData({ user: { deleteBots: { success: true } } })
 
   // TODO: Uncomment once UuidQuery is completely deleted
   // (currently the resolver requests the DB-Layer where the user still exsists
   //await userQuery
-  //  .withVariables({ id: user.id })
+  //  .withVariables({ id: input.botIds[0] })
   //  .shouldReturnData({ uuid: null })
-  expect(global.kratos.identities).toHaveLength(users.length - 2)
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
 describe('community chat', () => {
@@ -126,7 +124,9 @@ describe('community chat', () => {
   })
 
   test('does not sent a sentry event if the user is not in the community chat', async () => {
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+    await mutation
+      .withInput({ botIds: input.botIds.slice(0, 1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
@@ -159,7 +159,9 @@ describe('mailchimp', () => {
   })
 
   test('does not sent a sentry event if the user is not in the newsletter', async () => {
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+    await mutation
+      .withInput({ botIds: input.botIds.slice(0, 1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
@@ -181,13 +183,13 @@ describe('mailchimp', () => {
 
 test('fails if one of the given bot ids is not a user', async () => {
   await mutation
-    .withInput({ botIds: [article.id] })
+    .withInput({ botIds: [35580] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails if one given bot id has more than 4 edits', async () => {
   given('ActivityByTypeQuery')
-    .withPayload({ userId: user.id })
+    .withPayload({ userId: input.botIds[0] })
     .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
