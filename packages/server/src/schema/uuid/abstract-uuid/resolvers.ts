@@ -346,12 +346,13 @@ async function resolveUuidFromDatabase(
 
 export async function setUuidState(
   { id, trashed }: { id: number; trashed: boolean },
-  { database }: Pick<Context, 'database'>,
+  { database, cache }: Pick<Context, 'database' | 'cache'>,
 ) {
   await database.mutate('update uuid set trashed = ? where id = ?', [
     trashed ? 1 : 0,
     id,
   ])
+  await UuidResolver.removeCacheEntries([{ id }], { cache })
 }
 
 function getSortedList(listAsDict: t.TypeOf<typeof WeightedNumberList>) {
