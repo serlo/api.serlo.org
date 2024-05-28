@@ -417,18 +417,20 @@ export const resolvers: Resolvers = {
             throw new UserInputError('comment must have an instance')
           }
 
-          await setUuidState({ id, trashed }, context)
+          if (comment.trashed !== trashed) {
+            await setUuidState({ id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetThreadState,
-              actorId: userId,
-              archived: trashed,
-              threadId: comment.id,
-              instance,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetThreadState,
+                actorId: userId,
+                archived: trashed,
+                threadId: comment.id,
+                instance,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()
@@ -483,18 +485,20 @@ export const resolvers: Resolvers = {
             throw new UserInputError('comment must have an instance')
           }
 
-          await setUuidState({ id, trashed }, context)
+          if (comment.trashed !== trashed) {
+            await setUuidState({ id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetThreadState,
-              actorId: userId,
-              archived: trashed,
-              threadId: comment.id,
-              instance,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetThreadState,
+                actorId: userId,
+                archived: trashed,
+                threadId: comment.id,
+                instance,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()
