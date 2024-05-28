@@ -121,18 +121,20 @@ export const resolvers: Resolvers = {
             context,
           })
 
-          await setUuidState({ id: object.id, trashed }, context)
+          if (object.trashed !== trashed) {
+            await setUuidState({ id: object.id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetUuidState,
-              actorId: userId,
-              instance: object.instance,
-              objectId: object.id,
-              trashed,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetUuidState,
+                actorId: userId,
+                instance: object.instance,
+                objectId: object.id,
+                trashed,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()
