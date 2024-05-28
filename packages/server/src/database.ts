@@ -16,6 +16,38 @@ export class Database {
     this.state = { type: 'OutsideOfTransaction' }
   }
 
+  public async withTransaction(fn: () => Promise<void>) {
+    const transaction = await this.beginTransaction()
+
+    try {
+      await fn()
+
+      await transaction.commit()
+    } catch (error: unknown) {
+      console.log(error)
+
+      if (this.state.type !== 'OutsideOfTransaction') {
+        console.log(
+          await this.state.transaction.query('SHOW ENGINE INNODB STATUS;'),
+        )
+      }
+
+      await transaction.rollback()
+
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ER_LOCK_DEADLOCK'
+      ) {
+        console.log('deadlock detected, retrying')
+
+        await this.withTransaction(fn)
+      } else {
+        throw error
+      }
+    }
+  }
+
   public async beginTransaction() {
     if (this.state.type === 'OutsideOfTransaction') {
       const transaction = await this.pool.getConnection()

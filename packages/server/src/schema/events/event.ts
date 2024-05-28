@@ -34,9 +34,7 @@ export async function createEvent(
   const abstractEventPayload = toDatabaseRepresentation(payload)
   const { type, actorId, objectId, instance } = abstractEventPayload
 
-  const transaction = await database.beginTransaction()
-
-  try {
+  await database.withTransaction(async () => {
     const { insertId: eventId } = await database.mutate(
       `
       INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
@@ -83,11 +81,7 @@ export async function createEvent(
     const event = { ...abstractEventPayload, id: eventId }
 
     await createNotifications(event, { database })
-
-    await transaction.commit()
-  } finally {
-    await transaction.rollback()
-  }
+  })
 }
 
 async function createNotifications(
