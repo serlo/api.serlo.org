@@ -137,11 +137,6 @@ export const resolvers: Resolvers = {
 
         await transaction.commit()
 
-        await UuidResolver.removeCacheEntries(
-          ids.map((id) => ({ id }), context),
-          context,
-        )
-
         return { success: true, query: {} }
       } finally {
         await transaction.rollback()
