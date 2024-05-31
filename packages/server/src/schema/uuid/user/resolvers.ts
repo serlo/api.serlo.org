@@ -9,6 +9,7 @@ import * as DatabaseLayer from '../../../model/database-layer'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
+import { Database } from '~/database'
 import {
   addContext,
   assertAll,
@@ -35,6 +36,20 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
+
+async function resolveIdFromUsername(
+  username: string,
+  database: Database,
+): Promise<{ id: number }> {
+  const idResult = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM user WHERE username = ?`,
+    [username],
+  )
+  if (idResult === null) {
+    throw new UserInputError('no user with given username')
+  }
+  return idResult
+}
 
 export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
@@ -344,13 +359,7 @@ export const resolvers: Resolvers = {
         [username, generateRole(role, instance)],
       )
 
-      const idResult = await database.fetchOptional<{ id: number }>(
-        `SELECT id FROM user WHERE username = ?`,
-        [username],
-      )
-      if (idResult === null) {
-        throw new UserInputError('no user with given username')
-      }
+      const idResult = await resolveIdFromUsername(username, database)
       await UuidResolver.removeCacheEntry(idResult, context)
 
       return { success: true, query: {} }
