@@ -344,11 +344,14 @@ export const resolvers: Resolvers = {
         [username, generateRole(role, instance)],
       )
 
-      const { id } = await database.fetchOne<{ id: number }>(
+      const idResult = await database.fetchOptional<{ id: number }>(
         `SELECT id FROM user WHERE username = ?`,
         [username],
       )
-      await UuidResolver.removeCacheEntry({ id }, context)
+      if (idResult === null) {
+        throw new UserInputError('no user with given username')
+      }
+      await UuidResolver.removeCacheEntry(idResult, context)
 
       return { success: true, query: {} }
     },
