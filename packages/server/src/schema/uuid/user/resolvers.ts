@@ -317,6 +317,19 @@ export const resolvers: Resolvers = {
 
       await database.mutate(
         `
+        INSERT INTO role (name)
+        SELECT ?
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM role
+          WHERE name = ?
+        )
+        `,
+        [generateRole(role, instance), generateRole(role, instance)],
+      )
+
+      await database.mutate(
+        `
         INSERT INTO role_user (user_id, role_id)
         SELECT user.id, role.id
         FROM user, role
