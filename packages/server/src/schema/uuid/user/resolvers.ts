@@ -330,6 +330,7 @@ export const resolvers: Resolvers = {
         context,
       })
 
+      const { id } = await resolveIdFromUsername(username, database)
       await database.mutate(
         `
         INSERT INTO role (name)
@@ -346,21 +347,20 @@ export const resolvers: Resolvers = {
       await database.mutate(
         `
         INSERT INTO role_user (user_id, role_id)
-        SELECT user.id, role.id
-        FROM user, role
-        WHERE user.username = ? AND role.name = ?
+        SELECT ?, role.id
+        FROM role
+        WHERE role.name = ?
         AND NOT EXISTS (
           SELECT 1
           FROM role_user
-          WHERE role_user.user_id = user.id
+          WHERE role_user.user_id = ?
           AND role_user.role_id = role.id
         )
         `,
-        [username, generateRole(role, instance)],
+        [id, generateRole(role, instance), id],
       )
 
-      const idResult = await resolveIdFromUsername(username, database)
-      await UuidResolver.removeCacheEntry(idResult, context)
+      await UuidResolver.removeCacheEntry({ id }, context)
 
       return { success: true, query: {} }
     },
