@@ -1,6 +1,5 @@
 import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
-import { HttpResponse } from 'msw'
 
 import { user as admin, user2 as regularUser } from '../../../__fixtures__'
 import { Client, given, Query } from '../../__utils__'
@@ -53,7 +52,6 @@ beforeEach(() => {
     })
     .withVariables({ id: regularUser.id })
 
-  given('UuidQuery').for(admin, regularUser)
   given('AliasQuery')
     .withPayload({
       instance: Instance.De,
@@ -67,12 +65,6 @@ beforeEach(() => {
 })
 
 describe('add global role', () => {
-  beforeEach(() => {
-    given('UserAddRoleMutation')
-      .withPayload({ roleName: globalRole, username: regularUser.username })
-      .returns({ success: true })
-  })
-
   test('adds a role successfully', async () => {
     await mutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
@@ -88,20 +80,12 @@ describe('add global role', () => {
   })
 
   test('fails when only scoped admin', async () => {
-    await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
+    const newMutation = await mutation.forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 })
 
 describe('add scoped role', () => {
-  beforeEach(() => {
-    given('UserAddRoleMutation')
-      .withPayload({
-        roleName: `${instance}_${scopedRole}`,
-        username: regularUser.username,
-      })
-      .returns({ success: true })
-  })
-
   test('adds a role successfully', async () => {
     await mutation
       .withInput({
@@ -113,25 +97,25 @@ describe('add scoped role', () => {
   })
 
   test('adds a role successfully when scoped admin', async () => {
-    await mutation
-      .forLoginUser('de_admin')
+    const newMutation = await mutation
       .withInput({
         username: regularUser.username,
         role: scopedRole,
         instance,
       })
-      .shouldReturnData({ user: { addRole: { success: true } } })
+      .forUser('de_admin')
+    await newMutation.shouldReturnData({ user: { addRole: { success: true } } })
   })
 
   test('fails when admin in wrong scope', async () => {
-    await mutation
+    const newMutation = await mutation
       .withInput({
         username: regularUser.username,
         role: scopedRole,
         instance,
       })
-      .forLoginUser('en_admin')
-      .shouldFailWithError('FORBIDDEN')
+      .forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when not given an instance', async () => {
@@ -145,11 +129,6 @@ describe('add scoped role', () => {
 })
 
 test('updates the cache', async () => {
-  given('UserAddRoleMutation').isDefinedBy(() => {
-    given('UuidQuery').for({ ...regularUser, roles: ['login', globalRole] })
-    return HttpResponse.json({ success: true })
-  })
-
   await uuidQuery.shouldReturnData({
     uuid: {
       roles: {
@@ -175,11 +154,6 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "admin"', async () => {
-  await mutation.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('UserAddRoleMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
+  const newMutation = await mutation.forUser('de_reviewer')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })

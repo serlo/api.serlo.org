@@ -29,6 +29,7 @@ import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
   { id: number },
@@ -198,8 +199,8 @@ const BaseUser = t.intersection([
     discriminator: t.literal('user'),
     userUsername: t.string,
     userDate: date,
-    userDescription: t.string,
-    userRoles: t.array(t.string),
+    userDescription: t.union([t.string, t.null]),
+    userRoles: t.array(t.union([t.null, t.string])),
   }),
 ])
 
@@ -330,7 +331,7 @@ async function resolveUuidFromDatabase(
         alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        roles: baseUuid.userRoles,
+        roles: baseUuid.userRoles.filter(isDefined),
         username: baseUuid.userUsername,
       }
     }

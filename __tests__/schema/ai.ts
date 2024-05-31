@@ -130,7 +130,8 @@ test('successfully generate content for student (not logged in) - staging', asyn
 })
 
 test('successfully generate content for architect - staging', async () => {
-  await query.forLoginUser('de_architect').shouldReturnData({
+  const newQuery = await query.forUser('de_architect')
+  await newQuery.shouldReturnData({
     ai: {
       executePrompt: {
         success: true,
@@ -152,7 +153,8 @@ test('fails for unauthenticated user in production', async () => {
 test('fails for unauthorized user (wrong role) in production', async () => {
   const previousEnvironment = process.env.ENVIRONMENT
   process.env.ENVIRONMENT = 'production'
-  await query.forLoginUser('de_architect').shouldFailWithError('FORBIDDEN')
+  const newQuery = await query.forUser('de_moderator')
+  await newQuery.shouldFailWithError('FORBIDDEN')
   process.env.ENVIRONMENT = previousEnvironment
 })
 

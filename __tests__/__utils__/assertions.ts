@@ -6,8 +6,6 @@ import { DocumentNode } from 'graphql'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import { given, nextUuid } from '.'
-import { user } from '../../__fixtures__'
 import { Context } from '~/context'
 import { Service } from '~/context/service'
 import { ModelDataSource } from '~/internals/data-source'
@@ -98,16 +96,37 @@ export class Query<
     return new Query(new Client(context), this.query)
   }
 
-  forLoginUser(...additionalRoles: string[]) {
-    const loginUser = {
-      ...user,
-      id: nextUuid(user.id),
-      roles: [...additionalRoles, 'login'],
+  async forUser(...additionalRoles: string[]) {
+    const userWithoutRolesId = 35478
+
+    for (const role of additionalRoles) {
+      const result = await databaseForTests.fetchOptional<{ id: number }>(
+        'select id from role where name = ?',
+        [role],
+      )
+
+      let roleId = result?.id
+
+      if (roleId == null) {
+        const result = await databaseForTests.mutate(
+          'insert into role (name) values (?)',
+          [role],
+        )
+
+        roleId = result.insertId
+      }
+
+      await databaseForTests.mutate(
+        'insert into role_user (user_id, role_id) values (?, ?)',
+        [userWithoutRolesId, roleId],
+      )
     }
 
-    given('UuidQuery').for(loginUser)
+    return this.withContext({ userId: userWithoutRolesId })
+  }
 
-    return this.withContext({ userId: loginUser.id })
+  forLoginUser() {
+    return this.withContext({ userId: 9 })
   }
 
   forUnauthenticatedUser() {

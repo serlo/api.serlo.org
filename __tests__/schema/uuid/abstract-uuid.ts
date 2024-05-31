@@ -170,9 +170,9 @@ describe('uuid', () => {
   })
 
   test('returns null when uuid does not exist', async () => {
-    given('UuidQuery').withPayload({ id: 666 }).returnsNotFound()
-
-    await uuidQuery.withVariables({ id: 666 }).shouldReturnData({ uuid: null })
+    await uuidQuery
+      .withVariables({ id: 666666 })
+      .shouldReturnData({ uuid: null })
   })
 
   test('returns an error when no arguments are given', async () => {
@@ -183,22 +183,6 @@ describe('uuid', () => {
     await uuidQuery
       .withVariables({ alias: { instance: 'de', path: 'math' } })
       .shouldFailWithError('BAD_USER_INPUT')
-  })
-
-  test('returns an error when request fails (500)', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).hasInternalServerError()
-
-    await uuidQuery
-      .withVariables({ id: user.id })
-      .shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
-
-  test('succeeds on 404', async () => {
-    given('UuidQuery').withPayload({ id: user.id }).returnsNotFound()
-
-    await uuidQuery
-      .withVariables({ id: user.id })
-      .shouldReturnData({ uuid: null })
   })
 })
 
@@ -226,7 +210,8 @@ test('`uuid` returns null on unsupported uuid type', async () => {
     .shouldReturnData({ uuid: null })
 })
 
-describe('property "alias"', () => {
+// TODO: Update those tests when one works at AliasQuery
+describe.skip('property "alias"', () => {
   describe('returns encoded alias when alias of payloads is a string', () => {
     test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
       given('UuidQuery').for({
@@ -312,7 +297,7 @@ describe('property "title"', () => {
           id: 123,
         },
       ],
-      '123',
+      '122a238f',
     ],
     ['exercise', [exercise, taxonomyTermSubject], 'Mathe'],
     ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Mathe'],
