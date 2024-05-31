@@ -1,8 +1,7 @@
 import { Scope, Thread } from '@serlo/authorization'
 import gql from 'graphql-tag'
 
-import { user } from '../../__fixtures__'
-import { given, Client } from '../__utils__'
+import { Client } from '../__utils__'
 import { resolveRolesPayload, RolesPayload } from '~/schema/authorization/roles'
 import { Role } from '~/types'
 
@@ -22,9 +21,7 @@ describe('authorization', () => {
   })
 
   test('Authenticated Users (no special roles)', async () => {
-    given('UuidQuery').for({ ...user, roles: ['login'] })
-
-    await new Client({ userId: user.id })
+    await new Client({ userId: 20 })
       .prepareQuery({
         query: gql`
           {
@@ -38,9 +35,7 @@ describe('authorization', () => {
   })
 
   test('Authenticated Users (filter old legacy roles)', async () => {
-    given('UuidQuery').for({ ...user, roles: ['login', 'german_moderator'] })
-
-    await new Client({ userId: user.id })
+    await new Client({ userId: 33931 })
       .prepareQuery({
         query: gql`
           {
@@ -54,9 +49,15 @@ describe('authorization', () => {
   })
 
   test('Authenticated Users (map new legacy roles)', async () => {
-    given('UuidQuery').for({ ...user, roles: ['login', 'de_moderator'] })
+    const { insertId } = await databaseForTests.mutate(
+      "insert into role (name) values ('de_moderator')",
+    )
+    await databaseForTests.mutate(
+      `insert into role_user (user_id, role_id) values (33931, ?)`,
+      [insertId],
+    )
 
-    await new Client({ userId: user.id })
+    await new Client({ userId: 33931 })
       .prepareQuery({
         query: gql`
           {

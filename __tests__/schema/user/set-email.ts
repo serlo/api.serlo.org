@@ -34,5 +34,6 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "sysadmin"', async () => {
-  await query.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
+  const newQuery = await query.forUser('de_admin')
+  await newQuery.shouldFailWithError('FORBIDDEN')
 })

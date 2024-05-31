@@ -9,6 +9,7 @@ import * as DatabaseLayer from '../../../model/database-layer'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
+import { Database } from '~/database'
 import {
   addContext,
   assertAll,
@@ -35,6 +36,20 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
+
+async function resolveIdFromUsername(
+  username: string,
+  database: Database,
+): Promise<{ id: number }> {
+  const idResult = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM user WHERE username = ?`,
+    [username],
+  )
+  if (idResult === null) {
+    throw new UserInputError('no user with given username')
+  }
+  return idResult
+}
 
 export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
@@ -297,7 +312,7 @@ export const resolvers: Resolvers = {
   },
   UserMutation: {
     async addRole(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { role, instance = null, username } = input
@@ -315,10 +330,37 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.addRole({
-        username,
-        roleName: generateRole(role, instance),
-      })
+      const { id } = await resolveIdFromUsername(username, database)
+      await database.mutate(
+        `
+        INSERT INTO role (name)
+        SELECT ?
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM role
+          WHERE name = ?
+        )
+        `,
+        [generateRole(role, instance), generateRole(role, instance)],
+      )
+
+      await database.mutate(
+        `
+        INSERT INTO role_user (user_id, role_id)
+        SELECT ?, role.id
+        FROM role
+        WHERE role.name = ?
+        AND NOT EXISTS (
+          SELECT 1
+          FROM role_user
+          WHERE role_user.user_id = ?
+          AND role_user.role_id = role.id
+        )
+        `,
+        [id, generateRole(role, instance), id],
+      )
+
+      await UuidResolver.removeCacheEntry({ id }, context)
 
       return { success: true, query: {} }
     },

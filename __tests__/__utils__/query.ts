@@ -35,6 +35,25 @@ export const taxonomyTermQuery = new Client().prepareQuery({
   `,
 })
 
+export const userQuery = new Client().prepareQuery({
+  query: gql`
+    query ($id: Int!) {
+      uuid(id: $id) {
+        id
+        __typename
+        ... on User {
+          roles {
+            nodes {
+              role
+              scope
+            }
+          }
+        }
+      }
+    }
+  `,
+})
+
 export const threadsQuery = new Client().prepareQuery({
   query: gql`
     query thread($id: Int!, $archived: Boolean) {
