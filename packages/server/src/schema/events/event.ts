@@ -142,15 +142,9 @@ async function createNotifications(
 export function toGraphQLModel(
   event: DatabaseEventRepresentation,
 ): GraphQLEventModels {
-  // Due to old hack Germany dates are saved in database as UTC.
-  // To output them we correct them back as real UTC.
-  const clonedDate = new Date(event.date)
-  const hackedDate = new Date(
-    clonedDate.setMinutes(event.date.getTimezoneOffset()),
-  )
   const base = {
     ...R.pick(['id', 'actorId', 'instance', 'objectId'], event),
-    date: hackedDate.toISOString(),
+    date: event.date.toISOString(),
   }
 
   if (
