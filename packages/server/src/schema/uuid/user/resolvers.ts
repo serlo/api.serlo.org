@@ -583,21 +583,6 @@ export const resolvers: Resolvers = {
       await UuidResolver.removeCacheEntry({ id: userId }, context)
       return { success: true, query: {} }
     },
-
-    async setEmail(_parent, { input }, context) {
-      const { database, userId } = context
-      assertUserIsAuthenticated(userId)
-      await assertUserIsAuthorized({
-        guard: serloAuth.User.setEmail(serloAuth.Scope.Serlo),
-        message: 'You are not allowed to change the E-mail address for a user',
-        context,
-      })
-      await database.mutate('UPDATE user SET email = ? WHERE id = ?', [
-        input.email,
-        userId,
-      ])
-      return { success: true, query: {} }
-    },
   },
 }
 
