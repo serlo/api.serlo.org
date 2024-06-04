@@ -1,8 +1,9 @@
-name: Deploy to Production
+name: Deploy
 on:
   push:
     branches:
       - production
+      - staging
 
 jobs:
   docker-image:
@@ -15,17 +16,22 @@ jobs:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - run: gcloud auth configure-docker
       - uses: google-github-actions/setup-gcloud@v2
-      - run: yarn deploy:images:production
+      - run: yarn deploy:images:${{ github.ref }}
   deploy-image:
     runs-on: ubuntu-latest
     needs: docker-image
     steps:
-      - uses: google-github-actions/auth@v2
+      - if: ${{ github.ref == 'production'}}
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_PRODUCTION_SERVICE_ACCOUNT }}'
+      - if: ${{ github.ref == 'staging'}}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_STAGING_SERVICE_ACCOUNT }}'
       - uses: google-github-actions/get-gke-credentials@v2
         with:
-          cluster_name: serlo-production-cluster
+          cluster_name: serlo-${{ github.ref }}-cluster
           location: europe-west3-a
       - run: kubectl delete pod -n api -l app=server
       - run: kubectl delete pod -n api -l app=swr-queue-worker
