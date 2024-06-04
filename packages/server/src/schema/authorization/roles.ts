@@ -30,11 +30,7 @@ const roleDefinitions: Record<Role, RoleDefinition> = {
       Role.Admin,
       Role.StaticPagesBuilder,
     ],
-    permissions: [
-      Permission.User_SetEmail,
-      Permission.User_DeleteBot,
-      Permission.User_DeleteRegularUser,
-    ],
+    permissions: [Permission.User_DeleteBot, Permission.User_DeleteRegularUser],
   },
   [Role.Moderator]: {
     permissions: [
