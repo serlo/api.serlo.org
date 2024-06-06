@@ -8,6 +8,7 @@ import {
   resolveThreads,
 } from './utils'
 import { createEvent } from '../events/event'
+import { setSubscription } from '../subscription/resolvers'
 import { Context } from '~/context'
 import { ForbiddenError, UserInputError } from '~/errors'
 import {
@@ -19,6 +20,7 @@ import {
 import {
   CommentDecoder,
   DiscriminatorType,
+  EntityDecoder,
   NotificationEventType,
   UserDecoder,
   UuidDecoder,
@@ -204,34 +206,55 @@ export const resolvers: Resolvers = {
   },
   ThreadMutation: {
     async createThread(_parent, payload, context) {
-      const { dataSources, userId } = context
-      const { objectId } = payload.input
-      const scope = await fetchScopeOfUuid({ id: objectId }, context)
+      const { database, userId } = context
+      const { objectId, title, content, subscribe, sendEmail } = payload.input
+
+      const object = await UuidResolver.resolveWithDecoder(
+        EntityDecoder,
+        { id: objectId },
+        context,
+      )
 
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        guard: auth.Thread.createThread(scope),
+        guard: auth.Thread.createThread(auth.instanceToScope(object.instance)),
         message: 'You are not allowed to create a thread on this object.',
         context,
       })
 
-      const commentPayload = await dataSources.model.serlo.createThread({
-        ...payload.input,
-        userId,
-      })
-      const success = commentPayload !== null
-      return {
-        record:
-          commentPayload !== null
-            ? { __typename: 'Thread', commentPayloads: [commentPayload] }
-            : null,
-        success,
-        query: {},
+      const transaction = await database.beginTransaction()
+
+      try {
+        const { insertId: threadId } = await database.mutate(
+          "insert into uuid (discriminator) values ('comment')",
+        )
+
+        await database.mutate(
+          `
+          insert into comment 
+          (id, instance_id, author_id, uuid_id, title, content)
+          select ?, instance.id, ?, ?, ?, ?
+          from instance where instance.subdomain = ?
+          `,
+          [threadId, userId, objectId, title, content, object.instance],
+        )
+
+        await setSubscription(
+          { objectId: threadId, subscribe, sendEmail, userId },
+          context,
+        )
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
       }
     },
     async createComment(_parent, { input }, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const threadId = decodeThreadId(input.threadId)
+      const { content, subscribe, sendEmail } = input
       const scope = await fetchScopeOfUuid({ id: threadId }, context)
 
       assertUserIsAuthenticated(userId)
@@ -241,16 +264,35 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const commentPayload = await dataSources.model.serlo.createComment({
-        ...input,
-        threadId,
-        userId,
-      })
+      const transaction = await database.beginTransaction()
 
-      return {
-        record: commentPayload,
-        success: commentPayload !== null,
-        query: {},
+      try {
+        const { insertId: commentId } = await database.mutate(
+          "insert into uuid (discriminator) values ('comment')",
+        )
+
+        await database.mutate(
+          `
+          insert into comment
+          (id, instance_id, author_id, parent_id, content)
+          select ?, parent.instance_id, ?, ?, ?
+          from comment parent where parent.id = ?
+          `,
+          [commentId, userId, threadId, content, threadId],
+        )
+
+        await setSubscription(
+          { objectId: threadId, subscribe, sendEmail, userId },
+          context,
+        )
+
+        await transaction.commit()
+
+        await UuidResolver.removeCacheEntry({ id: threadId }, context)
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
       }
     },
     async editComment(_parent, { input }, context) {
@@ -307,7 +349,7 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
     async setThreadArchived(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       const { id, archived } = payload.input
       const ids = decodeThreadIds(id)
 
@@ -322,12 +364,24 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.archiveThread({
-        ids,
-        archived,
-        userId,
-      })
-      return { success: true, query: {} }
+      const transaction = await database.beginTransaction()
+
+      try {
+        for (const id of ids) {
+          await database.mutate(
+            `update comment set archived = ? where id = ?`,
+            [archived ? 1 : 0, id],
+          )
+
+          await UuidResolver.removeCacheEntry({ id }, context)
+        }
+
+        await transaction.commit()
+
+        return { success: true, query: {} }
+      } finally {
+        await transaction.rollback()
+      }
     },
     async setThreadState(_parent, payload, context) {
       const { database, userId } = context
@@ -363,18 +417,20 @@ export const resolvers: Resolvers = {
             throw new UserInputError('comment must have an instance')
           }
 
-          await setUuidState({ id, trashed }, context)
+          if (comment.trashed !== trashed) {
+            await setUuidState({ id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetThreadState,
-              actorId: userId,
-              archived: trashed,
-              threadId: comment.id,
-              instance,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetThreadState,
+                actorId: userId,
+                archived: trashed,
+                threadId: comment.id,
+                instance,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()
@@ -429,18 +485,20 @@ export const resolvers: Resolvers = {
             throw new UserInputError('comment must have an instance')
           }
 
-          await setUuidState({ id, trashed }, context)
+          if (comment.trashed !== trashed) {
+            await setUuidState({ id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetThreadState,
-              actorId: userId,
-              archived: trashed,
-              threadId: comment.id,
-              instance,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetThreadState,
+                actorId: userId,
+                archived: trashed,
+                threadId: comment.id,
+                instance,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()

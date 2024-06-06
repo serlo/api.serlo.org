@@ -1,79 +1,55 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
-import { user as baseUser } from '../../../__fixtures__'
-import { Client, given, nextUuid, Query } from '../../__utils__'
+import { article, user as baseUser } from '../../../__fixtures__'
+import { Client, given, userQuery } from '../../__utils__'
 
-let client: Client
-let mutation: Query
-
-const user = { ...baseUser, roles: ['sysadmin'] }
-const noUserId = nextUuid(nextUuid(user.id))
+const input = { username: '1274f605', id: 35412 }
+const mutation = new Client({ userId: 1 }).prepareQuery({
+  query: gql`
+    mutation ($input: UserDeleteRegularUsersInput!) {
+      user {
+        deleteRegularUser(input: $input) {
+          success
+        }
+      }
+    }
+  `,
+  variables: { input },
+})
 
 beforeEach(() => {
-  client = new Client({ userId: user.id })
-
-  mutation = client
-    .prepareQuery({
-      query: gql`
-        mutation ($input: UserDeleteRegularUsersInput!) {
-          user {
-            deleteRegularUser(input: $input) {
-              success
-            }
-          }
-        }
-      `,
-    })
-    .withInput(R.pick(['id', 'username'], user))
-
-  given('UuidQuery').for(user)
+  given('UuidQuery').for({ ...baseUser, id: input.id })
 })
 
 test('runs successfully if mutation could be successfully executed', async () => {
   expect(global.kratos.identities).toHaveLength(1)
+  await userQuery
+    .withVariables({ id: input.id })
+    .shouldReturnData({ uuid: { id: input.id } })
 
   await mutation.shouldReturnData({
     user: { deleteRegularUser: { success: true } },
   })
+
+  // TODO: uncomment once UUID query does not call the database-layer any more if the UUID SQL query here is null
+  // await userQuery.withVariables({ id: 35412 }).shouldReturnData({ uuid: null })
   expect(global.kratos.identities).toHaveLength(0)
 })
 
 test('fails if username does not match user', async () => {
   await mutation
-    .withInput({ users: [{ id: user.id, username: 'something' }] })
+    .changeInput({ username: 'something' })
     .shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('updates the cache', async () => {
-  const uuidQuery = client
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            id
-          }
-        }
-      `,
-    })
-    .withVariables({ id: user.id })
-
-  await uuidQuery.shouldReturnData({ uuid: { id: user.id } })
-
-  await mutation.execute()
-
-  // TODO: uncomment once UUID query does not call the database-layer any more if the UUID SQL query here is null
-  //await uuidQuery.shouldReturnData({ uuid: null })
 })
 
 test('fails if one of the given bot ids is not a user', async () => {
   await mutation
-    .withInput({ userIds: [noUserId] })
+    .changeInput({ id: article.id })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails if you try to delete user Deleted', async () => {
-  await mutation.withInput({ userIds: 4 }).shouldFailWithError('BAD_USER_INPUT')
+  await mutation.changeInput({ id: 4 }).shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails if user is not authenticated', async () => {
@@ -81,7 +57,8 @@ test('fails if user is not authenticated', async () => {
 })
 
 test('fails if user does not have role "sysadmin"', async () => {
-  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_admin')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })
 
 test('fails if kratos has an error', async () => {

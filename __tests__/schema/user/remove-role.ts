@@ -2,62 +2,48 @@ import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
 
 import { user as admin } from '../../../__fixtures__'
-import { Client, given, Query } from '../../__utils__'
+import { Client, userQuery } from '../../__utils__'
 import { Instance, Role } from '~/types'
-
-let client: Client
-let mutation: Query
-let uuidQuery: Query
 
 const globalRole = Role.Sysadmin
 const scopedRole = Role.Reviewer
 const instance = Instance.De
-
-beforeEach(() => {
-  client = new Client({ userId: admin.id })
-  mutation = client
-    .prepareQuery({
-      query: gql`
-        mutation ($input: UserRoleInput!) {
-          user {
-            removeRole(input: $input) {
-              success
-            }
+const input = {
+  username: admin.username,
+  role: globalRole,
+}
+const mutation = new Client({ userId: admin.id })
+  .prepareQuery({
+    query: gql`
+      mutation ($input: UserRoleInput!) {
+        user {
+          removeRole(input: $input) {
+            success
           }
         }
-      `,
-    })
-    .withInput({
-      username: admin.username,
-      role: globalRole,
-    })
-
-  uuidQuery = client
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            ... on User {
-              roles {
-                nodes {
-                  role
-                  scope
-                }
-              }
-            }
-          }
-        }
-      `,
-    })
-    .withVariables({ id: admin.id })
-
-  given('UuidQuery').for(admin)
-})
+      }
+    `,
+  })
+  .withInput(input)
 
 describe('remove global role', () => {
   test('removes a role successfully', async () => {
+    await userQuery.withVariables({ id: admin.id }).shouldReturnData({
+      uuid: {
+        roles: {
+          nodes: [
+            { role: Role.Login, scope: Scope.Serlo },
+            { role: globalRole, scope: Scope.Serlo },
+          ],
+        },
+      },
+    })
+
     await mutation.shouldReturnData({ user: { removeRole: { success: true } } })
+
+    await userQuery.withVariables({ id: admin.id }).shouldReturnData({
+      uuid: { roles: { nodes: [{ role: Role.Login, scope: Scope.Serlo }] } },
+    })
   })
 
   test('ignores instance if given', async () => {
@@ -67,7 +53,8 @@ describe('remove global role', () => {
   })
 
   test('fails if only scoped admin', async () => {
-    await mutation.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
+    const newMutation = await mutation.forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 })
 
@@ -79,17 +66,18 @@ describe('remove scoped role', () => {
   })
 
   test('removes a role successfully if scoped admin', async () => {
-    await mutation
-      .forLoginUser('de_admin')
+    const newMutation = await mutation.forUser('de_admin')
+
+    await newMutation
       .withInput({ username: admin.username, role: scopedRole, instance })
       .shouldReturnData({ user: { removeRole: { success: true } } })
   })
 
   test('fails if admin in wrong scope', async () => {
-    await mutation
+    const newMutation = await mutation
       .withInput({ username: admin.username, role: scopedRole, instance })
-      .forLoginUser('en_admin')
-      .shouldFailWithError('FORBIDDEN')
+      .forUser('en_admin')
+    await newMutation.shouldFailWithError('FORBIDDEN')
   })
 
   test('fails if not given an instance', async () => {
@@ -99,28 +87,11 @@ describe('remove scoped role', () => {
   })
 })
 
-// TODO: Enable once the user was moved to Uuid Query
-test.skip('updates the cache', async () => {
-  await uuidQuery.shouldReturnData({
-    uuid: {
-      roles: {
-        nodes: [
-          { role: Role.Login, scope: Scope.Serlo },
-          { role: globalRole, scope: Scope.Serlo },
-        ],
-      },
-    },
-  })
-  await mutation.execute()
-  await uuidQuery.shouldReturnData({
-    uuid: { roles: { nodes: [{ role: Role.Login, scope: Scope.Serlo }] } },
-  })
-})
-
 test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
 test('fails if user does not have role "admin"', async () => {
-  await mutation.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_reviewer')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })

@@ -64,7 +64,6 @@ type UserMutation {
   deleteRegularUser(input: UserDeleteRegularUsersInput!): DefaultResponse!
   removeRole(input: UserRoleInput!): DefaultResponse!
   setDescription(input: UserSetDescriptionInput!): DefaultResponse!
-  setEmail(input: UserSetEmailInput!): DefaultResponse!
 }
 
 input UserDeleteBotsInput {
@@ -90,9 +89,4 @@ input UserRoleInput {
 
 input UserSetDescriptionInput {
   description: String!
-}
-
-input UserSetEmailInput {
-  userId: Int!
-  email: String!
 }

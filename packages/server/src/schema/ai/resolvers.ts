@@ -27,12 +27,15 @@ export const resolvers: Resolvers = {
   AiQuery: {
     async executePrompt(_parent, payload, context) {
       const { userId, dataSources } = context
-      assertUserIsAuthenticated(userId)
-      await assertUserIsAuthorized({
-        guard: auth.Ai.executePrompt(Scope.Serlo_De),
-        message: 'Insufficient role to execute the prompt.',
-        context,
-      })
+
+      if (process.env.ENVIRONMENT === 'production') {
+        assertUserIsAuthenticated(userId)
+        await assertUserIsAuthorized({
+          guard: auth.Ai.executePrompt(Scope.Serlo_De),
+          message: 'Insufficient role to execute the prompt.',
+          context,
+        })
+      }
       const { messages } = payload
 
       if (!ExecutePromptRequestType.is(messages)) {
