@@ -6,7 +6,7 @@ test('UuidQuery for an entity', async () => {
       __typename: 'Article',
       id: 27801,
       instance: 'de',
-      alias: '/mathe/27801/addition-und-subtraktion-von-dezimalbrchen',
+      alias: '/mathe/27801/addition-und-subtraktion-von-dezimalbruechen',
       trashed: false,
       date: '2014-08-26T08:29:35.000Z',
       title: 'Addition und Subtraktion von Dezimalbrüchen',
