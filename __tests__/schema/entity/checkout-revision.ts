@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { user } from '../../../__fixtures__'
 import {
   Client,
-  userQuery,
+  userQueryUnrevisedEntities,
   expectEvent,
   entityQuery,
   entityRevisionQuery,
@@ -29,11 +29,13 @@ test('checks out a revision', async () => {
     uuid: { currentRevision: { id: 35248 } },
   })
 
-  await userQuery.withVariables({ id: 26334 }).shouldReturnData({
-    uuid: {
-      unrevisedEntities: { nodes: [{ id: 34907 }, { id: 35247 }] },
-    },
-  })
+  await userQueryUnrevisedEntities
+    .withVariables({ id: 26334 })
+    .shouldReturnData({
+      uuid: {
+        unrevisedEntities: { nodes: [{ id: 34907 }, { id: 35247 }] },
+      },
+    })
 
   await mutation.shouldReturnData({
     entity: { checkoutRevision: { success: true } },
@@ -43,9 +45,11 @@ test('checks out a revision', async () => {
     uuid: { currentRevision: { id: 35290 } },
   })
 
-  await userQuery.withVariables({ id: 26334 }).shouldReturnData({
-    uuid: { unrevisedEntities: { nodes: [{ id: 34907 }] } },
-  })
+  await userQueryUnrevisedEntities
+    .withVariables({ id: 26334 })
+    .shouldReturnData({
+      uuid: { unrevisedEntities: { nodes: [{ id: 34907 }] } },
+    })
 
   await expectEvent({
     __typename: NotificationEventType.CheckoutRevision,
@@ -80,5 +84,6 @@ test('fails when user is not authenticated', async () => {
 })
 
 test('fails when user does not have role "reviewer"', async () => {
-  await mutation.forLoginUser('de_moderator').shouldFailWithError('FORBIDDEN')
+  const newMutation = await mutation.forUser('de_moderator')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })

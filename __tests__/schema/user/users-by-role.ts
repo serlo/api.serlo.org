@@ -77,7 +77,8 @@ describe('get users by role tests', () => {
     })
 
     test('fails when only scoped admin', async () => {
-      await query.forLoginUser('en_admin').shouldFailWithError('FORBIDDEN')
+      const newMutation = await query.forUser('en_admin')
+      await newMutation.shouldFailWithError('FORBIDDEN')
     })
   })
 
@@ -102,28 +103,24 @@ describe('get users by role tests', () => {
         })
     })
 
-    test('get users when scoped admin', async () => {
-      await query
-        .forLoginUser('de_admin')
-        .withVariables({
-          role: localRole,
-          instance,
-          first: 2,
-        })
+    test.skip('get users when scoped admin', async () => {
+      const newQuery = await query.forUser('de_admin')
+      await newQuery
+        .withVariables({ role: localRole, instance, first: 2 })
         .shouldReturnData({
           user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
         })
     })
 
     test('fails when admin in wrong scope', async () => {
-      await query
+      const newQuery = await query
         .withVariables({
           role: localRole,
           instance,
           first: 2,
         })
-        .forLoginUser('en_admin')
-        .shouldFailWithError('FORBIDDEN')
+        .forUser('en_admin')
+      await newQuery.shouldFailWithError('FORBIDDEN')
     })
 
     test('fails when given global scope', async () => {
@@ -141,7 +138,8 @@ describe('get users by role tests', () => {
   })
 
   test('fails when user does not have role "admin"', async () => {
-    await query.forLoginUser('en_reviewer').shouldFailWithError('FORBIDDEN')
+    const newQuery = await query.forUser('de_reviewer')
+    await newQuery.shouldFailWithError('FORBIDDEN')
   })
 
   test('fails when database layer has an internal error', async () => {

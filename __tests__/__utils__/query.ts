@@ -70,7 +70,7 @@ export const entityRevisionQuery = new Client().prepareQuery({
   variables: { id: 35296 },
 })
 
-export const userQuery = new Client().prepareQuery({
+export const userQueryUnrevisedEntities = new Client().prepareQuery({
   query: gql`
     query ($id: Int!) {
       uuid(id: $id) {
@@ -112,6 +112,58 @@ export const taxonomyTermQuery = new Client().prepareQuery({
           children {
             nodes {
               id
+            }
+          }
+        }
+      }
+    }
+  `,
+})
+
+export const userQuery = new Client().prepareQuery({
+  query: gql`
+    query ($id: Int!) {
+      uuid(id: $id) {
+        id
+        __typename
+        ... on User {
+          roles {
+            nodes {
+              role
+              scope
+            }
+          }
+        }
+      }
+    }
+  `,
+})
+
+export const threadsQuery = new Client().prepareQuery({
+  query: gql`
+    query thread($id: Int!, $archived: Boolean) {
+      uuid(id: $id) {
+        ... on ThreadAware {
+          threads(archived: $archived) {
+            nodes {
+              id
+              title
+              createdAt
+              archived
+              object {
+                id
+              }
+              comments {
+                nodes {
+                  id
+                  content
+                  createdAt
+                  archived
+                  legacyObject {
+                    id
+                  }
+                }
+              }
             }
           }
         }

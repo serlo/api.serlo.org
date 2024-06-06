@@ -5,8 +5,8 @@ import * as DatabaseLayer from './database-layer'
 import { PageRevisionDecoder } from './decoder'
 import { Context } from '~/context'
 import {
-  createMutation,
   createLegacyQuery,
+  createMutation,
   createRequest,
 } from '~/internals/data-source-helper'
 import { isInstance } from '~/schema/instance/utils'
@@ -78,20 +78,6 @@ export function createSerloModel({
     },
   })
 
-  const deleteBots = createMutation({
-    type: 'UserDeleteBotsMutation',
-    decoder: DatabaseLayer.getDecoderFor('UserDeleteBotsMutation'),
-    mutate(payload: DatabaseLayer.Payload<'UserDeleteBotsMutation'>) {
-      return DatabaseLayer.makeRequest('UserDeleteBotsMutation', payload)
-    },
-    async updateCache({ botIds }) {
-      await UuidResolver.removeCacheEntries(
-        botIds.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
-
   const getAlias = createLegacyQuery(
     {
       type: 'AliasQuery',
@@ -122,85 +108,6 @@ export function createSerloModel({
     },
     context,
   )
-
-  const getThreadIds = createLegacyQuery(
-    {
-      type: 'ThreadsQuery',
-      decoder: DatabaseLayer.getDecoderFor('ThreadsQuery'),
-      async getCurrentValue(payload: DatabaseLayer.Payload<'ThreadsQuery'>) {
-        return DatabaseLayer.makeRequest('ThreadsQuery', payload)
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: ({ id }) => {
-        return `de.serlo.org/api/threads/${id}`
-      },
-      getPayload: (key) => {
-        const prefix = 'de.serlo.org/api/threads/'
-        return key.startsWith(prefix)
-          ? O.some({ id: parseInt(key.replace(prefix, ''), 10) })
-          : O.none
-      },
-      examplePayload: { id: 1 },
-    },
-    context,
-  )
-
-  const createThread = createMutation({
-    type: 'ThreadCreateThreadMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadCreateThreadMutation'),
-    async mutate(payload: DatabaseLayer.Payload<'ThreadCreateThreadMutation'>) {
-      return DatabaseLayer.makeRequest('ThreadCreateThreadMutation', payload)
-    },
-    updateCache: async (payload, value) => {
-      if (value !== null) {
-        await UuidResolver.removeCacheEntry({ id: value.id }, context)
-        await getThreadIds._querySpec.setCache({
-          payload: { id: payload.objectId },
-          getValue(current) {
-            if (!current) return
-            current.firstCommentIds.unshift(value.id) //new thread on first pos
-            return current
-          },
-        })
-      }
-    },
-  })
-
-  const createComment = createMutation({
-    type: 'ThreadCreateCommentMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadCreateCommentMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadCreateCommentMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest('ThreadCreateCommentMutation', payload)
-    },
-    async updateCache(payload, value) {
-      if (value !== null) {
-        await UuidResolver.removeCacheEntry({ id: value.id }, context)
-        await UuidResolver.removeCacheEntry({ id: payload.threadId }, context)
-      }
-    },
-  })
-
-  const archiveThread = createMutation({
-    type: 'ThreadSetThreadArchivedMutation',
-    decoder: DatabaseLayer.getDecoderFor('ThreadSetThreadArchivedMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'ThreadSetThreadArchivedMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest(
-        'ThreadSetThreadArchivedMutation',
-        payload,
-      )
-    },
-    async updateCache({ ids }) {
-      await UuidResolver.removeCacheEntries(
-        ids.map((id) => ({ id })),
-        context,
-      )
-    },
-  })
 
   const createPage = createMutation({
     type: 'PageCreateMutation',
@@ -276,24 +183,6 @@ export function createSerloModel({
     },
   })
 
-  const addRole = createMutation({
-    type: 'UsersByRoleQuery',
-    decoder: DatabaseLayer.getDecoderFor('UserAddRoleMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'UserAddRoleMutation'>) => {
-      return DatabaseLayer.makeRequest('UserAddRoleMutation', payload)
-    },
-    async updateCache({ username }, { success }) {
-      if (success) {
-        const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
-          instance: Instance.De,
-          path: `user/profile/${username}`,
-        })) as { id: number }
-
-        await UuidResolver.removeCacheEntry({ id: alias.id }, context)
-      }
-    },
-  })
-
   const getUsersByRole = createRequest({
     type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
@@ -304,20 +193,14 @@ export function createSerloModel({
 
   return {
     addPageRevision,
-    addRole,
-    archiveThread,
     checkoutPageRevision,
-    createComment,
     createPage,
-    createThread,
-    deleteBots,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
     getAlias,
     getDeletedEntities,
     getPotentialSpamUsers,
-    getThreadIds,
     getUsersByRole,
     getPages,
     sortEntity,

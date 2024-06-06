@@ -1725,7 +1725,6 @@ export type UserMutation = {
   deleteRegularUser: DefaultResponse;
   removeRole: DefaultResponse;
   setDescription: DefaultResponse;
-  setEmail: DefaultResponse;
 };
 
 
@@ -1751,11 +1750,6 @@ export type UserMutationRemoveRoleArgs = {
 
 export type UserMutationSetDescriptionArgs = {
   input: UserSetDescriptionInput;
-};
-
-
-export type UserMutationSetEmailArgs = {
-  input: UserSetEmailInput;
 };
 
 export type UserQuery = {
@@ -1792,11 +1786,6 @@ export type UserRoleInput = {
 
 export type UserSetDescriptionInput = {
   description: Scalars['String']['input'];
-};
-
-export type UserSetEmailInput = {
-  email: Scalars['String']['input'];
-  userId: Scalars['Int']['input'];
 };
 
 export type UuidMutation = {
@@ -2118,7 +2107,6 @@ export type ResolversTypes = {
   UserQuery: ResolverTypeWrapper<ModelOf<UserQuery>>;
   UserRoleInput: ResolverTypeWrapper<ModelOf<UserRoleInput>>;
   UserSetDescriptionInput: ResolverTypeWrapper<ModelOf<UserSetDescriptionInput>>;
-  UserSetEmailInput: ResolverTypeWrapper<ModelOf<UserSetEmailInput>>;
   UuidMutation: ResolverTypeWrapper<ModelOf<UuidMutation>>;
   UuidSetStateInput: ResolverTypeWrapper<ModelOf<UuidSetStateInput>>;
   Video: ResolverTypeWrapper<ModelOf<Video>>;
@@ -2264,7 +2252,6 @@ export type ResolversParentTypes = {
   UserQuery: ModelOf<UserQuery>;
   UserRoleInput: ModelOf<UserRoleInput>;
   UserSetDescriptionInput: ModelOf<UserSetDescriptionInput>;
-  UserSetEmailInput: ModelOf<UserSetEmailInput>;
   UuidMutation: ModelOf<UuidMutation>;
   UuidSetStateInput: ModelOf<UuidSetStateInput>;
   Video: ModelOf<Video>;
@@ -3249,7 +3236,6 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
   deleteRegularUser?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
   removeRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
   setDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
-  setEmail?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetEmailArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

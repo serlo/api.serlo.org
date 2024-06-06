@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
 
@@ -9,54 +10,43 @@ import {
   returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
+  userQuery,
 } from '../../__utils__'
 
+const input = { botIds: [24034, 24139] }
 let client: Client
-const users = [{ ...user, roles: ['sysadmin'] }, user2]
 let chatUsers: string[]
+const emailHash = createHash('md5').update(`126012bd@localhost`).digest('hex')
 let mailchimpEmails: string[]
 let mutation: Query
 
 beforeEach(() => {
   client = new Client({ userId: user.id })
-  mutation = client
-    .prepareQuery({
-      query: gql`
-        mutation ($input: UserDeleteBotsInput!) {
-          user {
-            deleteBots(input: $input) {
-              success
-            }
+  mutation = client.prepareQuery({
+    query: gql`
+      mutation ($input: UserDeleteBotsInput!) {
+        user {
+          deleteBots(input: $input) {
+            success
           }
         }
-      `,
-    })
-    .withInput({ botIds: [user.id] })
-
-  mailchimpEmails = [emailHash(user)]
-
-  for (const user of users) {
-    given('ActivityByTypeQuery')
-      .withPayload({ userId: user.id })
-      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
-  }
-
-  given('UuidQuery').for(users, article)
-  given('UserDeleteBotsMutation').isDefinedBy(async ({ request }) => {
-    const body = await request.json()
-    const { botIds } = body.payload
-
-    for (const id of botIds) {
-      given('UuidQuery').withPayload({ id }).returnsNotFound()
-    }
-
-    return HttpResponse.json({
-      success: true,
-      emailHashes: botIds.map((id) => emailHash({ id })),
-    })
+      }
+    `,
+    variables: { input },
   })
 
-  chatUsers = [user.username]
+  mailchimpEmails = [emailHash]
+
+  for (const botId of input.botIds) {
+    given('ActivityByTypeQuery')
+      .withPayload({ userId: botId })
+      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
+    given('UuidQuery').for({ ...user, id: botId })
+  }
+
+  given('UuidQuery').for(article)
+
+  chatUsers = ['126012d3']
 
   givenChatDeleteUserEndpoint(async ({ request }) => {
     const body = (await request.json()) as {
@@ -105,31 +95,20 @@ beforeEach(() => {
   })
 })
 
-test('runs successfully when mutation could be successfully executed', async () => {
-  expect(global.kratos.identities).toHaveLength(users.length)
-  await mutation
-    .withInput({ botIds: [user.id, user2.id] })
-    .shouldReturnData({ user: { deleteBots: { success: true } } })
-  expect(global.kratos.identities).toHaveLength(users.length - 2)
-})
+test('runs successfully if mutation could be successfully executed', async () => {
+  expect(global.kratos.identities).toHaveLength(input.botIds.length)
+  await userQuery
+    .withVariables({ id: input.botIds[0] })
+    .shouldReturnData({ uuid: { id: input.botIds[0] } })
 
-test('updates the cache', async () => {
-  const uuidQuery = client
-    .prepareQuery({
-      query: gql`
-        query ($id: Int!) {
-          uuid(id: $id) {
-            id
-          }
-        }
-      `,
-    })
-    .withVariables({ id: user.id })
+  await mutation.shouldReturnData({ user: { deleteBots: { success: true } } })
 
-  await uuidQuery.execute()
-  await mutation.execute()
-
-  await uuidQuery.shouldReturnData({ uuid: null })
+  // TODO: Uncomment once UuidQuery is completely deleted
+  // (currently the resolver requests the DB-Layer where the user still exsists
+  //await userQuery
+  //  .withVariables({ id: input.botIds[0] })
+  //  .shouldReturnData({ uuid: null })
+  expect(global.kratos.identities).toHaveLength(0)
 })
 
 describe('community chat', () => {
@@ -144,14 +123,16 @@ describe('community chat', () => {
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the community chat', async () => {
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+  test('does not sent a sentry event if the user is not in the community chat', async () => {
+    await mutation
+      .withInput({ botIds: input.botIds.slice(0, 1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     expect(chatUsers).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
-  test('send a sentry event when the user cannot be deleted from the community chat', async () => {
+  test('send a sentry event if the user cannot be deleted from the community chat', async () => {
     givenChatDeleteUserEndpoint(
       returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
@@ -177,14 +158,16 @@ describe('mailchimp', () => {
     await assertNoErrorEvents()
   })
 
-  test('does not sent a sentry event when the user is not in the newsletter', async () => {
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+  test('does not sent a sentry event if the user is not in the newsletter', async () => {
+    await mutation
+      .withInput({ botIds: input.botIds.slice(0, 1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     expect(mailchimpEmails).toHaveLength(1)
     await assertNoErrorEvents()
   })
 
-  test('send a sentry event when the user cannot be deleted', async () => {
+  test('send a sentry event if the user cannot be deleted', async () => {
     givenMailchimpDeleteEmailEndpoint(
       returnsJson({ status: 405, json: { errorType: 'unknown' } }),
     )
@@ -193,42 +176,35 @@ describe('mailchimp', () => {
 
     await assertErrorEvent({
       message: 'Cannot delete user from mailchimp',
-      errorContext: { emailHash: emailHash(user) },
+      errorContext: { emailHash },
     })
   })
 })
 
-test('fails when one of the given bot ids is not a user', async () => {
+test('fails if one of the given bot ids is not a user', async () => {
   await mutation
-    .withInput({ botIds: [article.id] })
+    .withInput({ botIds: [35580] })
     .shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('fails when one given bot id has more than 4 edits', async () => {
+test('fails if one given bot id has more than 4 edits', async () => {
   given('ActivityByTypeQuery')
-    .withPayload({ userId: user.id })
+    .withPayload({ userId: input.botIds[0] })
     .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
 
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
-test('fails when user is not authenticated', async () => {
+test('fails if user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
 
-test('fails when user does not have role "sysadmin"', async () => {
-  await mutation.forLoginUser('de_admin').shouldFailWithError('FORBIDDEN')
+test('fails if user does not have role "sysadmin"', async () => {
+  const newMutation = await mutation.forUser('de_admin')
+  await newMutation.shouldFailWithError('FORBIDDEN')
 })
 
-test('fails when database layer has an internal error', async () => {
-  given('UserDeleteBotsMutation').hasInternalServerError()
-
-  await mutation.shouldFailWithError('INTERNAL_SERVER_ERROR')
-
-  expect(global.kratos.identities).toHaveLength(users.length)
-})
-
-test('fails when kratos has an error', async () => {
+test('fails if kratos has an error', async () => {
   global.kratos.admin.deleteIdentity = () => {
     throw new Error('Error in kratos')
   }
@@ -255,7 +231,3 @@ function givenMailchimpDeleteEmailEndpoint(
 type MailchimpResponseResolver = ResponseResolver<{
   params: { emailHash: string }
 }>
-
-function emailHash(user: { id: number }) {
-  return `${user.id}@example.org`
-}

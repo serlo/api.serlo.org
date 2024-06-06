@@ -1,12 +1,7 @@
-import { option as O, function as F } from 'fp-ts'
+import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import {
-  CommentDecoder,
-  InstanceDecoder,
-  PageDecoder,
-  UuidDecoder,
-} from './decoder'
+import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
@@ -103,44 +98,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  ThreadCreateCommentMutation: {
-    payload: t.type({
-      content: t.string,
-      threadId: t.number,
-      userId: t.number,
-      subscribe: t.boolean,
-      sendEmail: t.boolean,
-    }),
-    response: t.union([CommentDecoder, t.null]),
-    canBeNull: false,
-  },
-  ThreadCreateThreadMutation: {
-    payload: t.type({
-      content: t.string,
-      objectId: t.number,
-      sendEmail: t.boolean,
-      subscribe: t.boolean,
-      title: t.string,
-      userId: t.number,
-    }),
-    // TODO: See whether it can be just CommentDecoder
-    response: t.union([CommentDecoder, t.null]),
-    canBeNull: false,
-  },
-  ThreadSetThreadArchivedMutation: {
-    payload: t.type({
-      ids: t.array(t.number),
-      archived: t.boolean,
-      userId: t.number,
-    }),
-    response: t.void,
-    canBeNull: false,
-  },
-  ThreadsQuery: {
-    payload: t.type({ id: t.number }),
-    response: t.type({ firstCommentIds: t.array(t.number) }),
-    canBeNull: false,
-  },
   UserCreateMutation: {
     payload: t.type({
       username: t.string,
@@ -153,13 +110,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  UserAddRoleMutation: {
-    payload: t.type({ username: t.string, roleName: t.string }),
-    response: t.strict({
-      success: t.literal(true),
-    }),
-    canBeNull: false,
-  },
   UsersByRoleQuery: {
     payload: t.type({
       roleName: t.string,
@@ -168,14 +118,6 @@ export const spec = {
     }),
     response: t.strict({
       usersByRole: t.array(t.number),
-    }),
-    canBeNull: false,
-  },
-  UserDeleteBotsMutation: {
-    payload: t.type({ botIds: t.array(t.number) }),
-    response: t.strict({
-      success: t.literal(true),
-      emailHashes: t.array(t.string),
     }),
     canBeNull: false,
   },
@@ -214,8 +156,6 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
-    if (spec[type].response._tag === 'VoidType') return
-
     return await response.json()
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to

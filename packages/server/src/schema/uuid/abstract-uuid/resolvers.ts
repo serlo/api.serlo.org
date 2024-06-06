@@ -32,6 +32,7 @@ import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
 import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
   { id: number },
@@ -124,26 +125,23 @@ export const resolvers: Resolvers = {
             context,
           })
 
-          await setUuidState({ id: object.id, trashed }, context)
+          if (object.trashed !== trashed) {
+            await setUuidState({ id: object.id, trashed }, context)
 
-          await createEvent(
-            {
-              __typename: NotificationEventType.SetUuidState,
-              actorId: userId,
-              instance: object.instance,
-              objectId: object.id,
-              trashed,
-            },
-            context,
-          )
+            await createEvent(
+              {
+                __typename: NotificationEventType.SetUuidState,
+                actorId: userId,
+                instance: object.instance,
+                objectId: object.id,
+                trashed,
+              },
+              context,
+            )
+          }
         }
 
         await transaction.commit()
-
-        await UuidResolver.removeCacheEntries(
-          ids.map((id) => ({ id }), context),
-          context,
-        )
 
         return { success: true, query: {} }
       } finally {
@@ -217,7 +215,7 @@ const BaseComment = t.intersection([
   t.type({
     discriminator: t.literal('comment'),
     commentAuthorId: t.number,
-    commentTitle: t.string,
+    commentTitle: t.union([t.string, t.null]),
     commentDate: date,
     commentArchived: Tinyint,
     commentContent: t.string,
@@ -250,8 +248,8 @@ const BaseUser = t.intersection([
     discriminator: t.literal('user'),
     userUsername: t.string,
     userDate: date,
-    userDescription: t.string,
-    userRoles: t.array(t.string),
+    userDescription: t.union([t.string, t.null]),
+    userRoles: t.array(t.union([t.null, t.string])),
   }),
 ])
 
@@ -528,7 +526,7 @@ async function resolveUuidFromDatabase(
         alias: `/user/${base.id}/${baseUuid.userUsername}`,
         date: baseUuid.userDate.toISOString(),
         description: baseUuid.userDescription,
-        roles: baseUuid.userRoles,
+        roles: baseUuid.userRoles.filter(isDefined),
         username: baseUuid.userUsername,
       }
     }
@@ -541,12 +539,13 @@ async function resolveUuidFromDatabase(
 
 export async function setUuidState(
   { id, trashed }: { id: number; trashed: boolean },
-  { database }: Pick<Context, 'database'>,
+  { database, cache }: Pick<Context, 'database' | 'cache'>,
 ) {
   await database.mutate('update uuid set trashed = ? where id = ?', [
     trashed ? 1 : 0,
     id,
   ])
+  await UuidResolver.removeCacheEntries([{ id }], { cache })
 }
 
 function getSortedList(listAsDict: t.TypeOf<typeof WeightedNumberList>) {
@@ -619,6 +618,16 @@ async function resolveIdFromAlias(
 function toSlug(name: string) {
   return name
     .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/á/g, 'a')
+    .replace(/é/g, 'e')
+    .replace(/í/g, 'i')
+    .replace(/ó/g, 'o')
+    .replace(/ú/g, 'u')
+    .replace(/ñ/g, 'n')
     .replace(/ /g, '-') // replace spaces with hyphens
     .replace(/[^\w-]+/g, '') // remove all non-word chars including _
     .replace(/--+/g, '-') // replace multiple hyphens
