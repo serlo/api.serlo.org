@@ -71,10 +71,10 @@ export const ActiveUserIdsResolver = createCachedResolver<
       `
         SELECT u.id
         FROM user u
-        JOIN event_log e ON u.id = e.actor_id
-        WHERE e.event_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
+        JOIN event e ON u.id = e.actor_id
+        WHERE e.event_type_id = 5 AND e.date > DATE_SUB(?, Interval 90 day)
         GROUP BY u.id
-        HAVING count(e.event_id) > 10
+        HAVING count(e.event_type_id) > 10
       `,
       [new Date(timer.now()).toISOString()],
     )
@@ -499,10 +499,10 @@ export const resolvers: Resolvers = {
             'UPDATE entity_revision SET author_id = ? WHERE author_id = ?',
             [idUserDeleted, id],
           ),
-          database.mutate(
-            'UPDATE event_log SET actor_id = ? WHERE actor_id = ?',
-            [idUserDeleted, id],
-          ),
+          database.mutate('UPDATE event SET actor_id = ? WHERE actor_id = ?', [
+            idUserDeleted,
+            id,
+          ]),
           database.mutate(
             'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
             [idUserDeleted, id],
