@@ -137,11 +137,13 @@ describe('community chat', () => {
       returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
 
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+    await mutation
+      .withInput({ botIds: input.botIds.slice(1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
-      errorContext: { user: user2 },
+      errorContext: { user: { id: input.botIds[1] } },
     })
   })
 })
