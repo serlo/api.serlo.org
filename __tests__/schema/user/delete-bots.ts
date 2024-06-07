@@ -2,14 +2,14 @@ import { createHash } from 'crypto'
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
 
-import { article, user, user2 } from '../../../__fixtures__'
+import { article, user } from '../../../__fixtures__'
 import {
-  given,
   Client,
   Query,
-  returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
+  given,
+  returnsJson,
   userQuery,
 } from '../../__utils__'
 
