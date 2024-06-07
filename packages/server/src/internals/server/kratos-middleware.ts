@@ -1,33 +1,84 @@
 import { IdentityStateEnum } from '@ory/client'
 import * as Sentry from '@sentry/node'
+import { randomBytes } from 'crypto'
 import express, { Express, Request, Response, RequestHandler } from 'express'
 import * as t from 'io-ts'
 import { JwtPayload, decode } from 'jsonwebtoken'
+import { type Pool } from 'mysql2/promise'
 import { validate as uuidValidate } from 'uuid'
 
 import { Identity, Kratos } from '~/context/auth-services'
+import { Database } from '~/database'
 import { captureErrorEvent } from '~/error-event'
-import { createRequest } from '~/internals/data-source-helper'
-import { DatabaseLayer } from '~/model'
 
 const basePath = '/kratos'
 
-const createLegacyUser = createRequest({
-  type: 'UserCreateMutation',
-  decoder: DatabaseLayer.getDecoderFor('UserCreateMutation'),
-  async getCurrentValue(payload: DatabaseLayer.Payload<'UserCreateMutation'>) {
-    return DatabaseLayer.makeRequest('UserCreateMutation', payload)
-  },
-})
+async function createLegacyUser(
+  username: string,
+  password: string,
+  email: string,
+  database: Database,
+) {
+  if (username.length > 32 || username.trim() === '') {
+    throw new Error(
+      "Username can't be longer than 32 characters and can't be empty.",
+    )
+  }
+  if (email.length > 254) {
+    throw new Error("Email can't be longer than 254 characters.")
+  }
+  if (password.length > 50) {
+    throw new Error("Password can't be longer than 50 characters.")
+  }
+
+  const transaction = await database.beginTransaction()
+
+  try {
+    await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
+      'user',
+    ])
+
+    const userIdResult = await database.fetchOne<{ id: number }>(
+      `SELECT LAST_INSERT_ID() AS id FROM uuid`,
+    )
+    const userId = userIdResult.id
+
+    const token = randomBytes(4).toString('hex')
+
+    await database.mutate(
+      `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
+      [userId, email, username, password, token.toLowerCase()],
+    )
+
+    const defaultRoleId = 2
+    await database.mutate(
+      `INSERT INTO role_user (user_id, role_id) VALUES (?, ?)`,
+      [userId, defaultRoleId],
+    )
+
+    await transaction.commit()
+
+    return userId
+  } catch (error) {
+    await transaction.rollback()
+    throw error
+  }
+}
 
 export function applyKratosMiddleware({
   app,
   kratos,
+  pool,
 }: {
   app: Express
   kratos: Kratos
+  pool: Pool
 }) {
-  app.post(`${basePath}/register`, createKratosRegisterHandler(kratos))
+  const database = new Database(pool)
+  app.post(
+    `${basePath}/register`,
+    createKratosRegisterHandler(kratos, database),
+  )
   app.post(`${basePath}/updateLastLogin`, updateLastLoginHandler(kratos))
   app.use(express.urlencoded({ extended: true }))
 
@@ -47,7 +98,10 @@ export function applyKratosMiddleware({
   return basePath
 }
 
-function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
+function createKratosRegisterHandler(
+  kratos: Kratos,
+  database: Database,
+): RequestHandler {
   async function handleRequest(request: Request, response: Response) {
     // TODO: delete after debugging
     Sentry.captureMessage(`/kratos/register reached`, {
@@ -90,13 +144,14 @@ function createKratosRegisterHandler(kratos: Kratos): RequestHandler {
       }
 
       for (const account of unsyncedAccounts) {
-        const { userId: legacyUserId } = await createLegacyUser({
-          username: account.traits.username,
+        const legacyUserId = await createLegacyUser(
+          account.traits.username,
           // we just need to store something, since the password in legacy DB is not going to be used anymore
           // storing the kratos id is just a good way of easily seeing this value in case we need it
-          password: account.id,
-          email: account.traits.email,
-        })
+          account.id,
+          account.traits.email,
+          database,
+        )
 
         await kratos.admin.updateIdentity({
           id: account.id,
@@ -243,7 +298,7 @@ function updateLastLoginHandler(kratos: Kratos): RequestHandler {
   // See https://stackoverflow.com/a/71912991
   return (request, response) => {
     handleRequest(request, response).catch(() =>
-      response.status(500).send('Internal Server Error (Illegal state=)'),
+      response.status(500).send('Internal Server Error (Illegal state)'),
     )
   }
 }
