@@ -76,7 +76,8 @@ async function resolveEventsFromDB(
       join instance on event.instance_id = instance.id
       where
         event.id < ?
-        and (? is null or event.uuid_id = ?)
+        and (? is null or event.uuid_id = ? or event.uuid_parameter = ?
+            or event.uuid_parameter2 = ?)
         and (? is null or event.actor_id = ?)
         and (? is null or instance.subdomain = ?)
       group by event.id
@@ -86,6 +87,8 @@ async function resolveEventsFromDB(
     [
       // 2147483647 is the maximum number of INT in mysql
       after ?? 2147483647,
+      objectId ?? null,
+      objectId ?? null,
       objectId ?? null,
       objectId ?? null,
       actorId ?? null,
