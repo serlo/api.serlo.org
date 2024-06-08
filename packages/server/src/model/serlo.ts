@@ -1,13 +1,8 @@
 import { option as O } from 'fp-ts'
-import * as t from 'io-ts'
 
 import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
-import {
-  EntityDecoder,
-  EntityRevisionDecoder,
-  PageRevisionDecoder,
-} from './decoder'
+import { PageRevisionDecoder } from './decoder'
 import { Context } from '~/context'
 import {
   createLegacyQuery,
@@ -114,154 +109,6 @@ export function createSerloModel({
     context,
   )
 
-  const getUnrevisedEntities = createLegacyQuery(
-    {
-      type: 'UnrevisedEntitiesQuery',
-      decoder: DatabaseLayer.getDecoderFor('UnrevisedEntitiesQuery'),
-      getCurrentValue: () => {
-        return DatabaseLayer.makeRequest('UnrevisedEntitiesQuery', {})
-      },
-      enableSwr: true,
-      staleAfter: { minutes: 2 },
-      maxAge: { hours: 1 },
-      getKey: () => 'serlo.org/unrevised',
-      getPayload: (key) => {
-        return key === 'serlo.org/unrevised' ? O.some(undefined) : O.none
-      },
-      examplePayload: undefined,
-    },
-    context,
-  )
-
-  const getUnrevisedEntitiesPerSubject = createRequest({
-    type: 'getUnrevisedEntitiesPerSubject',
-    decoder: t.record(t.string, t.union([t.array(t.number), t.null])),
-    async getCurrentValue(_payload: undefined) {
-      const { unrevisedEntityIds } = await getUnrevisedEntities()
-      const result: Record<string, number[] | null> = {}
-
-      for (const entityId of unrevisedEntityIds) {
-        const entity = await UuidResolver.resolveWithDecoder(
-          EntityDecoder,
-          { id: entityId },
-          context,
-        )
-        const key = entity.canonicalSubjectId?.toString() ?? '__no_subject'
-
-        result[key] ??= []
-        result[key]?.push(entity.id)
-      }
-
-      return result
-    },
-  })
-
-  const createEntity = createMutation({
-    type: 'EntityCreateMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityCreateMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntityCreateMutation'>) => {
-      return DatabaseLayer.makeRequest('EntityCreateMutation', payload)
-    },
-    async updateCache({ input }, newEntity) {
-      if (newEntity) {
-        const { parentId, taxonomyTermId } = input
-        if (parentId) {
-          await UuidResolver.removeCacheEntry({ id: parentId }, context)
-        }
-        if (taxonomyTermId) {
-          await UuidResolver.removeCacheEntry({ id: taxonomyTermId }, context)
-        }
-
-        await getUnrevisedEntities._querySpec.setCache({
-          payload: undefined,
-          getValue(current) {
-            if (!current) return
-            if (
-              !input.needsReview &&
-              current.unrevisedEntityIds.includes(newEntity.id)
-            ) {
-              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
-                (id) => id !== newEntity.id,
-              )
-            }
-            if (
-              input.needsReview &&
-              !current.unrevisedEntityIds.includes(newEntity.id)
-            ) {
-              current.unrevisedEntityIds.push(newEntity.id)
-            }
-
-            return current
-          },
-        })
-      }
-    },
-  })
-
-  const addEntityRevision = createMutation({
-    type: 'EntityAddRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityAddRevisionMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntityAddRevisionMutation'>) => {
-      return DatabaseLayer.makeRequest('EntityAddRevisionMutation', payload)
-    },
-    updateCache: async ({ input }, { success }) => {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: input.entityId }, context)
-
-        await getUnrevisedEntities._querySpec.setCache({
-          payload: undefined,
-          getValue(current) {
-            if (!current) return
-            if (
-              !input.needsReview &&
-              current.unrevisedEntityIds.includes(input.entityId)
-            ) {
-              current.unrevisedEntityIds = current.unrevisedEntityIds.filter(
-                (id) => id !== input.entityId,
-              )
-            }
-            if (
-              input.needsReview &&
-              !current.unrevisedEntityIds.includes(input.entityId)
-            ) {
-              current.unrevisedEntityIds.push(input.entityId)
-            }
-
-            return current
-          },
-        })
-      }
-    },
-  })
-
-  const checkoutEntityRevision = createMutation({
-    type: 'EntityCheckoutRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityCheckoutRevisionMutation'),
-    async mutate(
-      payload: DatabaseLayer.Payload<'EntityCheckoutRevisionMutation'>,
-    ) {
-      return DatabaseLayer.makeRequest(
-        'EntityCheckoutRevisionMutation',
-        payload,
-      )
-    },
-    async updateCache({ revisionId }) {
-      const revision = await UuidResolver.resolveWithDecoder(
-        EntityRevisionDecoder,
-        { id: revisionId },
-        context,
-      )
-
-      await UuidResolver.removeCacheEntry(
-        { id: revision.repositoryId },
-        context,
-      )
-      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-
-      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
-    },
-  })
-
   const createPage = createMutation({
     type: 'PageCreateMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
@@ -304,19 +151,6 @@ export function createSerloModel({
     },
   })
 
-  const rejectEntityRevision = createMutation({
-    type: 'EntityRejectRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntityRejectRevisionMutation'),
-    mutate(payload: DatabaseLayer.Payload<'EntityRejectRevisionMutation'>) {
-      return DatabaseLayer.makeRequest('EntityRejectRevisionMutation', payload)
-    },
-    async updateCache({ revisionId }) {
-      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-
-      await getUnrevisedEntities._querySpec.removeCache({ payload: undefined })
-    },
-  })
-
   const getDeletedEntities = createRequest({
     type: 'DeletedEntitiesQuery',
     decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
@@ -341,19 +175,6 @@ export function createSerloModel({
     },
   })
 
-  const setEntityLicense = createMutation({
-    type: 'EntitySetLicenseMutation',
-    decoder: DatabaseLayer.getDecoderFor('EntitySetLicenseMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'EntitySetLicenseMutation'>) => {
-      return DatabaseLayer.makeRequest('EntitySetLicenseMutation', payload)
-    },
-    async updateCache({ entityId }, { success }) {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: entityId }, context)
-      }
-    },
-  })
-
   const getPages = createRequest({
     type: 'PagesQuery',
     decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
@@ -371,11 +192,8 @@ export function createSerloModel({
   })
 
   return {
-    addEntityRevision,
     addPageRevision,
-    checkoutEntityRevision,
     checkoutPageRevision,
-    createEntity,
     createPage,
     executePrompt,
     getActiveReviewerIds,
@@ -383,12 +201,8 @@ export function createSerloModel({
     getAlias,
     getDeletedEntities,
     getPotentialSpamUsers,
-    getUnrevisedEntities,
-    getUnrevisedEntitiesPerSubject,
     getUsersByRole,
     getPages,
-    rejectEntityRevision,
-    setEntityLicense,
     sortEntity,
   }
 }

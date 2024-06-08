@@ -13,7 +13,7 @@ export const video: Model<'Video'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/32321/schriftliche-addition',
-  date: '2014-10-15T12:49:12+02:00',
+  date: '2014-10-15T12:49:12.000Z',
   currentRevisionId: 32322,
   revisionIds: [32322],
   licenseId,

@@ -2,13 +2,7 @@ import { Scope } from '@serlo/authorization'
 import gql from 'graphql-tag'
 import * as R from 'ramda'
 
-import {
-  article,
-  user,
-  user2,
-  articleRevision,
-  activityByType,
-} from '../../../__fixtures__'
+import { article, user, user2, activityByType } from '../../../__fixtures__'
 import {
   assertErrorEvent,
   assertNoErrorEvents,
@@ -17,9 +11,9 @@ import {
   givenSpreadheetApi,
   givenSpreadsheet,
   hasInternalServerError,
-  nextUuid,
   given,
   Client,
+  userQueryUnrevisedEntities,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
@@ -461,58 +455,9 @@ describe('User', () => {
   })
 
   test('property unrevisedEntities', async () => {
-    const unrevisedRevisionByUser: Model<'ArticleRevision'> = {
-      ...articleRevision,
-      id: nextUuid(article.currentRevisionId),
-      authorId: user.id,
-    }
-    const unrevisedRevisionByAnotherUser: Model<'ArticleRevision'> = {
-      ...articleRevision,
-      id: nextUuid(unrevisedRevisionByUser.id),
-      authorId: user2.id,
-    }
-    const articleByUser: Model<'Article'> = {
-      ...article,
-      id: nextUuid(article.id),
-      revisionIds: [unrevisedRevisionByUser.id, ...article.revisionIds],
-    }
-    const articleByAnotherUser: Model<'Article'> = {
-      ...article,
-      id: nextUuid(articleByUser.id),
-      revisionIds: [unrevisedRevisionByAnotherUser.id, ...article.revisionIds],
-    }
-
-    given('UuidQuery').for(
-      unrevisedRevisionByUser,
-      unrevisedRevisionByAnotherUser,
-      articleByAnotherUser,
-      articleByUser,
-    )
-    given('UnrevisedEntitiesQuery').for(articleByUser, articleByAnotherUser)
-
-    await client
-      .prepareQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                unrevisedEntities {
-                  nodes {
-                    id
-                    __typename
-                  }
-                }
-              }
-            }
-          }
-        `,
-      })
-      .withVariables({ id: user.id })
-      .shouldReturnData({
-        uuid: {
-          unrevisedEntities: { nodes: [getTypenameAndId(articleByUser)] },
-        },
-      })
+    await userQueryUnrevisedEntities.shouldReturnData({
+      uuid: { unrevisedEntities: { nodes: [{ id: 26892 }] } },
+    })
   })
 
   describe('property lastLogin', () => {

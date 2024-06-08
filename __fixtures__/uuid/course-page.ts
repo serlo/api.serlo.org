@@ -15,7 +15,7 @@ export const coursePage: Model<'CoursePage'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/18521/startseite',
-  date: '2014-03-01T20:45:56Z',
+  date: '2014-03-17T12:24:54.000Z',
   currentRevisionId: 19277,
   revisionIds: [19277],
   licenseId,

@@ -120,8 +120,8 @@ export const resolvers: Resolvers = {
             entity.id,
             JSON_ARRAYAGG(subject_mapping.subject_id) AS subjectIds,
             type.name AS resourceType,
-            MIN(field_title.value) AS title,
-            MIN(field_description.value) AS description,
+            entity_revision.title AS title,
+            entity_revision.meta_description AS description,
             entity.date AS dateCreated,
             entity_revision.date AS dateModified,
             entity.current_revision_id AS currentRevisionId,
@@ -138,12 +138,6 @@ export const resolvers: Resolvers = {
         JOIN type on entity.type_id = type.id
         JOIN license on license.id = entity.license_id
         JOIN entity_revision ON entity.current_revision_id = entity_revision.id
-        LEFT JOIN entity_revision_field field_title on
-            field_title.entity_revision_id = entity_revision.id AND
-            field_title.field = "title"
-        LEFT JOIN entity_revision_field field_description on
-            field_description.entity_revision_id = entity_revision.id AND
-            field_description.field = "meta_description"
         JOIN term_taxonomy_entity on term_taxonomy_entity.entity_id = entity.id
         JOIN term_taxonomy on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
         JOIN term on term_taxonomy.term_id = term.id
