@@ -14,7 +14,7 @@ export const applet: Model<'Applet'> = {
   trashed: false,
   instance: Instance.En,
   alias: '/math/35596/example-applet',
-  date: '2014-03-01T20:45:56Z',
+  date: '2020-01-29T17:47:19.000Z',
   currentRevisionId: 35597,
   revisionIds: [35597],
   licenseId,

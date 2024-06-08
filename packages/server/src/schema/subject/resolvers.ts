@@ -2,6 +2,7 @@ import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
 import { resolveConnection } from '../connection/utils'
+import { resolveUnrevisedEntityIds } from '../uuid/abstract-entity/resolvers'
 import { UuidResolver } from '../uuid/abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { createNamespace } from '~/internals/graphql'
@@ -60,7 +61,18 @@ export const resolvers: Resolvers = {
       const filteredSubjects = subjects.filter(
         (subject) => subject.instance === payload.instance,
       )
-      return filteredSubjects
+      const unrevisedEntityIds = await resolveUnrevisedEntityIds({}, context)
+      const unreviseedEntities = await Promise.all(
+        unrevisedEntityIds.map((id) =>
+          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context),
+        ),
+      )
+      return filteredSubjects.map((subject) => ({
+        ...subject,
+        allUnrevisedEntities: unreviseedEntities.filter(
+          (entity) => entity.canonicalSubjectId === subject.taxonomyTermId,
+        ),
+      }))
     },
   },
   Subject: {
@@ -74,19 +86,9 @@ export const resolvers: Resolvers = {
         context,
       )
     },
-    async unrevisedEntities(subject, payload, context) {
-      const entitiesPerSubject =
-        await context.dataSources.model.serlo.getUnrevisedEntitiesPerSubject()
-      const entityIds =
-        entitiesPerSubject[subject.taxonomyTermId.toString()] ?? []
-      const entities = await Promise.all(
-        entityIds.map((id) =>
-          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context),
-        ),
-      )
-
+    unrevisedEntities({ allUnrevisedEntities }, payload, _) {
       return resolveConnection({
-        nodes: entities,
+        nodes: allUnrevisedEntities,
         payload,
         createCursor: (node) => node.id.toString(),
       })

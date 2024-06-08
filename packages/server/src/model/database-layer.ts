@@ -1,14 +1,7 @@
 import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import {
-  EntityDecoder,
-  EntityRevisionTypeDecoder,
-  EntityTypeDecoder,
-  InstanceDecoder,
-  PageDecoder,
-  UuidDecoder,
-} from './decoder'
+import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
@@ -50,66 +43,6 @@ export const spec = {
         }),
       ),
     }),
-    canBeNull: false,
-  },
-  EntityAddRevisionMutation: {
-    payload: t.type({
-      userId: t.number,
-      revisionType: EntityRevisionTypeDecoder,
-      input: t.type({
-        changes: t.string,
-        entityId: t.number,
-        needsReview: t.boolean,
-        subscribeThis: t.boolean,
-        subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.union([t.string, t.undefined])),
-      }),
-    }),
-    response: t.type({
-      success: t.literal(true),
-      revisionId: t.number,
-    }),
-    canBeNull: false,
-  },
-  EntityCheckoutRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  EntityRejectRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  EntityCreateMutation: {
-    payload: t.type({
-      userId: t.number,
-      entityType: EntityTypeDecoder,
-      input: t.intersection([
-        t.type({
-          changes: t.string,
-          licenseId: t.number,
-          needsReview: t.boolean,
-          subscribeThis: t.boolean,
-          subscribeThisByEmail: t.boolean,
-          fields: t.record(t.string, t.string),
-        }),
-        // TODO: prefer union
-        t.partial({
-          parentId: t.number,
-          taxonomyTermId: t.number,
-        }),
-      ]),
-    }),
-    response: EntityDecoder,
     canBeNull: false,
   },
   EntitySortMutation: {
@@ -163,20 +96,6 @@ export const spec = {
     response: t.type({
       pages: t.array(t.number),
     }),
-    canBeNull: false,
-  },
-  EntitySetLicenseMutation: {
-    payload: t.type({
-      entityId: t.number,
-      licenseId: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  UnrevisedEntitiesQuery: {
-    payload: t.type({}),
-    response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
     canBeNull: false,
   },
   UserCreateMutation: {

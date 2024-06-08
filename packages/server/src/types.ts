@@ -1261,8 +1261,10 @@ export type SetAbstractEntityInput = {
 
 export type SetEntityResponse = {
   __typename?: 'SetEntityResponse';
+  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
   query: Query;
   record?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
+  revision?: Maybe<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -3003,8 +3005,10 @@ export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType exte
 };
 
 export type SetEntityResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetEntityResponse'] = ResolversParentTypes['SetEntityResponse']> = {
+  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   record?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  revision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
