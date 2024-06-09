@@ -54,6 +54,12 @@
     "migrate:run": "packages/db-migrations/scripts/run_migrations.sh",
     "migrate:all": "lerna run --stream migrate:all",
     "migrate:up": "lerna run --stream migrate:up",
+    "mysql": "docker compose exec mysql serlo-mysql",
+    "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
+    "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
+    "mysql:list-migrations": "yarn mysql --execute 'SELECT * FROM migrations'",
+    "mysql:import-anonymous-data": "./scripts/mysql/import-anonymous-data.sh",
+    "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
     "postgres": "docker compose -f docker-compose.kratos.yml exec postgres  psql -U serlo -d kratos",
     "postgres:dump": "docker compose -f docker-compose.kratos.yml exec postgres pg_dump --clean --if-exists kratos --user serlo > kratos/postgres/001-init.sql",
     "postgres:import-anonymous-data": "./scripts/postgres-import-anonymous-data.sh",
@@ -74,12 +80,7 @@
     "test:docker:server": "run-s \"test:docker:server:*\"",
     "test:docker:server:playground": "curl --verbose http://localhost:3001/___graphql | grep '<title>GraphQL Playground</title>'",
     "test:docker:server:graphql": "curl --verbose -H 'Content-type: application/json' --data '{\"query\": \"query { version }\" }' http://localhost:3001/graphql",
-    "test:docker:swr-queue-worker": "curl --verbose http://localhost:3030/.well-known/health | grep OK",
-    "mysql": "docker compose exec mysql serlo-mysql",
-    "mysql:import-anonymous-data": "./scripts/mysql/import-anonymous-data.sh",
-    "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
-    "start:docker": "docker compose up --detach",
-    "stop:docker": "docker compose down"
+    "test:docker:swr-queue-worker": "curl --verbose http://localhost:3030/.well-known/health | grep OK"
   },
   "dependencies": {
     "graphql": "^16.8.1"
