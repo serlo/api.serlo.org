@@ -1,4 +1,5 @@
 FROM node:20 as base
+ARG image
 WORKDIR /usr/src/app
 COPY .yarn .yarn
 COPY .yarnrc.yml .
@@ -13,7 +14,7 @@ COPY yarn.lock .
 FROM base as build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
-COPY packages/server packages/server
+COPY packages/server packages/$image
 RUN yarn build:server
 
 FROM base as build_node_modules
@@ -23,5 +24,5 @@ FROM node:20-alpine as release
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist
 COPY --from=build_node_modules /usr/src/app/node_modules node_modules
-ENTRYPOINT ["node", "dist/server.cjs"]
+ENTRYPOINT ["node", "dist/$image.cjs"]
 EXPOSE 3000
