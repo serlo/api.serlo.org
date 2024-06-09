@@ -1,6 +1,6 @@
-import * as DBMigrate from 'db-migrate'; 
+import * as DBMigrate from 'db-migrate'
 
 export async function migrateDB() {
-    const dbmigrate = DBMigrate.getInstance(true)
-    await dbmigrate.up()
+  const dbmigrate = DBMigrate.getInstance(true)
+  await dbmigrate.up()
 }
