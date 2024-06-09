@@ -14,8 +14,8 @@ COPY yarn.lock .
 FROM base as build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
-COPY packages/server packages/$image
-RUN yarn build:server
+COPY packages/server packages/server
+RUN yarn build:${image}
 
 FROM base as build_node_modules
 RUN yarn workspaces focus @serlo/api.serlo.org --production
@@ -24,5 +24,5 @@ FROM node:20-alpine as release
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist
 COPY --from=build_node_modules /usr/src/app/node_modules node_modules
-ENTRYPOINT ["node", "dist/$image.cjs"]
+ENTRYPOINT ["node", "dist/${image}.cjs"]
 EXPOSE 3000
