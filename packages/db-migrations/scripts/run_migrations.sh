@@ -2,8 +2,6 @@
 
 set -e
 
-DIR="$(dirname "$0")"
-
 main() {
   clear_build_outdir
   build_migrations_into_build_outdir "$@"
@@ -14,18 +12,19 @@ main() {
 
 wait_for_mysql() {
   if docker compose ps | grep -q "mysql"; then
-    "$DIR/mysql/wait-for-mysql.sh"
+    "scripts/mysql/wait-for-mysql.sh"
   fi
 }
 
 clear_build_outdir() {
-  if ls migrations/*js &> /dev/null; then
-    rm migrations/*js
+  MIGRATIONS_DIR="$PWD/packages/db-migrations/migrations/*js"
+  if ls $MIGRATIONS_DIR &> /dev/null; then
+    rm $MIGRATIONS_DIR
   fi
 }
 
 build_migrations_into_build_outdir() {
-  yarn build "$@"
+  yarn lerna --scope @serlo/db-migrations run build -- "$@"
 }
 
 delete_migrations_in_mysql() {
@@ -41,7 +40,6 @@ delete_migrations_in_mysql() {
     FILENAME="$(basename "$ARG")"
     MIGRATIONS="\"/${FILENAME%.*}\""
   done
-
   yarn mysql --execute "DELETE FROM migrations WHERE name IN ($MIGRATIONS)"
 }
 

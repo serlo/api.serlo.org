@@ -4841,9 +4841,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@serlo/server-migrate@workspace:packages/db-migrations":
+"@serlo/db-migrations@workspace:packages/db-migrations":
   version: 0.0.0-use.local
-  resolution: "@serlo/server-migrate@workspace:packages/db-migrations"
+  resolution: "@serlo/db-migrations@workspace:packages/db-migrations"
   dependencies:
     "@jest/types": ^29.6.3
     "@slack/web-api": ^7.0.4
