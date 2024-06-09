@@ -20,6 +20,8 @@ jobs:
           push: false
           load: true
           file: packages/server/Dockerfile
+          build-args: |
+            image=${{ matrix.image }}
           tags: api-${{ matrix.image }}-local-build:latest
       - uses: serlo/configure-repositories/actions/setup-node@main
       - name: Start containers
