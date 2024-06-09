@@ -126,51 +126,31 @@ export const resolvers: Resolvers = {
           throw new InternalServerError('no uuid entry could be created')
         }
 
-        const { insertId: termId } = await database.mutate(
-          `
-          insert into term (instance_id, name)
-            select term_parent.instance_id, ?
-            from term term_parent
-            join term_taxonomy taxonomy_parent on taxonomy_parent.term_id = term_parent.id
-            where taxonomy_parent.id = ?
-            limit 1
-        `,
-          [name, parentId],
-        )
-
-        if (termId <= 0) {
-          throw new UserInputError(
-            `parent taxonomy ${parentId} does not exists`,
-          )
-        }
-
         const { currentHeaviest } = await database.fetchOne<{
           currentHeaviest: number
         }>(
           `
-          SELECT IFNULL(MAX(tt.weight), 0) AS currentHeaviest
-            FROM term_taxonomy tt
-            WHERE tt.parent_id = ?
-        `,
+          SELECT IFNULL(MAX(taxonomy.weight), 0) AS currentHeaviest
+            FROM taxonomy
+            WHERE taxonomy.parent_id = ?
+          `,
           [parentId],
         )
 
         await database.mutate(
           `
-          insert into term_taxonomy (id, taxonomy_id, term_id, parent_id, description, weight)
-          select ?, taxonomy.id, ?, ?, ?, ?
-          from taxonomy
-          join type on taxonomy.type_id = type.id
-          join instance on taxonomy.instance_id = instance.id
+          insert into taxonomy
+            (id, type_id, instance_id, parent_id, description, weight, name)
+          select ?, type.id, instance.id, ?, ?, ?, ?
+          from type, instance
           where type.name = ? and instance.subdomain = ?
-          limit 1
-        `,
+          `,
           [
             taxonomyId,
-            termId,
             parentId,
             description,
             currentHeaviest + 1,
+            name,
             taxonomyType,
             parent.instance,
           ],
@@ -402,7 +382,7 @@ export const resolvers: Resolvers = {
             // we do not need to distinguish between them
 
             await database.mutate(
-              'update term_taxonomy set weight = ? where parent_id = ? and id = ?',
+              'update taxonomy set weight = ? where parent_id = ? and id = ?',
               [position, taxonomyTermId, childId],
             )
 
@@ -459,11 +439,9 @@ export const resolvers: Resolvers = {
 
       await database.mutate(
         `
-          UPDATE term
-          JOIN term_taxonomy ON term.id = term_taxonomy.term_id
-          SET term.name = ?,
-              term_taxonomy.description = ?
-          WHERE term_taxonomy.id = ?;
+          UPDATE taxonomy
+          SET name = ?, description = ?
+          WHERE taxonomy.id = ?;
         `,
         [input.name, input.description, input.id],
       )
