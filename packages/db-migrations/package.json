@@ -1,10 +1,12 @@
 {
-  "name": "@serlo/server-migrate",
+  "name": "@serlo/db-migrations",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
   "author": "Serlo Education e.V.",
   "scripts": {
+    "build": "tsx scripts/build.ts",
+    "build:all": "yarn build src/*ts",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
     "migrate:run": "scripts/run_migrations.sh",
