@@ -12,9 +12,6 @@
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:all": "npm-run-all build:all migrate:up",
     "migrate:up": "yarn db-migrate -m migrations up",
-    "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
-    "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
-    "mysql:list-migrations": "yarn mysql --execute 'SELECT * FROM migrations'",
     "new": "./scripts/touch_file.sh",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
