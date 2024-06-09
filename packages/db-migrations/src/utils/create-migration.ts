@@ -9,9 +9,10 @@ export async function migrateSerloEditorContent({
   apiCache,
   db,
   migrationName = 'migration',
+  // eslint-disable-next-line no-console
   log = console.log,
 }: {
-  migrateState: (state: any) => any
+  migrateState: (state: unknown) => unknown
   dryRun?: boolean
   migrationName?: string
   apiCache: ApiCache
@@ -117,7 +118,7 @@ async function changeUuidContents({
   db: Database
   table: string
   column: string
-  migrateState: (state: any) => any
+  migrateState: (state: unknown) => unknown
   apiCache: ApiCache
   logger: SlackLogger
   dryRun?: boolean
@@ -135,6 +136,7 @@ async function changeUuidContents({
       let oldState
 
       try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         oldState = JSON.parse(uuid.content)
       } catch (e) {
         // Ignore (some articles have raw text)
@@ -155,12 +157,12 @@ async function changeUuidContents({
             newContent,
             uuid.id,
           )
-          await apiCache.markUuid(uuid.uuid)
+          apiCache.markUuid(uuid.uuid)
         }
 
         log(`Update ${table}.${column} with ID ${uuid.uuid}`)
 
-        logger.logEvent('contentChanged', {
+        await logger.logEvent('contentChanged', {
           table,
           column,
           uuid: uuid.uuid,
@@ -178,5 +180,3 @@ interface Uuid {
   content: string
   uuid: number
 }
-
-type Callback = (error?: Error) => void

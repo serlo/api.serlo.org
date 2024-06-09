@@ -22,14 +22,14 @@ export class SlackLogger {
 
     this.gz.pipe(this.writeStream)
 
-    this.logEvent('logStarted', { name: this.name })
+    void this.logEvent('logStarted', { name: this.name })
   }
 
-  logEvent(eventType: string, data: unknown) {
+  async logEvent(eventType: string, data: unknown) {
     const event = { eventType, data, time: new Date().toISOString() }
 
-    this.write(JSON.stringify(event))
-    this.write('\n')
+    await this.write(JSON.stringify(event))
+    await this.write('\n')
   }
 
   async closeAndSend() {
@@ -38,7 +38,7 @@ export class SlackLogger {
   }
 
   protected async close() {
-    this.logEvent('logEnded', { name: this.name })
+    await this.logEvent('logEnded', { name: this.name })
 
     this.gz.end()
     await once(this.gz, 'finish')

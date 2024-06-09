@@ -1,6 +1,9 @@
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
+const SlateNodeDecoder = t.type({ type: t.string })
+type SlateNode = t.TypeOf<typeof SlateNodeDecoder>
+
 export function replacePlugins(transformations: {
   [key in string]?: (args: {
     plugin: Plugin
@@ -106,6 +109,7 @@ function transformRecursively(
       const newValue = value.flatMap((element) => {
         const transformation = transform(element)
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return transformation !== undefined ? transformation : [element]
       })
 
@@ -138,6 +142,7 @@ function transformLists(
       const newValue = value.flatMap((element) => {
         const transformation = transform(element)
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return transformation !== undefined ? transformation : [element]
       })
 
@@ -171,6 +176,3 @@ export interface Plugin {
   state: unknown
   id?: string
 }
-
-const SlateNodeDecoder = t.type({ type: t.string })
-type SlateNode = t.TypeOf<typeof SlateNodeDecoder>
