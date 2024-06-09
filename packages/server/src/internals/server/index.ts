@@ -1,3 +1,4 @@
+import { migrateDB } from '@serlo/db-migrations'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import createApp from 'express'
@@ -20,6 +21,8 @@ export { getGraphQLOptions } from './graphql-middleware'
 
 export async function start() {
   dotenv.config()
+
+  await migrateDB()
 
   initializeSentry({ context: 'server' })
   const timer = createTimer()

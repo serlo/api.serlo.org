@@ -19,6 +19,7 @@
     "baseUrl": "./packages",
     "paths": {
       "@serlo/authorization": ["authorization/src"],
+      "@serlo/db-migrations": ["db-migrations/src"],
       "~/*": ["server/src/*"]
     }
   },
