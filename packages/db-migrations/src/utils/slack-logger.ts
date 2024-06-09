@@ -1,9 +1,9 @@
-import { createWriteStream, WriteStream } from 'fs'
-import { createGzip, Gzip } from 'zlib'
-import { tmpdir } from 'os'
-import path from 'path'
 import { WebClient } from '@slack/web-api'
 import { once } from 'events'
+import { createWriteStream, WriteStream } from 'fs'
+import { tmpdir } from 'os'
+import path from 'path'
+import { createGzip, Gzip } from 'zlib'
 
 export class SlackLogger {
   private logFileName: string

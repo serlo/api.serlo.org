@@ -12,7 +12,7 @@ particularly for the mysql database
 2. You need to build a migration by running
    `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
    new file in `migrations`. Both files in `migrations` and `src` need to be
-   added in the PR. 
+   added in the PR.
 
 !!_Note that any changes in other directories that are
-   imported by the file will be built together_!! 
+imported by the file will be built together_!!
