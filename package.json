@@ -54,7 +54,6 @@
     "postgres:dump": "docker compose -f docker-compose.kratos.yml exec postgres pg_dump --clean --if-exists kratos --user serlo > kratos/postgres/001-init.sql",
     "postgres:import-anonymous-data": "./scripts/postgres-import-anonymous-data.sh",
     "postgres:rollback": "docker compose -f docker-compose.kratos.yml exec postgres bash -c 'psql -U serlo kratos < /docker-entrypoint-initdb.d/001-init.sql'",
-    "prepare-release": "yarn lerna version --no-git-tag-version --no-push",
     "redis:cli": "docker compose exec redis redis-cli",
     "redis:empty": "docker compose exec redis redis-cli FLUSHDB",
     "redis:list": "docker compose exec redis redis-cli KEYS '*'",
