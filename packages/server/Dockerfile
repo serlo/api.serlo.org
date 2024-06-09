@@ -14,6 +14,7 @@ COPY yarn.lock .
 FROM base as build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
+COPY packages/db-migrations packages/db-migrations
 COPY packages/server packages/server
 RUN yarn build:${image}
 
