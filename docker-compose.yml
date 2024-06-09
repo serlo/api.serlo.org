@@ -4,7 +4,7 @@ services:
     ports:
       - '6379:6379'
   mysql:
-    image: eu.gcr.io/serlo-shared/serlo-mysql-database:prerelease-merge-course-pages-into-courses.2
+    image: eu.gcr.io/serlo-shared/serlo-mysql-database:prerelease-simplify-taxonomy-tables
     platform: linux/x86_64
     pull_policy: always
     ports:
