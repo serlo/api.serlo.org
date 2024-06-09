@@ -5,6 +5,7 @@ export default {
     '^~/(.*)$': 'server/src/$1',
     '@serlo/api': '@serlo/api/src',
     '@serlo/authorization': '@serlo/authorization/src',
+    '@serlo/db-migrations': '@serlo/db-migrations/src',
   },
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],

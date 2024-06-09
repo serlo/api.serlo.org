@@ -11,6 +11,7 @@ export class ApiCache {
       this.redis = new Redis(process.env.REDIS_URL)
 
       this.redis.on('error', (err) => {
+        // eslint-disable-next-line no-console
         console.error(err)
 
         // In a local environment we sometimes want to run a migration
@@ -20,9 +21,10 @@ export class ApiCache {
           err.message.includes('ECONNREFUSED') &&
           process.env.ENVIRONMENT === 'local'
         ) {
+          // eslint-disable-next-line no-console
           console.log('INFO: Close redis connection in local environment')
 
-          this.redis.quit()
+          void this.redis.quit()
         }
       })
     } else {
