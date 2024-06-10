@@ -154,9 +154,6 @@ export const resolvers: Resolvers = {
       }
     },
     async userByUsername(_parent, payload, context) {
-      if (!payload.username)
-        throw new UserInputError('`username` is not provided')
-
       const id = await resolveIdFromUsername(payload.username, context)
 
       if (!id) return null
