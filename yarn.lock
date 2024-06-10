@@ -3366,13 +3366,13 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^4.2.0":
-  version: 4.3.0
-  resolution: "@nmshd/connector-sdk@npm:4.3.0"
+  version: 4.4.0
+  resolution: "@nmshd/connector-sdk@npm:4.4.0"
   dependencies:
-    axios: ^1.6.7
+    axios: ^1.7.2
     form-data: ^4.0.0
-    qs: ^6.11.2
-  checksum: e8fafecb9e2919e7ef8e36c8cf4e0e78662814acbce49972cb99728584ef4476f35318d540a9ab905062f0835170e28a0ccbed3b8ade80fb3bd5667e81c5feef
+    qs: ^6.12.1
+  checksum: fa86f3e1a24b2ead09b6c5de5bb51694964993ae567a3f13719ff829f9132d2062f4cc6245d99573c145f628b9ab8b6baa714b4884a7c24fa2af433f41793a4e
   languageName: node
   linkType: hard
 
@@ -6506,7 +6506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.7":
+"axios@npm:^1.6.0, axios@npm:^1.6.1":
   version: 1.6.8
   resolution: "axios@npm:1.6.8"
   dependencies:
@@ -6514,6 +6514,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: bf007fa4b207d102459300698620b3b0873503c6d47bf5a8f6e43c0c64c90035a4f698b55027ca1958f61ab43723df2781c38a99711848d232cad7accbcdfcdd
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "axios@npm:1.7.2"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: e457e2b0ab748504621f6fa6609074ac08c824bf0881592209dfa15098ece7e88495300e02cd22ba50b3468fd712fe687e629dcb03d6a3f6a51989727405aedf
   languageName: node
   linkType: hard
 
@@ -16690,12 +16701,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.11.2":
-  version: 6.11.2
-  resolution: "qs@npm:6.11.2"
+"qs@npm:^6.12.1":
+  version: 6.12.1
+  resolution: "qs@npm:6.12.1"
   dependencies:
-    side-channel: ^1.0.4
-  checksum: e812f3c590b2262548647d62f1637b6989cc56656dc960b893fe2098d96e1bd633f36576f4cd7564dfbff9db42e17775884db96d846bebe4f37420d073ecdc0b
+    side-channel: ^1.0.6
+  checksum: aa761d99e65b6936ba2dd2187f2d9976afbcda38deb3ff1b3fe331d09b0c578ed79ca2abdde1271164b5be619c521ec7db9b34c23f49a074e5921372d16242d5
   languageName: node
   linkType: hard
 
