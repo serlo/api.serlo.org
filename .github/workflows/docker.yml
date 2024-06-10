@@ -10,11 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         image: [server, swr-queue-worker]
-        include:
-          - image: server
-            dockerfile: packages/server/docker/server/Dockerfile
-          - image: swr-queue-worker
-            dockerfile: packages/server/docker/swr-queue-worker/Dockerfile
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -24,7 +19,9 @@ jobs:
         with:
           push: false
           load: true
-          file: ${{ matrix.dockerfile }}
+          file: packages/server/Dockerfile
+          build-args: |
+            image=${{ matrix.image }}
           tags: api-${{ matrix.image }}-local-build:latest
       - uses: serlo/configure-repositories/actions/setup-node@main
       - name: Start containers
