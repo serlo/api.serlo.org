@@ -5,7 +5,6 @@ import { array as A, either as E, function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-import * as DatabaseLayer from '../../../model/database-layer'
 import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
