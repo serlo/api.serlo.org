@@ -10,7 +10,6 @@ import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
-import { Database } from '~/database'
 import {
   addContext,
   assertAll,
@@ -37,20 +36,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
-
-async function resolveIdFromUsername(
-  username: string,
-  database: Database,
-): Promise<{ id: number }> {
-  const idResult = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM user WHERE username = ?`,
-    [username],
-  )
-  if (idResult === null) {
-    throw new UserInputError('no user with given username')
-  }
-  return idResult
-}
 
 export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
@@ -170,15 +155,10 @@ export const resolvers: Resolvers = {
       }
     },
     async userByUsername(_parent, payload, context) {
-      const { dataSources } = context
       if (!payload.username)
         throw new UserInputError('`username` is not provided')
 
-      const alias = {
-        path: `/user/profile/${payload.username}`,
-        instance: Instance.De, // should not matter
-      }
-      const id = (await dataSources.model.serlo.getAlias(alias))?.id
+      const id = await resolveIdFromUsername(payload.username, context)
 
       if (!id) return null
 
@@ -308,7 +288,11 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const { id } = await resolveIdFromUsername(username, database)
+      const id = await resolveIdFromUsername(username, context)
+
+      if (id == null) {
+        throw new UserInputError('no user with given username')
+      }
       await database.mutate(
         `
         INSERT INTO role (name)
@@ -538,12 +522,11 @@ export const resolvers: Resolvers = {
         [roleName, username],
       )
 
-      const alias = (await DatabaseLayer.makeRequest('AliasQuery', {
-        instance: Instance.De,
-        path: `user/profile/${username}`,
-      })) as { id: number }
+      const changedId = await resolveIdFromUsername(username, context)
 
-      await UuidResolver.removeCacheEntry({ id: alias.id }, context)
+      if (changedId != null) {
+        await UuidResolver.removeCacheEntry({ id: changedId }, context)
+      }
 
       return { success: true, query: {} }
     },
@@ -562,6 +545,17 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
   },
+}
+
+export async function resolveIdFromUsername(
+  username: string,
+  { database }: Pick<Context, 'database'>,
+): Promise<number | null> {
+  const result = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM user WHERE username = ?`,
+    [username],
+  )
+  return result?.id ?? null
 }
 
 async function activeDonorIDs(context: Context) {
