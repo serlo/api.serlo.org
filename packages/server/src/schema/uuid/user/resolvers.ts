@@ -9,6 +9,7 @@ import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
+import { Database } from '~/database'
 import {
   addContext,
   assertAll,
@@ -35,7 +36,6 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
-
 
 interface ActivityCounts {
   edits: number
@@ -85,18 +85,29 @@ async function fetchActivityByType(
   return result
 }
 
-async function resolveIdFromUsername(
+export async function resolveIdFromUsername(
   username: string,
   database: Database,
-): Promise<{ id: number }> {
+): Promise<number | null> {
   const idResult = await database.fetchOptional<{ id: number }>(
     `SELECT id FROM user WHERE username = ?`,
     [username],
   )
-  if (idResult === null) {
-    throw new UserInputError('no user with given username')
+  return idResult?.id ?? null
+}
+
+async function fetchRoleId(
+  roleName: string,
+  database: Database,
+): Promise<number> {
+  const result = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM role WHERE name = ?`,
+    [roleName],
+  )
+  if (result === null) {
+    throw new UserInputError(`This role does not exist: ${roleName}`)
   }
-  return idResult
+  return result.id
 }
 
 export const ActiveUserIdsResolver = createCachedResolver<
@@ -380,7 +391,7 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const id = await resolveIdFromUsername(username, context)
+      const id = await resolveIdFromUsername(username, database)
 
       if (id == null) {
         throw new UserInputError('no user with given username')
@@ -612,7 +623,7 @@ export const resolvers: Resolvers = {
         [roleName, username],
       )
 
-      const changedId = await resolveIdFromUsername(username, context)
+      const changedId = await resolveIdFromUsername(username, database)
 
       if (changedId != null) {
         await UuidResolver.removeCacheEntry({ id: changedId }, context)
@@ -635,17 +646,6 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
   },
-}
-
-export async function resolveIdFromUsername(
-  username: string,
-  { database }: Pick<Context, 'database'>,
-): Promise<number | null> {
-  const result = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM user WHERE username = ?`,
-    [username],
-  )
-  return result?.id ?? null
 }
 
 async function activeDonorIDs(context: Context) {
@@ -700,17 +700,4 @@ async function deleteKratosUser(
   if (identity) {
     await authServices.kratos.admin.deleteIdentity({ id: identity.id })
   }
-}
-async function fetchRoleId(
-  roleName: string,
-  database: Database,
-): Promise<number> {
-  const result = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM role WHERE name = ?`,
-    [roleName],
-  )
-  if (result === null) {
-    throw new UserInputError(`This role does not exist: ${roleName}`)
-  }
-  return result.id
 }

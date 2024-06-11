@@ -1,5 +1,5 @@
 import { DatabaseEventRepresentation, toGraphQLModel } from './event'
-import { Context } from '~/context'
+import { Database } from '~/database'
 import { UserInputError } from '~/errors'
 import { decodeId } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -14,6 +14,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     async events(_parent, payload, context) {
+      const { database } = context
       const limit = 500
       const first = payload.first ?? 10
       const { objectId, actorUsername, instance } = payload
@@ -22,7 +23,7 @@ export const resolvers: Resolvers = {
       const actorId = payload.actorId
         ? payload.actorId
         : actorUsername
-          ? await resolveIdFromUsername(actorUsername, context)
+          ? await resolveIdFromUsername(actorUsername, database)
           : null
 
       if (first > limit)
@@ -30,7 +31,7 @@ export const resolvers: Resolvers = {
 
       const events = await resolveEventsFromDB(
         { after, objectId, actorId, instance, first: first + 1 },
-        context,
+        database,
       )
 
       return resolveConnection({
@@ -51,7 +52,7 @@ async function resolveEventsFromDB(
     actorId?: number | null
     instance?: Instance | null
   },
-  { database }: Pick<Context, 'database'>,
+  database: Database,
 ) {
   const { after, first, objectId, actorId, instance } = args
 
