@@ -2,11 +2,13 @@ import Redis from 'ioredis'
 
 import { ApiCache } from '../src/utils/api-cache'
 
-const redis = new Redis(process.env.REDIS_URL as string)
+if (!process.env.REDIS_URL) throw new Error('Test could not start, REDIS_URL missing')
+const redis = new Redis(process.env.REDIS_URL)
 let apiCache: ApiCache
 
-beforeEach(() => {
+beforeEach(async () => {
   apiCache = new ApiCache()
+  await wait(10) // wait for redis to be ready
 })
 
 afterAll(async () => {
@@ -30,3 +32,9 @@ describe('deleteUuid', () => {
     expect(await redis.get('de.serlo.org/api/uuid/42')).toBeNull()
   })
 })
+
+async function wait(duration: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration)
+  })
+}
