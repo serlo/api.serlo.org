@@ -31,4 +31,6 @@ COPY packages/db-migrations/database.json packages/db-migrations/database.json
 RUN mkdir packages/db-migrations/migrations
 RUN cp dist/${image}.cjs dist/entrypoint.cjs 2>/dev/null
 ENTRYPOINT ["node", "dist/entrypoint.cjs"]
-EXPOSE 3000
+# for server and swr queue worker respectively, but EXPOSE is anyway just for documentation
+EXPOSE 3001
+EXPOSE 3030
