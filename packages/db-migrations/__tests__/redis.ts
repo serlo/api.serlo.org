@@ -2,7 +2,8 @@ import Redis from 'ioredis'
 
 import { ApiCache } from '../src/utils/api-cache'
 
-if (!process.env.REDIS_URL) throw new Error('Test could not start, REDIS_URL missing')
+if (!process.env.REDIS_URL)
+  throw new Error('Test could not start, REDIS_URL missing')
 const redis = new Redis(process.env.REDIS_URL)
 let apiCache: ApiCache
 
