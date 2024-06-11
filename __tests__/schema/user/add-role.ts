@@ -51,17 +51,6 @@ beforeEach(() => {
       `,
     })
     .withVariables({ id: regularUser.id })
-
-  given('AliasQuery')
-    .withPayload({
-      instance: Instance.De,
-      path: `user/profile/${regularUser.username}`,
-    })
-    .returns({
-      id: regularUser.id,
-      instance: Instance.De,
-      path: `/user/${regularUser.id}/${regularUser.username}`,
-    })
 })
 
 describe('add global role', () => {
