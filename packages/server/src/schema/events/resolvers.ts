@@ -3,6 +3,7 @@ import { Context } from '~/context'
 import { UserInputError } from '~/errors'
 import { decodeId } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
+import { resolveIdFromUsername } from '~/schema/uuid/user/resolvers'
 import { Instance, Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
@@ -21,12 +22,7 @@ export const resolvers: Resolvers = {
       const actorId = payload.actorId
         ? payload.actorId
         : actorUsername
-          ? (
-              await context.dataSources.model.serlo.getAlias({
-                path: `/user/profile/${actorUsername}`,
-                instance: Instance.De,
-              })
-            )?.id ?? null
+          ? await resolveIdFromUsername(actorUsername, context)
           : null
 
       if (first > limit)
