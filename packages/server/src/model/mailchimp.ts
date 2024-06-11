@@ -30,7 +30,7 @@ export function createMailchimpModel() {
         let mailchimpResponse = undefined
 
         try {
-          mailchimpResponse = await response.json()
+          mailchimpResponse = (await response.json()) as unknown
         } catch (exception) {
           mailchimpResponse = exception
         }
