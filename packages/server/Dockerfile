@@ -20,13 +20,15 @@ COPY packages/server packages/server
 RUN yarn build:${image}
 
 FROM base as build_node_modules
-RUN yarn workspaces focus @serlo/api.serlo.org --production
+RUN yarn workspaces focus --all --production
 
 FROM node:20-alpine as release
 ARG image
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist
 COPY --from=build_node_modules /usr/src/app/node_modules node_modules
+COPY packages/db-migrations/database.json packages/db-migrations/database.json
+COPY packages/db-migrations/migrations packages/db-migrations/migrations
 RUN cp dist/${image}.cjs dist/entrypoint.cjs 2>/dev/null
 ENTRYPOINT ["node", "dist/entrypoint.cjs"]
 EXPOSE 3000
