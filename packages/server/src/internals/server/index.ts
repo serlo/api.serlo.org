@@ -22,7 +22,7 @@ export { getGraphQLOptions } from './graphql-middleware'
 export async function start() {
   dotenv.config()
 
-  await migrateDB()
+  if (process.env.ENVIRONMENT !== 'production') await migrateDB()
 
   initializeSentry({ context: 'server' })
   const timer = createTimer()
