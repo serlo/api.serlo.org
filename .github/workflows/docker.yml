@@ -29,6 +29,8 @@ jobs:
       - name: Run the ${{ matrix.image }} docker image
         run: yarn docker:run:${{ matrix.image }}
       - name: Wait a little bit until the container was started
-        run: sleep 30
+        run: sleep 10
+      - name: Debug ${{ matrix.image }}
+        run: docker logs api-server-from-local-build
       - name: Test the docker container ${{ matrix.image }}
         run: yarn test:docker:${{ matrix.image }}
