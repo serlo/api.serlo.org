@@ -38,6 +38,54 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
+interface ActivityCounts {
+  edits: number
+  reviews: number
+  comments: number
+  taxonomy: number
+}
+
+async function fetchActivityByType(
+  userId: number,
+  database: Database,
+): Promise<ActivityCounts> {
+  const rows: { event_type: string; counts: number }[] =
+    await database.fetchAll(
+      `
+            SELECT events.type AS event_type, COUNT(*) AS counts
+            FROM (
+                SELECT CASE
+                    WHEN event_id = 5 THEN 'edits'
+                    WHEN event_id IN (6, 11) THEN 'reviews'
+                    WHEN event_id IN (8, 9, 14, 16) THEN 'comments'
+                    ELSE 'taxonomy'
+                END AS type
+                FROM event_log
+                WHERE actor_id = ?
+                    AND event_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
+            ) events
+            GROUP BY events.type
+        `,
+      [userId],
+    )
+
+  const result: ActivityCounts = {
+    edits: 0,
+    reviews: 0,
+    comments: 0,
+    taxonomy: 0,
+  }
+
+  rows.forEach((row: { event_type: string; counts: number }) => {
+    if (row.event_type === 'edits') result.edits = row.counts
+    else if (row.event_type === 'reviews') result.reviews = row.counts
+    else if (row.event_type === 'comments') result.comments = row.counts
+    else if (row.event_type === 'taxonomy') result.taxonomy = row.counts
+  })
+
+  return result
+}
+
 async function resolveIdFromUsername(
   username: string,
   database: Database,
@@ -91,7 +139,7 @@ export const resolvers: Resolvers = {
   },
   UserQuery: {
     async potentialSpamUsers(_parent, payload, context) {
-      const { dataSources } = context
+      const { database } = context
       const first = payload.first ?? 10
       const after = payload.after
         ? parseInt(Buffer.from(payload.after, 'base64').toString())
@@ -103,12 +151,35 @@ export const resolvers: Resolvers = {
       if (first > 500)
         throw new UserInputError('`first` must be smaller than 500')
 
-      const { userIds } = await dataSources.model.serlo.getPotentialSpamUsers({
-        first: first + 1,
-        after,
-      })
+      const result = await database.fetchAll<{ id: number }>(
+        `
+          SELECT id
+          FROM (
+            SELECT user.id AS id, MAX(role_user.role_id) AS role_id
+            FROM user
+            LEFT JOIN role_user ON user.id = role_user.user_id
+            WHERE user.description IS NOT NULL
+              AND user.description != "NULL"
+              AND (? IS NULL OR user.id < ?)
+            GROUP BY user.id
+          ) A
+          WHERE (role_id IS NULL OR role_id <= 2)
+          ORDER BY id DESC
+          LIMIT ?
+        `,
+        [after, after, first + 1],
+      )
+
+      const ids = []
+      for (const item of result) {
+        const activity = await fetchActivityByType(item.id, database)
+        if (activity.edits <= 5) {
+          ids.push(item.id)
+        }
+      }
+
       const users = await Promise.all(
-        userIds.map((id) =>
+        ids.map((id) =>
           UuidResolver.resolveWithDecoder(UserDecoder, { id }, context),
         ),
       )
@@ -120,7 +191,7 @@ export const resolvers: Resolvers = {
       })
     },
     async usersByRole(_parent, payload, context) {
-      const { dataSources, userId } = context
+      const { database, userId } = context
       assertUserIsAuthenticated(userId)
 
       const { instance = null, role } = payload
@@ -146,15 +217,27 @@ export const resolvers: Resolvers = {
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
 
-      const { usersByRole } = await dataSources.model.serlo.getUsersByRole({
-        roleName: generateRole(role, instance),
-        first: first + 1,
-        after,
-      })
+      const roleId = await fetchRoleId(generateRole(role, instance), database)
+
+      const usersByRole = await database.fetchAll<{ user_id: number }>(
+        `
+          SELECT user_id
+          FROM role_user
+          WHERE role_id = ?
+            AND (? IS NULL OR user_id > ?)
+          ORDER BY user_id
+          LIMIT ?
+        `,
+        [roleId, after, after, first + 1],
+      )
 
       const users = await Promise.all(
-        usersByRole.map((id: number) =>
-          UuidResolver.resolveWithDecoder(UserDecoder, { id }, context),
+        usersByRole.map((row) =>
+          UuidResolver.resolveWithDecoder(
+            UserDecoder,
+            { id: row.user_id },
+            context,
+          ),
         ),
       )
       const userConnection = resolveConnection({
@@ -170,7 +253,7 @@ export const resolvers: Resolvers = {
       }
     },
     async userByUsername(_parent, payload, context) {
-      const { dataSources } = context
+      const { database } = context
       if (!payload.username)
         throw new UserInputError('`username` is not provided')
 
@@ -178,7 +261,12 @@ export const resolvers: Resolvers = {
         path: `/user/profile/${payload.username}`,
         instance: Instance.De, // should not matter
       }
-      const id = (await dataSources.model.serlo.getAlias(alias))?.id
+      const id = (
+        await database.fetchOptional<{ id: number }>(
+          `SELECT id FROM alias WHERE path = ? AND instance = ?`,
+          [alias.path, alias.instance],
+        )
+      )?.id
 
       if (!id) return null
 
@@ -226,17 +314,13 @@ export const resolvers: Resolvers = {
 
       return ids.includes(user.id)
     },
-    async isActiveReviewer(user, _args, { dataSources }) {
-      return (await dataSources.model.serlo.getActiveReviewerIds()).includes(
-        user.id,
-      )
+    async isActiveReviewer(user, _args, context) {
+      const ids = await fetchActivityByType(user.id, context.database)
+      return ids.reviews > 0
     },
-    async isNewAuthor(user, _args, { dataSources }) {
-      const { edits } = await dataSources.model.serlo.getActivityByType({
-        userId: user.id,
-      })
-
-      return edits < 5
+    async isNewAuthor(user, _args, context) {
+      const activity = await fetchActivityByType(user.id, context.database)
+      return activity.edits < 5
     },
     async unrevisedEntities(user, payload, context) {
       const unrevisedEntityIds = await resolveUnrevisedEntityIds(
@@ -258,10 +342,8 @@ export const resolvers: Resolvers = {
     imageUrl(user) {
       return `https://community.serlo.org/avatar/${user.username}`
     },
-    async activityByType(user, _args, { dataSources }) {
-      return await dataSources.model.serlo.getActivityByType({
-        userId: user.id,
-      })
+    async activityByType(user, _args, context) {
+      return await fetchActivityByType(user.id, context.database)
     },
     roles(user, payload) {
       return resolveConnection({
@@ -361,9 +443,7 @@ export const resolvers: Resolvers = {
         throw new UserInputError('not all bots are users')
 
       const activities = await Promise.all(
-        botIds.map((userId) =>
-          dataSources.model.serlo.getActivityByType({ userId }),
-        ),
+        botIds.map((userId) => fetchActivityByType(userId, database)),
       )
 
       if (activities.some((activity) => activity.edits >= 5))
@@ -616,4 +696,17 @@ async function deleteKratosUser(
   if (identity) {
     await authServices.kratos.admin.deleteIdentity({ id: identity.id })
   }
+}
+async function fetchRoleId(
+  roleName: string,
+  database: Database,
+): Promise<number> {
+  const result = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM role WHERE name = ?`,
+    [roleName],
+  )
+  if (result === null) {
+    throw new UserInputError(`This role does not exist: ${roleName}`)
+  }
+  return result.id
 }
