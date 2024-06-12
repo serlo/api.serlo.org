@@ -144,6 +144,14 @@ describe('uuid by alias', () => {
       .shouldReturnData({ uuid: { id: user.id } })
   })
 
+  test('returns course page when alias is /{subject}/{course-id}/{course-page-id}/{slug-from-course-page-title}', async () => {
+    await uuidQuery
+      .withVariables({
+        alias: { instance: Instance.De, path: `/mathe/35598/123456/a-course` },
+      })
+      .shouldReturnData({ uuid: { id: 35598 } })
+  })
+
   test('returns null when uuid does not exist', async () => {
     await uuidQuery
       .withVariables({ id: 666666 })
