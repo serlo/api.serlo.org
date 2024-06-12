@@ -1,6 +1,7 @@
 import express, { Express } from 'express'
 import type { Server } from 'http'
 import { bypass } from 'msw'
+import { createPool } from 'mysql2/promise'
 
 import { given } from '../__utils__'
 import { Identity, Kratos } from '~/context/auth-services'
@@ -162,6 +163,7 @@ function createKratosMiddlewareBeforeEach(done: jest.DoneCallback) {
   applyKratosMiddleware({
     app,
     kratos: kratosMock,
+    pool: createPool(process.env.MYSQL_URI),
   })
 
   server = app.listen(port, done)
