@@ -169,12 +169,10 @@ async function createLegacyUser(
     )
     const userId = userIdResult.id
 
-    const token = randomBytes(4).toString('hex')
-
     await database.mutate(
       `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
-      // we just need to store something in password
-      [userId, email, username, username, token.toLowerCase()],
+      // we just need to store something in password and token
+      [userId, email, username, username, username],
     )
 
     const defaultRoleId = 2
