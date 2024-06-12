@@ -95,9 +95,6 @@ function createKratosRegisterHandler(
       for (const account of unsyncedAccounts) {
         const legacyUserId = await createLegacyUser(
           account.traits.username,
-          // we just need to store something, since the password in legacy DB is not going to be used anymore
-          // storing the kratos id is just a good way of easily seeing this value in case we need it
-          account.id,
           account.traits.email,
           database,
         )
@@ -148,7 +145,6 @@ function createKratosRegisterHandler(
 
 async function createLegacyUser(
   username: string,
-  password: string,
   email: string,
   database: Database,
 ) {
@@ -159,9 +155,6 @@ async function createLegacyUser(
   }
   if (email.length > 254) {
     throw new Error("Email can't be longer than 254 characters.")
-  }
-  if (password.length > 50) {
-    throw new Error("Password can't be longer than 50 characters.")
   }
 
   const transaction = await database.beginTransaction()
@@ -180,7 +173,8 @@ async function createLegacyUser(
 
     await database.mutate(
       `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
-      [userId, email, username, password, token.toLowerCase()],
+      // we just need to store something in password
+      [userId, email, username, username, token.toLowerCase()],
     )
 
     const defaultRoleId = 2
