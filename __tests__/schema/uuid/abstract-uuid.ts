@@ -149,7 +149,7 @@ describe('uuid by alias', () => {
       .withVariables({
         alias: {
           instance: Instance.De,
-          path: `/mathe/35598/f47ac10b-58cc/a-course`,
+          path: `/mathe/35598/f47ac10b/a-course`,
         },
       })
       .shouldReturnData({ uuid: { id: 35598 } })
