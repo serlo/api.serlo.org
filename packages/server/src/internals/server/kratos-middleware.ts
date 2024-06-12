@@ -160,14 +160,9 @@ async function createLegacyUser(
   const transaction = await database.beginTransaction()
 
   try {
-    await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
+    const { insertId: userId} = await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
       'user',
     ])
-
-    const userIdResult = await database.fetchOne<{ id: number }>(
-      `SELECT LAST_INSERT_ID() AS id FROM uuid`,
-    )
-    const userId = userIdResult.id
 
     await database.mutate(
       `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
