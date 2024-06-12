@@ -311,7 +311,6 @@ async function resolveUuidFromDatabase(
         ELSE comment_status.name
       END AS commentStatus,
 
-      taxonomy.id AS taxonomyId,
       taxonomy_type.name AS taxonomyType,
       taxonomy_instance.subdomain AS taxonomyInstance,
       taxonomy.name AS taxonomyName,
@@ -513,7 +512,8 @@ async function resolveUuidFromDatabase(
         name: baseUuid.taxonomyName,
         description: baseUuid.taxonomyDescription,
         weight: baseUuid.taxonomyWeight ?? 0,
-        taxonomyId: baseUuid.taxonomyId,
+        // TODO: Remove this property when https://github.com/serlo/frontend/pull/3882 is merged
+        taxonomyId: -1,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
       }
