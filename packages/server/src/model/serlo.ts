@@ -9,10 +9,7 @@ import {
   createMutation,
   createRequest,
 } from '~/internals/data-source-helper'
-import { isInstance } from '~/schema/instance/utils'
 import { UuidResolver } from '~/schema/uuid/abstract-uuid/resolvers'
-import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Instance } from '~/types'
 
 export function createSerloModel({
   context,
@@ -77,37 +74,6 @@ export function createSerloModel({
       return DatabaseLayer.makeRequest('UserPotentialSpamUsersQuery', payload)
     },
   })
-
-  const getAlias = createLegacyQuery(
-    {
-      type: 'AliasQuery',
-      decoder: DatabaseLayer.getDecoderFor('AliasQuery'),
-      getCurrentValue: ({
-        path,
-        instance,
-      }: DatabaseLayer.Payload<'AliasQuery'>) => {
-        return DatabaseLayer.makeRequest('AliasQuery', {
-          instance,
-          path: decodePath(path),
-        })
-      },
-      enableSwr: true,
-      staleAfter: { days: 1 },
-      getKey: ({ path, instance }) => {
-        const cleanPath = encodePath(decodePath(path))
-        return `${instance}.serlo.org/api/alias${cleanPath}`
-      },
-      getPayload: (key) => {
-        const instance = getInstanceFromKey(key)
-        const prefix = `${instance || ''}.serlo.org/api/alias`
-        return instance && key.startsWith(`${prefix}/`)
-          ? O.some({ instance, path: key.replace(prefix, '') })
-          : O.none
-      },
-      examplePayload: { path: '/math', instance: Instance.En },
-    },
-    context,
-  )
 
   const createPage = createMutation({
     type: 'PageCreateMutation',
@@ -198,18 +164,10 @@ export function createSerloModel({
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
-    getAlias,
     getDeletedEntities,
     getPotentialSpamUsers,
     getUsersByRole,
     getPages,
     sortEntity,
   }
-}
-
-function getInstanceFromKey(key: string): Instance | null {
-  const instance = key.slice(0, 2)
-  return key.startsWith(`${instance}.serlo.org`) && isInstance(instance)
-    ? instance
-    : null
 }
