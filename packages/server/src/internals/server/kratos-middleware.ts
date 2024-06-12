@@ -13,7 +13,6 @@ import { captureErrorEvent } from '~/error-event'
 
 const basePath = '/kratos'
 
-
 export function applyKratosMiddleware({
   app,
   kratos,
@@ -142,7 +141,6 @@ function createKratosRegisterHandler(
   }
 }
 
-
 async function createLegacyUser(
   username: string,
   email: string,
@@ -160,9 +158,10 @@ async function createLegacyUser(
   const transaction = await database.beginTransaction()
 
   try {
-    const { insertId: userId} = await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
-      'user',
-    ])
+    const { insertId: userId } = await database.mutate(
+      `INSERT INTO uuid (discriminator) VALUES (?)`,
+      ['user'],
+    )
 
     await database.mutate(
       `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
