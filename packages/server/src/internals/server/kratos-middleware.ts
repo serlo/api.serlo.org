@@ -13,57 +13,6 @@ import { captureErrorEvent } from '~/error-event'
 
 const basePath = '/kratos'
 
-async function createLegacyUser(
-  username: string,
-  password: string,
-  email: string,
-  database: Database,
-) {
-  if (username.length > 32 || username.trim() === '') {
-    throw new Error(
-      "Username can't be longer than 32 characters and can't be empty.",
-    )
-  }
-  if (email.length > 254) {
-    throw new Error("Email can't be longer than 254 characters.")
-  }
-  if (password.length > 50) {
-    throw new Error("Password can't be longer than 50 characters.")
-  }
-
-  const transaction = await database.beginTransaction()
-
-  try {
-    await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
-      'user',
-    ])
-
-    const userIdResult = await database.fetchOne<{ id: number }>(
-      `SELECT LAST_INSERT_ID() AS id FROM uuid`,
-    )
-    const userId = userIdResult.id
-
-    const token = randomBytes(4).toString('hex')
-
-    await database.mutate(
-      `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
-      [userId, email, username, password, token.toLowerCase()],
-    )
-
-    const defaultRoleId = 2
-    await database.mutate(
-      `INSERT INTO role_user (user_id, role_id) VALUES (?, ?)`,
-      [userId, defaultRoleId],
-    )
-
-    await transaction.commit()
-
-    return userId
-  } catch (error) {
-    await transaction.rollback()
-    throw error
-  }
-}
 
 export function applyKratosMiddleware({
   app,
@@ -193,6 +142,59 @@ function createKratosRegisterHandler(
     handleRequest(request, response).catch(() =>
       response.status(500).send('Internal Server Error (Illegal state)'),
     )
+  }
+}
+
+
+async function createLegacyUser(
+  username: string,
+  password: string,
+  email: string,
+  database: Database,
+) {
+  if (username.length > 32 || username.trim() === '') {
+    throw new Error(
+      "Username can't be longer than 32 characters and can't be empty.",
+    )
+  }
+  if (email.length > 254) {
+    throw new Error("Email can't be longer than 254 characters.")
+  }
+  if (password.length > 50) {
+    throw new Error("Password can't be longer than 50 characters.")
+  }
+
+  const transaction = await database.beginTransaction()
+
+  try {
+    await database.mutate(`INSERT INTO uuid (discriminator) VALUES (?)`, [
+      'user',
+    ])
+
+    const userIdResult = await database.fetchOne<{ id: number }>(
+      `SELECT LAST_INSERT_ID() AS id FROM uuid`,
+    )
+    const userId = userIdResult.id
+
+    const token = randomBytes(4).toString('hex')
+
+    await database.mutate(
+      `INSERT INTO user (id, email, username, password, date, token) VALUES (?, ?, ?, ?, NOW(), ?)`,
+      [userId, email, username, password, token.toLowerCase()],
+    )
+
+    const defaultRoleId = 2
+    await database.mutate(
+      `INSERT INTO role_user (user_id, role_id) VALUES (?, ?)`,
+      [userId, defaultRoleId],
+    )
+
+    await transaction.commit()
+
+    return userId
+  } catch (error) {
+    await transaction.rollback()
+    throw error
   }
 }
 
