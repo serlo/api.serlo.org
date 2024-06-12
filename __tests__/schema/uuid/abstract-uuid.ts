@@ -67,7 +67,7 @@ const abstractUuidFixtures: Record<
 }
 const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 
-describe('uuid', () => {
+describe('uuid by alias', () => {
   const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int, $alias: AliasInput) {
@@ -80,13 +80,6 @@ describe('uuid', () => {
   })
 
   test('returns null when alias cannot be found', async () => {
-    given('AliasQuery')
-      .withPayload({
-        instance: Instance.De,
-        path: '/not-existing',
-      })
-      .returnsNotFound()
-
     await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: '/not-existing' },
@@ -95,21 +88,14 @@ describe('uuid', () => {
   })
 
   test('returns uuid when alias is /:uuid', async () => {
-    given('UuidQuery').for(exercise)
-
     await uuidQuery
       .withVariables({
-        alias: {
-          instance: Instance.De,
-          path: `/${exercise.id}`,
-        },
+        alias: { instance: Instance.De, path: `/${exercise.id}` },
       })
       .shouldReturnData({ uuid: { id: exercise.id } })
   })
 
   test('returns uuid when alias is /entity/view/:id', async () => {
-    given('UuidQuery').for(article)
-
     await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: `/entity/view/${article.id}` },
@@ -117,9 +103,7 @@ describe('uuid', () => {
       .shouldReturnData({ uuid: getTypenameAndId(article) })
   })
 
-  test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
-    given('UuidQuery').for(article)
-
+  test('returns uuid when alias is /:subject/:id/:alias', async () => {
     await uuidQuery
       .withVariables({
         alias: {
@@ -131,8 +115,6 @@ describe('uuid', () => {
   })
 
   test('returns uuid when alias starts with an instance', async () => {
-    given('UuidQuery').for(article)
-
     await uuidQuery
       .withVariables({
         alias: {
@@ -144,8 +126,6 @@ describe('uuid', () => {
   })
 
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
-    given('UuidQuery').for(articleRevision)
-
     await uuidQuery
       .withVariables({
         alias: {
@@ -157,16 +137,22 @@ describe('uuid', () => {
   })
 
   test('returns user when alias is /user/profile/:userId', async () => {
-    given('UuidQuery').for(user)
+    await uuidQuery
+      .withVariables({
+        alias: { instance: Instance.De, path: `/user/profile/${user.id}` },
+      })
+      .shouldReturnData({ uuid: { id: user.id } })
+  })
 
+  test('returns course page when alias is /{subject}/{course-id}/{course-page-id}/{slug-from-course-page-title}', async () => {
     await uuidQuery
       .withVariables({
         alias: {
           instance: Instance.De,
-          path: `/user/profile/${user.id}`,
+          path: `/mathe/35598/f47ac10b/a-course`,
         },
       })
-      .shouldReturnData({ uuid: { id: user.id } })
+      .shouldReturnData({ uuid: { id: 35598 } })
   })
 
   test('returns null when uuid does not exist', async () => {

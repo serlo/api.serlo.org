@@ -4,6 +4,7 @@ import * as t from 'io-ts'
 import { date } from 'io-ts-types/lib/date'
 import * as R from 'ramda'
 
+import { resolveIdFromUsername } from '../user/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { resolveCustomId } from '~/config'
 import { Context } from '~/context'
@@ -63,8 +64,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     async uuid(_parent, payload, context) {
-      const { dataSources } = context
-      const id = await resolveIdFromPayload(dataSources, payload)
+      const id = await resolveIdFromPayload(payload, context)
 
       if (id === null) return null
 
@@ -569,12 +569,9 @@ function getTaxonomyTermType(type: string) {
   }
 }
 
-async function resolveIdFromPayload(
-  dataSources: Context['dataSources'],
-  payload: QueryUuidArgs,
-) {
+async function resolveIdFromPayload(payload: QueryUuidArgs, context: Context) {
   if (payload.alias) {
-    return await resolveIdFromAlias(dataSources, payload.alias)
+    return await resolveIdFromAlias(payload.alias, context)
   } else if (payload.id) {
     return payload.id
   } else {
@@ -583,8 +580,8 @@ async function resolveIdFromPayload(
 }
 
 async function resolveIdFromAlias(
-  dataSources: Context['dataSources'],
   alias: NonNullable<QueryUuidArgs['alias']>,
+  context: Context,
 ): Promise<number | null> {
   const cleanPath = encodePath(decodePath(alias.path))
 
@@ -597,8 +594,8 @@ async function resolveIdFromAlias(
   for (const regex of [
     /^\/(?<id>\d+)$/,
     /^\/entity\/view\/(?<id>\d+)$/,
-    /^\/(?<instance>[^/]+\/)(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)$/,
-    /^\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
+    /^\/entity\/repository\/compare\/(?<entityId>\d+)\/(?<id>\d+)$/,
+    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[\w-]+\/)?(?<id>\d+)(?<coursePageId>\/[0-9a-f]+)?\/(?<title>[^/]*)$/,
     /^\/user\/profile\/(?<id>\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)
@@ -612,7 +609,77 @@ async function resolveIdFromAlias(
   })
   if (customId) return customId
 
-  return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
+  const usernameMatch = /^\/user\/profile\/(?<username>[^/]+)\/?$/.exec(
+    cleanPath,
+  )
+
+  if (usernameMatch && usernameMatch.groups !== undefined) {
+    return await resolveIdFromUsername(usernameMatch.groups.username, context)
+  }
+
+  // The following check is to avoid DB lookups for paths that we know do
+  // not belong to UUIDs. This is a performance optimization.
+  // Original code see https://github.com/serlo/database-layer/blob/71b80050ecda63d616ab34eda0fa1143cb9e3ddc/server/src/alias/model.rs#L17-L63
+  if (
+    cleanPath.startsWith('backend') ||
+    cleanPath.startsWith('horizon/') ||
+    cleanPath.startsWith('api/') ||
+    cleanPath === '' ||
+    cleanPath === '/' ||
+    cleanPath == 'application' ||
+    cleanPath.startsWith('application/') ||
+    cleanPath.startsWith('attachment/file/') ||
+    cleanPath.startsWith('attachment/upload') ||
+    cleanPath.startsWith('auth/') ||
+    cleanPath.startsWith('authorization/') ||
+    cleanPath.startsWith('blog') ||
+    cleanPath.startsWith('discussion/') ||
+    cleanPath.startsWith('discussions/') ||
+    cleanPath.startsWith('entities/') ||
+    cleanPath.startsWith('entity/') ||
+    cleanPath.startsWith('event/') ||
+    cleanPath.startsWith('flag/') ||
+    cleanPath.startsWith('license/') ||
+    cleanPath.startsWith('navigation/') ||
+    cleanPath.startsWith('meta/') ||
+    cleanPath.startsWith('ref/') ||
+    cleanPath.startsWith('sitemap/') ||
+    cleanPath.startsWith('notification/') ||
+    cleanPath.startsWith('subscribe/') ||
+    cleanPath.startsWith('unsubscribe/') ||
+    cleanPath.startsWith('subscription/') ||
+    cleanPath.startsWith('subscriptions/') ||
+    cleanPath == 'pages' ||
+    cleanPath.startsWith('page/') ||
+    cleanPath.startsWith('related_content/') ||
+    cleanPath == 'search' ||
+    cleanPath == 'session/gc' ||
+    cleanPath == 'spenden' ||
+    cleanPath.startsWith('taxonomies/') ||
+    cleanPath.startsWith('taxonomy/') ||
+    cleanPath == 'users' ||
+    cleanPath == 'user/me' ||
+    cleanPath == 'user/public' ||
+    cleanPath == 'user/register' ||
+    cleanPath == 'user/settings' ||
+    cleanPath.startsWith('user/remove/') ||
+    cleanPath.startsWith('uuid/')
+  ) {
+    return null
+  }
+
+  const result = await context.database.fetchOptional<{ id: number }>(
+    `
+    select url_alias.id
+    from url_alias
+    join instance on instance.id = url_alias.instance_id
+    where instance.subdomain = ? and url_alias.alias = ?
+    order by url_alias.timestamp desc
+    `,
+    [alias.instance, cleanPath],
+  )
+
+  return result?.id ?? null
 }
 
 function toSlug(name: string) {
