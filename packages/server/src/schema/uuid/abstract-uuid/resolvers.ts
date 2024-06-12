@@ -595,7 +595,7 @@ async function resolveIdFromAlias(
     /^\/(?<id>\d+)$/,
     /^\/entity\/view\/(?<id>\d+)$/,
     /^\/entity\/repository\/compare\/(?<entityId>\d+)\/(?<id>\d+)$/,
-    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[a-z]+\/)?(?<id>\d+)(?<coursePageId>\/\d+)?\/(?<title>[^/]*)$/,
+    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[\w-]+\/)?(?<id>\d+)(?<coursePageId>\/[a-z0-9-]+)?\/(?<title>[^/]*)$/,
     /^\/user\/profile\/(?<id>\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)

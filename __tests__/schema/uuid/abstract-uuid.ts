@@ -147,7 +147,10 @@ describe('uuid by alias', () => {
   test('returns course page when alias is /{subject}/{course-id}/{course-page-id}/{slug-from-course-page-title}', async () => {
     await uuidQuery
       .withVariables({
-        alias: { instance: Instance.De, path: `/mathe/35598/123456/a-course` },
+        alias: {
+          instance: Instance.De,
+          path: `/mathe/35598/f47ac10b-58cc/a-course`,
+        },
       })
       .shouldReturnData({ uuid: { id: 35598 } })
   })
