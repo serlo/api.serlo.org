@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
-import { Client, given, Query } from '../../__utils__'
+import { user as sysadmin } from '../../../__fixtures__'
+import { Client, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
 let client: Client
@@ -43,11 +43,6 @@ describe('get users by role tests', () => {
         first: 3,
         after: 'MQ==',
       })
-
-    const sysadmin2 = { ...sysadmin, id: 2 }
-    const sysadmin3 = { ...sysadmin, id: 6 }
-    const sysadmin4 = { ...sysadmin, id: 10 }
-    const sysadmin5 = { ...sysadmin, id: 396 }
   })
 
   describe('get users by globalRole', () => {

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { user, user2 } from '../../../__fixtures__'
-import { getTypenameAndId, given, Client } from '../../__utils__'
+import { getTypenameAndId, Client } from '../../__utils__'
 
 const query = new Client()
   .prepareQuery({
