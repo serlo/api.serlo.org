@@ -48,12 +48,6 @@ describe('get users by role tests', () => {
     const sysadmin3 = { ...sysadmin, id: 6 }
     const sysadmin4 = { ...sysadmin, id: 10 }
     const sysadmin5 = { ...sysadmin, id: 396 }
-
-    given('UsersByRoleQuery')
-      .withPayload({ roleName: globalRole, first: 4, after: 1 })
-      .returns({ usersByRole: [2, 6, 10, 396] })
-
-    given('UuidQuery').for(sysadmin, sysadmin2, sysadmin3, sysadmin4, sysadmin5)
   })
 
   describe('get users by globalRole', () => {
@@ -83,14 +77,6 @@ describe('get users by role tests', () => {
   })
 
   describe('get users by localRole', () => {
-    beforeEach(() => {
-      const reviewer2 = { ...reviewer, id: 11 }
-      const reviewer3 = { ...reviewer, id: 30 }
-      given('UsersByRoleQuery')
-        .withPayload({ roleName: 'de_reviewer', first: 3 })
-        .returns({ usersByRole: [11, 23, 30] })
-      given('UuidQuery').for(reviewer, reviewer2, reviewer3)
-    })
     test('get german reviewers', async () => {
       await query
         .withVariables({
@@ -143,8 +129,6 @@ describe('get users by role tests', () => {
   })
 
   test('fails when database layer has an internal error', async () => {
-    given('UsersByRoleQuery').hasInternalServerError()
-
     await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 })

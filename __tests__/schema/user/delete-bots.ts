@@ -37,13 +37,6 @@ beforeEach(() => {
 
   mailchimpEmails = [emailHash]
 
-  for (const botId of input.botIds) {
-    given('ActivityByTypeQuery')
-      .withPayload({ userId: botId })
-      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
-    given('UuidQuery').for({ ...user, id: botId })
-  }
-
   given('UuidQuery').for(article)
 
   chatUsers = ['126012d3']
@@ -188,10 +181,6 @@ test('fails if one of the given bot ids is not a user', async () => {
 })
 
 test('fails if one given bot id has more than 4 edits', async () => {
-  given('ActivityByTypeQuery')
-    .withPayload({ userId: input.botIds[0] })
-    .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
-
   await mutation.shouldFailWithError('BAD_USER_INPUT')
 })
 
