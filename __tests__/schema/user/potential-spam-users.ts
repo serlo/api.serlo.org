@@ -20,16 +20,6 @@ const query = new Client()
   })
   .withVariables({ first: 100, after: null as string | null })
 
-beforeEach(() => {
-  given('UuidQuery').for(user, user2)
-  given('UserPotentialSpamUsersQuery')
-    .withPayload({ first: 101, after: null })
-    .returns({ userIds: [user.id, user2.id] })
-  given('UserPotentialSpamUsersQuery')
-    .withPayload({ first: 101, after: user.id })
-    .returns({ userIds: [user2.id] })
-})
-
 describe('endpoint user.potentialSpamUsers', () => {
   test('without parameter `after`', async () => {
     const nodes = [getTypenameAndId(user), getTypenameAndId(user2)]
