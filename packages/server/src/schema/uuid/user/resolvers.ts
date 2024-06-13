@@ -87,7 +87,7 @@ async function fetchActivityByType(
 
 export async function resolveIdFromUsername(
   username: string,
-  database: Database,
+  { database }: { database: Database },
 ): Promise<number | null> {
   const idResult = await database.fetchOptional<{ id: number }>(
     `SELECT id FROM user WHERE username = ?`,
@@ -263,11 +263,10 @@ export const resolvers: Resolvers = {
       }
     },
     async userByUsername(_parent, payload, context) {
-      const { database } = context
       if (!payload.username)
         throw new UserInputError('`username` is not provided')
 
-      const id = await resolveIdFromUsername(payload.username, database)
+      const id = await resolveIdFromUsername(payload.username, context)
 
       if (!id) return null
 
@@ -391,7 +390,7 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const id = await resolveIdFromUsername(username, database)
+      const id = await resolveIdFromUsername(username, context)
 
       if (id == null) {
         throw new UserInputError('no user with given username')
@@ -623,7 +622,7 @@ export const resolvers: Resolvers = {
         [roleName, username],
       )
 
-      const changedId = await resolveIdFromUsername(username, database)
+      const changedId = await resolveIdFromUsername(username, context)
 
       if (changedId != null) {
         await UuidResolver.removeCacheEntry({ id: changedId }, context)
