@@ -5,21 +5,6 @@ import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  ActiveReviewersQuery: {
-    payload: t.undefined,
-    response: t.array(t.number),
-    canBeNull: false,
-  },
-  ActivityByTypeQuery: {
-    payload: t.type({ userId: t.number }),
-    response: t.type({
-      edits: t.number,
-      comments: t.number,
-      reviews: t.number,
-      taxonomy: t.number,
-    }),
-    canBeNull: false,
-  },
   DeletedEntitiesQuery: {
     payload: t.type({
       first: t.number,
@@ -86,41 +71,6 @@ export const spec = {
     }),
     response: t.type({
       pages: t.array(t.number),
-    }),
-    canBeNull: false,
-  },
-  UserCreateMutation: {
-    payload: t.type({
-      username: t.string,
-      password: t.string,
-      email: t.string,
-    }),
-    response: t.strict({
-      success: t.literal(true),
-      userId: t.number,
-    }),
-    canBeNull: false,
-  },
-  UsersByRoleQuery: {
-    payload: t.type({
-      roleName: t.string,
-      first: t.number,
-      after: t.union([t.number, t.undefined]),
-    }),
-    response: t.strict({
-      usersByRole: t.array(t.number),
-    }),
-    canBeNull: false,
-  },
-  UserPotentialSpamUsersQuery: {
-    payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
-    response: t.type({ userIds: t.array(t.number) }),
-    canBeNull: false,
-  },
-  UserRemoveRoleMutation: {
-    payload: t.type({ username: t.string, roleName: t.string }),
-    response: t.strict({
-      success: t.literal(true),
     }),
     canBeNull: false,
   },
