@@ -71,6 +71,7 @@ async function initializeServer({
   const kratosPath = applyKratosMiddleware({
     app,
     kratos: authServices.kratos,
+    pool,
   })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 
