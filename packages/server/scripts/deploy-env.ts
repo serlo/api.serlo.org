@@ -56,11 +56,17 @@ function buildDockerImage({
   ])
   const tags = [...remoteTags, ...toTags(name, [envName])]
 
-  spawnSync(
+  const build = spawnSync(
     'docker',
     ['build', '-f', Dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
-    { stdio: 'inherit' },
+    { stdio: ['inherit', 'inherit', 'pipe'] },
   )
+
+  if (build.stderr) {
+    // eslint-disable-next-line no-console
+    console.log(Error(build.stderr.toString()))
+    process.exit(1)
+  }
 
   remoteTags.forEach((remoteTag) => {
     // eslint-disable-next-line no-console
