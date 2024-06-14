@@ -33,7 +33,7 @@ test('checks out a revision', async () => {
     .withVariables({ id: 26334 })
     .shouldReturnData({
       uuid: {
-        unrevisedEntities: { nodes: [{ id: 34907 }, { id: 35247 }] },
+        unrevisedEntities: { nodes: [{ id: 35247 }, { id: 34907 }] },
       },
     })
 

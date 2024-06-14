@@ -508,7 +508,7 @@ export async function resolveUnrevisedEntityIds(
       entity_uuid.trashed = 0
       and (entity.current_revision_id is null or
         entity.current_revision_id < revision.max_revision_id)
-    order by max_revision_id
+    order by max_revision_id desc
     `,
     [userId, userId],
   )
