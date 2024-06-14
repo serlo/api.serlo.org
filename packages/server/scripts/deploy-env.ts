@@ -51,7 +51,15 @@ function buildDockerImage({ name, context, envName }: DockerImageOptions) {
 
   const build = spawnSync(
     'docker',
-    ['build', '-f', dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
+    [
+      'build',
+      '-f',
+      dockerfile,
+      ...tags.flatMap((tag) => ['-t', tag]),
+      context,
+      '--build-arg',
+      `image=${name.replace('api-', '')}`,
+    ],
     { stdio: ['inherit', 'inherit', 'pipe'] },
   )
 
