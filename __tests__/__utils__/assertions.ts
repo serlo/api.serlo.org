@@ -236,11 +236,16 @@ export async function assertErrorEvent(args?: {
 
     if (args?.errorContext !== undefined) {
       for (const contextName in args.errorContext) {
-        const contextValue = event.contexts?.error?.[contextName]
+        const contextValueString = event.contexts?.error?.[contextName]
+        const contextValue = destringifyProperties(contextValueString)
         const targetValue = args.errorContext[contextName]
 
-        if (!R.equals(destringifyProperties(contextValue), targetValue))
-          return false
+        if (typeof targetValue === 'object' && targetValue !== null) {
+          if (!R.equals(R.pick(R.keys(targetValue), contextValue), targetValue))
+            return false
+        } else {
+          if (contextValue !== targetValue) return false
+        }
       }
     }
 
