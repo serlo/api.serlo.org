@@ -23,7 +23,6 @@ type TaxonomyTerm implements AbstractUuid & InstanceAware & ThreadAware {
   weight: Int!
   parent: TaxonomyTerm
   path: [TaxonomyTerm]!
-  taxonomyId: Int!
   children(after: String, first: Int): AbstractUuidConnection!
 }
 

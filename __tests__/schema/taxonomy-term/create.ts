@@ -64,20 +64,6 @@ describe('creates a new taxonomy term', () => {
   })
 })
 
-test('does not fail when there are duplicated taxonomy entries', async () => {
-  // In the database layer there was a bug to created multiple duplicated
-  // taxonomy entries (which is currently not in the DB container)
-  // This test can be deleted after https://github.com/serlo/db-migrations/issues/346
-
-  await databaseForTests.mutate(
-    `insert into taxonomy (type_id, instance_id) values (11, 1)`,
-  )
-
-  await mutation.shouldReturnData({
-    taxonomyTerm: { create: { success: true } },
-  })
-})
-
 test('cache of parent is updated', async () => {
   const query = new Client().prepareQuery({
     query: gql`

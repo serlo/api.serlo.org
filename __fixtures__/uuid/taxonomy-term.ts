@@ -13,7 +13,6 @@ export const taxonomyTermRoot: Model<'TaxonomyTerm'> = {
   description: null,
   weight: 1,
   parentId: null,
-  taxonomyId: 1,
   childrenIds: [5],
 }
 
@@ -28,7 +27,6 @@ export const taxonomyTermSubject: Model<'TaxonomyTerm'> = {
   description: null,
   weight: 2,
   parentId: taxonomyTermRoot.id,
-  taxonomyId: 3,
   childrenIds: [16048],
 }
 
@@ -42,7 +40,6 @@ export const taxonomyTermCurriculumTopic: Model<'TaxonomyTerm'> = {
   name: 'name',
   description: 'description',
   weight: 3,
-  taxonomyId: 11,
   parentId: taxonomyTermSubject.id,
   childrenIds: [1855],
 }
@@ -57,7 +54,6 @@ export const taxonomyTermTopic: Model<'TaxonomyTerm'> = {
   name: 'Geometrie',
   description: null,
   weight: 6,
-  taxonomyId: 4,
   parentId: 5,
   childrenIds: [
     23453, 1454, 1394, 24518, 1380, 24410, 24422, 1381, 1383, 1300, 1413,
@@ -74,7 +70,6 @@ export const taxonomyTermTopicFolder: Model<'TaxonomyTerm'> = {
   name: 'Aufgaben zu einfachen Potenzen',
   description: '',
   weight: 1,
-  taxonomyId: 9,
   parentId: 1288,
   childrenIds: [10385, 6925, 6921, 6933, 6917, 7085],
 }

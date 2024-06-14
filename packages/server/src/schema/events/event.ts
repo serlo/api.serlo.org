@@ -39,46 +39,29 @@ export async function createEvent(
   try {
     const { insertId: eventId } = await database.mutate(
       `
-      INSERT INTO event_log (actor_id, event_id, uuid_id, instance_id)
-        SELECT ?, event.id, ?, instance.id
-        FROM event, instance
-        WHERE event.name = ? and instance.subdomain = ?
+      INSERT INTO event
+          (actor_id, event_type_id, uuid_id, instance_id,
+           uuid_parameter, uuid_parameter2, string_parameter)
+        SELECT ?, event_type.id, ?, instance.id, ?, ?, ?
+        FROM event_type, instance
+        WHERE event_type.name = ? and instance.subdomain = ?
       `,
-      [actorId, objectId, type, instance],
+      [
+        actorId,
+        objectId,
+        'uuidParameter' in abstractEventPayload
+          ? abstractEventPayload.uuidParameter
+          : null,
+        'uuidParameter2' in abstractEventPayload
+          ? abstractEventPayload.uuidParameter2
+          : null,
+        'stringParameter' in abstractEventPayload
+          ? abstractEventPayload.stringParameter
+          : null,
+        type,
+        instance,
+      ],
     )
-
-    const { stringParameters, uuidParameters } = abstractEventPayload
-    const parameters = { ...stringParameters, ...uuidParameters }
-
-    for (const [parameter, value] of Object.entries(parameters)) {
-      const { insertId: parameterId } = await database.mutate(
-        `
-          INSERT INTO event_parameter (log_id, name_id)
-            SELECT ?, id
-            FROM event_parameter_name
-            WHERE name = ?
-        `,
-        [eventId, parameter],
-      )
-
-      if (typeof value === 'string') {
-        await database.mutate(
-          `
-            INSERT INTO event_parameter_string (value, event_parameter_id)
-              VALUES (?, ?)
-          `,
-          [value, parameterId],
-        )
-      } else {
-        await database.mutate(
-          `
-            INSERT INTO event_parameter_uuid (uuid_id, event_parameter_id)
-              VALUES (?, ?)
-          `,
-          [value, parameterId],
-        )
-      }
-    }
 
     const event = { ...abstractEventPayload, id: eventId }
 
@@ -96,7 +79,11 @@ async function createNotifications(
 ) {
   const { objectId, actorId } = event
 
-  const objectIds = [objectId, ...Object.values(event.uuidParameters)]
+  const objectIds = [
+    objectId,
+    ...('uuidParameter' in event ? [event.uuidParameter] : []),
+    ...('uuidParameter2' in event ? [event.uuidParameter2] : []),
+  ]
   const subscribers = []
 
   for (const objectId of objectIds) {
@@ -131,7 +118,7 @@ async function createNotifications(
 
     await database.mutate(
       `
-        INSERT INTO notification_event (notification_id, event_log_id)
+        INSERT INTO notification_event (notification_id, event_id)
           SELECT LAST_INSERT_ID(), ?
       `,
       [event.id],
@@ -161,14 +148,14 @@ export function toGraphQLModel(
     return {
       ...base,
       __typename: NotificationEventType.CreateComment,
-      threadId: event.uuidParameters.discussion,
+      threadId: event.uuidParameter,
       commentId: event.objectId,
     }
   } else if (event.type === EventType.CreateThread) {
     return {
       ...base,
       __typename: NotificationEventType.CreateThread,
-      objectId: event.uuidParameters.on,
+      objectId: event.uuidParameter,
       threadId: event.objectId,
     }
   } else if (event.type === EventType.CreateEntity) {
@@ -194,13 +181,13 @@ export function toGraphQLModel(
           ? NotificationEventType.CreateEntityLink
           : NotificationEventType.RemoveEntityLink,
       childId: event.objectId,
-      parentId: event.uuidParameters.parent,
+      parentId: event.uuidParameter,
     }
   } else if (event.type === EventType.CreateEntityRevision) {
     return {
       ...base,
       __typename: NotificationEventType.CreateEntityRevision,
-      entityId: event.uuidParameters.repository,
+      entityId: event.uuidParameter,
       entityRevisionId: event.objectId,
     }
   } else if (
@@ -213,9 +200,9 @@ export function toGraphQLModel(
         event.type === EventType.CheckoutRevision
           ? NotificationEventType.CheckoutRevision
           : NotificationEventType.RejectRevision,
-      repositoryId: event.uuidParameters.repository,
+      repositoryId: event.uuidParameter,
       revisionId: event.objectId,
-      reason: event.stringParameters.reason,
+      reason: event.stringParameter,
     }
   } else if (
     event.type === EventType.CreateTaxonomyLink ||
@@ -228,7 +215,7 @@ export function toGraphQLModel(
           ? NotificationEventType.CreateTaxonomyLink
           : NotificationEventType.RemoveTaxonomyLink,
       parentId: event.objectId,
-      childId: event.uuidParameters.object,
+      childId: event.uuidParameter,
     }
   } else if (
     event.type === EventType.CreateTaxonomyTerm ||
@@ -247,8 +234,8 @@ export function toGraphQLModel(
       ...base,
       __typename: NotificationEventType.SetTaxonomyParent,
       childId: event.objectId,
-      previousParentId: event.uuidParameters.from,
-      parentId: event.uuidParameters.to,
+      previousParentId: event.uuidParameter,
+      parentId: event.uuidParameter2,
     }
   } else {
     return {
@@ -262,11 +249,7 @@ export function toGraphQLModel(
 function toDatabaseRepresentation(
   event: PayloadForNewEvent,
 ): PayloadForNewAbstractEvent {
-  const base = {
-    ...R.pick(['actorId', 'instance'], event),
-    uuidParameters: {},
-    stringParameters: {},
-  }
+  const base = R.pick(['actorId', 'instance'], event)
 
   if (event.__typename === NotificationEventType.SetThreadState) {
     return {
@@ -279,14 +262,14 @@ function toDatabaseRepresentation(
       ...base,
       type: EventType.CreateComment,
       objectId: event.commentId,
-      uuidParameters: { discussion: event.threadId },
+      uuidParameter: event.threadId,
     }
   } else if (event.__typename === NotificationEventType.CreateThread) {
     return {
       ...base,
       type: EventType.CreateThread,
       objectId: event.threadId,
-      uuidParameters: { on: event.objectId },
+      uuidParameter: event.objectId,
     }
   } else if (event.__typename === NotificationEventType.CreateEntity) {
     return { ...base, type: EventType.CreateEntity, objectId: event.entityId }
@@ -307,14 +290,14 @@ function toDatabaseRepresentation(
           ? EventType.CreateEntityLink
           : EventType.RemoveEntityLink,
       objectId: event.childId,
-      uuidParameters: { parent: event.parentId },
+      uuidParameter: event.parentId,
     }
   } else if (event.__typename === NotificationEventType.CreateEntityRevision) {
     return {
       ...base,
       type: EventType.CreateEntityRevision,
       objectId: event.entityRevisionId,
-      uuidParameters: { repository: event.entityId },
+      uuidParameter: event.entityId,
     }
   } else if (
     event.__typename === NotificationEventType.CheckoutRevision ||
@@ -327,8 +310,8 @@ function toDatabaseRepresentation(
           ? EventType.CheckoutRevision
           : EventType.RejectRevision,
       objectId: event.revisionId,
-      uuidParameters: { repository: event.repositoryId },
-      stringParameters: { reason: event.reason },
+      uuidParameter: event.repositoryId,
+      stringParameter: event.reason,
     }
   } else if (
     event.__typename === NotificationEventType.CreateTaxonomyLink ||
@@ -341,7 +324,7 @@ function toDatabaseRepresentation(
           ? EventType.CreateTaxonomyLink
           : EventType.RemoveTaxonomyLink,
       objectId: event.parentId,
-      uuidParameters: { object: event.childId },
+      uuidParameter: event.childId,
     }
   } else if (
     event.__typename === NotificationEventType.CreateTaxonomyTerm ||
@@ -360,7 +343,8 @@ function toDatabaseRepresentation(
       ...base,
       type: EventType.SetTaxonomyParent,
       objectId: event.childId,
-      uuidParameters: { from: event.previousParentId, to: event.parentId },
+      uuidParameter: event.previousParentId,
+      uuidParameter2: event.parentId,
     }
   } else {
     return {
@@ -438,96 +422,78 @@ type PayloadForNewEvent =
 const DatabaseEventRepresentations = {
   ArchiveThread: getDatabaseRepresentationDecoder({
     type: EventType.ArchiveThread,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   RestoreThread: getDatabaseRepresentationDecoder({
     type: EventType.RestoreThread,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   CreateComment: getDatabaseRepresentationDecoder({
     type: EventType.CreateComment,
-    uuidParameters: t.type({ discussion: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   CreateThread: getDatabaseRepresentationDecoder({
     type: EventType.CreateThread,
-    uuidParameters: t.type({ on: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   CreateEntity: getDatabaseRepresentationDecoder({
     type: EventType.CreateEntity,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   SetLicense: getDatabaseRepresentationDecoder({
     type: EventType.SetLicense,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   CreateEntityLink: getDatabaseRepresentationDecoder({
     type: EventType.CreateEntityLink,
-    uuidParameters: t.type({ parent: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   RemoveEntityLink: getDatabaseRepresentationDecoder({
     type: EventType.RemoveEntityLink,
-    uuidParameters: t.type({ parent: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   CreateEntityRevision: getDatabaseRepresentationDecoder({
     type: EventType.CreateEntityRevision,
-    uuidParameters: t.type({ repository: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   CheckoutRevision: getDatabaseRepresentationDecoder({
     type: EventType.CheckoutRevision,
-    uuidParameters: t.type({ repository: t.number }),
-    stringParameters: t.type({ reason: t.string }),
+    parameters: t.type({ uuidParameter: t.number, stringParameter: t.string }),
   }),
   RejectRevision: getDatabaseRepresentationDecoder({
     type: EventType.RejectRevision,
-    uuidParameters: t.type({ repository: t.number }),
-    stringParameters: t.type({ reason: t.string }),
+    parameters: t.type({ uuidParameter: t.number, stringParameter: t.string }),
   }),
   CreateTaxonomyLink: getDatabaseRepresentationDecoder({
     type: EventType.CreateTaxonomyLink,
-    uuidParameters: t.type({ object: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   RemoveTaxonomyLink: getDatabaseRepresentationDecoder({
     type: EventType.RemoveTaxonomyLink,
-    uuidParameters: t.type({ object: t.number }),
-    stringParameters: t.type({}),
+    parameters: t.type({ uuidParameter: t.number }),
   }),
   CreateTaxonomyTerm: getDatabaseRepresentationDecoder({
     type: EventType.CreateTaxonomyTerm,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   SetTaxonomyTerm: getDatabaseRepresentationDecoder({
     type: EventType.SetTaxonomyTerm,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   SetTaxonomyParent: getDatabaseRepresentationDecoder({
     type: EventType.SetTaxonomyParent,
-    uuidParameters: t.type({
-      from: t.union([t.number, t.null]),
-      to: t.union([t.number, t.null]),
+    parameters: t.type({
+      uuidParameter: t.union([t.number, t.null]),
+      uuidParameter2: t.union([t.number, t.null]),
     }),
-    stringParameters: t.type({}),
   }),
   TrashUuid: getDatabaseRepresentationDecoder({
     type: EventType.TrashUuid,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
   RestoreUuid: getDatabaseRepresentationDecoder({
     type: EventType.RestoreUuid,
-    uuidParameters: t.type({}),
-    stringParameters: t.type({}),
+    parameters: t.type({}),
   }),
 } as const
 
@@ -555,25 +521,21 @@ export const DatabaseEventRepresentation: t.Type<DatabaseEventRepresentation> =
 
 function getDatabaseRepresentationDecoder<
   Type extends EventType,
-  UuidParameters extends Record<string, number | null>,
-  StringParameters extends Record<string, string>,
->({
-  type,
-  uuidParameters,
-  stringParameters,
-}: {
-  type: Type
-  uuidParameters: t.Type<UuidParameters>
-  stringParameters: t.Type<StringParameters>
-}) {
-  return t.type({
-    id: t.number,
-    type: t.literal(type),
-    actorId: t.number,
-    date: DateDecoder,
-    objectId: t.number,
-    instance: InstanceDecoder,
-    uuidParameters: uuidParameters,
-    stringParameters: stringParameters,
-  })
+  Parameters extends {
+    uuidParameter?: number | null
+    uuidParameter2?: number | null
+    stringParameter?: string
+  },
+>({ type, parameters }: { type: Type; parameters: t.Type<Parameters> }) {
+  return t.intersection([
+    t.type({
+      id: t.number,
+      type: t.literal(type),
+      actorId: t.number,
+      date: DateDecoder,
+      objectId: t.number,
+      instance: InstanceDecoder,
+    }),
+    parameters,
+  ])
 }

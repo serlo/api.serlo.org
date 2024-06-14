@@ -58,39 +58,33 @@ async function resolveEventsFromDB(
   const rows = await database.fetchAll<unknown>(
     `
       select
-        event_log.id as id,
-        event.name as type,
-        event_log.actor_id as actorId,
+        event.id as id,
+        event_type.name as type,
+        event.actor_id as actorId,
         instance.subdomain as instance,
-        event_log.date as date,
-        event_log.uuid_id as objectId,
-        JSON_OBJECTAGG(
-          COALESCE(event_parameter_name.name, "__unused"),
-          event_parameter_uuid.uuid_id
-        ) as uuidParameters,
-        JSON_OBJECTAGG(
-          COALESCE(event_parameter_name.name, "__unused"),
-          event_parameter_string.value
-        ) as stringParameters
-      from event_log
-      join event on event.id = event_log.event_id
-      join instance on event_log.instance_id = instance.id
-      left join event_parameter on event_parameter.log_id = event_log.id
-      left join event_parameter_name on event_parameter.name_id = event_parameter_name.id
-      left join event_parameter_string on event_parameter_string.event_parameter_id = event_parameter.id
-      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
+        event.date as date,
+        event.uuid_id as objectId,
+        event.uuid_parameter as uuidParameter,
+        event.uuid_parameter2 as uuidParameter2,
+        event.string_parameter as stringParameter
+      from event
+      join event_type on event_type.id = event.event_type_id
+      join instance on event.instance_id = instance.id
       where
-        event_log.id < ?
-        and (? is null or event_log.uuid_id = ?)
-        and (? is null or event_log.actor_id = ?)
+        event.id < ?
+        and (? is null or event.uuid_id = ? or event.uuid_parameter = ?
+            or event.uuid_parameter2 = ?)
+        and (? is null or event.actor_id = ?)
         and (? is null or instance.subdomain = ?)
-      group by event_log.id
+      group by event.id
       order by id desc
       limit ?
     `,
     [
       // 2147483647 is the maximum number of INT in mysql
       after ?? 2147483647,
+      objectId ?? null,
+      objectId ?? null,
       objectId ?? null,
       objectId ?? null,
       actorId ?? null,
