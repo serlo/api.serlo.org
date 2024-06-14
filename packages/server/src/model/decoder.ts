@@ -31,9 +31,6 @@ export enum DiscriminatorType {
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export type RepositoryType = EntityType
-export type RevisionType = EntityRevisionType
-
 export enum EntityType {
   Applet = 'Applet',
   Article = 'Article',
