@@ -65,7 +65,7 @@ async function fetchActivityByType(
             ) events
             GROUP BY events.type
         `,
-      [userId],
+      [String(userId)],
     )
 
   const result: ActivityCounts = {
@@ -177,7 +177,7 @@ export const resolvers: Resolvers = {
           ORDER BY id DESC
           LIMIT ?
         `,
-        [after, after, first + 1],
+        [String(after), String(after), String(first + 1)],
       )
 
       const ids = []
@@ -238,7 +238,7 @@ export const resolvers: Resolvers = {
           ORDER BY user_id
           LIMIT ?
         `,
-        [roleId, after, after, first + 1],
+        [String(roleId), String(after), String(after), String(first + 1)],
       )
 
       const users = await Promise.all(
