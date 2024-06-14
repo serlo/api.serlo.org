@@ -112,11 +112,7 @@ export const resolvers: Resolvers = {
           }
 
           const scope = auth.instanceToScope(object.instance)
-          const type = EntityTypeDecoder.is(object)
-            ? 'Entity'
-            : object.__typename === DiscriminatorType.Page
-              ? 'Page'
-              : 'TaxonomyTerm'
+          const type = EntityTypeDecoder.is(object) ? 'Entity' : 'TaxonomyTerm'
 
           await assertUserIsAuthorized({
             guard: auth.Uuid.setState(type)(scope),
@@ -171,7 +167,7 @@ const DBEntityType = t.union([
   t.literal('course'),
   t.literal('course-page'),
   t.literal('event'),
-  t.literal('static-page'),
+  t.literal('page'),
   t.literal('text-exercise'),
   t.literal('text-exercise-group'),
   t.literal('video'),
@@ -420,7 +416,7 @@ async function resolveUuidFromDatabase(
           return { ...entity, __typename: EntityType.Exercise }
         case 'text-exercise-group':
           return { ...entity, __typename: EntityType.ExerciseGroup }
-        case 'static-page':
+        case 'page':
           return { ...entity, __typename: EntityType.Page }
         case 'video':
           return { ...entity, __typename: EntityType.Video }
@@ -470,7 +466,7 @@ async function resolveUuidFromDatabase(
             ...revision,
             __typename: EntityRevisionType.ExerciseGroupRevision,
           }
-        case 'static-page':
+        case 'page':
           return {
             ...revision,
             __typename: EntityRevisionType.PageRevision,

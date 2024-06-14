@@ -7,7 +7,7 @@ export async function up(db: Database) {
   )
 
   const { insertId: staticTypeId } = await db.runSql<{ insertId: number }>(
-    "insert into type (name) values ('static-page')",
+    "insert into type (name) values ('page')",
   )
 
   await db.runSql('SET foreign_key_checks = 0;')

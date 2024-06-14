@@ -141,14 +141,6 @@ export function createSerloModel({
     },
   })
 
-  const getPages = createRequest({
-    type: 'PagesQuery',
-    decoder: DatabaseLayer.getDecoderFor('PagesQuery'),
-    async getCurrentValue(payload: DatabaseLayer.Payload<'PagesQuery'>) {
-      return DatabaseLayer.makeRequest('PagesQuery', payload)
-    },
-  })
-
   const getUsersByRole = createRequest({
     type: 'UsersByRoleQuery',
     decoder: DatabaseLayer.getDecoderFor('UsersByRoleQuery'),
@@ -167,7 +159,6 @@ export function createSerloModel({
     getDeletedEntities,
     getPotentialSpamUsers,
     getUsersByRole,
-    getPages,
     sortEntity,
   }
 }
