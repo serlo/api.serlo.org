@@ -47,31 +47,22 @@ export const NotificationsResolver = createCachedResolver({
           notification.seen,
           notification.email_sent as emailSent,
           notification.email,
-          event_log.id as eventId,
-          event.name as type,
-          event_log.actor_id as actorId,
+          event.id as eventId,
+          event_type.name as type,
+          event.actor_id as actorId,
           instance.subdomain as instance,
-          event_log.date as date,
-          event_log.uuid_id as objectId,
-          JSON_OBJECTAGG(
-            COALESCE(event_parameter_name.name, "__unused"),
-            event_parameter_uuid.uuid_id
-          ) as uuidParameters,
-          JSON_OBJECTAGG(
-            COALESCE(event_parameter_name.name, "__unused"),
-            event_parameter_string.value
-          ) as stringParameters
+          event.date as date,
+          event.uuid_id as objectId,
+          event.uuid_parameter as uuidParameter,
+          event.uuid_parameter2 as uuidParameter2,
+          event.string_parameter as stringParameter
         from notification
         join notification_event ON notification.id = notification_event.notification_id
-        join event_log on event_log.id = notification_event.event_log_id
-        join event on event.id = event_log.event_id
-        join instance on event_log.instance_id = instance.id
-        left join event_parameter on event_parameter.log_id = event_log.id
-        left join event_parameter_name on event_parameter.name_id = event_parameter_name.id
-        left join event_parameter_string on event_parameter_string.event_parameter_id = event_parameter.id
-        left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
+        join event on event.id = notification_event.event_id
+        join event_type on event_type.id = event.event_type_id
+        join instance on event.instance_id = instance.id
         where notification.user_id = ?
-        group by notification.id, event_log.id
+        group by notification.id, event.id
         order by notification.date desc, notification.id desc
       `,
       [userId],

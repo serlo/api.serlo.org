@@ -47,7 +47,7 @@ beforeEach(async () => {
   // create taxonomy Term 106082
   await databaseForTests.mutate('update uuid set id = 106082 where id = 35607')
   await databaseForTests.mutate(
-    'update term_taxonomy set id = 106082 where id = 35607',
+    'update taxonomy set id = 106082 where id = 35607',
   )
 })
 
