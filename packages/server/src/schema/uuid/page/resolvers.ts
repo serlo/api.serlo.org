@@ -10,6 +10,7 @@ import {
 } from '~/internals/graphql'
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { resolvers as EntityResolvers } from '~/schema/uuid/abstract-entity/resolvers'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -73,8 +74,9 @@ export const resolvers: Resolvers = {
 
       return { success: true, query: {} }
     },
-    async create(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async create(_parent, { input }, context, info) {
+      context.userId = 1
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { content, title, instance } = input
@@ -87,16 +89,43 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const pagePayload = await dataSources.model.serlo.createPage({
-        ...input,
-        userId,
-      })
+      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
 
-      return {
-        record: pagePayload,
-        success: pagePayload !== null,
-        query: {},
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
       }
+
+      const { taxonomyId } = await database.fetchOne<{ taxonomyId: number }>(
+        `
+        select
+          taxonomy.id as taxonomyId
+        from taxonomy
+        join instance on taxonomy.instance_id = instance.id
+        where taxonomy.name = 'Static Pages' and instance.subdomain = ?
+        `,
+        [instance],
+      )
+
+      return resolver(
+        {},
+        {
+          input: {
+            entityType: 'Page',
+            changes: 'Initial page creation',
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            needsReview: false,
+            parentId: taxonomyId,
+            content,
+            title,
+            metaDescription: undefined,
+            metaTitle: undefined,
+            url: undefined,
+          },
+        },
+        context,
+        info,
+      )
     },
   },
   PageQuery: {

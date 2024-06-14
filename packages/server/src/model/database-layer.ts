@@ -63,23 +63,6 @@ export const spec = {
     response: t.type({ success: t.literal(true) }),
     canBeNull: false,
   },
-  PageCreateMutation: {
-    payload: t.intersection([
-      t.type({
-        content: t.string,
-        discussionsEnabled: t.boolean,
-        instance: InstanceDecoder,
-        licenseId: t.number,
-        title: t.string,
-        userId: t.number,
-      }),
-      t.partial({
-        forumId: t.union([t.number, t.null]),
-      }),
-    ]),
-    response: t.union([PageDecoder, t.undefined]),
-    canBeNull: false,
-  },
   UserCreateMutation: {
     payload: t.type({
       username: t.string,

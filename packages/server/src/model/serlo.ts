@@ -75,14 +75,6 @@ export function createSerloModel({
     },
   })
 
-  const createPage = createMutation({
-    type: 'PageCreateMutation',
-    decoder: DatabaseLayer.getDecoderFor('PageCreateMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'PageCreateMutation'>) => {
-      return DatabaseLayer.makeRequest('PageCreateMutation', payload)
-    },
-  })
-
   const addPageRevision = createMutation({
     type: 'PageAddRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('PageAddRevisionMutation'),
@@ -152,7 +144,6 @@ export function createSerloModel({
   return {
     addPageRevision,
     checkoutPageRevision,
-    createPage,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,
