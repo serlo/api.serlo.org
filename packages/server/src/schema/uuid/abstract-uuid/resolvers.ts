@@ -235,7 +235,6 @@ const BaseTaxonomy = t.intersection([
     taxonomyName: t.string,
     taxonomyDescription: t.union([t.null, t.string]),
     taxonomyWeight: t.union([t.null, t.number]),
-    taxonomyId: t.number,
     taxonomyParentId: t.union([t.null, t.number]),
     taxonomyChildrenIds: WeightedNumberList,
     taxonomyEntityChildrenIds: WeightedNumberList,
@@ -313,11 +312,10 @@ async function resolveUuidFromDatabase(
 
       taxonomy_type.name AS taxonomyType,
       taxonomy_instance.subdomain AS taxonomyInstance,
-      term.name AS taxonomyName,
-      term_taxonomy.description AS taxonomyDescription,
-      term_taxonomy.weight AS taxonomyWeight,
-      taxonomy.id AS taxonomyId,
-      term_taxonomy.parent_id AS taxonomyParentId,
+      taxonomy.name AS taxonomyName,
+      taxonomy.description AS taxonomyDescription,
+      taxonomy.weight AS taxonomyWeight,
+      taxonomy.parent_id AS taxonomyParentId,
       JSON_OBJECTAGG(
         COALESCE(taxonomy_child.id, "__no_key"),
         taxonomy_child.weight
@@ -351,13 +349,11 @@ async function resolveUuidFromDatabase(
     left join entity revision_entity on revision_entity.id = revision.repository_id
     left join type revision_type on revision_entity.type_id = revision_type.id
 
-    LEFT JOIN term_taxonomy ON term_taxonomy.id = uuid.id
-    LEFT JOIN taxonomy ON taxonomy.id = term_taxonomy.taxonomy_id
+    LEFT JOIN taxonomy ON taxonomy.id = uuid.id
     LEFT JOIN type taxonomy_type ON taxonomy_type.id = taxonomy.type_id
     LEFT JOIN instance taxonomy_instance ON taxonomy_instance.id = taxonomy.instance_id
-    LEFT JOIN term ON term.id = term_taxonomy.term_id
-    LEFT JOIN term_taxonomy taxonomy_child ON taxonomy_child.parent_id = term_taxonomy.id
-    LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+    LEFT JOIN taxonomy taxonomy_child ON taxonomy_child.parent_id = taxonomy.id
+    LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = taxonomy.id
 
     LEFT JOIN user ON user.id = uuid.id
     LEFT JOIN role_user ON user.id = role_user.user_id
@@ -515,7 +511,6 @@ async function resolveUuidFromDatabase(
         name: baseUuid.taxonomyName,
         description: baseUuid.taxonomyDescription,
         weight: baseUuid.taxonomyWeight ?? 0,
-        taxonomyId: baseUuid.taxonomyId,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
       }
