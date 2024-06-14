@@ -102,7 +102,6 @@ export const taxonomyTermQuery = new Client().prepareQuery({
           name
           description
           weight
-          taxonomyId
           path {
             id
           }

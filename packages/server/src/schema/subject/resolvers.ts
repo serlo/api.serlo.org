@@ -30,13 +30,11 @@ export const SubjectsResolver = createCachedResolver({
         SELECT
           subject.id as taxonomyTermId,
           subject_instance.subdomain as instance
-        FROM term_taxonomy AS subject
-        JOIN term_taxonomy AS root ON root.id = subject.parent_id
+        FROM taxonomy AS subject
+        JOIN taxonomy AS root ON root.id = subject.parent_id
         JOIN uuid as subject_uuid ON subject_uuid.id = subject.id
-        JOIN taxonomy AS subject_taxonomy ON subject_taxonomy.id = subject.taxonomy_id
-        JOIN type AS subject_type ON subject_type.id = subject_taxonomy.type_id
-        JOIN term AS subject_term ON subject_term.id = subject.term_id
-        JOIN instance AS subject_instance ON subject_instance.id = subject_term.instance_id
+        JOIN type AS subject_type ON subject_type.id = subject.type_id
+        JOIN instance AS subject_instance ON subject_instance.id = subject.instance_id
         WHERE
           (root.parent_id IS NULL
             OR root.id = 106081
@@ -119,29 +117,29 @@ export const SubjectResolver = createCachedResolver({
 
     return await database.fetchOptional<Row>(
       `
-      SELECT t.name as name, t1.id as id
-      FROM term_taxonomy t0
-      JOIN term_taxonomy t1 ON t1.parent_id = t0.id
-      LEFT JOIN term_taxonomy t2 ON t2.parent_id = t1.id
-      LEFT JOIN term_taxonomy t3 ON t3.parent_id = t2.id
-      LEFT JOIN term_taxonomy t4 ON t4.parent_id = t3.id
-      LEFT JOIN term_taxonomy t5 ON t5.parent_id = t4.id
-      LEFT JOIN term_taxonomy t6 ON t6.parent_id = t5.id
-      LEFT JOIN term_taxonomy t7 ON t7.parent_id = t6.id
-      LEFT JOIN term_taxonomy t8 ON t8.parent_id = t7.id
-      LEFT JOIN term_taxonomy t9 ON t9.parent_id = t8.id
-      LEFT JOIN term_taxonomy t10 ON t10.parent_id = t9.id
-      LEFT JOIN term_taxonomy t11 ON t11.parent_id = t10.id
-      LEFT JOIN term_taxonomy t12 ON t12.parent_id = t11.id
-      LEFT JOIN term_taxonomy t13 ON t13.parent_id = t12.id
-      LEFT JOIN term_taxonomy t14 ON t14.parent_id = t13.id
-      LEFT JOIN term_taxonomy t15 ON t15.parent_id = t14.id
-      LEFT JOIN term_taxonomy t16 ON t16.parent_id = t15.id
-      LEFT JOIN term_taxonomy t17 ON t17.parent_id = t16.id
-      LEFT JOIN term_taxonomy t18 ON t18.parent_id = t17.id
-      LEFT JOIN term_taxonomy t19 ON t19.parent_id = t18.id
-      LEFT JOIN term_taxonomy t20 ON t20.parent_id = t19.id
-      JOIN term t on t1.term_id = t.id
+      SELECT
+        t1.name as name, t1.id as id
+      FROM taxonomy t0
+      JOIN taxonomy t1 ON t1.parent_id = t0.id
+      LEFT JOIN taxonomy t2 ON t2.parent_id = t1.id
+      LEFT JOIN taxonomy t3 ON t3.parent_id = t2.id
+      LEFT JOIN taxonomy t4 ON t4.parent_id = t3.id
+      LEFT JOIN taxonomy t5 ON t5.parent_id = t4.id
+      LEFT JOIN taxonomy t6 ON t6.parent_id = t5.id
+      LEFT JOIN taxonomy t7 ON t7.parent_id = t6.id
+      LEFT JOIN taxonomy t8 ON t8.parent_id = t7.id
+      LEFT JOIN taxonomy t9 ON t9.parent_id = t8.id
+      LEFT JOIN taxonomy t10 ON t10.parent_id = t9.id
+      LEFT JOIN taxonomy t11 ON t11.parent_id = t10.id
+      LEFT JOIN taxonomy t12 ON t12.parent_id = t11.id
+      LEFT JOIN taxonomy t13 ON t13.parent_id = t12.id
+      LEFT JOIN taxonomy t14 ON t14.parent_id = t13.id
+      LEFT JOIN taxonomy t15 ON t15.parent_id = t14.id
+      LEFT JOIN taxonomy t16 ON t16.parent_id = t15.id
+      LEFT JOIN taxonomy t17 ON t17.parent_id = t16.id
+      LEFT JOIN taxonomy t18 ON t18.parent_id = t17.id
+      LEFT JOIN taxonomy t19 ON t19.parent_id = t18.id
+      LEFT JOIN taxonomy t20 ON t20.parent_id = t19.id
       WHERE
           (
               t0.id = 146728 OR
