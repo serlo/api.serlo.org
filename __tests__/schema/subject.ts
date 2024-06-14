@@ -45,8 +45,8 @@ const subjects = [
   {
     unrevisedEntities: {
       nodes: [
-        { __typename: 'Article', id: 34907 },
         { __typename: 'Article', id: 35247 },
+        { __typename: 'Article', id: 34907 },
       ],
     },
   },
@@ -93,17 +93,18 @@ test('`Subject.unrevisedEntities` shows new revisions first', async () => {
     })
     .execute()
   const subjectsChangedOrder = [...subjects]
-  ;(subjectsChangedOrder[4] = {
+  subjectsChangedOrder[4] = {
     unrevisedEntities: {
       nodes: [
-        { __typename: 'Article', id: 35247 },
         { __typename: 'Article', id: 34907 },
+        { __typename: 'Article', id: 35247 },
       ],
     },
-  }),
-    await query.shouldReturnData({
-      subject: {
-        subjects: subjectsChangedOrder,
-      },
-    })
+  }
+
+  await query.shouldReturnData({
+    subject: {
+      subjects: subjectsChangedOrder,
+    },
+  })
 })
