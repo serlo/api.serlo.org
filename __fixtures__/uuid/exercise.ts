@@ -14,7 +14,7 @@ export const exercise: Model<'Exercise'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/29637/29637',
-  date: '2014-03-01T20:45:56Z',
+  date: '2014-09-08T10:42:33.000Z',
   currentRevisionId: 29638,
   revisionIds: [29638],
   licenseId,

@@ -1261,8 +1261,10 @@ export type SetAbstractEntityInput = {
 
 export type SetEntityResponse = {
   __typename?: 'SetEntityResponse';
+  entity?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
   query: Query;
   record?: Maybe<Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Video>;
+  revision?: Maybe<AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | VideoRevision>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -1404,7 +1406,6 @@ export type TaxonomyTerm = AbstractUuid & InstanceAware & ThreadAware & {
   name: Scalars['String']['output'];
   parent?: Maybe<TaxonomyTerm>;
   path: Array<Maybe<TaxonomyTerm>>;
-  taxonomyId: Scalars['Int']['output'];
   threads: ThreadConnection;
   title: Scalars['String']['output'];
   trashed: Scalars['Boolean']['output'];
@@ -3003,8 +3004,10 @@ export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType exte
 };
 
 export type SetEntityResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetEntityResponse'] = ResolversParentTypes['SetEntityResponse']> = {
+  entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   record?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
+  revision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -3108,7 +3111,6 @@ export type TaxonomyTermResolvers<ContextType = Context, ParentType extends Reso
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   path?: Resolver<Array<Maybe<ResolversTypes['TaxonomyTerm']>>, ParentType, ContextType>;
-  taxonomyId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<TaxonomyTermThreadsArgs>>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

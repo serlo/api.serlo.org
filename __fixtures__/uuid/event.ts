@@ -14,7 +14,7 @@ export const event: Model<'Event'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/35554/beispielveranstaltung',
-  date: '2014-03-01T20:45:56Z',
+  date: '2019-12-02T22:40:41.000Z',
   currentRevisionId: 35555,
   revisionIds: [35555],
   licenseId,

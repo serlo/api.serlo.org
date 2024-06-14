@@ -85,7 +85,7 @@ export const resolvers: Resolvers = {
         originalAuthorUrl: string | null
         instance: string
         taxonomyTermIds: number[]
-        termNames: Record<number, string | undefined>
+        taxonomyNames: Record<number, string | undefined>
         authors: Record<number, string | undefined>
         authorEdits: Record<number, number>
       }
@@ -94,11 +94,11 @@ export const resolvers: Resolvers = {
         `
         WITH RECURSIVE subject_mapping AS (
             SELECT
-                subject.id AS term_taxonomy_id,
+                subject.id AS taxonomy_id,
                 subject.id AS subject_id,
                 root.id AS root_id
-            FROM term_taxonomy root
-            JOIN term_taxonomy subject ON subject.parent_id = root.id
+            FROM taxonomy root
+            JOIN taxonomy subject ON subject.parent_id = root.id
             WHERE root.parent_id IS NULL
             OR root.id IN (106081, 146728)
 
@@ -108,8 +108,8 @@ export const resolvers: Resolvers = {
                 child.id,
                 subject_mapping.subject_id,
                 subject_mapping.root_id
-            FROM term_taxonomy child
-            JOIN subject_mapping ON subject_mapping.term_taxonomy_id = child.parent_id
+            FROM taxonomy child
+            JOIN subject_mapping ON subject_mapping.taxonomy_id = child.parent_id
             -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
             -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
             WHERE child.parent_id NOT IN (87993, 106081, 146728)
@@ -120,16 +120,16 @@ export const resolvers: Resolvers = {
             entity.id,
             JSON_ARRAYAGG(subject_mapping.subject_id) AS subjectIds,
             type.name AS resourceType,
-            MIN(field_title.value) AS title,
-            MIN(field_description.value) AS description,
+            entity_revision.title AS title,
+            entity_revision.meta_description AS description,
             entity.date AS dateCreated,
             entity_revision.date AS dateModified,
             entity.current_revision_id AS currentRevisionId,
             license.url AS licenseUrl,
             license.original_author_url as originalAuthorUrl,
             instance.subdomain AS instance,
-            JSON_ARRAYAGG(term_taxonomy.id) AS taxonomyTermIds,
-            JSON_OBJECTAGG(term_taxonomy.id, term.name) AS termNames,
+            JSON_ARRAYAGG(taxonomy.id) AS taxonomyTermIds,
+            JSON_OBJECTAGG(taxonomy.id, taxonomy.name) AS taxonomyNames,
             JSON_OBJECTAGG(user.id, user.username) AS authors,
             JSON_OBJECTAGG(all_revisions_of_entity.id, user.id) AS authorEdits
         FROM entity
@@ -138,18 +138,11 @@ export const resolvers: Resolvers = {
         JOIN type on entity.type_id = type.id
         JOIN license on license.id = entity.license_id
         JOIN entity_revision ON entity.current_revision_id = entity_revision.id
-        LEFT JOIN entity_revision_field field_title on
-            field_title.entity_revision_id = entity_revision.id AND
-            field_title.field = "title"
-        LEFT JOIN entity_revision_field field_description on
-            field_description.entity_revision_id = entity_revision.id AND
-            field_description.field = "meta_description"
         JOIN term_taxonomy_entity on term_taxonomy_entity.entity_id = entity.id
-        JOIN term_taxonomy on term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
-        JOIN term on term_taxonomy.term_id = term.id
+        JOIN taxonomy on term_taxonomy_entity.term_taxonomy_id = taxonomy.id
         JOIN entity_revision all_revisions_of_entity ON all_revisions_of_entity.repository_id = entity.id
         JOIN user ON all_revisions_of_entity.author_id = user.id
-        JOIN subject_mapping on subject_mapping.term_taxonomy_id = term_taxonomy_entity.term_taxonomy_id
+        JOIN subject_mapping on subject_mapping.taxonomy_id = term_taxonomy_entity.term_taxonomy_id
         WHERE entity.id > ?
             AND (? is NULL OR instance.subdomain = ?)
             AND (? is NULL OR entity_revision.date > ?)
@@ -317,7 +310,7 @@ export const resolvers: Resolvers = {
               }
           }
           const termName =
-            R.sortBy(([id]) => parseInt(id), Object.entries(row.termNames))
+            R.sortBy(([id]) => parseInt(id), Object.entries(row.taxonomyNames))
               .map((x) => x[1])
               .at(0) ?? '<unknown>'
           const fromI18n: string = row.instance === 'de' ? 'aus' : 'from'

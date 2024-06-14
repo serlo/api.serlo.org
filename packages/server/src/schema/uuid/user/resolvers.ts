@@ -6,6 +6,7 @@ import * as t from 'io-ts'
 import * as R from 'ramda'
 
 import * as DatabaseLayer from '../../../model/database-layer'
+import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { Context } from '~/context'
@@ -26,7 +27,7 @@ import {
   isGlobalRole,
 } from '~/internals/graphql'
 import { CellValues, MajorDimension } from '~/model'
-import { EntityDecoder, RevisionDecoder, UserDecoder } from '~/model/decoder'
+import { EntityDecoder, UserDecoder } from '~/model/decoder'
 import {
   getPermissionsForRole,
   getRolesWithInheritance,
@@ -238,41 +239,18 @@ export const resolvers: Resolvers = {
       return edits < 5
     },
     async unrevisedEntities(user, payload, context) {
-      const { dataSources } = context
-      const { unrevisedEntityIds } =
-        await dataSources.model.serlo.getUnrevisedEntities()
-      const unrevisedEntitiesAndRevisions = await Promise.all(
+      const unrevisedEntityIds = await resolveUnrevisedEntityIds(
+        { userId: user.id },
+        context,
+      )
+      const unrevisedEntities = await Promise.all(
         unrevisedEntityIds.map((id) =>
-          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context).then(
-            async (unrevisedEntity) => {
-              const unrevisedRevisionIds = unrevisedEntity.revisionIds.filter(
-                (revisionId) =>
-                  unrevisedEntity.currentRevisionId === null ||
-                  revisionId > unrevisedEntity.currentRevisionId,
-              )
-              const unrevisedRevisions = await Promise.all(
-                unrevisedRevisionIds.map((id) =>
-                  UuidResolver.resolveWithDecoder(
-                    RevisionDecoder,
-                    { id },
-                    context,
-                  ),
-                ),
-              )
-
-              return [unrevisedEntity, unrevisedRevisions] as const
-            },
-          ),
+          UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context),
         ),
       )
-      const unrevisedEntitiesByUser = unrevisedEntitiesAndRevisions
-        .filter(([_, unrevisedRevisions]) =>
-          unrevisedRevisions.some((revision) => revision.authorId === user.id),
-        )
-        .map(([unrevisedEntity, _]) => unrevisedEntity)
 
       return resolveConnection({
-        nodes: unrevisedEntitiesByUser,
+        nodes: unrevisedEntities,
         payload,
         createCursor: (node) => node.id.toString(),
       })

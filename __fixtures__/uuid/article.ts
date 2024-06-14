@@ -16,7 +16,7 @@ export const article: ArticleWithAllFieldsDefined = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/1855/parabel',
-  date: '2014-03-01T20:45:56Z',
+  date: '2014-03-01T20:45:56.000Z',
   currentRevisionId: 30674,
   licenseId,
   taxonomyTermIds: [5],
