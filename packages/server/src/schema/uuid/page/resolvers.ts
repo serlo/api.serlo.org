@@ -14,6 +14,7 @@ import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
@@ -23,7 +24,10 @@ export const resolvers: Resolvers = {
   Mutation: {
     page: createNamespace(),
   },
-  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+  Page: {
+    ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
+  },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
     async addRevision(_parent, { input }, context) {
