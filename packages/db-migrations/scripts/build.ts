@@ -20,7 +20,7 @@ async function main() {
     }
 
     const basename = path.basename(file, '.ts')
-    const outfile = path.join(outputDir, `${basename}.cjs`)
+    const outfile = path.join(outputDir, `${basename}.js`)
 
     await esbuild.build({
       entryPoints: [file],
