@@ -92,7 +92,7 @@ describe('query endpoint "events"', () => {
   test('with filter "objectId"', async () => {
     await query.withVariables({ first: 1, objectId: 1855 }).shouldReturnData({
       events: {
-        nodes: [{ __typename: 'CreateEntityNotificationEvent', id: 1198 }],
+        nodes: [{ __typename: 'CheckoutRevisionNotificationEvent', id: 77030 }],
       },
     })
   })

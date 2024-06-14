@@ -2,14 +2,14 @@ import { createHash } from 'crypto'
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
 
-import { article, user, user2 } from '../../../__fixtures__'
+import { article, user } from '../../../__fixtures__'
 import {
-  given,
   Client,
   Query,
-  returnsJson,
   assertErrorEvent,
   assertNoErrorEvents,
+  given,
+  returnsJson,
   userQuery,
 } from '../../__utils__'
 
@@ -130,11 +130,13 @@ describe('community chat', () => {
       returnsJson({ json: { success: false, errorType: 'unknown' } }),
     )
 
-    await mutation.withInput({ botIds: [user2.id] }).execute()
+    await mutation
+      .withInput({ botIds: input.botIds.slice(1) })
+      .shouldReturnData({ user: { deleteBots: { success: true } } })
 
     await assertErrorEvent({
       message: 'Cannot delete a user from community.serlo.org',
-      errorContext: { user: user2 },
+      errorContext: { user: { id: input.botIds[1] } },
     })
   })
 })
