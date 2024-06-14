@@ -343,6 +343,7 @@ export const PageDecoder = t.exact(
     AbstractEntityDecoder,
     t.type({
       __typename: t.literal(EntityType.Page),
+      taxonomyTermIds: t.array(t.number),
     }),
   ]),
 )
