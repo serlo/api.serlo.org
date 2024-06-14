@@ -3,10 +3,6 @@ import { spawnSync } from 'node:child_process'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-const root = path.join(__dirname, '..')
-
 void run()
 
 function run() {
@@ -21,24 +17,17 @@ function run() {
   }
   buildDockerImage({
     name: 'api-server',
-    Dockerfile: path.join(root, 'docker', 'server', 'Dockerfile'),
     context: '../..',
     envName,
   })
   buildDockerImage({
     name: 'api-swr-queue-worker',
-    Dockerfile: path.join(root, 'docker', 'swr-queue-worker', 'Dockerfile'),
     context: '../..',
     envName,
   })
 }
 
-function buildDockerImage({
-  name,
-  Dockerfile,
-  context,
-  envName,
-}: DockerImageOptions) {
+function buildDockerImage({ name, context, envName }: DockerImageOptions) {
   const remoteName = `eu.gcr.io/serlo-shared/${name}`
   const date = new Date()
   const timestamp = `${date.toISOString().split('T')[0]}-${date.getTime()}`
@@ -56,11 +45,21 @@ function buildDockerImage({
   ])
   const tags = [...remoteTags, ...toTags(name, [envName])]
 
-  spawnSync(
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const root = path.join(__dirname, '..')
+  const dockerfile = path.join(root, 'Dockerfile')
+
+  const build = spawnSync(
     'docker',
-    ['build', '-f', Dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
-    { stdio: 'inherit' },
+    ['build', '-f', dockerfile, ...tags.flatMap((tag) => ['-t', tag]), context],
+    { stdio: ['inherit', 'inherit', 'pipe'] },
   )
+
+  if (build.stderr) {
+    // eslint-disable-next-line no-console
+    console.log(Error(build.stderr.toString()))
+    process.exit(1)
+  }
 
   remoteTags.forEach((remoteTag) => {
     // eslint-disable-next-line no-console
@@ -75,7 +74,6 @@ function toTags(name: string, versions: string[]) {
 
 interface DockerImageOptions {
   name: string
-  Dockerfile: string
   context: string
   envName: 'staging' | 'production'
 }
