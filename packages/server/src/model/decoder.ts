@@ -403,6 +403,7 @@ export const EntityDecoder = t.union([
   EventDecoder,
   ExerciseDecoder,
   ExerciseGroupDecoder,
+  PageDecoder,
   VideoDecoder,
 ])
 
@@ -414,20 +415,14 @@ export const EntityRevisionDecoder = t.union([
   EventRevisionDecoder,
   ExerciseRevisionDecoder,
   ExerciseGroupRevisionDecoder,
-  VideoRevisionDecoder,
-])
-
-export const RepositoryDecoder = t.union([EntityDecoder, PageDecoder])
-
-export const RevisionDecoder = t.union([
-  EntityRevisionDecoder,
   PageRevisionDecoder,
+  VideoRevisionDecoder,
 ])
 
 export const UuidDecoder = t.union([
   CommentDecoder,
-  RepositoryDecoder,
-  RevisionDecoder,
+  EntityDecoder,
+  EntityRevisionDecoder,
   TaxonomyTermDecoder,
   UserDecoder,
 ])

@@ -1,8 +1,7 @@
 import {
   CommentDecoder,
   EntityDecoder,
-  RepositoryDecoder,
-  RevisionDecoder,
+  EntityRevisionDecoder,
   TaxonomyTermDecoder,
   UserDecoder,
   UuidDecoder,
@@ -16,14 +15,14 @@ export const resolvers: Resolvers = {
     ...createNotificationEventResolvers(),
     async repository(notificationEvent, _args, context) {
       return await UuidResolver.resolveWithDecoder(
-        RepositoryDecoder,
+        EntityDecoder,
         { id: notificationEvent.repositoryId },
         context,
       )
     },
     async revision(notificationEvent, _args, context) {
       return await UuidResolver.resolveWithDecoder(
-        RevisionDecoder,
+        EntityRevisionDecoder,
         { id: notificationEvent.revisionId },
         context,
       )
@@ -74,7 +73,7 @@ export const resolvers: Resolvers = {
     ...createNotificationEventResolvers(),
     repository(event, _args, context) {
       const id = event.repositoryId
-      return UuidResolver.resolveWithDecoder(RepositoryDecoder, { id }, context)
+      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
     },
   },
 
@@ -145,11 +144,15 @@ export const resolvers: Resolvers = {
     ...createNotificationEventResolvers(),
     async entity(event, _args, context) {
       const id = event.entityId
-      return UuidResolver.resolveWithDecoder(RepositoryDecoder, { id }, context)
+      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
     },
     async entityRevision(event, _args, context) {
       const id = event.entityRevisionId
-      return UuidResolver.resolveWithDecoder(RevisionDecoder, { id }, context)
+      return UuidResolver.resolveWithDecoder(
+        EntityRevisionDecoder,
+        { id },
+        context,
+      )
     },
   },
 
@@ -157,11 +160,15 @@ export const resolvers: Resolvers = {
     ...createNotificationEventResolvers(),
     async repository(event, _args, context) {
       const id = event.repositoryId
-      return UuidResolver.resolveWithDecoder(RepositoryDecoder, { id }, context)
+      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
     },
     async revision(event, _args, context) {
       const id = event.revisionId
-      return UuidResolver.resolveWithDecoder(RevisionDecoder, { id }, context)
+      return UuidResolver.resolveWithDecoder(
+        EntityRevisionDecoder,
+        { id },
+        context,
+      )
     },
   },
 

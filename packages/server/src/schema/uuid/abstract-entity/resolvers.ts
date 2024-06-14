@@ -40,6 +40,7 @@ const mandatoryFieldsLookup: Record<EntityType, InputFields[]> = {
   [EntityType.Event]: ['content', 'title'],
   [EntityType.Exercise]: ['content'],
   [EntityType.ExerciseGroup]: ['content'],
+  [EntityType.Page]: ['content', 'title'],
   [EntityType.Video]: ['title', 'url'],
 } as const
 
