@@ -14,53 +14,96 @@ test('`Subject.id` returns encoded id of subject', async () => {
   })
 })
 
+const query = new Client()
+  .prepareQuery({
+    query: gql`
+      query ($instance: Instance!) {
+        subject {
+          subjects(instance: $instance) {
+            unrevisedEntities {
+              nodes {
+                __typename
+                id
+              }
+            }
+          }
+        }
+      }
+    `,
+  })
+  .withVariables({ instance: 'de' })
+
+const subjects = [
+  {
+    unrevisedEntities: {
+      nodes: [{ __typename: 'Article', id: 34741 }],
+    },
+  },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  {
+    unrevisedEntities: {
+      nodes: [
+        { __typename: 'Article', id: 34907 },
+        { __typename: 'Article', id: 35247 },
+      ],
+    },
+  },
+  {
+    unrevisedEntities: {
+      nodes: [{ __typename: 'Article', id: 26892 }],
+    },
+  },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+  { unrevisedEntities: { nodes: [] } },
+]
+
 test('`Subject.unrevisedEntities` returns list of unrevisedEntities', async () => {
-  await new Client()
+  await query.shouldReturnData({
+    subject: {
+      subjects,
+    },
+  })
+})
+
+test('`Subject.unrevisedEntities` shows new revisions first', async () => {
+  await new Client({ userId: 1 })
     .prepareQuery({
       query: gql`
-        query ($instance: Instance!) {
-          subject {
-            subjects(instance: $instance) {
-              unrevisedEntities {
-                nodes {
-                  __typename
-                  id
-                }
+        mutation {
+          entity {
+            setAbstractEntity(
+              input: {
+                entityType: "Article"
+                changes: "new revision changes"
+                entityId: 34907
+                content: "new content"
+                subscribeThis: false
+                subscribeThisByEmail: false
+                needsReview: true
               }
+            ) {
+              success
             }
           }
         }
       `,
     })
-    .withVariables({ instance: 'de' })
-    .shouldReturnData({
+    .execute()
+  const subjectsChangedOrder = [...subjects]
+  ;(subjectsChangedOrder[4] = {
+    unrevisedEntities: {
+      nodes: [
+        { __typename: 'Article', id: 35247 },
+        { __typename: 'Article', id: 34907 },
+      ],
+    },
+  }),
+    await query.shouldReturnData({
       subject: {
-        subjects: [
-          {
-            unrevisedEntities: {
-              nodes: [{ __typename: 'Article', id: 34741 }],
-            },
-          },
-          { unrevisedEntities: { nodes: [] } },
-          { unrevisedEntities: { nodes: [] } },
-          { unrevisedEntities: { nodes: [] } },
-          {
-            unrevisedEntities: {
-              nodes: [
-                { __typename: 'Article', id: 34907 },
-                { __typename: 'Article', id: 35247 },
-              ],
-            },
-          },
-          {
-            unrevisedEntities: {
-              nodes: [{ __typename: 'Article', id: 26892 }],
-            },
-          },
-          { unrevisedEntities: { nodes: [] } },
-          { unrevisedEntities: { nodes: [] } },
-          { unrevisedEntities: { nodes: [] } },
-        ],
+        subjects: subjectsChangedOrder,
       },
     })
 })
