@@ -25,16 +25,14 @@ export const RoleDecoder: t.Type<Role> = t.union([
 
 export enum DiscriminatorType {
   Comment = 'Comment',
-  Page = 'Page',
-  PageRevision = 'PageRevision',
   TaxonomyTerm = 'TaxonomyTerm',
   User = 'User',
 }
 
 export type UuidType = DiscriminatorType | EntityType | EntityRevisionType
 
-export type RepositoryType = EntityType | DiscriminatorType.Page
-export type RevisionType = EntityRevisionType | DiscriminatorType.PageRevision
+export type RepositoryType = EntityType
+export type RevisionType = EntityRevisionType
 
 export enum EntityType {
   Applet = 'Applet',
@@ -44,6 +42,7 @@ export enum EntityType {
   Event = 'Event',
   Exercise = 'Exercise',
   ExerciseGroup = 'ExerciseGroup',
+  Page = 'Page',
   Video = 'Video',
 }
 
@@ -55,6 +54,7 @@ export enum EntityRevisionType {
   EventRevision = 'EventRevision',
   ExerciseRevision = 'ExerciseRevision',
   ExerciseGroupRevision = 'ExerciseGroupRevision',
+  PageRevision = 'PageRevision',
   VideoRevision = 'VideoRevision',
 }
 
@@ -95,6 +95,7 @@ export const EntityTypeDecoder = t.union([
   t.literal(EntityType.Event),
   t.literal(EntityType.Exercise),
   t.literal(EntityType.ExerciseGroup),
+  t.literal(EntityType.Page),
   t.literal(EntityType.Video),
 ])
 
@@ -119,6 +120,7 @@ export const EntityRevisionTypeDecoder = t.union([
   t.literal(EntityRevisionType.EventRevision),
   t.literal(EntityRevisionType.ExerciseRevision),
   t.literal(EntityRevisionType.ExerciseGroupRevision),
+  t.literal(EntityRevisionType.PageRevision),
   t.literal(EntityRevisionType.VideoRevision),
 ])
 
@@ -133,34 +135,6 @@ export const AbstractEntityRevisionDecoder = t.intersection([
     changes: t.string,
   }),
 ])
-
-export const PageDecoder = t.exact(
-  t.intersection([
-    AbstractUuidDecoder,
-    t.type({
-      __typename: t.literal(DiscriminatorType.Page),
-      instance: InstanceDecoder,
-      currentRevisionId: t.union([t.number, t.null]),
-      revisionIds: t.array(t.number),
-      date: t.string,
-      licenseId: t.number,
-    }),
-  ]),
-)
-
-export const PageRevisionDecoder = t.exact(
-  t.intersection([
-    AbstractUuidDecoder,
-    t.type({
-      __typename: t.literal(DiscriminatorType.PageRevision),
-      title: t.string,
-      content: t.string,
-      date: t.string,
-      authorId: t.number,
-      repositoryId: t.number,
-    }),
-  ]),
-)
 
 export const TaxonomyTermTypeDecoder = t.union([
   t.literal('blog'),
@@ -360,6 +334,24 @@ export const EventRevisionDecoder = t.exact(
       title: t.string,
       metaTitle: t.string,
       metaDescription: t.string,
+    }),
+  ]),
+)
+
+export const PageDecoder = t.exact(
+  t.intersection([
+    AbstractEntityDecoder,
+    t.type({
+      __typename: t.literal(EntityType.Page),
+    }),
+  ]),
+)
+
+export const PageRevisionDecoder = t.exact(
+  t.intersection([
+    AbstractEntityRevisionDecoder,
+    t.type({
+      __typename: t.literal(EntityRevisionType.PageRevision),
     }),
   ]),
 )
