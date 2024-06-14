@@ -235,7 +235,6 @@ const BaseTaxonomy = t.intersection([
     taxonomyName: t.string,
     taxonomyDescription: t.union([t.null, t.string]),
     taxonomyWeight: t.union([t.null, t.number]),
-    taxonomyId: t.number,
     taxonomyParentId: t.union([t.null, t.number]),
     taxonomyChildrenIds: WeightedNumberList,
     taxonomyEntityChildrenIds: WeightedNumberList,
