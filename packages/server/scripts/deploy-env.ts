@@ -49,7 +49,7 @@ function buildDockerImage({ name, context, envName }: DockerImageOptions) {
   const root = path.join(__dirname, '..')
   const dockerfile = path.join(root, 'Dockerfile')
 
-  const build = spawnSync(
+  spawnSync(
     'docker',
     [
       'build',
@@ -60,14 +60,8 @@ function buildDockerImage({ name, context, envName }: DockerImageOptions) {
       '--build-arg',
       `image=${name.replace('api-', '')}`,
     ],
-    { stdio: ['inherit', 'inherit', 'pipe'] },
+    { stdio: 'inherit' },
   )
-
-  if (build.stderr) {
-    // eslint-disable-next-line no-console
-    console.log(Error(build.stderr.toString()))
-    process.exit(1)
-  }
 
   remoteTags.forEach((remoteTag) => {
     // eslint-disable-next-line no-console
