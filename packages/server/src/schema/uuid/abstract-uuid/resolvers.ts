@@ -511,8 +511,6 @@ async function resolveUuidFromDatabase(
         name: baseUuid.taxonomyName,
         description: baseUuid.taxonomyDescription,
         weight: baseUuid.taxonomyWeight ?? 0,
-        // TODO: Remove this property when https://github.com/serlo/frontend/pull/3882 is merged
-        taxonomyId: -1,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
       }
