@@ -54,14 +54,14 @@ async function fetchActivityByType(
             SELECT events.type AS event_type, COUNT(*) AS counts
             FROM (
                 SELECT CASE
-                    WHEN event_id = 5 THEN 'edits'
-                    WHEN event_id IN (6, 11) THEN 'reviews'
-                    WHEN event_id IN (8, 9, 14, 16) THEN 'comments'
+                    WHEN event_type_id = 5 THEN 'edits'
+                    WHEN event_type_id IN (6, 11) THEN 'reviews'
+                    WHEN event_type_id IN (8, 9, 14, 16) THEN 'comments'
                     ELSE 'taxonomy'
                 END AS type
-                FROM event_log
+                FROM event
                 WHERE actor_id = ?
-                    AND event_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
+                    AND event_type_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
             ) events
             GROUP BY events.type
         `,
