@@ -14,7 +14,7 @@ export const course: Model<'Course'> = {
   trashed: false,
   instance: Instance.De,
   alias: '/mathe/18514/überblick-zum-satz-des-pythagoras',
-  date: '2014-03-01T20:45:56Z',
+  date: '2014-03-17T12:22:17.000Z',
   currentRevisionId: 30713,
   revisionIds: [30713],
   licenseId,

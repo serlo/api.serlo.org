@@ -22,6 +22,7 @@ import {
   CreateTaxonomyLinkNotificationEventDecoder,
   CreateTaxonomyTermNotificationEventDecoder,
   CreateThreadNotificationEventDecoder,
+  EntityDecoder,
   EventDecoder,
   EventRevisionDecoder,
   ExerciseDecoder,
@@ -64,7 +65,10 @@ export interface Models {
   ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
-  Subject: { taxonomyTermId: number }
+  Subject: {
+    taxonomyTermId: number
+    allUnrevisedEntities: t.TypeOf<typeof EntityDecoder>[]
+  }
   SubscriptionInfo: t.TypeOf<
     typeof SubscriptionsDecoder
   >['subscriptions'][number]
