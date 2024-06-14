@@ -12,7 +12,7 @@ test('Uuid query for an entity revision', async () => {
       repository: { id: 35295 },
       title: '"falsche Freunde"',
       content:
-        '{"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"wip"}]}],"id":"8abdb955-fa42-442d-87a8-91bfae603101"}],"id":"e5dd1162-7e55-4b1c-aacd-acb267c290ee"}',
+        '{"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"wip"}]}],"id":"7165fed8-d729-45fd-a28c-8ea7c2622953"}],"id":"3b4326f6-88c6-4da8-9bea-f0eb4aa5407a"}',
       changes: '',
       metaTitle: '',
       metaDescription: '',
