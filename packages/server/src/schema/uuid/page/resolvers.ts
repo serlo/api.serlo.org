@@ -101,12 +101,21 @@ export const resolvers: Resolvers = {
   },
   PageQuery: {
     async pages(_parent, payload, context) {
-      const { pages } = await context.dataSources.model.serlo.getPages({
-        instance: payload.instance,
-      })
+      const pages = await context.database.fetchAll<{ id: number }>(
+        `
+        select entity.id
+        from entity
+        join type on entity.type_id = type.id
+        join instance on entity.instance_id = instance.id
+        where type.name = 'page'
+          and (? is null or instance.subdomain = ?)
+        order by entity.id desc`,
+        [payload.instance, payload.instance],
+      )
+
       return await Promise.all(
-        pages.map(async (id: number) =>
-          UuidResolver.resolveWithDecoder(PageDecoder, { id }, context),
+        pages.map((page) =>
+          UuidResolver.resolveWithDecoder(PageDecoder, page, context),
         ),
       )
     },
