@@ -13,7 +13,7 @@ test('TaxonomyTerm root', async () => {
       name: 'Root',
       description: null,
       weight: 0,
-      taxonomyId: 1,
+      taxonomyId: -1,
       path: [],
       parent: null,
       children: {
@@ -55,7 +55,7 @@ test('TaxonomyTerm subject', async () => {
       name: 'Chemie',
       description: '',
       weight: 17,
-      taxonomyId: 3,
+      taxonomyId: -1,
       path: [],
       parent: { id: 3 },
       children: {
@@ -87,7 +87,7 @@ test('TaxonomyTerm exerciseFolder', async () => {
       name: 'Example topic folder',
       description: '',
       weight: 1,
-      taxonomyId: 19,
+      taxonomyId: -1,
       path: [{ id: 23590 }, { id: 23593 }, { id: 35559 }, { id: 35560 }],
       parent: {
         id: 35560,
