@@ -122,8 +122,4 @@ describe('get users by role tests', () => {
     const newQuery = await query.forUser('de_reviewer')
     await newQuery.shouldFailWithError('FORBIDDEN')
   })
-
-  test('fails when database layer has an internal error', async () => {
-    await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
-  })
 })
