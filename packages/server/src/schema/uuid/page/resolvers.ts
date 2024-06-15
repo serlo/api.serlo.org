@@ -70,8 +70,8 @@ export const resolvers: Resolvers = {
         info,
       )
     },
-    async checkoutRevision(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async checkoutRevision(_parent, { input }, context, info) {
+      const { userId } = context
       assertUserIsAuthenticated(userId)
 
       const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
@@ -82,13 +82,13 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.checkoutPageRevision({
-        revisionId: input.revisionId,
-        reason: input.reason,
-        userId,
-      })
+      const resolver = EntityResolvers.EntityMutation!.checkoutRevision!
 
-      return { success: true, query: {} }
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
+      }
+
+      return resolver({}, { input }, context, info)
     },
     async create(_parent, { input }, context, info) {
       context.userId = 1

@@ -41,15 +41,6 @@ export const spec = {
     response: t.type({ success: t.boolean }),
     canBeNull: false,
   },
-  PageCheckoutRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
   UserCreateMutation: {
     payload: t.type({
       username: t.string,
