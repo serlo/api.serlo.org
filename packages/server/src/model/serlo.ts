@@ -75,19 +75,6 @@ export function createSerloModel({
     },
   })
 
-  const addPageRevision = createMutation({
-    type: 'PageAddRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('PageAddRevisionMutation'),
-    mutate: (payload: DatabaseLayer.Payload<'PageAddRevisionMutation'>) => {
-      return DatabaseLayer.makeRequest('PageAddRevisionMutation', payload)
-    },
-    updateCache: async ({ pageId }, { success }) => {
-      if (success) {
-        await UuidResolver.removeCacheEntry({ id: pageId }, context)
-      }
-    },
-  })
-
   const checkoutPageRevision = createMutation({
     type: 'PageCheckoutRevisionMutation',
     decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
@@ -142,7 +129,6 @@ export function createSerloModel({
   })
 
   return {
-    addPageRevision,
     checkoutPageRevision,
     executePrompt,
     getActiveReviewerIds,
