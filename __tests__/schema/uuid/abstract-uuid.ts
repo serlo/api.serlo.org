@@ -1,71 +1,21 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
 import {
-  applet,
-  appletRevision,
   article,
   articleRevision,
   comment,
-  course,
-  coursePage,
-  coursePageRevision,
-  courseRevision,
-  event,
-  eventRevision,
   exercise,
   exerciseGroup,
-  exerciseGroupRevision,
-  exerciseRevision,
   page,
-  pageRevision,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
-  video,
-  videoRevision,
 } from '../../../__fixtures__'
 import { Client, getTypenameAndId, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  UuidType,
-} from '~/model/decoder'
 import { Instance } from '~/types'
 
 const client = new Client()
-
-// Endpoint uuid() returns null for comments
-type AccessibleUuidTypes = Exclude<UuidType, DiscriminatorType.Comment>
-
-const abstractUuidFixtures: Record<
-  AccessibleUuidTypes,
-  Model<'AbstractUuid'>
-> = {
-  [DiscriminatorType.Page]: page,
-  [DiscriminatorType.PageRevision]: pageRevision,
-  [DiscriminatorType.TaxonomyTerm]: taxonomyTermRoot,
-  [DiscriminatorType.User]: user,
-  [EntityType.Applet]: applet,
-  [EntityType.Article]: article,
-  [EntityType.Course]: course,
-  [EntityType.CoursePage]: coursePage,
-  [EntityType.Exercise]: exercise,
-  [EntityType.ExerciseGroup]: exerciseGroup,
-  [EntityType.Event]: event,
-  [EntityType.Video]: video,
-  [EntityRevisionType.AppletRevision]: appletRevision,
-  [EntityRevisionType.ArticleRevision]: articleRevision,
-  [EntityRevisionType.CourseRevision]: courseRevision,
-  [EntityRevisionType.CoursePageRevision]: coursePageRevision,
-  [EntityRevisionType.ExerciseRevision]: exerciseRevision,
-  [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
-  [EntityRevisionType.EventRevision]: eventRevision,
-  [EntityRevisionType.VideoRevision]: videoRevision,
-}
-const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
 
 describe('uuid by alias', () => {
   const uuidQuery = client.prepareQuery({
@@ -194,32 +144,6 @@ test('`uuid` returns null on unsupported uuid type', async () => {
     })
     .withVariables({ id: 146944 })
     .shouldReturnData({ uuid: null })
-})
-
-// TODO: Update those tests when one works at AliasQuery
-describe.skip('property "alias"', () => {
-  describe('returns encoded alias when alias of payloads is a string', () => {
-    test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
-      given('UuidQuery').for({
-        ...payload,
-        alias: '/%%/größe',
-        id: 23,
-      })
-
-      await client
-        .prepareQuery({
-          query: gql`
-            query ($id: Int) {
-              uuid(id: $id) {
-                alias
-              }
-            }
-          `,
-        })
-        .withVariables({ id: 23 })
-        .shouldReturnData({ uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } })
-    })
-  })
 })
 
 describe('custom aliases', () => {
