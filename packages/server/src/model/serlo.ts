@@ -2,7 +2,6 @@ import { option as O } from 'fp-ts'
 
 import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
-import { PageRevisionDecoder } from './decoder'
 import { Context } from '~/context'
 import {
   createLegacyQuery,
@@ -75,27 +74,6 @@ export function createSerloModel({
     },
   })
 
-  const checkoutPageRevision = createMutation({
-    type: 'PageCheckoutRevisionMutation',
-    decoder: DatabaseLayer.getDecoderFor('PageCheckoutRevisionMutation'),
-    mutate(payload: DatabaseLayer.Payload<'PageCheckoutRevisionMutation'>) {
-      return DatabaseLayer.makeRequest('PageCheckoutRevisionMutation', payload)
-    },
-    async updateCache({ revisionId }) {
-      const revision = await UuidResolver.resolveWithDecoder(
-        PageRevisionDecoder,
-        { id: revisionId },
-        context,
-      )
-
-      await UuidResolver.removeCacheEntry(
-        { id: revision.repositoryId },
-        context,
-      )
-      await UuidResolver.removeCacheEntry({ id: revisionId }, context)
-    },
-  })
-
   const getDeletedEntities = createRequest({
     type: 'DeletedEntitiesQuery',
     decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
@@ -129,7 +107,6 @@ export function createSerloModel({
   })
 
   return {
-    checkoutPageRevision,
     executePrompt,
     getActiveReviewerIds,
     getActivityByType,

@@ -379,11 +379,15 @@ export const resolvers: Resolvers = {
         context,
       )
 
+      const scope = instanceToScope(entity.instance)
+      const guard =
+        entity.__typename === EntityType.Page
+          ? serloAuth.Page.checkoutRevision(scope)
+          : serloAuth.Entity.checkoutRevision(scope)
+
       await assertUserIsAuthorized({
         message: 'You are not allowed to check out the provided revision.',
-        guard: serloAuth.Entity.checkoutRevision(
-          instanceToScope(entity.instance),
-        ),
+        guard,
         context,
       })
 
