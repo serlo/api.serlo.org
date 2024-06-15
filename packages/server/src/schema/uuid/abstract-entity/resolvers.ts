@@ -195,14 +195,6 @@ export const resolvers: Resolvers = {
           )
         }
 
-        await assertUserIsAuthorized({
-          context,
-          message: 'You are not allowed to create entities',
-          guard: serloAuth.Uuid.create('EntityRevision')(
-            instanceToScope(entity.instance),
-          ),
-        })
-
         const { insertId: revisionId } = await database.mutate(
           'insert into uuid (trashed, discriminator) values (0, "entityRevision")',
         )
