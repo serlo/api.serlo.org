@@ -138,12 +138,16 @@ export const resolvers: Resolvers = {
             context,
           )
 
+          const scope = instanceToScope(parent.instance)
+          const guard =
+            entityType === EntityType.Page
+              ? serloAuth.Uuid.create('Page')(scope)
+              : serloAuth.Uuid.create('Entity')(scope)
+
           await assertUserIsAuthorized({
             context,
             message: 'You are not allowed to create entities',
-            guard: serloAuth.Uuid.create('Entity')(
-              instanceToScope(parent.instance),
-            ),
+            guard,
           })
 
           const { insertId: newEntityId } = await database.mutate(
