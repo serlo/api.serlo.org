@@ -12,7 +12,12 @@ const outputDir = path.join(root, 'migrations')
 await main()
 
 async function main() {
-  for (const arg of process.argv.slice(2)) {
+  const args =
+    process.argv.slice(2).length > 0
+      ? process.argv.slice(2)
+      : fs.readdirSync(src).filter((file) => file.endsWith('.ts'))
+
+  for (const arg of args) {
     const file = path.join(src, path.basename(arg))
 
     if (!fs.statSync(file).isFile()) {
