@@ -84,6 +84,7 @@ async function createTaxonomyForStaticPages({
   )
 
   if (rootTaxonomy.length === 0) {
+    // eslint-disable-next-line no-console
     console.log('No root taxonomy found for instance', instance)
     return
   }
@@ -98,7 +99,7 @@ async function createTaxonomyForStaticPages({
     apiCache,
   })
 
-  db.runSql(
+  await db.runSql(
     `
     insert into term_taxonomy_entity
       (entity_id, term_taxonomy_id, position)
