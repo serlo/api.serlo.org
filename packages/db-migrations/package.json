@@ -6,7 +6,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "build": "tsx scripts/build.ts",
-    "build:all": "yarn build src/*ts",
+    "build:all": "yarn build",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
     "migrate:run": "scripts/run_migrations.sh",
