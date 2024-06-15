@@ -1,10 +1,6 @@
 import gql from 'graphql-tag'
 
-import {
-  article as baseArticle,
-  coursePage as baseCoursePage,
-} from '../../../__fixtures__'
-import { given, Client } from '../../__utils__'
+import { Client } from '../../__utils__'
 import { Instance } from '~/types'
 
 const query = new Client().prepareQuery({
@@ -24,11 +20,9 @@ const query = new Client().prepareQuery({
   `,
 })
 
-const coursePage = { ...baseCoursePage, instance: Instance.En }
-const article = { ...baseArticle, date: '2015-03-01T20:45:56Z' }
-
-beforeEach(() => {
-  given('DeletedEntitiesQuery').for(article, coursePage)
+beforeEach(async () => {
+  // The database dump does not contain any deleted entities, thus we create some here
+  await databaseForTests.mutate('update uuid set trashed = 1 where id = 1615')
 })
 
 test('returns deleted entities', async () => {
@@ -36,27 +30,7 @@ test('returns deleted entities', async () => {
     entity: {
       deletedEntities: {
         nodes: [
-          {
-            dateOfDeletion: article.date,
-            entity: { id: article.id },
-          },
-          {
-            dateOfDeletion: coursePage.date,
-            entity: { id: coursePage.id },
-          },
-        ],
-      },
-    },
-  })
-
-  await query.withVariables({ first: 1 }).shouldReturnData({
-    entity: {
-      deletedEntities: {
-        nodes: [
-          {
-            dateOfDeletion: article.date,
-            entity: { id: article.id },
-          },
+          { entity: { id: 1615 }, dateOfDeletion: '2014-04-21T14:40:28.000Z' },
         ],
       },
     },
@@ -68,37 +42,20 @@ test('paginates with `after` parameter { entityId, dateOfDeletion}, ', async () 
     .withVariables({
       after: Buffer.from(
         JSON.stringify({
-          id: coursePage.id,
-          dateOfDeletion: coursePage.date,
+          id: 1615,
+          dateOfDeletion: '2014-04-21T14:40:28.000Z',
         }),
       ).toString('base64'),
     })
     .shouldReturnData({
-      entity: {
-        deletedEntities: {
-          nodes: [
-            {
-              dateOfDeletion: article.date,
-              entity: { id: article.id },
-            },
-          ],
-        },
-      },
+      entity: { deletedEntities: { nodes: [] } },
     })
 })
 
 test('filters by instance', async () => {
-  await query
-    .withVariables({
-      instance: Instance.En,
-    })
-    .shouldReturnData({
-      entity: {
-        deletedEntities: {
-          nodes: [{ entity: { id: coursePage.id } }],
-        },
-      },
-    })
+  await query.withVariables({ instance: Instance.En }).shouldReturnData({
+    entity: { deletedEntities: { nodes: [] } },
+  })
 })
 
 test('fails when `first` is too high', async () => {
@@ -111,23 +68,8 @@ test('fails when `after` is malformed', async () => {
   await query
     .withVariables({
       after: Buffer.from(
-        JSON.stringify({
-          id: article.id,
-          dateOfDeletion: 'foo',
-        }),
+        JSON.stringify({ id: 1865, dateOfDeletion: 'foo' }),
       ).toString('base64'),
     })
     .shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer returns a 400er response', async () => {
-  given('DeletedEntitiesQuery').returnsBadRequest()
-
-  await query.shouldFailWithError('BAD_USER_INPUT')
-})
-
-test('fails when database layer has an internal error', async () => {
-  given('DeletedEntitiesQuery').hasInternalServerError()
-
-  await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
 })

@@ -63,19 +63,39 @@ export const resolvers: Resolvers = {
   EntityQuery: {
     async deletedEntities(_parent, payload, context) {
       const LIMIT = 1000
-      const { first = 100, after, instance } = payload
+      const { first = 100, after, instance = null } = payload
 
       if (first > LIMIT)
         throw new UserInputError(`'first' may not be higher than ${LIMIT}`)
 
-      const deletedAfter = after ? decodeDateOfDeletion(after) : undefined
+      const deletedAfter = after
+        ? decodeDateOfDeletion(after)
+        : new Date('9999-12-31')
 
-      const { deletedEntities } =
-        await context.dataSources.model.serlo.getDeletedEntities({
-          first: first + 1,
-          after: deletedAfter,
-          instance,
-        })
+      const deletedEntities = await context.database.fetchAll<{
+        id: number
+        dateOfDeletion: Date
+      }>(
+        `
+        SELECT
+          uuid.id as id,
+          MAX(event.date) AS dateOfDeletion
+        FROM event
+        JOIN uuid ON uuid.id = event.uuid_id
+        JOIN entity ON entity.id = uuid.id
+        JOIN instance ON instance.id = entity.instance_id
+        WHERE uuid.id = event.uuid_id
+            AND event.date < ?
+            AND (? is null OR instance.subdomain = ?)
+            AND event.event_type_id = 10
+            AND uuid.trashed = 1
+            AND entity.type_id NOT IN (35, 39, 40, 41, 42, 43, 44)
+        GROUP BY uuid.id
+        ORDER BY dateOfDeletion DESC
+        LIMIT ?;
+        `,
+        [deletedAfter, instance, instance, first.toString()],
+      )
 
       const nodes = await Promise.all(
         deletedEntities.map(async (node) => {
@@ -85,7 +105,7 @@ export const resolvers: Resolvers = {
               { id: node.id },
               context,
             ),
-            dateOfDeletion: node.dateOfDeletion,
+            dateOfDeletion: node.dateOfDeletion.toISOString(),
           }
         }),
       )
@@ -538,7 +558,7 @@ function decodeDateOfDeletion(after: string) {
       'The encoded dateOfDeletion in `after` should be a string in date format',
     )
 
-  return new Date(dateOfDeletion).toISOString()
+  return new Date(dateOfDeletion)
 }
 
 async function isAutoreviewEntity(
