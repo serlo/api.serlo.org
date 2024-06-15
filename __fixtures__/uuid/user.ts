@@ -25,8 +25,8 @@ export const user2: Model<'User'> = {
 }
 
 export const activityByType = {
-  edits: 55,
-  comments: 162,
+  edits: 162,
+  comments: 55,
   reviews: 164,
   taxonomy: 715,
 }
