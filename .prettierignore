@@ -13,3 +13,6 @@ lerna.json
 
 # Yarn
 .yarn/
+
+# Compiled DB migrations
+packages/db-migrations/migrations/
