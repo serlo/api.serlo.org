@@ -1,12 +1,11 @@
 import gql from 'graphql-tag'
 
-import { page } from '../../../__fixtures__'
 import { Client } from '../../__utils__'
 
 const input = {
   content: 'new content',
   title: 'new title',
-  pageId: page.id,
+  pageId: 19767,
 }
 
 const mutation = new Client().prepareQuery({
