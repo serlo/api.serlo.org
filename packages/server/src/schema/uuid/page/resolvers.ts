@@ -31,8 +31,8 @@ export const resolvers: Resolvers = {
   },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
-    async addRevision(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async addRevision(_parent, { input }, context, info) {
+      const { userId } = context
       assertUserIsAuthenticated(userId)
 
       const { pageId, content, title } = input
@@ -46,13 +46,29 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const { success, revisionId } =
-        await dataSources.model.serlo.addPageRevision({
-          userId,
-          ...input,
-        })
+      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
 
-      return { success, revisionId, query: {} }
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
+      }
+
+      return resolver(
+        {},
+        {
+          input: {
+            entityType: 'Page',
+            changes: 'Page updated',
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            needsReview: false,
+            entityId: pageId,
+            content,
+            title,
+          },
+        },
+        context,
+        info,
+      )
     },
     async checkoutRevision(_parent, { input }, context) {
       const { dataSources, userId } = context
@@ -118,9 +134,6 @@ export const resolvers: Resolvers = {
             parentId: taxonomyId,
             content,
             title,
-            metaDescription: undefined,
-            metaTitle: undefined,
-            url: undefined,
           },
         },
         context,

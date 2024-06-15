@@ -1,7 +1,7 @@
 import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
+import { InstanceDecoder, UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
@@ -39,19 +39,6 @@ export const spec = {
   EntitySortMutation: {
     payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
     response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
-  PageAddRevisionMutation: {
-    payload: t.type({
-      content: t.string,
-      pageId: t.number,
-      title: t.string,
-      userId: t.number,
-    }),
-    response: t.type({
-      success: t.boolean,
-      revisionId: t.union([t.number, t.null]),
-    }),
     canBeNull: false,
   },
   PageCheckoutRevisionMutation: {

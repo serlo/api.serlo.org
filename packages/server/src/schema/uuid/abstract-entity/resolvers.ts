@@ -22,6 +22,7 @@ import {
   EntityType,
   EntityTypeDecoder,
   NotificationEventType,
+  PageDecoder,
   TaxonomyTermDecoder,
 } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -546,6 +547,7 @@ async function isAutoreviewEntity(
   uuid: { id: number },
   context: Context,
 ): Promise<boolean> {
+  if (PageDecoder.is(uuid)) return true
   if (autoreviewTaxonomyIds.includes(uuid.id)) return true
 
   if (t.type({ parentId: t.number }).is(uuid)) {
