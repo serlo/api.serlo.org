@@ -1,4 +1,3 @@
-import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import { PageRevisionDecoder } from './decoder'
 import { Context } from '~/context'
@@ -78,7 +77,6 @@ export function createSerloModel({
     addPageRevision,
     checkoutPageRevision,
     createPage,
-    executePrompt,
     getPages,
     sortEntity,
   }
