@@ -72,24 +72,30 @@ describe('get users by role tests', () => {
   })
 
   describe('get users by localRole', () => {
+    beforeEach(async () => {
+      const { insertId: reviwerId } = await databaseForTests.mutate(
+        "insert into role (name) values ('de_reviewer')",
+      )
+      await databaseForTests.mutate(
+        'insert into role_user (user_id, role_id) values (35377, ?), (24139, ?)',
+        [reviwerId, reviwerId],
+      )
+    })
+
     test('get german reviewers', async () => {
       await query
-        .withVariables({
-          role: localRole,
-          instance,
-          first: 2,
-        })
+        .withVariables({ role: localRole, instance, first: 2 })
         .shouldReturnData({
-          user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+          user: { usersByRole: { nodes: [{ id: 24139 }, { id: 35377 }] } },
         })
     })
 
-    test.skip('get users when scoped admin', async () => {
+    test('get users when scoped admin', async () => {
       const newQuery = await query.forUser('de_admin')
       await newQuery
         .withVariables({ role: localRole, instance, first: 2 })
         .shouldReturnData({
-          user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+          user: { usersByRole: { nodes: [{ id: 24139 }, { id: 35377 }] } },
         })
     })
 
