@@ -1,4 +1,3 @@
-import { executePrompt } from './ai'
 import * as DatabaseLayer from './database-layer'
 import { Context } from '~/context'
 import { createMutation } from '~/internals/data-source-helper'
@@ -24,7 +23,6 @@ export function createSerloModel({
   })
 
   return {
-    executePrompt,
     sortEntity,
   }
 }
