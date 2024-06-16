@@ -196,10 +196,6 @@ describe('User', () => {
   })
 
   test('property "isNewAuthor"', async () => {
-    given('ActivityByTypeQuery')
-      .withPayload({ userId: user.id })
-      .returns(activityByType)
-
     await new Client()
       .prepareQuery({
         query: gql`
@@ -217,10 +213,6 @@ describe('User', () => {
   })
 
   test('property "activityByType"', async () => {
-    given('ActivityByTypeQuery')
-      .withPayload({ userId: user.id })
-      .returns(activityByType)
-
     await new Client()
       .prepareQuery({
         query: gql`
@@ -316,15 +308,13 @@ describe('User', () => {
       .withVariables({ id: user.id })
 
     test('by id (w/ activeReviewer when user is an active reviewer)', async () => {
-      given('ActiveReviewersQuery').returns([user.id])
-
       await query.shouldReturnData({ uuid: { isActiveReviewer: true } })
     })
 
     test('by id (w/ activeReviewer when user is not an active reviewer', async () => {
-      given('ActiveReviewersQuery').returns([])
-
-      await query.shouldReturnData({ uuid: { isActiveReviewer: false } })
+      await query
+        .withVariables({ id: 35377 })
+        .shouldReturnData({ uuid: { isActiveReviewer: false } })
     })
   })
 

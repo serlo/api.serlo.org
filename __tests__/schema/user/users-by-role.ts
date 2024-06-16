@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-import { user as sysadmin, user2 as reviewer } from '../../../__fixtures__'
-import { Client, given, Query } from '../../__utils__'
+import { user as sysadmin } from '../../../__fixtures__'
+import { Client, Query } from '../../__utils__'
 import { Instance, Role } from '~/types'
 
 let client: Client
@@ -43,17 +43,6 @@ describe('get users by role tests', () => {
         first: 3,
         after: 'MQ==',
       })
-
-    const sysadmin2 = { ...sysadmin, id: 2 }
-    const sysadmin3 = { ...sysadmin, id: 6 }
-    const sysadmin4 = { ...sysadmin, id: 10 }
-    const sysadmin5 = { ...sysadmin, id: 396 }
-
-    given('UsersByRoleQuery')
-      .withPayload({ roleName: globalRole, first: 4, after: 1 })
-      .returns({ usersByRole: [2, 6, 10, 396] })
-
-    given('UuidQuery').for(sysadmin, sysadmin2, sysadmin3, sysadmin4, sysadmin5)
   })
 
   describe('get users by globalRole', () => {
@@ -83,32 +72,30 @@ describe('get users by role tests', () => {
   })
 
   describe('get users by localRole', () => {
-    beforeEach(() => {
-      const reviewer2 = { ...reviewer, id: 11 }
-      const reviewer3 = { ...reviewer, id: 30 }
-      given('UsersByRoleQuery')
-        .withPayload({ roleName: 'de_reviewer', first: 3 })
-        .returns({ usersByRole: [11, 23, 30] })
-      given('UuidQuery').for(reviewer, reviewer2, reviewer3)
+    beforeEach(async () => {
+      const { insertId: reviwerId } = await databaseForTests.mutate(
+        "insert into role (name) values ('de_reviewer')",
+      )
+      await databaseForTests.mutate(
+        'insert into role_user (user_id, role_id) values (35377, ?), (24139, ?)',
+        [reviwerId, reviwerId],
+      )
     })
+
     test('get german reviewers', async () => {
       await query
-        .withVariables({
-          role: localRole,
-          instance,
-          first: 2,
-        })
+        .withVariables({ role: localRole, instance, first: 2 })
         .shouldReturnData({
-          user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+          user: { usersByRole: { nodes: [{ id: 24139 }, { id: 35377 }] } },
         })
     })
 
-    test.skip('get users when scoped admin', async () => {
+    test('get users when scoped admin', async () => {
       const newQuery = await query.forUser('de_admin')
       await newQuery
         .withVariables({ role: localRole, instance, first: 2 })
         .shouldReturnData({
-          user: { usersByRole: { nodes: [{ id: 11 }, { id: 23 }] } },
+          user: { usersByRole: { nodes: [{ id: 24139 }, { id: 35377 }] } },
         })
     })
 
@@ -140,11 +127,5 @@ describe('get users by role tests', () => {
   test('fails when user does not have role "admin"', async () => {
     const newQuery = await query.forUser('de_reviewer')
     await newQuery.shouldFailWithError('FORBIDDEN')
-  })
-
-  test('fails when database layer has an internal error', async () => {
-    given('UsersByRoleQuery').hasInternalServerError()
-
-    await query.shouldFailWithError('INTERNAL_SERVER_ERROR')
   })
 })
