@@ -41,6 +41,8 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start:containers
+      - run: scripts/mysql/wait-for-mysql.sh
+      - run: yarn migrate:all
       # It seems that running tests for changing taxonomies in parallel
       # to metadata query messes up with internal optimizatons so that
       # testing metadata endpoint runs into a timout

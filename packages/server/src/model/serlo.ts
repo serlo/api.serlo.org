@@ -52,16 +52,6 @@ export function createSerloModel({
     },
   })
 
-  const getDeletedEntities = createRequest({
-    type: 'DeletedEntitiesQuery',
-    decoder: DatabaseLayer.getDecoderFor('DeletedEntitiesQuery'),
-    async getCurrentValue(
-      payload: DatabaseLayer.Payload<'DeletedEntitiesQuery'>,
-    ) {
-      return DatabaseLayer.makeRequest('DeletedEntitiesQuery', payload)
-    },
-  })
-
   const sortEntity = createMutation({
     type: 'EntitySortMutation',
     decoder: DatabaseLayer.getDecoderFor('EntitySortMutation'),
@@ -89,7 +79,6 @@ export function createSerloModel({
     checkoutPageRevision,
     createPage,
     executePrompt,
-    getDeletedEntities,
     getPages,
     sortEntity,
   }
