@@ -33,6 +33,13 @@ export const entityQuery = new Client().prepareQuery({
             }
           }
         }
+        ... on ThreadAware {
+          threads {
+            nodes {
+              status
+            }
+          }
+        }
       }
     }
   `,
@@ -198,6 +205,18 @@ export const subscriptionsQuery = new Client({ userId: 27393 }).prepareQuery({
             }
             sendEmail
           }
+        }
+      }
+    }
+  `,
+})
+
+export const commentQuery = new Client().prepareQuery({
+  query: gql`
+    query ($id: Int!) {
+      uuid(id: $id) {
+        ... on Comment {
+          content
         }
       }
     }
