@@ -142,23 +142,23 @@ export const resolvers: Resolvers = {
       const first = payload.first ?? 100
       const after = payload.after
         ? parseInt(Buffer.from(payload.after, 'base64').toString())
-        : undefined
+        : 0
 
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
 
-      const roleId = await fetchRoleId(generateRole(role, instance), database)
-
       const usersByRole = await database.fetchAll<{ user_id: number }>(
         `
-          SELECT user_id
+          SELECT
+            role_user.user_id
           FROM role_user
-          WHERE role_id = ?
-            AND (? IS NULL OR user_id > ?)
-          ORDER BY user_id
+          JOIN role ON role_user.role_id = role.id
+          WHERE role.name = ?
+            AND user_id > ?
+          ORDER BY role_user.user_id
           LIMIT ?
         `,
-        [String(roleId), String(after), String(after), String(first + 1)],
+        [generateRole(role, instance), String(after), String(first + 1)],
       )
 
       const users = await Promise.all(
@@ -624,20 +624,6 @@ async function fetchActivityByType(
   })
 
   return result
-}
-
-async function fetchRoleId(
-  roleName: string,
-  database: Database,
-): Promise<number> {
-  const result = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM role WHERE name = ?`,
-    [roleName],
-  )
-  if (result === null) {
-    throw new UserInputError(`This role does not exist: ${roleName}`)
-  }
-  return result.id
 }
 
 async function activeDonorIDs(context: Context) {
