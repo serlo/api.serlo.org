@@ -1,7 +1,7 @@
 import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InstanceDecoder, UuidDecoder } from './decoder'
+import { UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
