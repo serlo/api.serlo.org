@@ -5,11 +5,6 @@ import { UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  EntitySortMutation: {
-    payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
-    response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
   UuidQuery: {
     payload: t.type({ id: t.number }),
     response: UuidDecoder,
