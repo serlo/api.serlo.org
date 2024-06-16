@@ -20,22 +20,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  DeletedEntitiesQuery: {
-    payload: t.type({
-      first: t.number,
-      after: t.union([t.string, t.undefined]),
-      instance: t.union([InstanceDecoder, t.undefined]),
-    }),
-    response: t.type({
-      deletedEntities: t.array(
-        t.type({
-          id: t.number,
-          dateOfDeletion: t.string,
-        }),
-      ),
-    }),
-    canBeNull: false,
-  },
   EntitySortMutation: {
     payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
     response: t.type({ success: t.boolean }),
