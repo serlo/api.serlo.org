@@ -592,19 +592,19 @@ async function fetchActivityByType(
   const rows: { event_type: string; counts: number }[] =
     await database.fetchAll(
       `
-            SELECT events.type AS event_type, COUNT(*) AS counts
-            FROM (
-                SELECT CASE
-                    WHEN event_type_id = 5 THEN 'edits'
-                    WHEN event_type_id IN (6, 11) THEN 'reviews'
-                    WHEN event_type_id IN (8, 9, 14, 16) THEN 'comments'
-                    ELSE 'taxonomy'
-                END AS type
-                FROM event
-                WHERE actor_id = ?
-                    AND event_type_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
-            ) events
-            GROUP BY events.type
+      SELECT events.type AS event_type, COUNT(*) AS counts
+      FROM (
+          SELECT CASE
+              WHEN event_type_id = 5 THEN 'edits'
+              WHEN event_type_id IN (6, 11) THEN 'reviews'
+              WHEN event_type_id IN (8, 9, 14, 16) THEN 'comments'
+              ELSE 'taxonomy'
+          END AS type
+          FROM event
+          WHERE actor_id = ?
+              AND event_type_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
+      ) events
+      GROUP BY events.type
         `,
       [String(userId)],
     )
