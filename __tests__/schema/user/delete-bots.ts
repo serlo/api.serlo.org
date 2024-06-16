@@ -2,18 +2,18 @@ import { createHash } from 'crypto'
 import gql from 'graphql-tag'
 import { HttpResponse, ResponseResolver, http } from 'msw'
 
-import { article, user } from '../../../__fixtures__'
+import { user } from '../../../__fixtures__'
 import {
   Client,
   Query,
   assertErrorEvent,
   assertNoErrorEvents,
-  given,
+  createFakeIdentity,
   returnsJson,
   userQuery,
 } from '../../__utils__'
 
-const input = { botIds: [24034, 24139] }
+const input = { botIds: [35377, 24139] }
 let client: Client
 let chatUsers: string[]
 const emailHash = createHash('md5').update(`126012bd@localhost`).digest('hex')
@@ -38,13 +38,8 @@ beforeEach(() => {
   mailchimpEmails = [emailHash]
 
   for (const botId of input.botIds) {
-    given('ActivityByTypeQuery')
-      .withPayload({ userId: botId })
-      .returns({ edits: 1, comments: 0, reviews: 0, taxonomy: 0 })
-    given('UuidQuery').for({ ...user, id: botId })
+    global.kratos.identities.push(createFakeIdentity({ ...user, id: botId }))
   }
-
-  given('UuidQuery').for(article)
 
   chatUsers = ['126012d3']
 
@@ -190,11 +185,9 @@ test('fails if one of the given bot ids is not a user', async () => {
 })
 
 test('fails if one given bot id has more than 4 edits', async () => {
-  given('ActivityByTypeQuery')
-    .withPayload({ userId: input.botIds[0] })
-    .returns({ edits: 5, comments: 0, reviews: 0, taxonomy: 0 })
-
-  await mutation.shouldFailWithError('BAD_USER_INPUT')
+  await mutation
+    .withInput({ botIds: [24034] })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
 
 test('fails if user is not authenticated', async () => {
