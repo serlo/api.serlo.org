@@ -15,7 +15,6 @@ import {
   createNamespace,
   Model,
 } from '~/internals/graphql'
-import { DatabaseLayer } from '~/model'
 import {
   UuidDecoder,
   DiscriminatorType,
@@ -531,9 +530,7 @@ async function resolveUuidFromDatabase(
     }
   }
 
-  const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
-
-  return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
+  return null
 }
 
 export async function setUuidState(
