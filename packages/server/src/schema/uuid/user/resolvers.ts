@@ -37,79 +37,6 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
-interface ActivityCounts {
-  edits: number
-  reviews: number
-  comments: number
-  taxonomy: number
-}
-
-async function fetchActivityByType(
-  userId: number,
-  database: Database,
-): Promise<ActivityCounts> {
-  const rows: { event_type: string; counts: number }[] =
-    await database.fetchAll(
-      `
-            SELECT events.type AS event_type, COUNT(*) AS counts
-            FROM (
-                SELECT CASE
-                    WHEN event_type_id = 5 THEN 'edits'
-                    WHEN event_type_id IN (6, 11) THEN 'reviews'
-                    WHEN event_type_id IN (8, 9, 14, 16) THEN 'comments'
-                    ELSE 'taxonomy'
-                END AS type
-                FROM event
-                WHERE actor_id = ?
-                    AND event_type_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
-            ) events
-            GROUP BY events.type
-        `,
-      [String(userId)],
-    )
-
-  const result: ActivityCounts = {
-    edits: 0,
-    reviews: 0,
-    comments: 0,
-    taxonomy: 0,
-  }
-
-  rows.forEach((row: { event_type: string; counts: number }) => {
-    if (row.event_type === 'edits') result.edits = row.counts
-    else if (row.event_type === 'reviews') result.reviews = row.counts
-    else if (row.event_type === 'comments') result.comments = row.counts
-    else if (row.event_type === 'taxonomy') result.taxonomy = row.counts
-  })
-
-  return result
-}
-
-export async function resolveIdFromUsername(
-  username: string,
-  { database }: { database: Database },
-): Promise<number | null> {
-  const idResult = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM user WHERE username = ?`,
-    [username],
-  )
-  return idResult?.id ?? null
-}
-
-async function fetchRoleId(
-  roleName: string,
-  database: Database,
-): Promise<number> {
-  const result = await database.fetchOptional<{ id: number }>(
-    `SELECT id FROM role WHERE name = ?`,
-    [roleName],
-  )
-  if (result === null) {
-    throw new UserInputError(`This role does not exist: ${roleName}`)
-  }
-  return result.id
-}
-
 export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
   number[]
@@ -638,6 +565,79 @@ export const resolvers: Resolvers = {
       return { success: true, query: {} }
     },
   },
+}
+
+export async function resolveIdFromUsername(
+  username: string,
+  { database }: { database: Database },
+): Promise<number | null> {
+  const idResult = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM user WHERE username = ?`,
+    [username],
+  )
+  return idResult?.id ?? null
+}
+
+interface ActivityCounts {
+  edits: number
+  reviews: number
+  comments: number
+  taxonomy: number
+}
+
+async function fetchActivityByType(
+  userId: number,
+  database: Database,
+): Promise<ActivityCounts> {
+  const rows: { event_type: string; counts: number }[] =
+    await database.fetchAll(
+      `
+            SELECT events.type AS event_type, COUNT(*) AS counts
+            FROM (
+                SELECT CASE
+                    WHEN event_type_id = 5 THEN 'edits'
+                    WHEN event_type_id IN (6, 11) THEN 'reviews'
+                    WHEN event_type_id IN (8, 9, 14, 16) THEN 'comments'
+                    ELSE 'taxonomy'
+                END AS type
+                FROM event
+                WHERE actor_id = ?
+                    AND event_type_id IN (5, 6, 11, 8, 9, 14, 16, 1, 2, 12, 15, 17)
+            ) events
+            GROUP BY events.type
+        `,
+      [String(userId)],
+    )
+
+  const result: ActivityCounts = {
+    edits: 0,
+    reviews: 0,
+    comments: 0,
+    taxonomy: 0,
+  }
+
+  rows.forEach((row: { event_type: string; counts: number }) => {
+    if (row.event_type === 'edits') result.edits = row.counts
+    else if (row.event_type === 'reviews') result.reviews = row.counts
+    else if (row.event_type === 'comments') result.comments = row.counts
+    else if (row.event_type === 'taxonomy') result.taxonomy = row.counts
+  })
+
+  return result
+}
+
+async function fetchRoleId(
+  roleName: string,
+  database: Database,
+): Promise<number> {
+  const result = await database.fetchOptional<{ id: number }>(
+    `SELECT id FROM role WHERE name = ?`,
+    [roleName],
+  )
+  if (result === null) {
+    throw new UserInputError(`This role does not exist: ${roleName}`)
+  }
+  return result.id
 }
 
 async function activeDonorIDs(context: Context) {
