@@ -1,7 +1,6 @@
 import gql from 'graphql-tag'
 
-import { user, user2 } from '../../../__fixtures__'
-import { getTypenameAndId, Client } from '../../__utils__'
+import { Client } from '../../__utils__'
 
 const query = new Client()
   .prepareQuery({
@@ -11,41 +10,45 @@ const query = new Client()
           potentialSpamUsers(first: $first, after: $after) {
             nodes {
               id
-              __typename
             }
           }
         }
       }
     `,
   })
-  .withVariables({ first: 100, after: null as string | null })
+  .withVariables({ first: 2, after: null as string | null })
 
-describe('endpoint user.potentialSpamUsers', () => {
-  test('without parameter `after`', async () => {
-    const nodes = [getTypenameAndId(user), getTypenameAndId(user2)]
-    await query.shouldReturnData({ user: { potentialSpamUsers: { nodes } } })
-  })
+beforeEach(async () => {
+  await databaseForTests.mutate(
+    "update user set description = 'content' where id in (35390, 35395, 35408)",
+  )
+})
 
-  test('with paramater `after`', async () => {
-    await query
-      .withVariables({
-        first: 100,
-        after: Buffer.from(user.id.toString()).toString('base64'),
-      })
-      .shouldReturnData({
-        user: { potentialSpamUsers: { nodes: [getTypenameAndId(user2)] } },
-      })
+test('without parameter `after`', async () => {
+  await query.shouldReturnData({
+    user: { potentialSpamUsers: { nodes: [{ id: 35395 }, { id: 35390 }] } },
   })
+})
 
-  test('fails when `first` is bigger then 500', async () => {
-    await query
-      .withVariables({ first: 501, after: null })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
+test('with paramater `after`', async () => {
+  await query
+    .withVariables({
+      first: 2,
+      after: Buffer.from('35395').toString('base64'),
+    })
+    .shouldReturnData({
+      user: { potentialSpamUsers: { nodes: [{ id: 35390 }] } },
+    })
+})
 
-  test('fails when `after` is not a valid id', async () => {
-    await query
-      .withVariables({ first: 100, after: 'foo' })
-      .shouldFailWithError('BAD_USER_INPUT')
-  })
+test('fails when `first` is bigger then 500', async () => {
+  await query
+    .withVariables({ first: 501, after: null })
+    .shouldFailWithError('BAD_USER_INPUT')
+})
+
+test('fails when `after` is not a valid id', async () => {
+  await query
+    .withVariables({ first: 100, after: 'foo' })
+    .shouldFailWithError('BAD_USER_INPUT')
 })
