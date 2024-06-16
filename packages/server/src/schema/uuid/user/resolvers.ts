@@ -151,9 +151,10 @@ export const resolvers: Resolvers = {
     async potentialSpamUsers(_parent, payload, context) {
       const { database } = context
       const first = payload.first ?? 10
+      // 2147483647 is the maximum number of INT in mysql
       const after = payload.after
         ? parseInt(Buffer.from(payload.after, 'base64').toString())
-        : null
+        : 2147483647
 
       if (Number.isNaN(after))
         throw new UserInputError('`after` is an illegal id')
@@ -163,33 +164,25 @@ export const resolvers: Resolvers = {
 
       const result = await database.fetchAll<{ id: number }>(
         `
-          SELECT id
-          FROM (
-            SELECT user.id AS id, MAX(role_user.role_id) AS role_id
-            FROM user
-            LEFT JOIN role_user ON user.id = role_user.user_id
-            WHERE user.description IS NOT NULL
-              AND user.description != "NULL"
-              AND (? IS NULL OR user.id < ?)
-            GROUP BY user.id
-          ) A
-          WHERE (role_id IS NULL OR role_id <= 2)
-          ORDER BY id DESC
+          SELECT user.id
+          FROM user
+          LEFT JOIN event ON user.id = event.actor_id
+          LEFT JOIN role_user ON user.id = role_user.user_id
+          WHERE user.id < ?
+            AND user.description IS NOT NULL
+            AND user.description != 'NULL'
+          GROUP BY user.id
+          HAVING
+            COUNT(event.actor_id) < 5
+            AND COALESCE(MAX(role_user.role_id), 0) <= 2
+          ORDER BY user.id DESC
           LIMIT ?
         `,
-        [String(after), String(after), String(first + 1)],
+        [String(after), String(first + 1)],
       )
 
-      const ids = []
-      for (const item of result) {
-        const activity = await fetchActivityByType(item.id, database)
-        if (activity.edits <= 5) {
-          ids.push(item.id)
-        }
-      }
-
       const users = await Promise.all(
-        ids.map((id) =>
+        result.map(({ id }) =>
           UuidResolver.resolveWithDecoder(UserDecoder, { id }, context),
         ),
       )
