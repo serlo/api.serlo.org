@@ -312,7 +312,9 @@ describe('User', () => {
     })
 
     test('by id (w/ activeReviewer when user is not an active reviewer', async () => {
-      await query.shouldReturnData({ uuid: { isActiveReviewer: false } })
+      await query
+        .withVariables({ id: 35377 })
+        .shouldReturnData({ uuid: { isActiveReviewer: false } })
     })
   })
 
