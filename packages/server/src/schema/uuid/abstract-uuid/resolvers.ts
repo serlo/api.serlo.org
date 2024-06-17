@@ -578,7 +578,7 @@ async function resolveIdFromAlias(
   alias: NonNullable<QueryUuidArgs['alias']>,
   context: Context,
 ): Promise<number | null> {
-  const cleanPath = encodePath(decodePath(alias.path))
+  let cleanPath = encodePath(decodePath(alias.path))
 
   if (!cleanPath.startsWith('/')) {
     throw new UserInputError(
@@ -612,6 +612,7 @@ async function resolveIdFromAlias(
     return await resolveIdFromUsername(usernameMatch.groups.username, context)
   }
 
+  cleanPath = cleanPath.slice(1)
   // The following check is to avoid DB lookups for paths that we know do
   // not belong to UUIDs. This is a performance optimization.
   // Original code see https://github.com/serlo/database-layer/blob/71b80050ecda63d616ab34eda0fa1143cb9e3ddc/server/src/alias/model.rs#L17-L63
@@ -663,9 +664,9 @@ async function resolveIdFromAlias(
     return null
   }
 
-  const result = await context.database.fetchOptional<{ id: number }>(
+  const result = await context.database.fetchOptional<{ uuid_id: number }>(
     `
-    select url_alias.id
+    select url_alias.uuid_id
     from url_alias
     join instance on instance.id = url_alias.instance_id
     where instance.subdomain = ? and url_alias.alias = ?
@@ -673,8 +674,7 @@ async function resolveIdFromAlias(
     `,
     [alias.instance, cleanPath],
   )
-
-  return result?.id ?? null
+  return result?.uuid_id ?? null
 }
 
 function toSlug(name: string) {
