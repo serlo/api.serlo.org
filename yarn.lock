@@ -4811,7 +4811,7 @@ __metadata:
     ts-unused-exports: ^10.0.1
     tsx: ^4.9.3
     typescript: ^5.4.5
-    uuid: ^9.0.1
+    uuid: ^10.0.0
   languageName: unknown
   linkType: soft
 
