@@ -1,4 +1,5 @@
 import * as auth from '@serlo/authorization'
+import * as t from 'io-ts'
 import type { RowDataPacket } from 'mysql2/promise'
 
 import {
@@ -22,6 +23,7 @@ import {
   DiscriminatorType,
   EntityDecoder,
   NotificationEventType,
+  TaxonomyTermDecoder,
   UserDecoder,
   UuidDecoder,
 } from '~/model/decoder'
@@ -210,14 +212,19 @@ export const resolvers: Resolvers = {
       const { objectId, title, content, subscribe, sendEmail } = payload.input
 
       const object = await UuidResolver.resolveWithDecoder(
-        EntityDecoder,
+        t.union([EntityDecoder, TaxonomyTermDecoder, UserDecoder]),
         { id: objectId },
         context,
       )
 
+      const scope =
+        'instance' in object
+          ? auth.instanceToScope(object.instance)
+          : auth.Scope.Serlo
+
       assertUserIsAuthenticated(userId)
       await assertUserIsAuthorized({
-        guard: auth.Thread.createThread(auth.instanceToScope(object.instance)),
+        guard: auth.Thread.createThread(scope),
         message: 'You are not allowed to create a thread on this object.',
         context,
       })
@@ -229,6 +236,7 @@ export const resolvers: Resolvers = {
           "insert into uuid (discriminator) values ('comment')",
         )
 
+        const instance = 'instance' in object ? object.instance : 'de'
         await database.mutate(
           `
           insert into comment 
@@ -236,7 +244,7 @@ export const resolvers: Resolvers = {
           select ?, instance.id, ?, ?, ?, ?
           from instance where instance.subdomain = ?
           `,
-          [threadId, userId, objectId, title, content, object.instance],
+          [threadId, userId, objectId, title, content, instance],
         )
 
         await setSubscription(
