@@ -409,6 +409,7 @@ async function resolveUuidFromDatabase(
           return baseUuid.entityParentId != null
             ? {
                 ...entity,
+                alias: `${subjectName}/${baseUuid.entityParentId}/${baseUuid.id}/${slugTitle}`,
                 __typename: EntityType.CoursePage,
                 parentId: baseUuid.entityParentId,
               }
