@@ -169,9 +169,7 @@ export function toGraphQLModel(
       __typename: NotificationEventType.SetLicense,
       repositoryId: event.objectId,
     }
-  } else if (
-    event.type === EventType.CreateEntityLink 
-  ) {
+  } else if (event.type === EventType.CreateEntityLink) {
     return {
       ...base,
       __typename: NotificationEventType.CreateEntityLink,
@@ -274,9 +272,7 @@ function toDatabaseRepresentation(
       type: EventType.SetLicense,
       objectId: event.repositoryId,
     }
-  } else if (
-    event.__typename === NotificationEventType.CreateEntityLink 
-  ) {
+  } else if (event.__typename === NotificationEventType.CreateEntityLink) {
     return {
       ...base,
       type: EventType.CreateEntityLink,
