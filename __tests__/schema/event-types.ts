@@ -13,7 +13,6 @@ import {
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   rejectRevisionNotificationEvent,
-  removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
@@ -46,7 +45,6 @@ describe('creates event successfully with right payload', () => {
     createTaxonomyTermNotificationEvent,
     createThreadNotificationEvent,
     rejectRevisionNotificationEvent,
-    removeEntityLinkNotificationEvent,
     removeTaxonomyLinkNotificationEvent,
     setLicenseNotificationEvent,
     setTaxonomyParentNotificationEvent,
@@ -194,15 +192,6 @@ async function getLastEvent() {
                   id
                 }
                 reason
-              }
-
-              ... on RemoveEntityLinkNotificationEvent {
-                parent {
-                  id
-                }
-                child {
-                  id
-                }
               }
 
               ... on RemoveTaxonomyLinkNotificationEvent {
