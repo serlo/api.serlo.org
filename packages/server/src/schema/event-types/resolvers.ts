@@ -187,18 +187,6 @@ export const resolvers: Resolvers = {
     },
   },
 
-  RemoveEntityLinkNotificationEvent: {
-    ...createNotificationEventResolvers(),
-    async parent(event, _args, context) {
-      const id = event.parentId
-      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
-    },
-    async child(event, _args, context) {
-      const id = event.childId
-      return UuidResolver.resolveWithDecoder(EntityDecoder, { id }, context)
-    },
-  },
-
   CreateEntityLinkNotificationEvent: {
     ...createNotificationEventResolvers(),
     async parent(event, _args, context) {
