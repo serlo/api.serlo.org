@@ -76,10 +76,10 @@ export async function migrateSerloEditorContent({
   await changeUuidContents({
     query: `
           SELECT id, description as content, id as uuid
-          FROM term_taxonomy WHERE id > ?
+          FROM taxonomy WHERE id > ?
         `,
     migrateState,
-    table: 'term_taxonomy',
+    table: 'taxonomy',
     column: 'description',
     apiCache,
     dryRun,
