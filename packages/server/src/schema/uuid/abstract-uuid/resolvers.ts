@@ -378,11 +378,8 @@ async function resolveUuidFromDatabase(
               context,
             )
           : null
-      const subjectName = subject != null ? '/' + toSlug(subject.name) : ''
-      const slugTitle = baseUuid.entityTitle
-        ? toSlug(baseUuid.entityTitle)
-        : baseUuid.id
-
+      const subjectName = subject ? toSlug(subject.name) : 'serlo'
+      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
       const entity = {
         ...base,
         instance: baseUuid.entityInstance,
@@ -390,7 +387,7 @@ async function resolveUuidFromDatabase(
         licenseId: baseUuid.entityLicenseId,
         currentRevisionId: baseUuid.entityCurrentRevisionId,
         taxonomyTermIds,
-        alias: `${subjectName}/${baseUuid.id}/${slugTitle}`,
+        alias: `/${subjectName}/${baseUuid.id}/${slugTitle}`,
         revisionIds: getSortedList(baseUuid.entityRevisionIds),
         canonicalSubjectId: subject != null ? subject.id : null,
       }
@@ -409,7 +406,7 @@ async function resolveUuidFromDatabase(
           return baseUuid.entityParentId != null
             ? {
                 ...entity,
-                alias: `${subjectName}/${baseUuid.entityParentId}/${baseUuid.id}/${slugTitle}`,
+                alias: `/${subjectName}/${baseUuid.entityParentId}/${baseUuid.id}/${slugTitle}`,
                 __typename: EntityType.CoursePage,
                 parentId: baseUuid.entityParentId,
               }
