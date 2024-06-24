@@ -378,15 +378,8 @@ async function resolveUuidFromDatabase(
               context,
             )
           : null
-      const subjectName =
-        subject != null && toSlug(subject.name).length > 0
-          ? toSlug(subject.name)
-          : 'serlo'
-      const slugTitle =
-        baseUuid.entityTitle && toSlug(baseUuid.entityTitle).length > 0
-          ? toSlug(baseUuid.entityTitle)
-          : baseUuid.id
-
+      const subjectName = subject ? toSlug(subject.name) : 'serlo'
+      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
       const entity = {
         ...base,
         instance: baseUuid.entityInstance,
