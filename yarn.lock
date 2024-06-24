@@ -3421,13 +3421,13 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "@nmshd/connector-sdk@npm:4.4.0"
+  version: 4.4.1
+  resolution: "@nmshd/connector-sdk@npm:4.4.1"
   dependencies:
     axios: ^1.7.2
     form-data: ^4.0.0
     qs: ^6.12.1
-  checksum: fa86f3e1a24b2ead09b6c5de5bb51694964993ae567a3f13719ff829f9132d2062f4cc6245d99573c145f628b9ab8b6baa714b4884a7c24fa2af433f41793a4e
+  checksum: 3307e572f367a7c1c13fe2bceddfaa6b14a542f4ddbaa0b9594137a5e373683ab1e59660c3a00ddb8c84960ba0c46a03cc79bf59dead375f8fdc6c37635c791f
   languageName: node
   linkType: hard
 
