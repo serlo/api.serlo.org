@@ -97,7 +97,7 @@ async function fetchChatApi(url: string, init?: RequestInit) {
     },
   })
 
-  return (await response.json()) as unknown
+  return await response.json()
 }
 
 function getChatUrl(endpoint: string) {
