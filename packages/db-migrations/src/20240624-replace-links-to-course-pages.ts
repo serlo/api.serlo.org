@@ -74,10 +74,10 @@ function replaceLinks(object: object, coursePages: CoursePage[]) {
       coursePages.forEach((coursePage) => {
         const { courseId, coursePageId } = coursePage
 
-        console.log('link to course page replaced with new format: ', {
+        /*console.log('link to course page replaced with new format: ', {
           initialHrefValue: object.href,
           ...coursePage,
-        })
+        })*/
         object.href = object.href.replace(
           coursePageId.toString(),
           `${courseId}/${coursePageId}`,

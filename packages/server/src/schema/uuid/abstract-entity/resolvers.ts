@@ -532,8 +532,10 @@ function toDatabaseType(entityType: EntityType) {
   switch (entityType) {
     case EntityType.CoursePage:
       return 'course-page'
+    case EntityType.Exercise:
+      return 'text-exercise'
     case EntityType.ExerciseGroup:
-      return 'exercise-group'
+      return 'text-exercise-group'
     default:
       return entityType.toLowerCase()
   }
