@@ -89,7 +89,7 @@ export const resolvers: Resolvers = {
             AND (? is null OR instance.subdomain = ?)
             AND event.event_type_id = 10
             AND uuid.trashed = 1
-            AND entity.type_id NOT IN (35, 39, 40, 41, 42, 43, 44)
+            AND entity.type_id NOT IN (35, 39, 40, 41, 42, 43, 44, 8)
         GROUP BY uuid.id
         ORDER BY dateOfDeletion DESC
         LIMIT ?;
