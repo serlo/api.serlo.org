@@ -16,21 +16,21 @@ const query = new Client({ userId: user.id }).prepareQuery({
   `,
 })
 
-describe('media.upload', () => {
-  test('returns url for uploading media file', async () => {
-    await query.shouldReturnData({
-      media: {
-        newUpload: {
-          uploadUrl: 'http://google.com/upload',
-          urlAfterUpload: expect.stringMatching(
-            /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/,
-          ) as unknown,
-        },
+test('returns url for uploading media file', async () => {
+  await query.shouldReturnData({
+    media: {
+      newUpload: {
+        uploadUrl: 'http://google.com/upload',
+        urlAfterUpload: expect.stringMatching(
+          /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/,
+        ) as unknown,
       },
-    })
+    },
   })
+})
 
-  test('fails for unauthenticated user', async () => {
-    await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-  })
+test.skip('Successfully uploads media file for moodle users', async () => {})
+
+test('fails for unauthenticated user', async () => {
+  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })

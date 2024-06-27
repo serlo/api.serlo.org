@@ -8,21 +8,30 @@ export const resolvers: Resolvers = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async newUpload(_parent, { mediaType }, { userId, googleStorage }) {
-      assertUserIsAuthenticated(userId)
+    async newUpload(
+      _parent,
+      { mediaType },
+      { userId, googleStorage, isMoodle },
+    ) {
+      if (!isMoodle) assertUserIsAuthenticated(userId)
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
 
-      const [uploadUrl] = await googleStorage
+      const file = googleStorage
         .bucket('assets.serlo.org')
         .file(`${fileHash}.${fileExtension}`)
-        .getSignedUrl({
-          version: 'v4',
-          action: 'write',
-          expires: Date.now() + 15 * 60 * 1000,
-          contentType: mimeType,
-        })
+
+      if (isMoodle) {
+        await file.setMetadata({})
+      }
+
+      const [uploadUrl] = await file.getSignedUrl({
+        version: 'v4',
+        action: 'write',
+        expires: Date.now() + 15 * 60 * 1000,
+        contentType: mimeType,
+      })
 
       return {
         uploadUrl,

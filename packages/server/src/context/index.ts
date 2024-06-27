@@ -20,4 +20,5 @@ export interface Context {
   swrQueue: SwrQueue
   service: Service
   timer: Timer
+  isMoodle: boolean
 }
