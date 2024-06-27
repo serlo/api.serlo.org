@@ -32,7 +32,7 @@ export async function up(db: Database) {
       SELECT
         entity.id AS coursePageId,
         ent2.id AS courseId,
-        ROW_NUMBER() OVER (PARTITION BY ent2.id ORDER BY entity.date) AS page_rank
+        ROW_NUMBER() OVER (PARTITION BY ent2.id ORDER BY entity.id) AS page_rank
       FROM entity
       JOIN entity_link ON entity.id = entity_link.child_id
       JOIN entity ent2 ON entity_link.parent_id = ent2.id
