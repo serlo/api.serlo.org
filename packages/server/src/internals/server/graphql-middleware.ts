@@ -59,6 +59,7 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
+        const isMoodle = req.headers['X-MOODLE_KEY'] === process.env.MOODLE_KEY
         const googleStorage = new Storage()
         const database = new Database(pool)
         const dataSources = {
@@ -68,7 +69,7 @@ export async function applyGraphQLMiddleware({
         if (!authorizationHeader) {
           return Promise.resolve({
             dataSources,
-            service: Service.SerloCloudflareWorker,
+            service: isMoodle ? Service.Moodle : Service.SerloCloudflareWorker,
             userId: null,
             googleStorage,
             database,
@@ -108,6 +109,7 @@ export async function applyGraphQLMiddleware({
           swrQueue,
           authServices,
           timer,
+          isMoodle,
         }
       },
     }),
