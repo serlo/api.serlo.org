@@ -28,14 +28,20 @@ export async function up(db: Database) {
   const apiCache = new ApiCache()
 
   const coursePages = await db.runSql<CoursePage[]>(`
+    WITH RankedPages AS (
       SELECT
         entity.id AS coursePageId,
-        ent2.id AS courseId
+        ent2.id AS courseId,
+        ROW_NUMBER() OVER (PARTITION BY ent2.id ORDER BY entity.date) AS page_rank
       FROM entity
       JOIN entity_link ON entity.id = entity_link.child_id
       JOIN entity ent2 ON entity_link.parent_id = ent2.id
       WHERE entity.type_id = 8
-    `)
+    )
+    SELECT coursePageId, courseId
+    FROM RankedPages
+    WHERE page_rank > 1
+  `)
 
   await migrateSerloEditorContent({
     apiCache,
