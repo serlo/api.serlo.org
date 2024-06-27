@@ -38,7 +38,6 @@ export async function up(db: Database) {
       JOIN entity ent2 ON entity_link.parent_id = ent2.id
       JOIN uuid ON entity.id = uuid.id
       WHERE entity.type_id = 8
-        AND uuid.discriminator = 'entity'
         AND uuid.trashed = 0
         AND entity.current_revision_id IS NOT NULL
     )
