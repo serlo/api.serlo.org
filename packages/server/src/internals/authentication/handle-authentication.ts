@@ -79,6 +79,8 @@ function validateServiceToken(token: string): Service {
           return process.env.SERVER_SERLO_CACHE_WORKER_SECRET
         case Service.NotificationEmailService:
           return process.env.SERVER_SERLO_NOTIFICATION_EMAIL_SERVICE_SECRET
+        case Service.SerloEditorTesting:
+          return process.env.SERLO_EDITOR_TESTING_SECRET
       }
     }
   }
