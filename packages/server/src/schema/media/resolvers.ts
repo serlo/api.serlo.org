@@ -1,6 +1,6 @@
 import { v1 as uuidv1 } from 'uuid'
-import { Service } from '~/context/service'
 
+import { Service } from '~/context/service'
 import { assertUserIsAuthenticated, createNamespace } from '~/internals/graphql'
 import { MediaType, Resolvers } from '~/types'
 
@@ -14,8 +14,9 @@ export const resolvers: Resolvers = {
       { mediaType },
       { userId, googleStorage, service },
     ) {
-      if (service !== Service.SerloEditorTesting)
+      if (service !== Service.SerloEditorTesting) {
         assertUserIsAuthenticated(userId)
+      }
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
