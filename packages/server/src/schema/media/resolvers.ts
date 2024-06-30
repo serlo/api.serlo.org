@@ -1,4 +1,5 @@
 import { v1 as uuidv1 } from 'uuid'
+import { Service } from '~/context/service'
 
 import { assertUserIsAuthenticated, createNamespace } from '~/internals/graphql'
 import { MediaType, Resolvers } from '~/types'
@@ -11,20 +12,22 @@ export const resolvers: Resolvers = {
     async newUpload(
       _parent,
       { mediaType },
-      { userId, googleStorage, isMoodle },
+      { userId, googleStorage, service },
     ) {
-      if (!isMoodle) assertUserIsAuthenticated(userId)
+      if (service !== Service.SerloEditorTesting)
+        assertUserIsAuthenticated(userId)
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
 
-      const file = googleStorage
-        .bucket('assets.serlo.org')
-        .file(`${fileHash}.${fileExtension}`)
+      const bucketName =
+        service === Service.SerloEditorTesting
+          ? 'serlo-editor-testing'
+          : 'assets.serlo.org'
 
-      if (isMoodle) {
-        await file.setMetadata({})
-      }
+      const file = googleStorage
+        .bucket(bucketName)
+        .file(`${fileHash}.${fileExtension}`)
 
       const [uploadUrl] = await file.getSignedUrl({
         version: 'v4',
@@ -35,7 +38,7 @@ export const resolvers: Resolvers = {
 
       return {
         uploadUrl,
-        urlAfterUpload: `https://assets.serlo.org/${fileHash}/image.${fileExtension}`,
+        urlAfterUpload: `https://${bucketName}/${fileHash}/image.${fileExtension}`,
       }
     },
   },
