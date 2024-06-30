@@ -3,5 +3,5 @@ export enum Service {
   SerloCloudflareWorker = 'serlo.org-cloudflare-worker',
   SerloCacheWorker = 'serlo.org-cache-worker',
   NotificationEmailService = 'notification-email-service',
-  Moodle = 'moodle',
+  SerloEditorTesting = 'serlo-editor-testing',
 }

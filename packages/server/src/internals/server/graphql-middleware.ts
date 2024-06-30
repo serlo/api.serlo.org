@@ -1,4 +1,4 @@
-import { ApolloServer } from '@apollo/server'
+import { ApolloServer, ApolloServerOptions } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { Storage } from '@google-cloud/storage'
@@ -59,7 +59,9 @@ export async function applyGraphQLMiddleware({
     graphQLPath,
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
-        const isMoodle = req.headers['X-MOODLE_KEY'] === process.env.MOODLE_KEY
+        const isSerloEditorTesting =
+          req.headers['X-SERLO-EDITOR-TESTING'] ===
+          process.env.SERLO_EDITOR_TESTING_KEY
         const googleStorage = new Storage()
         const database = new Database(pool)
         const dataSources = {
@@ -69,7 +71,9 @@ export async function applyGraphQLMiddleware({
         if (!authorizationHeader) {
           return Promise.resolve({
             dataSources,
-            service: isMoodle ? Service.Moodle : Service.SerloCloudflareWorker,
+            service: isSerloEditorTesting
+              ? Service.SerloEditorTesting
+              : Service.SerloCloudflareWorker,
             userId: null,
             googleStorage,
             database,
@@ -109,7 +113,6 @@ export async function applyGraphQLMiddleware({
           swrQueue,
           authServices,
           timer,
-          isMoodle,
         }
       },
     }),
@@ -125,7 +128,7 @@ export async function applyGraphQLMiddleware({
   return graphQLPath
 }
 
-export function getGraphQLOptions() {
+export function getGraphQLOptions(): ApolloServerOptions<Context> {
   return {
     typeDefs: schema.typeDefs,
     resolvers: schema.resolvers,
