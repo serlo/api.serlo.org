@@ -10,28 +10,29 @@ jobs:
       fail-fast: false
       matrix:
         image: [server, swr-queue-worker]
-        include:
-          - image: server
-            dockerfile: packages/server/docker/server/Dockerfile
-          - image: swr-queue-worker
-            dockerfile: packages/server/docker/swr-queue-worker/Dockerfile
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build the ${{ matrix.image }} image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: false
           load: true
-          file: ${{ matrix.dockerfile }}
+          file: packages/server/Dockerfile
+          build-args: |
+            image=${{ matrix.image }}
           tags: api-${{ matrix.image }}-local-build:latest
       - uses: serlo/configure-repositories/actions/setup-node@main
       - name: Start containers
         run: yarn start:containers
+      - name: Wait until all containers are ready
+        run: sleep 30
       - name: Run the ${{ matrix.image }} docker image
         run: yarn docker:run:${{ matrix.image }}
       - name: Wait a little bit until the container was started
-        run: sleep 10
+        run: sleep 15
+      - name: Let's see if it is running
+        run: docker logs api-${{ matrix.image }}-from-local-build
       - name: Test the docker container ${{ matrix.image }}
         run: yarn test:docker:${{ matrix.image }}

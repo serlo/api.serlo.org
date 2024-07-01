@@ -1,3 +1,4 @@
+import { migrateDB } from '@serlo/db-migrations'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import createApp from 'express'
@@ -20,6 +21,8 @@ export { getGraphQLOptions } from './graphql-middleware'
 
 export async function start() {
   dotenv.config()
+
+  if (process.env.ENVIRONMENT !== 'production') await migrateDB()
 
   initializeSentry({ context: 'server' })
   const timer = createTimer()
@@ -71,6 +74,7 @@ async function initializeServer({
   const kratosPath = applyKratosMiddleware({
     app,
     kratos: authServices.kratos,
+    pool,
   })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 

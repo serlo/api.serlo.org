@@ -4,6 +4,7 @@ import * as t from 'io-ts'
 import { date } from 'io-ts-types/lib/date'
 import * as R from 'ramda'
 
+import { resolveIdFromUsername } from '../user/resolvers'
 import { createCachedResolver } from '~/cached-resolver'
 import { resolveCustomId } from '~/config'
 import { Context } from '~/context'
@@ -24,6 +25,9 @@ import {
   EntityRevisionDecoder,
   PageRevisionDecoder,
   NotificationEventType,
+  EntityType,
+  EntityRevisionType,
+  castToNonEmptyString,
 } from '~/model/decoder'
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
@@ -60,8 +64,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     async uuid(_parent, payload, context) {
-      const { dataSources } = context
-      const id = await resolveIdFromPayload(dataSources, payload)
+      const id = await resolveIdFromPayload(payload, context)
 
       if (id === null) return null
 
@@ -157,9 +160,55 @@ const BaseUuid = t.type({
 })
 
 const WeightedNumberList = t.record(
-  t.union([t.literal('__no_key'), t.number]),
+  t.union([t.literal('__no_key'), t.string]),
   t.union([t.null, t.number]),
 )
+
+type DBEntityType = t.TypeOf<typeof DBEntityType>
+const DBEntityType = t.union([
+  t.literal('applet'),
+  t.literal('article'),
+  t.literal('course'),
+  t.literal('course-page'),
+  t.literal('event'),
+  t.literal('text-exercise'),
+  t.literal('text-exercise-group'),
+  t.literal('video'),
+])
+
+const BaseEntity = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('entity'),
+    entityInstance: InstanceDecoder,
+    entityLicenseId: t.number,
+    entityCurrentRevisionId: t.union([t.null, t.number]),
+    entityDate: date,
+    entityType: DBEntityType,
+    entityRevisionIds: WeightedNumberList,
+    entityTaxonomyIds: WeightedNumberList,
+    entityTitle: t.union([t.string, t.null]),
+    entityChildrenIds: WeightedNumberList,
+    entityParentId: t.union([t.null, t.number]),
+  }),
+])
+
+const BaseEntityRevision = t.intersection([
+  BaseUuid,
+  t.type({
+    discriminator: t.literal('entityRevision'),
+    revisionType: DBEntityType,
+    revisionContent: t.union([t.string, t.null]),
+    revisionDate: date,
+    revisionAuthorId: t.number,
+    revisionRepositoryId: t.number,
+    revisionChanges: t.union([t.string, t.null]),
+    revisionTitle: t.union([t.string, t.null]),
+    revisionMetaTitle: t.union([t.string, t.null]),
+    revisionMetaDescription: t.union([t.string, t.null]),
+    revisionUrl: t.union([t.string, t.null]),
+  }),
+])
 
 const BaseComment = t.intersection([
   BaseUuid,
@@ -186,7 +235,6 @@ const BaseTaxonomy = t.intersection([
     taxonomyName: t.string,
     taxonomyDescription: t.union([t.null, t.string]),
     taxonomyWeight: t.union([t.null, t.number]),
-    taxonomyId: t.number,
     taxonomyParentId: t.union([t.null, t.number]),
     taxonomyChildrenIds: WeightedNumberList,
     taxonomyEntityChildrenIds: WeightedNumberList,
@@ -215,6 +263,37 @@ async function resolveUuidFromDatabase(
       uuid.trashed,
       uuid.discriminator,
 
+      entity_instance.subdomain as entityInstance,
+      entity.license_id as entityLicenseId,
+      entity.current_revision_id as entityCurrentRevisionId,
+      entity.date as entityDate,
+      entity_type.name as entityType,
+      JSON_OBJECTAGG(
+        COALESCE(entity_revision.id, "__no_key"),
+        entity_revision.id
+      ) as entityRevisionIds,
+      JSON_OBJECTAGG(
+        COALESCE(entity_taxonomy.term_taxonomy_id, "__no_key"),
+        entity_taxonomy.term_taxonomy_id
+      ) as entityTaxonomyIds,
+      current_revision.title as entityTitle,
+      JSON_OBJECTAGG(
+        COALESCE(entity_link_child.child_id, "__no_key"),
+        entity_link_child.order
+      ) as entityChildrenIds,
+      MIN(entity_link_parent.parent_id) as entityParentId,
+
+      revision_type.name as revisionType,
+      revision.content as revisionContent,
+      revision.date as revisionDate,
+      revision.author_id as revisionAuthorId,
+      revision.repository_id as revisionRepositoryId,
+      revision.changes as revisionChanges,
+      revision.title as revisionTitle,
+      revision.meta_title as revisionMetaTitle,
+      revision.meta_description as revisionMetaDescription,
+      revision.url as revisionUrl,
+
       comment.author_id AS commentAuthorId,
       comment.title AS commentTitle,
       comment.date AS commentDate,
@@ -233,11 +312,10 @@ async function resolveUuidFromDatabase(
 
       taxonomy_type.name AS taxonomyType,
       taxonomy_instance.subdomain AS taxonomyInstance,
-      term.name AS taxonomyName,
-      term_taxonomy.description AS taxonomyDescription,
-      term_taxonomy.weight AS taxonomyWeight,
-      taxonomy.id AS taxonomyId,
-      term_taxonomy.parent_id AS taxonomyParentId,
+      taxonomy.name AS taxonomyName,
+      taxonomy.description AS taxonomyDescription,
+      taxonomy.weight AS taxonomyWeight,
+      taxonomy.parent_id AS taxonomyParentId,
       JSON_OBJECTAGG(
         COALESCE(taxonomy_child.id, "__no_key"),
         taxonomy_child.weight
@@ -253,23 +331,34 @@ async function resolveUuidFromDatabase(
       JSON_ARRAYAGG(role.name) AS userRoles
 
     FROM uuid
- 
+
     LEFT JOIN comment ON comment.id = uuid.id
     LEFT JOIN comment comment_children ON comment_children.parent_id = comment.id
     LEFT JOIN comment_status ON comment_status.id = comment.comment_status_id
 
-    LEFT JOIN term_taxonomy ON term_taxonomy.id = uuid.id
-    LEFT JOIN taxonomy ON taxonomy.id = term_taxonomy.taxonomy_id
+    left join entity on entity.id = uuid.id
+    left join instance entity_instance on entity_instance.id = entity.instance_id
+    left join type entity_type on entity_type.id = entity.type_id
+    left join entity_revision on entity_revision.repository_id = entity.id
+    left join term_taxonomy_entity entity_taxonomy on entity_taxonomy.entity_id = entity.id
+    left join entity_revision current_revision on current_revision.id = entity.current_revision_id
+    left join entity_link entity_link_child on entity_link_child.parent_id = entity.id
+    left join entity_link entity_link_parent on entity_link_parent.child_id = entity.id
+
+    left join entity_revision revision on revision.id = uuid.id
+    left join entity revision_entity on revision_entity.id = revision.repository_id
+    left join type revision_type on revision_entity.type_id = revision_type.id
+
+    LEFT JOIN taxonomy ON taxonomy.id = uuid.id
     LEFT JOIN type taxonomy_type ON taxonomy_type.id = taxonomy.type_id
     LEFT JOIN instance taxonomy_instance ON taxonomy_instance.id = taxonomy.instance_id
-    LEFT JOIN term ON term.id = term_taxonomy.term_id
-    LEFT JOIN term_taxonomy taxonomy_child ON taxonomy_child.parent_id = term_taxonomy.id
-    LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = term_taxonomy.id
+    LEFT JOIN taxonomy taxonomy_child ON taxonomy_child.parent_id = taxonomy.id
+    LEFT JOIN term_taxonomy_entity ON term_taxonomy_entity.term_taxonomy_id = taxonomy.id
 
     LEFT JOIN user ON user.id = uuid.id
     LEFT JOIN role_user ON user.id = role_user.user_id
     LEFT JOIN role ON role.id = role_user.role_id
-    
+
     WHERE uuid.id = ?
     GROUP BY uuid.id
     `,
@@ -279,7 +368,107 @@ async function resolveUuidFromDatabase(
   if (BaseUuid.is(baseUuid)) {
     const base = { id: baseUuid.id, trashed: Boolean(baseUuid.trashed) }
 
-    if (BaseComment.is(baseUuid)) {
+    if (BaseEntity.is(baseUuid)) {
+      const taxonomyTermIds = getSortedList(baseUuid.entityTaxonomyIds)
+
+      const subject =
+        taxonomyTermIds.length > 0
+          ? await SubjectResolver.resolve(
+              { taxonomyId: taxonomyTermIds[0] },
+              context,
+            )
+          : null
+      const subjectName = subject ? toSlug(subject.name) : 'serlo'
+      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
+      const entity = {
+        ...base,
+        instance: baseUuid.entityInstance,
+        date: baseUuid.entityDate.toISOString(),
+        licenseId: baseUuid.entityLicenseId,
+        currentRevisionId: baseUuid.entityCurrentRevisionId,
+        taxonomyTermIds,
+        alias: `/${subjectName}/${baseUuid.id}/${slugTitle}`,
+        revisionIds: getSortedList(baseUuid.entityRevisionIds),
+        canonicalSubjectId: subject != null ? subject.id : null,
+      }
+      switch (baseUuid.entityType) {
+        case 'applet':
+          return { ...entity, __typename: EntityType.Applet }
+        case 'article':
+          return { ...entity, __typename: EntityType.Article }
+        case 'course':
+          return {
+            ...entity,
+            __typename: EntityType.Course,
+            pageIds: getSortedList(baseUuid.entityChildrenIds),
+          }
+        case 'course-page':
+          return baseUuid.entityParentId != null
+            ? {
+                ...entity,
+                alias: `/${subjectName}/${baseUuid.entityParentId}/${baseUuid.id}/${slugTitle}`,
+                __typename: EntityType.CoursePage,
+                parentId: baseUuid.entityParentId,
+              }
+            : null
+        case 'event':
+          return { ...entity, __typename: EntityType.Event }
+        case 'text-exercise':
+          return { ...entity, __typename: EntityType.Exercise }
+        case 'text-exercise-group':
+          return { ...entity, __typename: EntityType.ExerciseGroup }
+        default:
+          return { ...entity, __typename: EntityType.Video }
+      }
+    } else if (BaseEntityRevision.is(baseUuid)) {
+      const defaultContent = JSON.stringify({ plugin: 'rows', state: [] })
+      const content =
+        baseUuid.revisionContent != null && baseUuid.revisionContent.length > 0
+          ? baseUuid.revisionContent
+          : defaultContent
+      const revision = {
+        ...base,
+        alias: `/entity/repository/compare/${baseUuid.revisionRepositoryId}/${baseUuid.id}`,
+        content: castToNonEmptyString(content),
+        date: baseUuid.revisionDate.toISOString(),
+        authorId: baseUuid.revisionAuthorId,
+        changes: baseUuid.revisionChanges ?? '',
+        title:
+          baseUuid.revisionTitle ?? `${baseUuid.revisionType} ${baseUuid.id}`,
+        metaTitle: baseUuid.revisionMetaTitle ?? '',
+        metaDescription: baseUuid.revisionMetaDescription ?? '',
+        repositoryId: baseUuid.revisionRepositoryId,
+        url: baseUuid.revisionUrl ?? '',
+      }
+
+      switch (baseUuid.revisionType) {
+        case 'applet':
+          return { ...revision, __typename: EntityRevisionType.AppletRevision }
+        case 'article':
+          return { ...revision, __typename: EntityRevisionType.ArticleRevision }
+        case 'course':
+          return { ...revision, __typename: EntityRevisionType.CourseRevision }
+        case 'course-page':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.CoursePageRevision,
+          }
+        case 'event':
+          return { ...revision, __typename: EntityRevisionType.EventRevision }
+        case 'text-exercise':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.ExerciseRevision,
+          }
+        case 'text-exercise-group':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.ExerciseGroupRevision,
+          }
+        default:
+          return { ...revision, __typename: EntityRevisionType.VideoRevision }
+      }
+    } else if (BaseComment.is(baseUuid)) {
       const parentId =
         baseUuid.commentParentUuid ?? baseUuid.commentParentCommentId ?? null
 
@@ -320,7 +509,6 @@ async function resolveUuidFromDatabase(
         name: baseUuid.taxonomyName,
         description: baseUuid.taxonomyDescription,
         weight: baseUuid.taxonomyWeight ?? 0,
-        taxonomyId: baseUuid.taxonomyId,
         parentId: baseUuid.taxonomyParentId,
         childrenIds,
       }
@@ -374,12 +562,9 @@ function getTaxonomyTermType(type: string) {
   }
 }
 
-async function resolveIdFromPayload(
-  dataSources: Context['dataSources'],
-  payload: QueryUuidArgs,
-) {
+async function resolveIdFromPayload(payload: QueryUuidArgs, context: Context) {
   if (payload.alias) {
-    return await resolveIdFromAlias(dataSources, payload.alias)
+    return await resolveIdFromAlias(payload.alias, context)
   } else if (payload.id) {
     return payload.id
   } else {
@@ -388,10 +573,10 @@ async function resolveIdFromPayload(
 }
 
 async function resolveIdFromAlias(
-  dataSources: Context['dataSources'],
   alias: NonNullable<QueryUuidArgs['alias']>,
+  context: Context,
 ): Promise<number | null> {
-  const cleanPath = encodePath(decodePath(alias.path))
+  let cleanPath = encodePath(decodePath(alias.path))
 
   if (!cleanPath.startsWith('/')) {
     throw new UserInputError(
@@ -402,8 +587,8 @@ async function resolveIdFromAlias(
   for (const regex of [
     /^\/(?<id>\d+)$/,
     /^\/entity\/view\/(?<id>\d+)$/,
-    /^\/(?<instance>[^/]+\/)(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)$/,
-    /^\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
+    /^\/entity\/repository\/compare\/(?<entityId>\d+)\/(?<id>\d+)$/,
+    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[\w-]+\/)?(?<id>\d+)(?<coursePageId>\/[0-9a-f]+)?\/(?<title>[^/]*)$/,
     /^\/user\/profile\/(?<id>\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)
@@ -417,7 +602,77 @@ async function resolveIdFromAlias(
   })
   if (customId) return customId
 
-  return (await dataSources.model.serlo.getAlias(alias))?.id ?? null
+  const usernameMatch = /^\/user\/profile\/(?<username>[^/]+)\/?$/.exec(
+    cleanPath,
+  )
+
+  if (usernameMatch && usernameMatch.groups !== undefined) {
+    return await resolveIdFromUsername(usernameMatch.groups.username, context)
+  }
+
+  cleanPath = cleanPath.slice(1)
+  // The following check is to avoid DB lookups for paths that we know do
+  // not belong to UUIDs. This is a performance optimization.
+  // Original code see https://github.com/serlo/database-layer/blob/71b80050ecda63d616ab34eda0fa1143cb9e3ddc/server/src/alias/model.rs#L17-L63
+  if (
+    cleanPath.startsWith('backend') ||
+    cleanPath.startsWith('horizon/') ||
+    cleanPath.startsWith('api/') ||
+    cleanPath === '' ||
+    cleanPath === '/' ||
+    cleanPath == 'application' ||
+    cleanPath.startsWith('application/') ||
+    cleanPath.startsWith('attachment/file/') ||
+    cleanPath.startsWith('attachment/upload') ||
+    cleanPath.startsWith('auth/') ||
+    cleanPath.startsWith('authorization/') ||
+    cleanPath.startsWith('blog') ||
+    cleanPath.startsWith('discussion/') ||
+    cleanPath.startsWith('discussions/') ||
+    cleanPath.startsWith('entities/') ||
+    cleanPath.startsWith('entity/') ||
+    cleanPath.startsWith('event/') ||
+    cleanPath.startsWith('flag/') ||
+    cleanPath.startsWith('license/') ||
+    cleanPath.startsWith('navigation/') ||
+    cleanPath.startsWith('meta/') ||
+    cleanPath.startsWith('ref/') ||
+    cleanPath.startsWith('sitemap/') ||
+    cleanPath.startsWith('notification/') ||
+    cleanPath.startsWith('subscribe/') ||
+    cleanPath.startsWith('unsubscribe/') ||
+    cleanPath.startsWith('subscription/') ||
+    cleanPath.startsWith('subscriptions/') ||
+    cleanPath == 'pages' ||
+    cleanPath.startsWith('page/') ||
+    cleanPath.startsWith('related_content/') ||
+    cleanPath == 'search' ||
+    cleanPath == 'session/gc' ||
+    cleanPath == 'spenden' ||
+    cleanPath.startsWith('taxonomies/') ||
+    cleanPath.startsWith('taxonomy/') ||
+    cleanPath == 'users' ||
+    cleanPath == 'user/me' ||
+    cleanPath == 'user/public' ||
+    cleanPath == 'user/register' ||
+    cleanPath == 'user/settings' ||
+    cleanPath.startsWith('user/remove/') ||
+    cleanPath.startsWith('uuid/')
+  ) {
+    return null
+  }
+
+  const result = await context.database.fetchOptional<{ uuid_id: number }>(
+    `
+    select url_alias.uuid_id
+    from url_alias
+    join instance on instance.id = url_alias.instance_id
+    where instance.subdomain = ? and url_alias.alias = ?
+    order by url_alias.timestamp desc
+    `,
+    [alias.instance, cleanPath],
+  )
+  return result?.uuid_id ?? null
 }
 
 function toSlug(name: string) {

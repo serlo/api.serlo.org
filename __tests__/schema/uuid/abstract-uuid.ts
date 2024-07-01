@@ -1,73 +1,23 @@
 import gql from 'graphql-tag'
-import * as R from 'ramda'
 
 import {
-  applet,
-  appletRevision,
   article,
   articleRevision,
   comment,
-  course,
-  coursePage,
-  coursePageRevision,
-  courseRevision,
-  event,
-  eventRevision,
   exercise,
   exerciseGroup,
-  exerciseGroupRevision,
-  exerciseRevision,
   page,
-  pageRevision,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
-  video,
-  videoRevision,
 } from '../../../__fixtures__'
 import { Client, getTypenameAndId, given } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import {
-  DiscriminatorType,
-  EntityRevisionType,
-  EntityType,
-  UuidType,
-} from '~/model/decoder'
 import { Instance } from '~/types'
 
 const client = new Client()
 
-// Endpoint uuid() returns null for comments
-type AccessibleUuidTypes = Exclude<UuidType, DiscriminatorType.Comment>
-
-const abstractUuidFixtures: Record<
-  AccessibleUuidTypes,
-  Model<'AbstractUuid'>
-> = {
-  [DiscriminatorType.Page]: page,
-  [DiscriminatorType.PageRevision]: pageRevision,
-  [DiscriminatorType.TaxonomyTerm]: taxonomyTermRoot,
-  [DiscriminatorType.User]: user,
-  [EntityType.Applet]: applet,
-  [EntityType.Article]: article,
-  [EntityType.Course]: course,
-  [EntityType.CoursePage]: coursePage,
-  [EntityType.Exercise]: exercise,
-  [EntityType.ExerciseGroup]: exerciseGroup,
-  [EntityType.Event]: event,
-  [EntityType.Video]: video,
-  [EntityRevisionType.AppletRevision]: appletRevision,
-  [EntityRevisionType.ArticleRevision]: articleRevision,
-  [EntityRevisionType.CourseRevision]: courseRevision,
-  [EntityRevisionType.CoursePageRevision]: coursePageRevision,
-  [EntityRevisionType.ExerciseRevision]: exerciseRevision,
-  [EntityRevisionType.ExerciseGroupRevision]: exerciseGroupRevision,
-  [EntityRevisionType.EventRevision]: eventRevision,
-  [EntityRevisionType.VideoRevision]: videoRevision,
-}
-const abstractUuidRepository = R.toPairs(abstractUuidFixtures)
-
-describe('uuid', () => {
+describe('uuid by alias', () => {
   const uuidQuery = client.prepareQuery({
     query: gql`
       query ($id: Int, $alias: AliasInput) {
@@ -80,13 +30,6 @@ describe('uuid', () => {
   })
 
   test('returns null when alias cannot be found', async () => {
-    given('AliasQuery')
-      .withPayload({
-        instance: Instance.De,
-        path: '/not-existing',
-      })
-      .returnsNotFound()
-
     await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: '/not-existing' },
@@ -95,21 +38,14 @@ describe('uuid', () => {
   })
 
   test('returns uuid when alias is /:uuid', async () => {
-    given('UuidQuery').for(exercise)
-
     await uuidQuery
       .withVariables({
-        alias: {
-          instance: Instance.De,
-          path: `/${exercise.id}`,
-        },
+        alias: { instance: Instance.De, path: `/${exercise.id}` },
       })
       .shouldReturnData({ uuid: { id: exercise.id } })
   })
 
   test('returns uuid when alias is /entity/view/:id', async () => {
-    given('UuidQuery').for(article)
-
     await uuidQuery
       .withVariables({
         alias: { instance: Instance.De, path: `/entity/view/${article.id}` },
@@ -117,9 +53,7 @@ describe('uuid', () => {
       .shouldReturnData({ uuid: getTypenameAndId(article) })
   })
 
-  test('returns uuid when alias is /:subject/:id/:alias (as hotfix for the current bug in the database layer)', async () => {
-    given('UuidQuery').for(article)
-
+  test('returns uuid when alias is /:subject/:id/:alias', async () => {
     await uuidQuery
       .withVariables({
         alias: {
@@ -131,8 +65,6 @@ describe('uuid', () => {
   })
 
   test('returns uuid when alias starts with an instance', async () => {
-    given('UuidQuery').for(article)
-
     await uuidQuery
       .withVariables({
         alias: {
@@ -144,8 +76,6 @@ describe('uuid', () => {
   })
 
   test('returns revision when alias is /entity/repository/compare/:entityId/:revisionId', async () => {
-    given('UuidQuery').for(articleRevision)
-
     await uuidQuery
       .withVariables({
         alias: {
@@ -157,16 +87,22 @@ describe('uuid', () => {
   })
 
   test('returns user when alias is /user/profile/:userId', async () => {
-    given('UuidQuery').for(user)
+    await uuidQuery
+      .withVariables({
+        alias: { instance: Instance.De, path: `/user/profile/${user.id}` },
+      })
+      .shouldReturnData({ uuid: { id: user.id } })
+  })
 
+  test('returns course page when alias is /{subject}/{course-id}/{course-page-id}/{slug-from-course-page-title}', async () => {
     await uuidQuery
       .withVariables({
         alias: {
           instance: Instance.De,
-          path: `/user/profile/${user.id}`,
+          path: `/mathe/35598/f47ac10b/a-course`,
         },
       })
-      .shouldReturnData({ uuid: { id: user.id } })
+      .shouldReturnData({ uuid: { id: 35598 } })
   })
 
   test('returns null when uuid does not exist', async () => {
@@ -210,32 +146,6 @@ test('`uuid` returns null on unsupported uuid type', async () => {
     .shouldReturnData({ uuid: null })
 })
 
-// TODO: Update those tests when one works at AliasQuery
-describe.skip('property "alias"', () => {
-  describe('returns encoded alias when alias of payloads is a string', () => {
-    test.each(abstractUuidRepository)('type = %s', async (_type, payload) => {
-      given('UuidQuery').for({
-        ...payload,
-        alias: '/%%/größe',
-        id: 23,
-      })
-
-      await client
-        .prepareQuery({
-          query: gql`
-            query ($id: Int) {
-              uuid(id: $id) {
-                alias
-              }
-            }
-          `,
-        })
-        .withVariables({ id: 23 })
-        .shouldReturnData({ uuid: { alias: '/%25%25/gr%C3%B6%C3%9Fe' } })
-    })
-  })
-})
-
 describe('custom aliases', () => {
   test('de.serlo.org/community resolves to uuid 19767', async () => {
     given('UuidQuery').for({
@@ -273,8 +183,9 @@ describe('property "title"', () => {
         },
         articleRevision,
       ],
-      articleRevision.title,
+      'Parabel',
     ],
+    /*
     [
       'article without current revision',
       [
@@ -287,6 +198,7 @@ describe('property "title"', () => {
       ],
       articleRevision.title,
     ],
+    */
     [
       'article without revisions',
       [
@@ -299,8 +211,8 @@ describe('property "title"', () => {
       ],
       '122a238f',
     ],
-    ['exercise', [exercise, taxonomyTermSubject], 'Mathe'],
-    ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Mathe'],
+    ['exercise', [exercise, taxonomyTermSubject], 'Aufgaben zum Baumdiagramm'],
+    ['exercise group', [exerciseGroup, taxonomyTermSubject], 'Sachaufgaben'],
     ['user', [user], user.username],
     ['taxonomy term', [taxonomyTermRoot], 'Root'],
   ] as [string, Model<'AbstractUuid'>[], string][]

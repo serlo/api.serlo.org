@@ -70,13 +70,13 @@ export const resolvers: Resolvers = {
         `
           WITH RECURSIVE descendants AS (
                     SELECT id, parent_id
-                    FROM term_taxonomy
+                    FROM taxonomy
                     WHERE (? is null OR id = ?)
 
                     UNION
 
                     SELECT tt.id, tt.parent_id
-                    FROM term_taxonomy tt
+                    FROM taxonomy tt
                     JOIN descendants d ON tt.parent_id = d.id
                 ), subject_entities AS (
                 SELECT id as entity_id FROM descendants

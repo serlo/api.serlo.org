@@ -1,117 +1,10 @@
 import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import {
-  EntityDecoder,
-  EntityRevisionTypeDecoder,
-  EntityTypeDecoder,
-  InstanceDecoder,
-  PageDecoder,
-  UuidDecoder,
-} from './decoder'
+import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
-  ActiveReviewersQuery: {
-    payload: t.undefined,
-    response: t.array(t.number),
-    canBeNull: false,
-  },
-  ActivityByTypeQuery: {
-    payload: t.type({ userId: t.number }),
-    response: t.type({
-      edits: t.number,
-      comments: t.number,
-      reviews: t.number,
-      taxonomy: t.number,
-    }),
-    canBeNull: false,
-  },
-  AliasQuery: {
-    payload: t.type({ path: t.string, instance: InstanceDecoder }),
-    response: t.type({
-      id: t.number,
-      instance: InstanceDecoder,
-      path: t.string,
-    }),
-    canBeNull: true,
-  },
-  DeletedEntitiesQuery: {
-    payload: t.type({
-      first: t.number,
-      after: t.union([t.string, t.undefined]),
-      instance: t.union([InstanceDecoder, t.undefined]),
-    }),
-    response: t.type({
-      deletedEntities: t.array(
-        t.type({
-          id: t.number,
-          dateOfDeletion: t.string,
-        }),
-      ),
-    }),
-    canBeNull: false,
-  },
-  EntityAddRevisionMutation: {
-    payload: t.type({
-      userId: t.number,
-      revisionType: EntityRevisionTypeDecoder,
-      input: t.type({
-        changes: t.string,
-        entityId: t.number,
-        needsReview: t.boolean,
-        subscribeThis: t.boolean,
-        subscribeThisByEmail: t.boolean,
-        fields: t.record(t.string, t.union([t.string, t.undefined])),
-      }),
-    }),
-    response: t.type({
-      success: t.literal(true),
-      revisionId: t.number,
-    }),
-    canBeNull: false,
-  },
-  EntityCheckoutRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  EntityRejectRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  EntityCreateMutation: {
-    payload: t.type({
-      userId: t.number,
-      entityType: EntityTypeDecoder,
-      input: t.intersection([
-        t.type({
-          changes: t.string,
-          licenseId: t.number,
-          needsReview: t.boolean,
-          subscribeThis: t.boolean,
-          subscribeThisByEmail: t.boolean,
-          fields: t.record(t.string, t.string),
-        }),
-        // TODO: prefer union
-        t.partial({
-          parentId: t.number,
-          taxonomyTermId: t.number,
-        }),
-      ]),
-    }),
-    response: EntityDecoder,
-    canBeNull: false,
-  },
   EntitySortMutation: {
     payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
     response: t.type({ success: t.boolean }),
@@ -165,55 +58,6 @@ export const spec = {
     }),
     canBeNull: false,
   },
-  EntitySetLicenseMutation: {
-    payload: t.type({
-      entityId: t.number,
-      licenseId: t.number,
-      userId: t.number,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  UnrevisedEntitiesQuery: {
-    payload: t.type({}),
-    response: t.strict({ unrevisedEntityIds: t.array(t.number) }),
-    canBeNull: false,
-  },
-  UserCreateMutation: {
-    payload: t.type({
-      username: t.string,
-      password: t.string,
-      email: t.string,
-    }),
-    response: t.strict({
-      success: t.literal(true),
-      userId: t.number,
-    }),
-    canBeNull: false,
-  },
-  UsersByRoleQuery: {
-    payload: t.type({
-      roleName: t.string,
-      first: t.number,
-      after: t.union([t.number, t.undefined]),
-    }),
-    response: t.strict({
-      usersByRole: t.array(t.number),
-    }),
-    canBeNull: false,
-  },
-  UserPotentialSpamUsersQuery: {
-    payload: t.type({ first: t.number, after: t.union([t.number, t.null]) }),
-    response: t.type({ userIds: t.array(t.number) }),
-    canBeNull: false,
-  },
-  UserRemoveRoleMutation: {
-    payload: t.type({ username: t.string, roleName: t.string }),
-    response: t.strict({
-      success: t.literal(true),
-    }),
-    canBeNull: false,
-  },
   UuidQuery: {
     payload: t.type({ id: t.number }),
     response: UuidDecoder,
@@ -237,7 +81,7 @@ export async function makeRequest<M extends MessageType>(
   })
 
   if (response.status === 200) {
-    return await response.json()
+    return (await response.json()) as unknown
   } else if (response.status === 404 && spec[type].canBeNull) {
     // TODO: Here we can check whether the body is "null" and report it to
     // Sentry

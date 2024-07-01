@@ -127,16 +127,6 @@ type CreateTaxonomyTermNotificationEvent implements AbstractNotificationEvent & 
   taxonomyTerm: TaxonomyTerm!
 }
 
-type RemoveEntityLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
-  id: Int!
-  instance: Instance!
-  date: DateTime!
-  actor: User!
-  objectId: Int!
-  parent: AbstractEntity!
-  child: AbstractEntity!
-}
-
 type CreateEntityLinkNotificationEvent implements AbstractNotificationEvent & InstanceAware {
   id: Int!
   instance: Instance!

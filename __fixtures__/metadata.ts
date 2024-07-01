@@ -266,6 +266,26 @@ const courseMetadata = {
   ],
   creator: [
     {
+      id: 'https://serlo.org/15473',
+      name: '125f3e12',
+      type: 'Person',
+      affiliation: {
+        id: 'https://serlo.org/organization',
+        name: 'Serlo Education e.V.',
+        type: 'Organization',
+      },
+    },
+    {
+      id: 'https://serlo.org/15491',
+      name: '125f4a84',
+      type: 'Person',
+      affiliation: {
+        id: 'https://serlo.org/organization',
+        name: 'Serlo Education e.V.',
+        type: 'Organization',
+      },
+    },
+    {
       id: 'https://serlo.org/324',
       name: '122d486a',
       type: 'Person',

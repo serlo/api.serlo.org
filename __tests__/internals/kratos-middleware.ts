@@ -1,8 +1,8 @@
 import express, { Express } from 'express'
 import type { Server } from 'http'
 import { bypass } from 'msw'
+import { createPool } from 'mysql2/promise'
 
-import { given } from '../__utils__'
 import { Identity, Kratos } from '~/context/auth-services'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
@@ -32,10 +32,6 @@ describe('Kratos middleware - register endpoint', () => {
   })
 
   test('successful if it finds an account to sync', async () => {
-    given('UserCreateMutation').returns({
-      userId: 1,
-      success: true,
-    })
     // eslint-disable-next-line @typescript-eslint/unbound-method
     kratosMock.db.executeSingleQuery<Identity> = async () => {
       return Promise.resolve([
@@ -162,6 +158,7 @@ function createKratosMiddlewareBeforeEach(done: jest.DoneCallback) {
   applyKratosMiddleware({
     app,
     kratos: kratosMock,
+    pool: createPool(process.env.MYSQL_URI),
   })
 
   server = app.listen(port, done)

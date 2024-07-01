@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { given, Client } from '../__utils__'
+import { Client } from '../__utils__'
 import { Instance } from '~/types'
 
 const query = new Client().prepareQuery({
@@ -68,11 +68,6 @@ describe('query endpoint "events"', () => {
   })
 
   test('with filter "actorUsername"', async () => {
-    given('AliasQuery').returns({
-      id: 2,
-      instance: Instance.De,
-      path: '/user/profile/1229793e',
-    })
     await query
       .withVariables({ first: 1, actorUsername: '1229793e' })
       .shouldReturnData({
@@ -97,7 +92,7 @@ describe('query endpoint "events"', () => {
   test('with filter "objectId"', async () => {
     await query.withVariables({ first: 1, objectId: 1855 }).shouldReturnData({
       events: {
-        nodes: [{ __typename: 'CreateEntityNotificationEvent', id: 1198 }],
+        nodes: [{ __typename: 'CheckoutRevisionNotificationEvent', id: 77030 }],
       },
     })
   })

@@ -22,6 +22,7 @@ import {
   CreateTaxonomyLinkNotificationEventDecoder,
   CreateTaxonomyTermNotificationEventDecoder,
   CreateThreadNotificationEventDecoder,
+  EntityDecoder,
   EventDecoder,
   EventRevisionDecoder,
   ExerciseDecoder,
@@ -32,7 +33,6 @@ import {
   PageDecoder,
   PageRevisionDecoder,
   RejectRevisionNotificationEventDecoder,
-  RemoveEntityLinkNotificationEventDecoder,
   RemoveTaxonomyLinkNotificationEventDecoder,
   SetLicenseNotificationEventDecoder,
   SetTaxonomyParentNotificationEventDecoder,
@@ -64,7 +64,10 @@ export interface Models {
   ExerciseRevision: t.TypeOf<typeof ExerciseRevisionDecoder>
   Page: t.TypeOf<typeof PageDecoder>
   PageRevision: t.TypeOf<typeof PageRevisionDecoder>
-  Subject: { taxonomyTermId: number }
+  Subject: {
+    taxonomyTermId: number
+    allUnrevisedEntities: t.TypeOf<typeof EntityDecoder>[]
+  }
   SubscriptionInfo: t.TypeOf<
     typeof SubscriptionsDecoder
   >['subscriptions'][number]
@@ -103,9 +106,6 @@ export interface Models {
   >
   RejectRevisionNotificationEvent: t.TypeOf<
     typeof RejectRevisionNotificationEventDecoder
-  >
-  RemoveEntityLinkNotificationEvent: t.TypeOf<
-    typeof RemoveEntityLinkNotificationEventDecoder
   >
   SetLicenseNotificationEvent: t.TypeOf<
     typeof SetLicenseNotificationEventDecoder

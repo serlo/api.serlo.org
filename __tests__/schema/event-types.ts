@@ -13,7 +13,6 @@ import {
   createTaxonomyTermNotificationEvent,
   createThreadNotificationEvent,
   rejectRevisionNotificationEvent,
-  removeEntityLinkNotificationEvent,
   removeTaxonomyLinkNotificationEvent,
   setLicenseNotificationEvent,
   setTaxonomyParentNotificationEvent,
@@ -46,7 +45,6 @@ describe('creates event successfully with right payload', () => {
     createTaxonomyTermNotificationEvent,
     createThreadNotificationEvent,
     rejectRevisionNotificationEvent,
-    removeEntityLinkNotificationEvent,
     removeTaxonomyLinkNotificationEvent,
     setLicenseNotificationEvent,
     setTaxonomyParentNotificationEvent,
@@ -81,7 +79,7 @@ test('adds a notification', async () => {
 
   expect(
     await databaseForTests.fetchAll(
-      'select * from notification_event where event_log_id = ?',
+      'select * from notification_event where event_id = ?',
       [lastEvent.id],
     ),
   ).not.toHaveLength(0)
@@ -98,19 +96,6 @@ test('fails if object does not exist', async () => {
   await expect(
     createEvent({ ...basePayload, threadId: 0 }, getContext()),
   ).rejects.toThrow()
-})
-
-test('fails if name from parameters is invalid', async () => {
-  const initialEventsNumber = await getEventsNumber()
-
-  await global.databaseForTests.mutate(
-    'delete from event_parameter_name where name = "discussion"',
-  )
-
-  await expect(createEvent(basePayload, getContext())).rejects.toThrow()
-
-  const finalEventsNumber = await getEventsNumber()
-  expect(finalEventsNumber).toEqual(initialEventsNumber)
 })
 
 test('fails if uuid number in parameters does not exist', async () => {
@@ -209,15 +194,6 @@ async function getLastEvent() {
                 reason
               }
 
-              ... on RemoveEntityLinkNotificationEvent {
-                parent {
-                  id
-                }
-                child {
-                  id
-                }
-              }
-
               ... on RemoveTaxonomyLinkNotificationEvent {
                 parent {
                   id
@@ -309,7 +285,7 @@ function getApiResult(event: Record<string, unknown>): Record<string, unknown> {
 async function getEventsNumber() {
   return (
     await global.databaseForTests.fetchOne<{ n: number }>(
-      'SELECT count(*) AS n FROM event_log',
+      'SELECT count(*) AS n FROM event',
     )
   ).n
 }
