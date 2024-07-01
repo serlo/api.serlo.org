@@ -54,6 +54,7 @@
     "migrate:run": "packages/db-migrations/scripts/run_migrations.sh",
     "migrate:all": "lerna run --stream migrate:all",
     "migrate:up": "lerna run --stream migrate:up",
+    "migrate:push-image": "lerna run --stream push-image",
     "mysql": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
