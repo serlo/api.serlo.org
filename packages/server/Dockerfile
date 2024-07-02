@@ -18,6 +18,7 @@ COPY packages/authorization packages/authorization
 COPY packages/db-migrations packages/db-migrations
 COPY packages/server packages/server
 RUN yarn build:${image}
+RUN yarn migrate:build
 
 FROM base as build_node_modules
 RUN yarn workspaces focus --all --production
@@ -26,9 +27,9 @@ FROM node:20-alpine as release
 ARG image
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist
+COPY --from=build_dist /usr/src/app/packages/db-migrations/migrations packages/db-migrations/migrations
 COPY --from=build_node_modules /usr/src/app/node_modules node_modules
 COPY packages/db-migrations/database.json packages/db-migrations/database.json
-RUN mkdir packages/db-migrations/migrations
 RUN cp dist/${image}.cjs dist/entrypoint.cjs 2>/dev/null
 ENTRYPOINT ["node", "dist/entrypoint.cjs"]
 # for server and swr queue worker respectively, but EXPOSE is anyway just for documentation
