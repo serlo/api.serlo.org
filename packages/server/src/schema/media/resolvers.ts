@@ -37,9 +37,14 @@ export const resolvers: Resolvers = {
         contentType: mimeType,
       })
 
+      const urlAfterUpload =
+        service === Service.SerloEditorTesting
+          ? `https://storage.googleapis.com/${bucketName}/${fileHash}.${fileExtension}`
+          : `https://${bucketName}/${fileHash}/image.${fileExtension}`
+
       return {
         uploadUrl,
-        urlAfterUpload: `https://${bucketName}/${fileHash}/image.${fileExtension}`,
+        urlAfterUpload,
       }
     },
   },
