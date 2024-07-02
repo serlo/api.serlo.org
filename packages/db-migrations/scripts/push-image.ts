@@ -19,7 +19,7 @@ void run()
 async function run() {
   const { version } = await fetchPackageJSON()
   buildDockerImage({
-    name: 'db-migration',
+    name: 'api-db-migration',
     version,
     Dockerfile: path.join(root, 'Dockerfile'),
     context: '.',
