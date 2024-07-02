@@ -5,7 +5,6 @@ import { createMailchimpModel } from './mailchimp'
 
 export * from './chat'
 export * from './google-spreadsheet-api'
-export * as DatabaseLayer from './database-layer'
 
 export const modelFactories = {
   chat: createChatModel,
