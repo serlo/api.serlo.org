@@ -1,11 +1,7 @@
 import gql from 'graphql-tag'
 
-import {
-  article,
-  article2,
-  comment as baseComment,
-} from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import { article, comment as baseComment } from '../../../__fixtures__'
+import { Client } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { encodeSubjectId } from '~/schema/subject/utils'
 import { encodeThreadId } from '~/schema/thread/utils'
@@ -41,10 +37,6 @@ const comment3 = {
 }
 
 describe('allThreads', () => {
-  beforeEach(() => {
-    given('UuidQuery').for(article, article2)
-  })
-
   const query = new Client().prepareQuery({
     query: gql`
       query (
