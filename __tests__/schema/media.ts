@@ -2,35 +2,52 @@ import gql from 'graphql-tag'
 
 import { user } from '../../__fixtures__'
 import { Client } from '../__utils__'
+import { Service } from '~/context/service'
 
-const query = new Client({ userId: user.id }).prepareQuery({
-  query: gql`
-    query {
-      media {
-        newUpload(mediaType: IMAGE_PNG) {
-          uploadUrl
-          urlAfterUpload
+test('returns url for uploading media file', async () => {
+  const query = setupQuery()
+  await query.shouldReturnData({
+    media: {
+      newUpload: {
+        uploadUrl: 'http://google.com/upload',
+        urlAfterUpload: expect.stringMatching(
+          /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/,
+        ) as unknown,
+      },
+    },
+  })
+})
+
+test('returns url for uploading media file for Serlo Editor testing', async () => {
+  const query = setupQuery({ service: Service.SerloEditorTesting })
+  await query.shouldReturnData({
+    media: {
+      newUpload: {
+        uploadUrl: 'http://google.com/upload',
+        urlAfterUpload: expect.stringMatching(
+          /https:\/\/storage.googleapis.com\/serlo-editor-testing\/[\d\-a-f]+.png/,
+        ) as unknown,
+      },
+    },
+  })
+})
+
+test('fails for unauthenticated user', async () => {
+  const query = setupQuery()
+  await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
+})
+
+function setupQuery(options: { service?: Service } = {}) {
+  return new Client({ userId: user.id, ...options }).prepareQuery({
+    query: gql`
+      query {
+        media {
+          newUpload(mediaType: IMAGE_PNG) {
+            uploadUrl
+            urlAfterUpload
+          }
         }
       }
-    }
-  `,
-})
-
-describe('media.upload', () => {
-  test('returns url for uploading media file', async () => {
-    await query.shouldReturnData({
-      media: {
-        newUpload: {
-          uploadUrl: 'http://google.com/upload',
-          urlAfterUpload: expect.stringMatching(
-            /https:\/\/assets.serlo.org\/[\d\-a-f]+\/image.png/,
-          ) as unknown,
-        },
-      },
-    })
+    `,
   })
-
-  test('fails for unauthenticated user', async () => {
-    await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
-  })
-})
+}
