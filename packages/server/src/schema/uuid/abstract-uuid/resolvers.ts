@@ -610,7 +610,7 @@ async function resolveIdFromAlias(
     return await resolveIdFromUsername(usernameMatch.groups.username, context)
   }
 
-  cleanPath = cleanPath.slice(1)
+  cleanPath = decodePath(cleanPath.slice(1))
   // The following check is to avoid DB lookups for paths that we know do
   // not belong to UUIDs. This is a performance optimization.
   // Original code see https://github.com/serlo/database-layer/blob/71b80050ecda63d616ab34eda0fa1143cb9e3ddc/server/src/alias/model.rs#L17-L63
