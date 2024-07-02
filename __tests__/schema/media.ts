@@ -18,14 +18,14 @@ test('returns url for uploading media file', async () => {
   })
 })
 
-test('Successfully uploads media file for Serlo Editor test users', async () => {
+test('returns url for uploading media file for Serlo Editor testing', async () => {
   const query = setupQuery({ service: Service.SerloEditorTesting })
   await query.shouldReturnData({
     media: {
       newUpload: {
         uploadUrl: 'http://google.com/upload',
         urlAfterUpload: expect.stringMatching(
-          /https:\/\/serlo-editor-testing\/[\d\-a-f]+\/image.png/,
+          /https:\/\/storage.googleapis.com\/serlo-editor-testing\/[\d\-a-f]+.png/,
         ) as unknown,
       },
     },
