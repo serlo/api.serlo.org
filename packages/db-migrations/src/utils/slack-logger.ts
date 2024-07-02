@@ -50,7 +50,7 @@ export class SlackLogger {
     const token = process.env.SLACK_TOKEN
     const channel = process.env.SLACK_CHANNEL
 
-    if (token == null) return
+    if (!token) return
 
     const slack = new WebClient(token)
 

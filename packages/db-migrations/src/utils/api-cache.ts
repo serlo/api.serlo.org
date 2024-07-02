@@ -7,7 +7,7 @@ export class ApiCache {
   constructor() {
     this.keys = new Set()
 
-    if (typeof process.env.REDIS_URL === 'string') {
+    if (process.env.REDIS_URL) {
       this.redis = new Redis(process.env.REDIS_URL)
 
       this.redis.on('error', (err) => {
