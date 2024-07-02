@@ -4,21 +4,6 @@ import { user } from '../../__fixtures__'
 import { Client } from '../__utils__'
 import { Service } from '~/context/service'
 
-function setupQuery(options: { service?: Service } = {}) {
-  return new Client({ userId: user.id, ...options }).prepareQuery({
-    query: gql`
-      query {
-        media {
-          newUpload(mediaType: IMAGE_PNG) {
-            uploadUrl
-            urlAfterUpload
-          }
-        }
-      }
-    `,
-  })
-}
-
 test('returns url for uploading media file', async () => {
   const query = setupQuery()
   await query.shouldReturnData({
@@ -51,3 +36,18 @@ test('fails for unauthenticated user', async () => {
   const query = setupQuery()
   await query.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
+
+function setupQuery(options: { service?: Service } = {}) {
+  return new Client({ userId: user.id, ...options }).prepareQuery({
+    query: gql`
+      query {
+        media {
+          newUpload(mediaType: IMAGE_PNG) {
+            uploadUrl
+            urlAfterUpload
+          }
+        }
+      }
+    `,
+  })
+}
