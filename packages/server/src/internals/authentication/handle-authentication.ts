@@ -80,7 +80,7 @@ function validateServiceToken(token: string): Service {
         case Service.NotificationEmailService:
           return process.env.SERVER_SERLO_NOTIFICATION_EMAIL_SERVICE_SECRET
         case Service.SerloEditorTesting:
-          return process.env.SERLO_EDITOR_TESTING_SECRET
+          return process.env.SERVER_SERLO_EDITOR_TESTING_SECRET
       }
     }
   }
