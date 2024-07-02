@@ -15,5 +15,7 @@ RUN yarn plugin import workspace-tools
 RUN yarn workspaces focus --production
 COPY --from=build_migrations /app/migrations migrations
 COPY migrations/package.json migrations/package.json
+COPY database.json .
+
 ENTRYPOINT ["yarn", "db-migrate"]
 CMD ["up"]
