@@ -1,6 +1,6 @@
 {
   "name": "@serlo/db-migrations",
-  "version": "1.1.0-staging.0",
+  "version": "1.1.0-staging.1",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
