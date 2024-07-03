@@ -4,7 +4,7 @@ services:
     ports:
       - '6379:6379'
   mysql:
-    image: eu.gcr.io/serlo-shared/serlo-mysql-database:prerelease-entityfield-coursepage-event-taxonomy
+    image: eu.gcr.io/serlo-shared/serlo-mysql-database:latest
     platform: linux/x86_64
     pull_policy: always
     ports:
