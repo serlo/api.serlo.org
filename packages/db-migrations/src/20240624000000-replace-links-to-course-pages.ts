@@ -30,7 +30,7 @@ export async function up(db: Database) {
   const coursePages = await db.runSql<CoursePage[]>(`
     SELECT
       entity.id AS coursePageId,
-      ent2.id AS courseId,
+      ent2.id AS courseId
     FROM entity
     JOIN entity_link ON entity.id = entity_link.child_id
     JOIN entity ent2 ON entity_link.parent_id = ent2.id
