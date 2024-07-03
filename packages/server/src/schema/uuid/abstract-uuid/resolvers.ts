@@ -15,7 +15,6 @@ import {
   createNamespace,
   Model,
 } from '~/internals/graphql'
-import { DatabaseLayer } from '~/model'
 import {
   UuidDecoder,
   DiscriminatorType,
