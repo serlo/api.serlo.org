@@ -379,7 +379,15 @@ async function resolveUuidFromDatabase(
             )
           : null
       const subjectName = subject ? toSlug(subject.name) : 'serlo'
-      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
+
+      let fallbackTitle: string = baseUuid.entityType
+      if (baseUuid.entityInstance === 'de') {
+        if (fallbackTitle === 'text-exercise') fallbackTitle = 'aufgabe'
+        else if (fallbackTitle === 'text-exercise-group') fallbackTitle = 'aufgabengruppe'
+      }
+
+      const slugTitle = toSlug(baseUuid.entityTitle ?? fallbackTitle)
+
       const entity = {
         ...base,
         instance: baseUuid.entityInstance,
