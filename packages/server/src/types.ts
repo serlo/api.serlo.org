@@ -78,7 +78,7 @@ export type AbstractNotificationEvent = {
 
 export type AbstractNotificationEventConnection = {
   __typename?: 'AbstractNotificationEventConnection';
-  nodes: Array<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
+  nodes: Array<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   pageInfo: PageInfo;
 };
 
@@ -960,7 +960,7 @@ export type Notification = {
   __typename?: 'Notification';
   email: Scalars['Boolean']['output'];
   emailSent: Scalars['Boolean']['output'];
-  event?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveEntityLinkNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
+  event?: Maybe<CheckoutRevisionNotificationEvent | CreateCommentNotificationEvent | CreateEntityLinkNotificationEvent | CreateEntityNotificationEvent | CreateEntityRevisionNotificationEvent | CreateTaxonomyLinkNotificationEvent | CreateTaxonomyTermNotificationEvent | CreateThreadNotificationEvent | RejectRevisionNotificationEvent | RemoveTaxonomyLinkNotificationEvent | SetLicenseNotificationEvent | SetTaxonomyParentNotificationEvent | SetTaxonomyTermNotificationEvent | SetThreadStateNotificationEvent | SetUuidStateNotificationEvent>;
   id: Scalars['Int']['output'];
   unread: Scalars['Boolean']['output'];
 };
@@ -1192,17 +1192,6 @@ export type RejectRevisionNotificationEvent = AbstractNotificationEvent & Instan
   reason: Scalars['String']['output'];
   repository: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
   revision: AppletRevision | ArticleRevision | CoursePageRevision | CourseRevision | EventRevision | ExerciseGroupRevision | ExerciseRevision | PageRevision | VideoRevision;
-};
-
-export type RemoveEntityLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
-  __typename?: 'RemoveEntityLinkNotificationEvent';
-  actor: User;
-  child: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
-  date: Scalars['DateTime']['output'];
-  id: Scalars['Int']['output'];
-  instance: Instance;
-  objectId: Scalars['Int']['output'];
-  parent: Applet | Article | Course | CoursePage | Event | Exercise | ExerciseGroup | Page | Video;
 };
 
 export type RemoveTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
@@ -1965,12 +1954,12 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
   AbstractEntity: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractEntityRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
   AbstractEntityRevisionConnection: ( ModelOf<AppletRevisionConnection> ) | ( ModelOf<ArticleRevisionConnection> ) | ( ModelOf<CoursePageRevisionConnection> ) | ( ModelOf<CourseRevisionConnection> ) | ( ModelOf<EventRevisionConnection> ) | ( ModelOf<ExerciseGroupRevisionConnection> ) | ( ModelOf<ExerciseRevisionConnection> ) | ( ModelOf<PageRevisionConnection> ) | ( ModelOf<VideoRevisionConnection> );
-  AbstractNotificationEvent: ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'entity'> & { entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'entity' | 'entityRevision'> & { entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'repository'> & { repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> );
+  AbstractNotificationEvent: ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'entity'> & { entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'entity' | 'entityRevision'> & { entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'repository'> & { repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> );
   AbstractRepository: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractRevision: ( ModelOf<AppletRevision> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<EventRevision> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<PageRevision> ) | ( ModelOf<VideoRevision> );
   AbstractTaxonomyTermChild: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Course> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Video> );
   AbstractUuid: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Omit<Comment, 'legacyObject'> & { legacyObject: _RefType['AbstractUuid'] }> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
-  InstanceAware: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'entity'> & { entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'entity' | 'entityRevision'> & { entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'repository'> & { repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<Video> );
+  InstanceAware: ( ModelOf<Applet> ) | ( ModelOf<Article> ) | ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CreateCommentNotificationEvent> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'child' | 'parent'> & { child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'entity'> & { entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'entity' | 'entityRevision'> & { entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<CreateTaxonomyTermNotificationEvent> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<Event> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<Page> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'repository'> & { repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<SetTaxonomyParentNotificationEvent> ) | ( ModelOf<SetTaxonomyTermNotificationEvent> ) | ( ModelOf<SetThreadStateNotificationEvent> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'object'> & { object: _RefType['AbstractUuid'] }> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<Video> );
   ThreadAware: ( ModelOf<Applet> ) | ( ModelOf<AppletRevision> ) | ( ModelOf<Article> ) | ( ModelOf<ArticleRevision> ) | ( ModelOf<Course> ) | ( ModelOf<CoursePage> ) | ( ModelOf<CoursePageRevision> ) | ( ModelOf<CourseRevision> ) | ( ModelOf<Event> ) | ( ModelOf<EventRevision> ) | ( ModelOf<Exercise> ) | ( ModelOf<ExerciseGroup> ) | ( ModelOf<ExerciseGroupRevision> ) | ( ModelOf<ExerciseRevision> ) | ( ModelOf<Page> ) | ( ModelOf<PageRevision> ) | ( ModelOf<TaxonomyTerm> ) | ( ModelOf<User> ) | ( ModelOf<Video> ) | ( ModelOf<VideoRevision> );
 };
 
@@ -2064,7 +2053,6 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: ResolversTypes['AbstractRepository'], revision: ResolversTypes['AbstractRevision'] }>>;
-  RemoveEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RemoveEntityLinkNotificationEvent, 'child' | 'parent'> & { child: ResolversTypes['AbstractEntity'], parent: ResolversTypes['AbstractEntity'] }>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: ResolversTypes['AbstractUuid'] }>>;
   ResourceMetadataConnection: ResolverTypeWrapper<ModelOf<ResourceMetadataConnection>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
@@ -2213,7 +2201,6 @@ export type ResolversParentTypes = {
   Query: {};
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<Omit<RejectRevisionNotificationEvent, 'repository' | 'revision'> & { repository: ResolversParentTypes['AbstractRepository'], revision: ResolversParentTypes['AbstractRevision'] }>;
-  RemoveEntityLinkNotificationEvent: ModelOf<Omit<RemoveEntityLinkNotificationEvent, 'child' | 'parent'> & { child: ResolversParentTypes['AbstractEntity'], parent: ResolversParentTypes['AbstractEntity'] }>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'child'> & { child: ResolversParentTypes['AbstractUuid'] }>;
   ResourceMetadataConnection: ModelOf<ResourceMetadataConnection>;
   ScopedRole: ModelOf<ScopedRole>;
@@ -2314,7 +2301,7 @@ export type AbstractEntityRevisionConnectionResolvers<ContextType = Context, Par
 };
 
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
-  __resolveType: TypeResolveFn<'CheckoutRevisionNotificationEvent' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'RejectRevisionNotificationEvent' | 'RemoveEntityLinkNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'CheckoutRevisionNotificationEvent' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'RejectRevisionNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent', ParentType, ContextType>;
   actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2815,7 +2802,7 @@ export type ExperimentMutationResolvers<ContextType = Context, ParentType extend
 };
 
 export type InstanceAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['InstanceAware'] = ResolversParentTypes['InstanceAware']> = {
-  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CheckoutRevisionNotificationEvent' | 'Course' | 'CoursePage' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'RejectRevisionNotificationEvent' | 'RemoveEntityLinkNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent' | 'TaxonomyTerm' | 'Video', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CheckoutRevisionNotificationEvent' | 'Course' | 'CoursePage' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'RejectRevisionNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent' | 'TaxonomyTerm' | 'Video', ParentType, ContextType>;
   instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
 };
 
@@ -2976,17 +2963,6 @@ export type RejectRevisionNotificationEventResolvers<ContextType = Context, Pare
   reason?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   repository?: Resolver<ResolversTypes['AbstractRepository'], ParentType, ContextType>;
   revision?: Resolver<ResolversTypes['AbstractRevision'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type RemoveEntityLinkNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RemoveEntityLinkNotificationEvent'] = ResolversParentTypes['RemoveEntityLinkNotificationEvent']> = {
-  actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  child?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  parent?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3382,7 +3358,6 @@ export type Resolvers<ContextType = Context> = {
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RejectRevisionNotificationEvent?: RejectRevisionNotificationEventResolvers<ContextType>;
-  RemoveEntityLinkNotificationEvent?: RemoveEntityLinkNotificationEventResolvers<ContextType>;
   RemoveTaxonomyLinkNotificationEvent?: RemoveTaxonomyLinkNotificationEventResolvers<ContextType>;
   ResourceMetadataConnection?: ResourceMetadataConnectionResolvers<ContextType>;
   ScopedRole?: ScopedRoleResolvers<ContextType>;
