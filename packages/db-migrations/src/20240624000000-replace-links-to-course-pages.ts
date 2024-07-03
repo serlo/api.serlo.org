@@ -28,22 +28,16 @@ export async function up(db: Database) {
   const apiCache = new ApiCache()
 
   const coursePages = await db.runSql<CoursePage[]>(`
-    WITH RankedPages AS (
-      SELECT
-        entity.id AS coursePageId,
-        ent2.id AS courseId,
-        ROW_NUMBER() OVER (PARTITION BY ent2.id ORDER BY entity.id) AS page_rank
-      FROM entity
-      JOIN entity_link ON entity.id = entity_link.child_id
-      JOIN entity ent2 ON entity_link.parent_id = ent2.id
-      JOIN uuid ON entity.id = uuid.id
-      WHERE entity.type_id = 8
-        AND uuid.trashed = 0
-        AND entity.current_revision_id IS NOT NULL
-    )
-    SELECT coursePageId, courseId
-    FROM RankedPages
-    WHERE page_rank > 1
+    SELECT
+      entity.id AS coursePageId,
+      ent2.id AS courseId,
+    FROM entity
+    JOIN entity_link ON entity.id = entity_link.child_id
+    JOIN entity ent2 ON entity_link.parent_id = ent2.id
+    JOIN uuid ON entity.id = uuid.id
+    WHERE entity.type_id = 8
+      AND uuid.trashed = 0
+      AND entity.current_revision_id IS NOT NULL
   `)
 
   await migrateSerloEditorContent({
@@ -81,12 +75,17 @@ function replaceLinks(object: object, coursePages: CoursePage[]) {
 
     if ((startsWithSlash || containsSerlo) && !isAnAttachment) {
       coursePages.forEach((coursePage) => {
-        const { courseId, coursePageId } = coursePage
+        const { coursePageId, courseId } = coursePage
+        const regex = new RegExp(`/${coursePageId}(?:/|$)`)
 
-        object.href = object.href.replace(
-          coursePageId.toString(),
-          `${courseId}/${coursePageId}`,
-        )
+        if (regex.test(object.href)) {
+          const isFirstPage = coursePages.find(page => page.courseId === courseId)?.coursePageId === coursePageId
+          if (isFirstPage) {
+            object.href = `/${courseId}`
+          } else {
+            object.href = `/${courseId}#${coursePageId}`
+          }
+        }
       })
     }
   }
