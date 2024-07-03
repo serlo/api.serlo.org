@@ -27,14 +27,6 @@ const SessionDecoder = t.type({
   identity: IdentityDecoder,
 })
 
-const BodyWithSerloEditorTestingHeader = t.type({
-  context: t.type({
-    headers: t.type({
-      'X-SERLO-EDITOR-TESTING': t.string,
-    }),
-  }),
-})
-
 export async function applyGraphQLMiddleware({
   app,
   cache,
@@ -68,9 +60,8 @@ export async function applyGraphQLMiddleware({
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
         const isSerloEditorTesting =
-          BodyWithSerloEditorTestingHeader.is(req.body) &&
-          req.body.context.headers['X-SERLO-EDITOR-TESTING'] ===
-            process.env.SERVER_SERLO_EDITOR_TESTING_SECRET
+          req.get('X-SERLO-EDITOR-TESTING') ===
+          process.env.SERVER_SERLO_EDITOR_TESTING_SECRET
         const googleStorage = new Storage()
         const database = new Database(pool)
         const dataSources = {
