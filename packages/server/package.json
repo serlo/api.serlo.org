@@ -40,7 +40,7 @@
     "@types/ramda": "^0.30.0",
     "@types/redlock": "^4.0.7",
     "@types/semver": "^7.5.8",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
     "cors": "^2.8.5",

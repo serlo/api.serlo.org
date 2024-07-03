@@ -74,18 +74,6 @@ export const createEntityLinkNotificationEvent: Model<'CreateEntityLinkNotificat
     childId: coursePage.id,
   }
 
-export const removeEntityLinkNotificationEvent: Model<'RemoveEntityLinkNotificationEvent'> =
-  {
-    __typename: NotificationEventType.RemoveEntityLink,
-    id: 55273,
-    instance: Instance.De,
-    date: '2014-03-01T20:45:56Z',
-    actorId: user.id,
-    objectId: coursePage.id,
-    parentId: course.id,
-    childId: coursePage.id,
-  }
-
 export const createEntityRevisionNotificationEvent: Model<'CreateEntityRevisionNotificationEvent'> =
   {
     __typename: NotificationEventType.CreateEntityRevision,
