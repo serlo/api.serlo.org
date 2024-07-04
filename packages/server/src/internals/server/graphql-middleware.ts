@@ -68,7 +68,7 @@ export async function applyGraphQLMiddleware({
           model: new ModelDataSource(environment),
         }
         const authorizationHeader = req.headers.authorization
-        if (!authorizationHeader) {
+        if (!authorizationHeader || isSerloEditorTesting) {
           return Promise.resolve({
             dataSources,
             service: isSerloEditorTesting
