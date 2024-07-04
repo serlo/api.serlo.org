@@ -80,8 +80,10 @@ function replaceLinks(object: object, coursePages: CoursePage[]) {
 
         if (regex.test(object.href)) {
           const isFirstPage =
-            coursePages.find((page) => page.courseId === courseId)
-              ?.coursePageId === coursePageId
+            coursePages
+              .filter((page) => page.courseId === courseId)
+              .sort((a, b) => a.coursePageId - b.coursePageId)[0]
+              .coursePageId === coursePageId
           if (isFirstPage) {
             object.href = `/${courseId}`
           } else {
