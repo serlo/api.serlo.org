@@ -18,3 +18,4 @@ services:
       - DATABASE_MAX_CONNECTIONS=5
       - DATABASE_URL=mysql://root:secret@mysql:3306/serlo
       - ENV=development
+    platform: linux/amd64
