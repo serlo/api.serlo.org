@@ -1,5 +1,6 @@
 {
   "name": "@serlo/db-migrations",
+  "version": "1.1.0-staging.4",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -12,6 +13,7 @@
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:all": "npm-run-all build:all migrate:up",
     "migrate:up": "yarn db-migrate -m migrations up",
+    "push-image": "tsx scripts/push-image.ts",
     "new": "./scripts/touch_file.sh",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },

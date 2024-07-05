@@ -32,7 +32,7 @@ import {
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { Instance, Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
 import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
@@ -379,7 +379,18 @@ async function resolveUuidFromDatabase(
             )
           : null
       const subjectName = subject ? toSlug(subject.name) : 'serlo'
-      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
+
+      const slugTitle = baseUuid.entityTitle
+        ? toSlug(baseUuid.entityTitle)
+        : (() => {
+            if (baseUuid.entityInstance === Instance.De) {
+              if (baseUuid.entityType === 'text-exercise') return 'aufgabe'
+              if (baseUuid.entityType === 'text-exercise-group')
+                return 'aufgabengruppe'
+            }
+            return baseUuid.entityType
+          })()
+
       const entity = {
         ...base,
         instance: baseUuid.entityInstance,
@@ -588,7 +599,7 @@ async function resolveIdFromAlias(
     /^\/(?<id>\d+)$/,
     /^\/entity\/view\/(?<id>\d+)$/,
     /^\/entity\/repository\/compare\/(?<entityId>\d+)\/(?<id>\d+)$/,
-    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[\w-]+\/)?(?<id>\d+)(?<coursePageId>\/[0-9a-f]+)?\/(?<title>[^/]*)$/,
+    /^\/(?<instance>[a-z]{2}\/)?(?<subject>[^/]+\/)?(?<id>\d+)(?<coursePageId>\/[0-9a-f]+)?\/(?<title>[^/]*)$/,
     /^\/user\/profile\/(?<id>\d+)$/,
   ]) {
     const match = regex.exec(cleanPath)
@@ -610,7 +621,7 @@ async function resolveIdFromAlias(
     return await resolveIdFromUsername(usernameMatch.groups.username, context)
   }
 
-  cleanPath = cleanPath.slice(1)
+  cleanPath = decodePath(cleanPath.slice(1))
   // The following check is to avoid DB lookups for paths that we know do
   // not belong to UUIDs. This is a performance optimization.
   // Original code see https://github.com/serlo/database-layer/blob/71b80050ecda63d616ab34eda0fa1143cb9e3ddc/server/src/alias/model.rs#L17-L63
