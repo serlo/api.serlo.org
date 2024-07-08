@@ -1,5 +1,4 @@
 #!/bin/bash
-# TODO: Commit with an explanation
 
 echo "Enter the name of the migration (no spaces and with hifens)"
 
