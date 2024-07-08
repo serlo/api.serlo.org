@@ -4761,7 +4761,7 @@ __metadata:
     "@types/semver": ^7.5.8
     "@types/uuid": ^10.0.0
     db-migrate: ^0.11.14
-    db-migrate-mysql: ^2.3.2
+    db-migrate-mysql: ^3.0.0
     depcheck: ^1.4.7
     dotenv: ^16.4.5
     esbuild: ^0.21.5
@@ -8415,15 +8415,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"db-migrate-mysql@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "db-migrate-mysql@npm:2.3.2"
+"db-migrate-mysql@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "db-migrate-mysql@npm:3.0.0"
   dependencies:
     bluebird: ^3.7.2
     db-migrate-base: ^2.3.0
     moment: ^2.28.0
-    mysql2: ^2.1.0
-  checksum: 84ce106c909b25fe92e90e3e660e000710bd3dced6f98c1d6ec467c36ce865bde72a89706813b2c906fa13af1365a18cbd9e4d2a31c45fcc497ae0a09052e760
+    mysql2: ^3.9.7
+  checksum: f69a45985f69ab58d1077579f9c9bfa7c66493c8d5cfe99bb9ad3e4510df4fe939b396dcbea6abbc2b29638a5fbad394aa68f8350f93798a842ef36144c7cac2
   languageName: node
   linkType: hard
 
@@ -8640,7 +8640,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"denque@npm:^2.0.1, denque@npm:^2.1.0":
+"denque@npm:^2.1.0":
   version: 2.1.0
   resolution: "denque@npm:2.1.0"
   checksum: 1d4ae1d05e59ac3a3481e7b478293f4b4c813819342273f3d5b826c7ffa9753c520919ba264f377e09108d24ec6cf0ec0ac729a5686cbb8f32d797126c5dae74
@@ -15003,22 +15003,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mysql2@npm:^2.1.0":
-  version: 2.3.3
-  resolution: "mysql2@npm:2.3.3"
-  dependencies:
-    denque: ^2.0.1
-    generate-function: ^2.3.1
-    iconv-lite: ^0.6.3
-    long: ^4.0.0
-    lru-cache: ^6.0.0
-    named-placeholders: ^1.1.2
-    seq-queue: ^0.0.5
-    sqlstring: ^2.3.2
-  checksum: 45e479d0cbdb24ceb9d1846a1708ae2c33aa64f603f7899279b33560b1eec441f1b7a596075896f1305f701cfbc083bceb88bc72ba5d2f3656a3d6102611286a
-  languageName: node
-  linkType: hard
-
 "mysql2@npm:^3.10.0":
   version: 3.10.1
   resolution: "mysql2@npm:3.10.1"
@@ -15035,7 +15019,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"named-placeholders@npm:^1.1.2, named-placeholders@npm:^1.1.3":
+"mysql2@npm:^3.9.7":
+  version: 3.10.2
+  resolution: "mysql2@npm:3.10.2"
+  dependencies:
+    denque: ^2.1.0
+    generate-function: ^2.3.1
+    iconv-lite: ^0.6.3
+    long: ^5.2.1
+    lru-cache: ^8.0.0
+    named-placeholders: ^1.1.3
+    seq-queue: ^0.0.5
+    sqlstring: ^2.3.2
+  checksum: 1fc10bc85e172f7b24d7a72a0cd82aeb9af867724e07eeefb20a15c9f63cc8f64cfff09b63f63afac585205928c1d78c20aeec87223edc851725de9273b0b2a7
+  languageName: node
+  linkType: hard
+
+"named-placeholders@npm:^1.1.3":
   version: 1.1.3
   resolution: "named-placeholders@npm:1.1.3"
   dependencies:
