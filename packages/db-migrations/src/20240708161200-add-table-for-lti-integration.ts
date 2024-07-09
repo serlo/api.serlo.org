@@ -10,6 +10,7 @@ export async function up(db: Database) {
       resource_link_id VARCHAR(255),
       custom_claim_id VARCHAR(255) NOT NULL,
       content LONGTEXT,
+      parsed_jwt_content TEXT,
       PRIMARY KEY (id)
     )
   `)
