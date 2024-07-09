@@ -37,7 +37,6 @@ export async function up(db: Database) {
     JOIN uuid ON entity.id = uuid.id
     WHERE entity.type_id = 8
       AND uuid.trashed = 0
-      AND entity.current_revision_id IS NOT NULL
   `)
 
   await migrateSerloEditorContent({
