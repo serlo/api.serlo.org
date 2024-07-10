@@ -1,4 +1,4 @@
-type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadAware {
+type Page implements AbstractUuid & AbstractRepository & AbstractEntity & AbstractTaxonomyTermChild & InstanceAware & ThreadAware {
   id: Int!
   trashed: Boolean!
   threads(
@@ -18,9 +18,10 @@ type Page implements AbstractUuid & AbstractRepository & InstanceAware & ThreadA
     first: Int
     unrevised: Boolean
   ): PageRevisionConnection!
+  taxonomyTerms(after: String, first: Int): TaxonomyTermConnection!
 }
 
-type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
+type PageRevision implements AbstractUuid & AbstractRevision & AbstractEntityRevision & ThreadAware {
   id: Int!
   author: User!
   trashed: Boolean!
@@ -35,9 +36,13 @@ type PageRevision implements AbstractUuid & AbstractRevision & ThreadAware {
   title: String!
   content: String!
   repository: Page!
+  changes: String!
+  metaTitle: String
+  metaDescription: String
+  url: String
 }
 
-type PageRevisionConnection {
+type PageRevisionConnection implements AbstractEntityRevisionConnection {
   nodes: [PageRevision!]!
   totalCount: Int!
   pageInfo: PageInfo!

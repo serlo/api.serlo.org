@@ -22,6 +22,7 @@ import {
   EntityType,
   EntityTypeDecoder,
   NotificationEventType,
+  PageDecoder,
   TaxonomyTermDecoder,
 } from '~/model/decoder'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -40,6 +41,7 @@ const mandatoryFieldsLookup: Record<EntityType, InputFields[]> = {
   [EntityType.Event]: ['content', 'title'],
   [EntityType.Exercise]: ['content'],
   [EntityType.ExerciseGroup]: ['content'],
+  [EntityType.Page]: ['content', 'title'],
   [EntityType.Video]: ['title', 'url'],
 } as const
 
@@ -156,12 +158,16 @@ export const resolvers: Resolvers = {
             context,
           )
 
+          const scope = instanceToScope(parent.instance)
+          const guard =
+            entityType === EntityType.Page
+              ? serloAuth.Uuid.create('Page')(scope)
+              : serloAuth.Uuid.create('Entity')(scope)
+
           await assertUserIsAuthorized({
             context,
             message: 'You are not allowed to create entities',
-            guard: serloAuth.Uuid.create('Entity')(
-              instanceToScope(parent.instance),
-            ),
+            guard,
           })
 
           const { insertId: newEntityId } = await database.mutate(
@@ -397,11 +403,15 @@ export const resolvers: Resolvers = {
         context,
       )
 
+      const scope = instanceToScope(entity.instance)
+      const guard =
+        entity.__typename === EntityType.Page
+          ? serloAuth.Page.checkoutRevision(scope)
+          : serloAuth.Entity.checkoutRevision(scope)
+
       await assertUserIsAuthorized({
         message: 'You are not allowed to check out the provided revision.',
-        guard: serloAuth.Entity.checkoutRevision(
-          instanceToScope(entity.instance),
-        ),
+        guard,
         context,
       })
 
@@ -567,6 +577,7 @@ async function isAutoreviewEntity(
   uuid: { id: number },
   context: Context,
 ): Promise<boolean> {
+  if (PageDecoder.is(uuid)) return true
   if (autoreviewTaxonomyIds.includes(uuid.id)) return true
 
   if (t.type({ parentId: t.number }).is(uuid)) {

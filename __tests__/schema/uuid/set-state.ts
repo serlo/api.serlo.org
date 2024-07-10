@@ -2,14 +2,13 @@ import gql from 'graphql-tag'
 
 import {
   article,
-  page,
   taxonomyTermSubject,
   user,
   articleRevision,
 } from '../../../__fixtures__'
 import { Client } from '../../__utils__'
 
-const uuids = [article.id, page.id, taxonomyTermSubject.id]
+const uuids = [article.id, taxonomyTermSubject.id]
 const mutation = new Client({ userId: 1 }).prepareQuery({
   query: gql`
     mutation uuid($input: UuidSetStateInput!) {
