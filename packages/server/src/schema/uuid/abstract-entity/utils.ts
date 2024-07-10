@@ -18,6 +18,8 @@ export function fromEntityTypeToEntityRevisionType(
       return EntityRevisionType.ExerciseRevision
     case EntityType.ExerciseGroup:
       return EntityRevisionType.ExerciseGroupRevision
+    case EntityType.Page:
+      return EntityRevisionType.PageRevision
     case EntityType.Video:
       return EntityRevisionType.VideoRevision
   }

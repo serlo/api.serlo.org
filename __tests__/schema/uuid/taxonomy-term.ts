@@ -35,6 +35,7 @@ test('TaxonomyTerm root', async () => {
           { id: 20605 },
           { id: 5 },
           { id: 18230 },
+          { id: 282309 },
         ],
       },
     },

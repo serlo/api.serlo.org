@@ -57,6 +57,15 @@ test('checks out a revision', async () => {
   })
 })
 
+test('allows to checkout a revision for pages for static pages builder', async () => {
+  const newMutation = await mutation
+    .changeInput({ revisionId: 35476 })
+    .forUser('de_static_pages_builder')
+  await newMutation.shouldReturnData({
+    entity: { checkoutRevision: { success: true } },
+  })
+})
+
 test('checkout revision has trashed == false for following queries', async () => {
   await databaseForTests.mutate('update uuid set trashed = 1 where id = ?', [
     input.revisionId,

@@ -6,7 +6,6 @@ import {
   comment,
   exercise,
   exerciseGroup,
-  page,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
@@ -148,12 +147,6 @@ test('`uuid` returns null on unsupported uuid type', async () => {
 
 describe('custom aliases', () => {
   test('de.serlo.org/community resolves to uuid 19767', async () => {
-    given('UuidQuery').for({
-      ...page,
-      id: 19882,
-      alias: '/legacy-alias',
-    })
-
     await client
       .prepareQuery({
         query: gql`

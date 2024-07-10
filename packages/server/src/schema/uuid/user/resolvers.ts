@@ -485,10 +485,6 @@ export const resolvers: Resolvers = {
             idUserDeleted,
             id,
           ]),
-          database.mutate(
-            'UPDATE page_revision SET author_id = ? WHERE author_id = ?',
-            [idUserDeleted, id],
-          ),
           database.mutate('DELETE FROM notification WHERE user_id = ?', [id]),
           database.mutate('DELETE FROM role_user WHERE user_id = ?', [id]),
           database.mutate('DELETE FROM subscription WHERE user_id = ?', [id]),

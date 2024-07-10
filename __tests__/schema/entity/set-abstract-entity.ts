@@ -91,6 +91,19 @@ test('creates a new entity when "parentId" is set', async () => {
   )
 })
 
+test('creates a new entity when "parentId" is set (for static pages)', async () => {
+  const newMutation = await mutation
+    .changeInput({
+      parentId: 282309,
+      entityType: 'Page',
+    })
+    .forUser('de_static_pages_builder')
+
+  await newMutation.shouldReturnData({
+    entity: { setAbstractEntity: { success: true } },
+  })
+})
+
 test('creates a subscription', async () => {
   await subscriptionsQuery.withContext({ userId: 15491 }).shouldReturnData({
     subscription: { getSubscriptions: { nodes: [] } },
