@@ -31,7 +31,7 @@ import {
 import { createEvent } from '~/schema/events/event'
 import { SubjectResolver } from '~/schema/subject/resolvers'
 import { decodePath, encodePath } from '~/schema/uuid/alias/utils'
-import { Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
+import { Instance, Resolvers, QueryUuidArgs, TaxonomyTermType } from '~/types'
 import { isDefined } from '~/utils'
 
 export const UuidResolver = createCachedResolver<
@@ -375,7 +375,18 @@ async function resolveUuidFromDatabase(
             )
           : null
       const subjectName = subject ? toSlug(subject.name) : 'serlo'
-      const slugTitle = toSlug(baseUuid.entityTitle ?? baseUuid.entityType)
+
+      const slugTitle = baseUuid.entityTitle
+        ? toSlug(baseUuid.entityTitle)
+        : (() => {
+            if (baseUuid.entityInstance === Instance.De) {
+              if (baseUuid.entityType === 'text-exercise') return 'aufgabe'
+              if (baseUuid.entityType === 'text-exercise-group')
+                return 'aufgabengruppe'
+            }
+            return baseUuid.entityType
+          })()
+
       const entity = {
         ...base,
         instance: baseUuid.entityInstance,
