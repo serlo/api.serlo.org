@@ -60,7 +60,7 @@ export async function applyGraphQLMiddleware({
     expressMiddleware(server, {
       async context({ req }): Promise<Context> {
         const isSerloEditorTesting =
-          req.headers['X-SERLO-EDITOR-TESTING'] ===
+          req.get('X-SERLO-EDITOR-TESTING') ===
           process.env.SERVER_SERLO_EDITOR_TESTING_SECRET
         const googleStorage = new Storage()
         const database = new Database(pool)
@@ -68,7 +68,7 @@ export async function applyGraphQLMiddleware({
           model: new ModelDataSource(environment),
         }
         const authorizationHeader = req.headers.authorization
-        if (!authorizationHeader) {
+        if (!authorizationHeader || isSerloEditorTesting) {
           return Promise.resolve({
             dataSources,
             service: isSerloEditorTesting
