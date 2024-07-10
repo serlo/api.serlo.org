@@ -10,10 +10,12 @@ import {
 } from '~/internals/graphql'
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
 import { fetchScopeOfUuid } from '~/schema/authorization/utils'
+import { resolvers as EntityResolvers } from '~/schema/uuid/abstract-entity/resolvers'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
 } from '~/schema/uuid/abstract-repository/utils'
+import { createTaxonomyTermChildResolvers } from '~/schema/uuid/abstract-taxonomy-term-child/utils'
 import { Resolvers } from '~/types'
 
 export const resolvers: Resolvers = {
@@ -23,11 +25,14 @@ export const resolvers: Resolvers = {
   Mutation: {
     page: createNamespace(),
   },
-  Page: createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+  Page: {
+    ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
+    ...createTaxonomyTermChildResolvers(),
+  },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageMutation: {
-    async addRevision(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async addRevision(_parent, { input }, context, info) {
+      const { userId } = context
       assertUserIsAuthenticated(userId)
 
       const { pageId, content, title } = input
@@ -41,16 +46,32 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const { success, revisionId } =
-        await dataSources.model.serlo.addPageRevision({
-          userId,
-          ...input,
-        })
+      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
 
-      return { success, revisionId, query: {} }
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
+      }
+
+      return resolver(
+        {},
+        {
+          input: {
+            entityType: 'Page',
+            changes: 'Page updated',
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            needsReview: false,
+            entityId: pageId,
+            content,
+            title,
+          },
+        },
+        context,
+        info,
+      )
     },
-    async checkoutRevision(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async checkoutRevision(_parent, { input }, context, info) {
+      const { userId } = context
       assertUserIsAuthenticated(userId)
 
       const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
@@ -61,16 +82,17 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      await dataSources.model.serlo.checkoutPageRevision({
-        revisionId: input.revisionId,
-        reason: input.reason,
-        userId,
-      })
+      const resolver = EntityResolvers.EntityMutation!.checkoutRevision!
 
-      return { success: true, query: {} }
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
+      }
+
+      return resolver({}, { input }, context, info)
     },
-    async create(_parent, { input }, context) {
-      const { dataSources, userId } = context
+    async create(_parent, { input }, context, info) {
+      context.userId = 1
+      const { userId, database } = context
       assertUserIsAuthenticated(userId)
 
       const { content, title, instance } = input
@@ -83,26 +105,59 @@ export const resolvers: Resolvers = {
         context,
       })
 
-      const pagePayload = await dataSources.model.serlo.createPage({
-        ...input,
-        userId,
-      })
+      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
 
-      return {
-        record: pagePayload,
-        success: pagePayload !== null,
-        query: {},
+      if (typeof resolver !== 'function') {
+        throw new Error('Resolver is not a function')
       }
+
+      const { taxonomyId } = await database.fetchOne<{ taxonomyId: number }>(
+        `
+        select
+          taxonomy.id as taxonomyId
+        from taxonomy
+        join instance on taxonomy.instance_id = instance.id
+        where taxonomy.name = 'Static Pages' and instance.subdomain = ?
+        `,
+        [instance],
+      )
+
+      return resolver(
+        {},
+        {
+          input: {
+            entityType: 'Page',
+            changes: 'Initial page creation',
+            subscribeThis: false,
+            subscribeThisByEmail: false,
+            needsReview: false,
+            parentId: taxonomyId,
+            content,
+            title,
+          },
+        },
+        context,
+        info,
+      )
     },
   },
   PageQuery: {
     async pages(_parent, payload, context) {
-      const { pages } = await context.dataSources.model.serlo.getPages({
-        instance: payload.instance,
-      })
+      const pages = await context.database.fetchAll<{ id: number }>(
+        `
+        select entity.id
+        from entity
+        join type on entity.type_id = type.id
+        join instance on entity.instance_id = instance.id
+        where type.name = 'page'
+          and (? is null or instance.subdomain = ?)
+        order by entity.id desc`,
+        [payload.instance, payload.instance],
+      )
+
       return await Promise.all(
-        pages.map(async (id: number) =>
-          UuidResolver.resolveWithDecoder(PageDecoder, { id }, context),
+        pages.map((page) =>
+          UuidResolver.resolveWithDecoder(PageDecoder, page, context),
         ),
       )
     },
