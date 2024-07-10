@@ -4,13 +4,18 @@ import { Client, subjectQuery } from '../__utils__'
 
 test('endpoint "subjects" returns list of all subjects for an instance', async () => {
   await subjectQuery.withVariables({ instance: 'en' }).shouldReturnData({
-    subject: { subjects: [{ taxonomyTerm: { name: 'Math' } }] },
+    subject: {
+      subjects: [
+        { taxonomyTerm: { name: 'Math' } },
+        { taxonomyTerm: { name: 'Static Pages' } },
+      ],
+    },
   })
 })
 
 test('`Subject.id` returns encoded id of subject', async () => {
   await subjectQuery.withVariables({ instance: 'en' }).shouldReturnData({
-    subject: { subjects: [{ id: 'czIzNTkz' }] },
+    subject: { subjects: [{ id: 'czIzNTkz' }, { id: 'czI4MjMxMA==' }] },
   })
 })
 
@@ -55,6 +60,7 @@ const subjects = [
       nodes: [{ __typename: 'Article', id: 26892 }],
     },
   },
+  { unrevisedEntities: { nodes: [] } },
   { unrevisedEntities: { nodes: [] } },
   { unrevisedEntities: { nodes: [] } },
   { unrevisedEntities: { nodes: [] } },

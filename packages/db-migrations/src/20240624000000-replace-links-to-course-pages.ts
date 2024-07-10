@@ -37,7 +37,6 @@ export async function up(db: Database) {
     JOIN uuid ON entity.id = uuid.id
     WHERE entity.type_id = 8
       AND uuid.trashed = 0
-      AND entity.current_revision_id IS NOT NULL
   `)
 
   await migrateSerloEditorContent({
@@ -80,8 +79,10 @@ function replaceLinks(object: object, coursePages: CoursePage[]) {
 
         if (regex.test(object.href)) {
           const isFirstPage =
-            coursePages.find((page) => page.courseId === courseId)
-              ?.coursePageId === coursePageId
+            coursePages
+              .filter((page) => page.courseId === courseId)
+              .sort((a, b) => a.coursePageId - b.coursePageId)[0]
+              .coursePageId === coursePageId
           if (isFirstPage) {
             object.href = `/${courseId}`
           } else {
