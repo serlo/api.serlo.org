@@ -55,23 +55,6 @@ export async function migrateSerloEditorContent({
     logger,
   })
 
-  log('Convert page revisions')
-  await changeUuidContents({
-    query: `
-          SELECT
-            page_revision.id, page_revision.content, page_revision.id as uuid
-          FROM page_revision WHERE page_revision.id > ?
-        `,
-    migrateState,
-    table: 'page_revision',
-    column: 'content',
-    apiCache,
-    dryRun,
-    db,
-    log,
-    logger,
-  })
-
   log('Convert taxonomy terms')
   await changeUuidContents({
     query: `

@@ -15,7 +15,6 @@ import {
   createNamespace,
   Model,
 } from '~/internals/graphql'
-import { DatabaseLayer } from '~/model'
 import {
   UuidDecoder,
   DiscriminatorType,
@@ -112,11 +111,7 @@ export const resolvers: Resolvers = {
           }
 
           const scope = auth.instanceToScope(object.instance)
-          const type = EntityTypeDecoder.is(object)
-            ? 'Entity'
-            : object.__typename === DiscriminatorType.Page
-              ? 'Page'
-              : 'TaxonomyTerm'
+          const type = EntityTypeDecoder.is(object) ? 'Entity' : 'TaxonomyTerm'
 
           await assertUserIsAuthorized({
             guard: auth.Uuid.setState(type)(scope),
@@ -171,6 +166,7 @@ const DBEntityType = t.union([
   t.literal('course'),
   t.literal('course-page'),
   t.literal('event'),
+  t.literal('page'),
   t.literal('text-exercise'),
   t.literal('text-exercise-group'),
   t.literal('video'),
@@ -428,7 +424,9 @@ async function resolveUuidFromDatabase(
           return { ...entity, __typename: EntityType.Exercise }
         case 'text-exercise-group':
           return { ...entity, __typename: EntityType.ExerciseGroup }
-        default:
+        case 'page':
+          return { ...entity, __typename: EntityType.Page }
+        case 'video':
           return { ...entity, __typename: EntityType.Video }
       }
     } else if (BaseEntityRevision.is(baseUuid)) {
@@ -476,7 +474,12 @@ async function resolveUuidFromDatabase(
             ...revision,
             __typename: EntityRevisionType.ExerciseGroupRevision,
           }
-        default:
+        case 'page':
+          return {
+            ...revision,
+            __typename: EntityRevisionType.PageRevision,
+          }
+        case 'video':
           return { ...revision, __typename: EntityRevisionType.VideoRevision }
       }
     } else if (BaseComment.is(baseUuid)) {
@@ -536,9 +539,7 @@ async function resolveUuidFromDatabase(
     }
   }
 
-  const uuidFromDBLayer = await DatabaseLayer.makeRequest('UuidQuery', { id })
-
-  return UuidDecoder.is(uuidFromDBLayer) ? uuidFromDBLayer : null
+  return null
 }
 
 export async function setUuidState(

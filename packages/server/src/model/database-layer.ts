@@ -1,61 +1,13 @@
 import { function as F, option as O } from 'fp-ts'
 import * as t from 'io-ts'
 
-import { InstanceDecoder, PageDecoder, UuidDecoder } from './decoder'
+import { UuidDecoder } from './decoder'
 import { UserInputError } from '~/errors'
 
 export const spec = {
   EntitySortMutation: {
     payload: t.type({ childrenIds: t.array(t.number), entityId: t.number }),
     response: t.type({ success: t.boolean }),
-    canBeNull: false,
-  },
-  PageAddRevisionMutation: {
-    payload: t.type({
-      content: t.string,
-      pageId: t.number,
-      title: t.string,
-      userId: t.number,
-    }),
-    response: t.type({
-      success: t.boolean,
-      revisionId: t.union([t.number, t.null]),
-    }),
-    canBeNull: false,
-  },
-  PageCheckoutRevisionMutation: {
-    payload: t.type({
-      revisionId: t.number,
-      userId: t.number,
-      reason: t.string,
-    }),
-    response: t.type({ success: t.literal(true) }),
-    canBeNull: false,
-  },
-  PageCreateMutation: {
-    payload: t.intersection([
-      t.type({
-        content: t.string,
-        discussionsEnabled: t.boolean,
-        instance: InstanceDecoder,
-        licenseId: t.number,
-        title: t.string,
-        userId: t.number,
-      }),
-      t.partial({
-        forumId: t.union([t.number, t.null]),
-      }),
-    ]),
-    response: t.union([PageDecoder, t.undefined]),
-    canBeNull: false,
-  },
-  PagesQuery: {
-    payload: t.type({
-      instance: t.union([InstanceDecoder, t.undefined]),
-    }),
-    response: t.type({
-      pages: t.array(t.number),
-    }),
     canBeNull: false,
   },
   UuidQuery: {
