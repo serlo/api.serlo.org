@@ -5,29 +5,26 @@ import { toSqlTuple } from './sql-utils'
 export async function deleteUuids(
   db: Database,
   apiCache: ApiCache,
-  uuidsToDelete: { id: number }[],
+  uuidsToDelete: number[],
 ) {
   if (uuidsToDelete.length > 0) {
-    const uuids = uuidsToDelete.map((uuid) => uuid.id)
-
-    const eventLogsToDelete: { id: number }[] = await db.runSql(`
-      select distinct event_log.id as id
-      from event_log
-      left join event_parameter on event_parameter.log_id = event_log.id
-      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
-      where
-        event_log.uuid_id in ${toSqlTuple(uuids)}
-        or event_parameter_uuid.uuid_id in ${toSqlTuple(uuids)}
+    const uuids = toSqlTuple(uuidsToDelete)
+    const eventsToDelete: { id: number }[] = await db.runSql(`
+      SELECT distinct event.id AS id
+      FROM event
+      WHERE
+        event.uuid_id IN ${uuids}
+        OR uuid_parameter IN ${uuids}
+        OR uuid_parameter2 IN ${uuids}
     `)
 
-    await db.runSql(`DELETE FROM uuid WHERE id IN ${toSqlTuple(uuids)}`)
+    await db.runSql(`DELETE FROM uuid WHERE id IN ${uuids}`)
 
-    for (const id of uuids) {
+    for (const id of uuidsToDelete) {
       apiCache.markUuid(id)
     }
 
-    // Make sure that events are also deleted from DB and ApiCache
-    await deleteEventLogs(db, apiCache, eventLogsToDelete)
+    await deleteEventLogs(db, apiCache, eventsToDelete)
   }
 }
 
@@ -39,7 +36,7 @@ export async function deleteEventLogs(
   if (event_logs.length > 0) {
     const ids = event_logs.map((event_log) => event_log.id)
 
-    await db.runSql(`DELETE FROM event_log WHERE id IN ${toSqlTuple(ids)}`)
+    await db.runSql(`DELETE FROM event WHERE id IN ${toSqlTuple(ids)}`)
 
     for (const eventId of ids) {
       apiCache.markEvent(eventId)

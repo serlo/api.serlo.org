@@ -1,0 +1,18 @@
+name: Push DB migration image
+on:
+  # not a problem if we do it at every push because it will check if the image already exists
+  push:
+
+jobs:
+  docker-image:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
+      - run: gcloud auth configure-docker
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: yarn migrate:push-image

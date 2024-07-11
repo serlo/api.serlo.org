@@ -14,7 +14,6 @@ enum EventType {
   CreateEntity = 'entity/create',
   SetLicense = 'license/object/set',
   CreateEntityLink = 'entity/link/create',
-  RemoveEntityLink = 'entity/link/remove',
   CreateEntityRevision = 'entity/revision/add',
   CheckoutRevision = 'entity/revision/checkout',
   RejectRevision = 'entity/revision/reject',
@@ -170,16 +169,10 @@ export function toGraphQLModel(
       __typename: NotificationEventType.SetLicense,
       repositoryId: event.objectId,
     }
-  } else if (
-    event.type === EventType.CreateEntityLink ||
-    event.type === EventType.RemoveEntityLink
-  ) {
+  } else if (event.type === EventType.CreateEntityLink) {
     return {
       ...base,
-      __typename:
-        event.type === EventType.CreateEntityLink
-          ? NotificationEventType.CreateEntityLink
-          : NotificationEventType.RemoveEntityLink,
+      __typename: NotificationEventType.CreateEntityLink,
       childId: event.objectId,
       parentId: event.uuidParameter,
     }
@@ -279,16 +272,10 @@ function toDatabaseRepresentation(
       type: EventType.SetLicense,
       objectId: event.repositoryId,
     }
-  } else if (
-    event.__typename === NotificationEventType.CreateEntityLink ||
-    event.__typename === NotificationEventType.RemoveEntityLink
-  ) {
+  } else if (event.__typename === NotificationEventType.CreateEntityLink) {
     return {
       ...base,
-      type:
-        event.__typename === NotificationEventType.CreateEntityLink
-          ? EventType.CreateEntityLink
-          : EventType.RemoveEntityLink,
+      type: EventType.CreateEntityLink,
       objectId: event.childId,
       uuidParameter: event.parentId,
     }
@@ -375,7 +362,6 @@ type GraphQLEventModels =
   | Model<'CreateEntityNotificationEvent'>
   | Model<'SetLicenseNotificationEvent'>
   | Model<'CreateEntityLinkNotificationEvent'>
-  | Model<'RemoveEntityLinkNotificationEvent'>
   | Model<'CreateEntityRevisionNotificationEvent'>
   | Model<'CheckoutRevisionNotificationEvent'>
   | Model<'RejectRevisionNotificationEvent'>
@@ -393,7 +379,6 @@ type PayloadForNewEvent =
   | Omit<Model<'CreateEntityNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'SetLicenseNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<Model<'CreateEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
-  | Omit<Model<'RemoveEntityLinkNotificationEvent'>, 'id' | 'date' | 'objectId'>
   | Omit<
       Model<'CreateEntityRevisionNotificationEvent'>,
       'id' | 'date' | 'objectId'
@@ -446,10 +431,6 @@ const DatabaseEventRepresentations = {
   }),
   CreateEntityLink: getDatabaseRepresentationDecoder({
     type: EventType.CreateEntityLink,
-    parameters: t.type({ uuidParameter: t.number }),
-  }),
-  RemoveEntityLink: getDatabaseRepresentationDecoder({
-    type: EventType.RemoveEntityLink,
     parameters: t.type({ uuidParameter: t.number }),
   }),
   CreateEntityRevision: getDatabaseRepresentationDecoder({
@@ -509,7 +490,6 @@ export const DatabaseEventRepresentation: t.Type<DatabaseEventRepresentation> =
     DatabaseEventRepresentations.CreateTaxonomyLink,
     DatabaseEventRepresentations.CreateThread,
     DatabaseEventRepresentations.RejectRevision,
-    DatabaseEventRepresentations.RemoveEntityLink,
     DatabaseEventRepresentations.RemoveTaxonomyLink,
     DatabaseEventRepresentations.RestoreThread,
     DatabaseEventRepresentations.RestoreUuid,
