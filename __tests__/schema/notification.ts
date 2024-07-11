@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { user } from '../../__fixtures__'
-import { Client, given } from '../__utils__'
+import { Client } from '../__utils__'
 import { Service } from '~/context/service'
 
 const query = new Client({ userId: 1194 }).prepareQuery({
@@ -161,10 +161,6 @@ describe('mutation notification setState', () => {
       `,
     })
     .withVariables({ input: { id: [11599, 11551], unread: false } })
-
-  beforeEach(() => {
-    given('UuidQuery').for(user)
-  })
 
   test('authenticated with array of ids', async () => {
     await query.shouldReturnData({

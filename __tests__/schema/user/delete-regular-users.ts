@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-import { article, user as baseUser } from '../../../__fixtures__'
-import { Client, given, userQuery } from '../../__utils__'
+import { article, user } from '../../../__fixtures__'
+import { Client, createFakeIdentity, userQuery } from '../../__utils__'
 
 const input = { username: '1274f605', id: 35412 }
 const mutation = new Client({ userId: 1 }).prepareQuery({
@@ -18,7 +18,7 @@ const mutation = new Client({ userId: 1 }).prepareQuery({
 })
 
 beforeEach(() => {
-  given('UuidQuery').for({ ...baseUser, id: input.id })
+  global.kratos.identities.push(createFakeIdentity({ ...user, id: input.id }))
 })
 
 test('runs successfully if mutation could be successfully executed', async () => {
