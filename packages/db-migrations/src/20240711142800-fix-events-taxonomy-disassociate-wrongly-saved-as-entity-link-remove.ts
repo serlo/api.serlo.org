@@ -4,7 +4,6 @@ export async function up(db: Database) {
   const logger = new SlackLogger(
     '20240711142800-fix-events-taxonomy-disassociate-wrongly-saved-as-entity-link-remove',
   )
-  console.log('here')
   await db.runSql(
     `UPDATE event
       JOIN (
