@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-import { article, comment as baseComment, user } from '../../../__fixtures__'
-import { Client, given } from '../../__utils__'
+import { comment as baseComment, user } from '../../../__fixtures__'
+import { Client, commentQuery } from '../../__utils__'
 
 const comment = { ...baseComment, id: 17296 }
 const newContent = 'This is new content.'
@@ -20,40 +20,21 @@ const mutation = new Client({ userId: user.id })
   })
   .withInput({ content: newContent, commentId: comment.id })
 
-const queryComment = new Client()
-  .prepareQuery({
-    query: gql`
-      query ($id: Int!) {
-        uuid(id: $id) {
-          ... on Comment {
-            content
-          }
-        }
-      }
-    `,
+test('changes content of a comment', async () => {
+  await commentQuery.withVariables({ id: comment.id }).shouldReturnData({
+    uuid: {
+      content:
+        'Könnte man nicht auch "Addiere folgende ein- beziehungsweise zweistelligen Zahlen im Kopf"?',
+    },
   })
-  .withVariables({ id: comment.id })
-
-beforeEach(() => {
-  given('UuidQuery').for(user, comment, article)
-})
-
-test('changes content of a comment (when comment is not cached)', async () => {
-  await mutation.shouldReturnData({
-    thread: { editComment: { success: true } },
-  })
-
-  await queryComment.shouldReturnData({ uuid: { content: newContent } })
-})
-
-test('changes content of a comment (when comment is cached)', async () => {
-  await queryComment.execute()
 
   await mutation.shouldReturnData({
     thread: { editComment: { success: true } },
   })
 
-  await queryComment.shouldReturnData({ uuid: { content: newContent } })
+  await commentQuery
+    .withVariables({ id: comment.id })
+    .shouldReturnData({ uuid: { content: newContent } })
 })
 
 test('fails when new comment is empty', async () => {

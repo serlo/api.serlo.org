@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 import { user } from '../../../__fixtures__'
-import { given, Client } from '../../__utils__'
+import { Client } from '../../__utils__'
 
 const mutation = new Client({ userId: user.id })
   .prepareQuery({
@@ -16,10 +16,6 @@ const mutation = new Client({ userId: user.id })
     `,
   })
   .withInput({ description: 'description' })
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-})
 
 test('returns "{ success: true }" if mutation could be successfully executed', async () => {
   await mutation.shouldReturnData({
@@ -55,10 +51,6 @@ test('updates the cache', async () => {
   await query.shouldReturnData({ uuid: { description: null } })
 
   await mutation.execute()
-
-  // We need to simulate that the description in the DB was changed
-  // TODO: Delete the following line when user is moved into UuidResolver
-  given('UuidQuery').for({ ...user, description: 'description' })
 
   await query.shouldReturnData({ uuid: { description: 'description' } })
 })

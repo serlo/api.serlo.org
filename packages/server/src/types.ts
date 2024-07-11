@@ -609,7 +609,6 @@ export type EntityMutation = {
   checkoutRevision: DefaultResponse;
   rejectRevision: DefaultResponse;
   setAbstractEntity: SetEntityResponse;
-  sort: DefaultResponse;
   updateLicense: DefaultResponse;
 };
 
@@ -629,11 +628,6 @@ export type EntityMutationSetAbstractEntityArgs = {
 };
 
 
-export type EntityMutationSortArgs = {
-  input: EntitySortInput;
-};
-
-
 export type EntityMutationUpdateLicenseArgs = {
   input: EntityUpdateLicenseInput;
 };
@@ -648,11 +642,6 @@ export type EntityQueryDeletedEntitiesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   instance?: InputMaybe<Instance>;
-};
-
-export type EntitySortInput = {
-  childrenIds: Array<Scalars['Int']['input']>;
-  entityId: Scalars['Int']['input'];
 };
 
 export type EntityUpdateLicenseInput = {
@@ -2012,7 +2001,6 @@ export type ResolversTypes = {
   DeletedEntityConnection: ResolverTypeWrapper<ModelOf<DeletedEntityConnection>>;
   EntityMutation: ResolverTypeWrapper<ModelOf<EntityMutation>>;
   EntityQuery: ResolverTypeWrapper<ModelOf<EntityQuery>>;
-  EntitySortInput: ResolverTypeWrapper<ModelOf<EntitySortInput>>;
   EntityUpdateLicenseInput: ResolverTypeWrapper<ModelOf<EntityUpdateLicenseInput>>;
   Event: ResolverTypeWrapper<ModelOf<Event>>;
   EventRevision: ResolverTypeWrapper<ModelOf<EventRevision>>;
@@ -2162,7 +2150,6 @@ export type ResolversParentTypes = {
   DeletedEntityConnection: ModelOf<DeletedEntityConnection>;
   EntityMutation: ModelOf<EntityMutation>;
   EntityQuery: ModelOf<EntityQuery>;
-  EntitySortInput: ModelOf<EntitySortInput>;
   EntityUpdateLicenseInput: ModelOf<EntityUpdateLicenseInput>;
   Event: ModelOf<Event>;
   EventRevision: ModelOf<EventRevision>;
@@ -2663,7 +2650,6 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationCheckoutRevisionArgs, 'input'>>;
   rejectRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
   setAbstractEntity?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetAbstractEntityArgs, 'input'>>;
-  sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationSortArgs, 'input'>>;
   updateLicense?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
