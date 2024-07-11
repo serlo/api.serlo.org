@@ -42,11 +42,9 @@ export const queueName = 'swr'
 export function createSwrQueue({
   cache,
   timer,
-  database,
 }: {
   cache: Cache
   timer: Timer
-  database: Database
 }): SwrQueue {
   const models = R.values(modelFactories).map((createModel) =>
     createModel({
@@ -54,8 +52,6 @@ export function createSwrQueue({
         cache,
         swrQueue: emptySwrQueue,
         authServices: createAuthServices(),
-        timer,
-        database,
       },
     }),
   )
@@ -146,8 +142,6 @@ export function createSwrQueueWorker({
         cache,
         swrQueue: emptySwrQueue,
         authServices: createAuthServices(),
-        timer,
-        database,
       },
     }),
   )
@@ -161,7 +155,7 @@ export function createSwrQueueWorker({
     removeOnSuccess: true,
   })
 
-  const swrQueue = createSwrQueue({ cache, timer, database })
+  const swrQueue = createSwrQueue({ cache, timer })
 
   queue.process(concurrency, async (job): Promise<string> => {
     async function processJob() {
