@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Enter the name of the migration (no spaces and with hifens)"
 
 read MIGRATION_NAME
