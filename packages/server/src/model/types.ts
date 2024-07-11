@@ -33,7 +33,6 @@ import {
   PageDecoder,
   PageRevisionDecoder,
   RejectRevisionNotificationEventDecoder,
-  RemoveEntityLinkNotificationEventDecoder,
   RemoveTaxonomyLinkNotificationEventDecoder,
   SetLicenseNotificationEventDecoder,
   SetTaxonomyParentNotificationEventDecoder,
@@ -107,9 +106,6 @@ export interface Models {
   >
   RejectRevisionNotificationEvent: t.TypeOf<
     typeof RejectRevisionNotificationEventDecoder
-  >
-  RemoveEntityLinkNotificationEvent: t.TypeOf<
-    typeof RemoveEntityLinkNotificationEventDecoder
   >
   SetLicenseNotificationEvent: t.TypeOf<
     typeof SetLicenseNotificationEventDecoder

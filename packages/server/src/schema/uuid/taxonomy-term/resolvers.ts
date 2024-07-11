@@ -319,7 +319,7 @@ export const resolvers: Resolvers = {
 
           await createEvent(
             {
-              __typename: NotificationEventType.RemoveEntityLink,
+              __typename: NotificationEventType.RemoveTaxonomyLink,
               actorId: userId,
               instance: taxonomyTerm.instance,
               parentId: taxonomyTermId,

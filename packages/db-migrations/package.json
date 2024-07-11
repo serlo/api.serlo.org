@@ -1,5 +1,6 @@
 {
   "name": "@serlo/db-migrations",
+  "version": "1.2.0-staging.0",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -12,12 +13,13 @@
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:all": "npm-run-all build:all migrate:up",
     "migrate:up": "yarn db-migrate -m migrations up",
+    "push-image": "tsx scripts/push-image.ts",
     "new": "./scripts/touch_file.sh",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "db-migrate": "^0.11.14",
-    "db-migrate-mysql": "^2.3.2"
+    "db-migrate-mysql": "^3.0.0"
   },
   "devDependencies": {
     "@jest/types": "^29.6.3",
@@ -27,10 +29,10 @@
     "@types/node": "^18.19.31",
     "@types/ramda": "^0.30.0",
     "@types/semver": "^7.5.8",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "depcheck": "^1.4.7",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.21.5",
     "fp-ts": "^2.16.5",
     "io-ts": "^2.2.21",
     "ioredis": "^5.4.1",
@@ -44,8 +46,7 @@
     "ts-node": "^10.9.2",
     "ts-unused-exports": "^10.0.1",
     "tsx": "^4.9.3",
-    "typescript": "^5.4.5",
-    "uuid": "^9.0.1"
+    "typescript": "^5.4.5"
   },
   "packageManager": "yarn@3.6.1",
   "engines": {

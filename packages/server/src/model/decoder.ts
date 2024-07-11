@@ -434,7 +434,6 @@ export enum NotificationEventType {
   CreateTaxonomyLink = 'CreateTaxonomyLinkNotificationEvent',
   CreateThread = 'CreateThreadNotificationEvent',
   RejectRevision = 'RejectRevisionNotificationEvent',
-  RemoveEntityLink = 'RemoveEntityLinkNotificationEvent',
   RemoveTaxonomyLink = 'RemoveTaxonomyLinkNotificationEvent',
   SetLicense = 'SetLicenseNotificationEvent',
   SetTaxonomyTerm = 'SetTaxonomyTermNotificationEvent',
@@ -523,17 +522,6 @@ export const CreateEntityLinkNotificationEventDecoder = t.exact(
     AbstractNotificationEventDecoder,
     t.type({
       __typename: t.literal(NotificationEventType.CreateEntityLink),
-      parentId: t.number,
-      childId: t.number,
-    }),
-  ]),
-)
-
-export const RemoveEntityLinkNotificationEventDecoder = t.exact(
-  t.intersection([
-    AbstractNotificationEventDecoder,
-    t.type({
-      __typename: t.literal(NotificationEventType.RemoveEntityLink),
       parentId: t.number,
       childId: t.number,
     }),
@@ -634,7 +622,6 @@ export const NotificationEventDecoder = t.union([
   CreateTaxonomyLinkNotificationEventDecoder,
   CreateThreadNotificationEventDecoder,
   RejectRevisionNotificationEventDecoder,
-  RemoveEntityLinkNotificationEventDecoder,
   RemoveTaxonomyLinkNotificationEventDecoder,
   SetLicenseNotificationEventDecoder,
   SetTaxonomyTermNotificationEventDecoder,

@@ -1,5 +1,6 @@
 import { v1 as uuidv1 } from 'uuid'
 
+import { Service } from '~/context/service'
 import { assertUserIsAuthenticated, createNamespace } from '~/internals/graphql'
 import { MediaType, Resolvers } from '~/types'
 
@@ -8,25 +9,42 @@ export const resolvers: Resolvers = {
     media: createNamespace(),
   },
   MediaQuery: {
-    async newUpload(_parent, { mediaType }, { userId, googleStorage }) {
-      assertUserIsAuthenticated(userId)
+    async newUpload(
+      _parent,
+      { mediaType },
+      { userId, googleStorage, service },
+    ) {
+      if (service !== Service.SerloEditorTesting) {
+        assertUserIsAuthenticated(userId)
+      }
 
       const [fileExtension, mimeType] = getFileExtensionAndMimeType(mediaType)
       const fileHash = uuidv1()
 
-      const [uploadUrl] = await googleStorage
-        .bucket('assets.serlo.org')
+      const bucketName =
+        service === Service.SerloEditorTesting
+          ? 'serlo-editor-testing'
+          : 'assets.serlo.org'
+
+      const file = googleStorage
+        .bucket(bucketName)
         .file(`${fileHash}.${fileExtension}`)
-        .getSignedUrl({
-          version: 'v4',
-          action: 'write',
-          expires: Date.now() + 15 * 60 * 1000,
-          contentType: mimeType,
-        })
+
+      const [uploadUrl] = await file.getSignedUrl({
+        version: 'v4',
+        action: 'write',
+        expires: Date.now() + 15 * 60 * 1000,
+        contentType: mimeType,
+      })
+
+      const urlAfterUpload =
+        service === Service.SerloEditorTesting
+          ? `https://storage.googleapis.com/${bucketName}/${fileHash}.${fileExtension}`
+          : `https://${bucketName}/${fileHash}/image.${fileExtension}`
 
       return {
         uploadUrl,
-        urlAfterUpload: `https://assets.serlo.org/${fileHash}/image.${fileExtension}`,
+        urlAfterUpload,
       }
     },
   },
