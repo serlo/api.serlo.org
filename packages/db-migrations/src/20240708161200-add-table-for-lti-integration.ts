@@ -9,8 +9,8 @@ export async function up(db: Database) {
       id BIGINT NOT NULL AUTO_INCREMENT,
       resource_link_id VARCHAR(255),
       custom_claim_id VARCHAR(255) NOT NULL,
-      content LONGTEXT,
-      parsed_jwt_content TEXT,
+      content LONGTEXT NOT NULL,
+      id_token_on_creation TEXT NOT NULL,
       PRIMARY KEY (id)
     )
   `)
