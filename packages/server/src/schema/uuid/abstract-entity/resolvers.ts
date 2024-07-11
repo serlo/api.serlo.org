@@ -16,7 +16,6 @@ import {
   createNamespace,
 } from '~/internals/graphql'
 import {
-  CourseDecoder,
   EntityDecoder,
   EntityRevisionDecoder,
   EntityType,
@@ -310,37 +309,6 @@ export const resolvers: Resolvers = {
       } finally {
         await transaction.rollback()
       }
-    },
-
-    async sort(_parent, { input }, context) {
-      const { dataSources, userId } = context
-      assertUserIsAuthenticated(userId)
-
-      const { entityId, childrenIds } = input
-
-      const entity = await UuidResolver.resolveWithDecoder(
-        CourseDecoder,
-        { id: entityId },
-        context,
-      )
-      await assertUserIsAuthorized({
-        context,
-        message:
-          'You are not allowed to sort children of entities in this instance.',
-        guard: serloAuth.Entity.orderChildren(
-          serloAuth.instanceToScope(entity.instance),
-        ),
-      })
-
-      // Provisory solution, See https://github.com/serlo/serlo.org-database-layer/issues/303
-      const allChildrenIds = [...new Set(childrenIds.concat(entity.pageIds))]
-
-      const { success } = await dataSources.model.serlo.sortEntity({
-        entityId,
-        childrenIds: allChildrenIds,
-      })
-
-      return { success, query: {} }
     },
 
     async updateLicense(_parent, { input }, context) {
