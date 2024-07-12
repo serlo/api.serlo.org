@@ -29,6 +29,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       return delay
     },
     lazyConnect: true,
+    maxRetriesPerRequest: 3,
   })
 
   client.on('error', (error) => {
@@ -43,7 +44,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       retryCount: 0,
     }),
     [Priority.High]: createLockManager({
-      retryCount: 10,
+      retryCount: 5,
     }),
   }
 
@@ -186,7 +187,9 @@ function createLockManager({
 }: {
   retryCount: number
 }): LockManager {
-  const client = new Redis(process.env.REDIS_URL, { lazyConnect: true })
+  const client = new Redis(process.env.REDIS_URL, {
+    lazyConnect: true,
+  })
   client.on('error', (error) => {
     captureErrorEvent({
       error,
