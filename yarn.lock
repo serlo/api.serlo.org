@@ -3453,13 +3453,13 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^4.4.0":
-  version: 4.5.0
-  resolution: "@nmshd/connector-sdk@npm:4.5.0"
+  version: 4.5.1
+  resolution: "@nmshd/connector-sdk@npm:4.5.1"
   dependencies:
     axios: ^1.7.2
     form-data: ^4.0.0
-    qs: ^6.12.1
-  checksum: b83efd4a837d3611dd17dc017213002451714e8a43a65c060c38d075da15888a92f58090965c215a75d290103a7dbcea0cfca49c21854193f9366e18978d037b
+    qs: ^6.12.2
+  checksum: 107bee4040b43c7ba574763aa35fc67c975e411be6a2bb87a5dd641aeed2dbdc604707437829b655c1a744886cd7ba182c94f856902a276222ff8c0b3e93a8b6
   languageName: node
   linkType: hard
 
@@ -16893,12 +16893,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.12.1":
-  version: 6.12.1
-  resolution: "qs@npm:6.12.1"
+"qs@npm:^6.12.2":
+  version: 6.12.3
+  resolution: "qs@npm:6.12.3"
   dependencies:
     side-channel: ^1.0.6
-  checksum: aa761d99e65b6936ba2dd2187f2d9976afbcda38deb3ff1b3fe331d09b0c578ed79ca2abdde1271164b5be619c521ec7db9b34c23f49a074e5921372d16242d5
+  checksum: 9a9228a623bc36d41648237667d7342fb8d64d1cfeb29e474b0c44591ba06ac507e2d726f60eca5af8dc420e5dd23370af408ef8c28e0405675c7187b736a693
   languageName: node
   linkType: hard
 
