@@ -28,7 +28,6 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       if (times * delay > 300_000) throw new Error('Redis connection timed out')
       return delay
     },
-    lazyConnect: true,
     maxRetriesPerRequest: 3,
   })
 
@@ -187,13 +186,11 @@ function createLockManager({
 }: {
   retryCount: number
 }): LockManager {
-  const client = new Redis(process.env.REDIS_URL, {
-    lazyConnect: true,
-  })
+  const client = new Redis(process.env.REDIS_URL)
   client.on('error', (error) => {
     captureErrorEvent({
       error,
-      location: 'cache lockmanager',
+      location: 'Cache lockManager',
     })
     client.disconnect()
   })
