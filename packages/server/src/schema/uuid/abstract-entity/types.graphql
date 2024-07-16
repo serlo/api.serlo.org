@@ -83,7 +83,6 @@ type EntityMutation {
   updateLicense(input: EntityUpdateLicenseInput!): DefaultResponse!
   checkoutRevision(input: CheckoutRevisionInput!): DefaultResponse!
   rejectRevision(input: RejectRevisionInput!): DefaultResponse!
-  sort(input: EntitySortInput!): DefaultResponse!
 }
 
 input SetAbstractEntityInput {
@@ -124,9 +123,4 @@ input CheckoutRevisionInput {
 input RejectRevisionInput {
   revisionId: Int!
   reason: String!
-}
-
-input EntitySortInput {
-  entityId: Int!
-  childrenIds: [Int!]!
 }

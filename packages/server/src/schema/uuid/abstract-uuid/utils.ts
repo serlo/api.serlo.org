@@ -33,7 +33,7 @@ async function getTitle(
     uuid.__typename === EntityType.Course ||
     uuid.__typename === EntityType.CoursePage ||
     uuid.__typename === EntityType.Event ||
-    uuid.__typename === DiscriminatorType.Page ||
+    uuid.__typename === EntityType.Page ||
     uuid.__typename === EntityType.Video
   ) {
     const revisionId = uuid.currentRevisionId ?? R.head(uuid.revisionIds)

@@ -3,7 +3,7 @@ import { HttpResponse, ResponseResolver, http } from 'msw'
 import type { OpenAI } from 'openai'
 
 import { user as baseUser } from '../../__fixtures__'
-import { Client, given, hasInternalServerError } from '../__utils__'
+import { Client, hasInternalServerError } from '../__utils__'
 
 interface ChoicesFromChatCompletion {
   choices: OpenAI.ChatCompletion['choices']
@@ -70,8 +70,6 @@ beforeEach(() => {
   mockOpenAIServer(() => {
     return HttpResponse.json(mockedOpenAiResponse)
   })
-
-  given('UuidQuery').for(user)
 })
 
 afterEach(() => {

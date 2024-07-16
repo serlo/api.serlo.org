@@ -11,9 +11,9 @@ import {
   givenSpreadheetApi,
   givenSpreadsheet,
   hasInternalServerError,
-  given,
   Client,
   userQueryUnrevisedEntities,
+  createFakeIdentity,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/model'
@@ -22,10 +22,6 @@ import { Instance } from '~/types'
 const client = new Client()
 const adminUserId = 1
 const loginUserId = 9
-
-beforeEach(() => {
-  given('UuidQuery').for(user)
-})
 
 describe('User', () => {
   test('by alias (/user/profile/:id)', async () => {
@@ -81,8 +77,6 @@ describe('User', () => {
   })
 
   test('by alias /user/profile/:id returns null when uuid :id is no user', async () => {
-    given('UuidQuery').for(article)
-
     await client
       .prepareQuery({
         query: gql`
@@ -451,33 +445,32 @@ describe('User', () => {
   })
 
   describe('property lastLogin', () => {
-    const query = client
-      .prepareQuery({
-        query: gql`
-          query user($id: Int!) {
-            uuid(id: $id) {
-              ... on User {
-                lastLogin
-              }
+    const query = client.prepareQuery({
+      query: gql`
+        query user($id: Int!) {
+          uuid(id: $id) {
+            ... on User {
+              lastLogin
             }
           }
-        `,
-      })
-      .withVariables({
-        id: user.id,
-      })
+        }
+      `,
+      variables: { id: user.id },
+    })
+
+    beforeEach(() => {
+      global.kratos.identities.push(createFakeIdentity(user))
+    })
+
     test('returns null for unauthenticated user', async () => {
       await query.shouldReturnData({
-        uuid: {
-          lastLogin: null,
-        },
+        uuid: { lastLogin: null },
       })
     })
+
     test('is readable for authenticated user', async () => {
       await query.forLoginUser().shouldReturnData({
-        uuid: {
-          lastLogin: user.lastLogin,
-        },
+        uuid: { lastLogin: user.lastLogin },
       })
     })
   })

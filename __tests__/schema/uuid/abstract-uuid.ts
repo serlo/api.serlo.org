@@ -6,12 +6,11 @@ import {
   comment,
   exercise,
   exerciseGroup,
-  page,
   taxonomyTermRoot,
   taxonomyTermSubject,
   user,
 } from '../../../__fixtures__'
-import { Client, getTypenameAndId, given } from '../../__utils__'
+import { Client, getTypenameAndId } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { Instance } from '~/types'
 
@@ -122,38 +121,8 @@ describe('uuid by alias', () => {
   })
 })
 
-test('`uuid` returns null on unsupported uuid type', async () => {
-  given('UuidQuery').for({
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error We assume here that we get an invalid type name
-    __typename: 'MathPuzzle',
-    id: 146944,
-    trashed: false,
-  })
-
-  await new Client()
-    .prepareQuery({
-      query: gql`
-        query unsupported($id: Int!) {
-          uuid(id: $id) {
-            __typename
-            id
-          }
-        }
-      `,
-    })
-    .withVariables({ id: 146944 })
-    .shouldReturnData({ uuid: null })
-})
-
 describe('custom aliases', () => {
   test('de.serlo.org/community resolves to uuid 19767', async () => {
-    given('UuidQuery').for({
-      ...page,
-      id: 19882,
-      alias: '/legacy-alias',
-    })
-
     await client
       .prepareQuery({
         query: gql`
@@ -218,8 +187,6 @@ describe('property "title"', () => {
   ] as [string, Model<'AbstractUuid'>[], string][]
 
   test.each(testCases)('%s', async (_, uuids, title) => {
-    given('UuidQuery').for(uuids)
-
     await client
       .prepareQuery({
         query: gql`
@@ -276,8 +243,6 @@ describe('property "title"', () => {
   // TODO: This property is not used and thus can be deleted
   // See https://serlo.github.io/unused-graphql-properties/#Comment.title
   test.skip('"title" for comments without title in thread', async () => {
-    given('UuidQuery').for(articleRevision)
-
     await client
       .prepareQuery({
         query: gql`

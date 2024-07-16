@@ -1,19 +1,11 @@
 import gql from 'graphql-tag'
 
-import {
-  article,
-  comment1,
-  comment2,
-  user,
-  user2 as commentator,
-} from '../../../__fixtures__'
-import { given, Client } from '../../__utils__'
+import { user } from '../../../__fixtures__'
+import { Client } from '../../__utils__'
 import { encodeThreadId } from '~/schema/thread/utils'
 
-const moderator = { ...user, id: 1234, roles: ['de_moderator'] }
-const threadInitiator = { ...user, id: 4321, roles: ['login'] }
-const thread = { ...comment1, authorId: threadInitiator.id }
-const subComment = { ...comment2, authorId: commentator.id }
+const moderator = { ...user, id: 10, roles: ['de_moderator'] }
+const threadInitiator = { ...user, id: 1194, roles: ['login'] }
 
 const mutation = new Client({ userId: threadInitiator.id })
   .prepareQuery({
@@ -27,18 +19,7 @@ const mutation = new Client({ userId: threadInitiator.id })
       }
     `,
   })
-  .withInput({ id: encodeThreadId(thread.id), status: 'open' })
-
-beforeEach(() => {
-  given('UuidQuery').for(
-    article,
-    thread,
-    subComment,
-    threadInitiator,
-    commentator,
-    moderator,
-  )
-})
+  .withInput({ id: encodeThreadId(35163), status: 'open' })
 
 test('status is actually changed', async function () {
   const threadQuery = new Client({ userId: user.id })
@@ -111,7 +92,13 @@ test('thread initiators are allowed to change thread status', async () => {
 })
 
 test('commentators are allowed to change thread status', async () => {
-  await mutation.withContext({ userId: commentator.id }).shouldReturnData({
+  const commentatorId = 266
+  // Let's remove all other roles of this user to be sure that they will change status although they are just login user
+  await global.databaseForTests.mutate(
+    'DELETE FROM role_user WHERE user_id = ? AND role_id > 2',
+    [commentatorId],
+  )
+  await mutation.withContext({ userId: commentatorId }).shouldReturnData({
     thread: { setThreadStatus: { success: true } },
   })
 })
