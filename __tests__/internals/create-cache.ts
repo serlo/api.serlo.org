@@ -6,9 +6,9 @@ import { createCache } from '~/cache'
 
 describe('Cache', () => {
   afterEach(() => {
-    // We need to recreate the cache since the connection was closed 
+    // We need to recreate the cache since the connection was closed
     // and it leads to an error in the global after hook when quit()
-    global.cache = createCache({ timer: global.timer }) 
+    global.cache = createCache({ timer: global.timer })
   })
 
   const query = new Client().prepareQuery({
