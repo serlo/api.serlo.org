@@ -10,9 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-node@main
-      - uses: google-github-actions/auth@v2
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
-      - run: gcloud auth configure-docker
-      - uses: google-github-actions/setup-gcloud@v2
-      - run: yarn migrate:push-image
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        run: |
+          cd packages/db-migrations
+          DOCKER_REGISTRY=ghcr.io DOCKER_REPOSITORY=$(echo $GITHUB_REPOSITORY)/db-migration lerna run --stream push-image
+        env:
+          DOCKER_REGISTRY: ghcr.io
+          DOCKER_REPOSITORY: ${{ github.repository }}/db-migration
