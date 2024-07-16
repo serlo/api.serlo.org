@@ -7,6 +7,7 @@ COPY scripts/build.ts scripts/build.ts
 COPY tsconfig.json .
 COPY packages/authorization/package.json packages/authorization/package.json
 COPY packages/server/package.json packages/server/package.json
+COPY packages/db-migrations/package.json packages/db-migrations/package.json
 COPY package.json .
 COPY lerna.json .
 COPY yarn.lock .
