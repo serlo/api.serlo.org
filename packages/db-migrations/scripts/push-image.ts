@@ -66,7 +66,11 @@ export function buildDockerImage({
   pushTags(versions)
 
   function shouldBuild() {
-    const result = spawnSync('docker', ['manifest', 'inspect', `${remoteName}:${version}`], { stdio: 'pipe' })
+    const result = spawnSync(
+      'docker',
+      ['manifest', 'inspect', `${remoteName}:${version}`],
+      { stdio: 'pipe' },
+    )
     return result.status !== 0
   }
 
