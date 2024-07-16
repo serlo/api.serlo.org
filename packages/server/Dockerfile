@@ -1,4 +1,4 @@
-FROM node:20 as base
+FROM node:20 AS base
 ARG image
 WORKDIR /usr/src/app
 COPY .yarn .yarn
@@ -11,16 +11,16 @@ COPY package.json .
 COPY lerna.json .
 COPY yarn.lock .
 
-FROM base as build_dist
+FROM base AS build_dist
 RUN yarn --immutable --immutable-cache --silent
 COPY packages/authorization packages/authorization
 COPY packages/server packages/server
 RUN yarn build:${image}
 
-FROM base as build_node_modules
+FROM base AS build_node_modules
 RUN yarn workspaces focus --all --production
 
-FROM node:20-alpine as release
+FROM node:20-alpine AS release
 ARG image
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist

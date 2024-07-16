@@ -1,4 +1,3 @@
-import { migrateDB } from '@serlo/db-migrations'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import createApp from 'express'
