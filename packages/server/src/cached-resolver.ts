@@ -15,12 +15,7 @@ export function createCachedResolver<P, R>(
     __typename: 'CachedResolver',
     async resolveWithDecoder(customDecoder, payload, context) {
       const key = spec.getKey(payload)
-      const cacheValue = await context.cache
-        .get<R>({ key, maxAge })
-        .catch(() => {
-          // probably we don't have a connection to redis
-          return O.none
-        })
+      const cacheValue = await context.cache.get<R>({ key, maxAge })
 
       if (O.isSome(cacheValue)) {
         const cacheEntry = cacheValue.value
@@ -43,16 +38,13 @@ export function createCachedResolver<P, R>(
       const value = await spec.getCurrentValue(payload, context)
 
       if (customDecoder.is(value)) {
-        await context.cache
-          .set({
-            key,
-            value,
-            source: 'API: From a call to a data source',
-            ttlInSeconds,
-          })
-          .catch(() => {
-            // probably we don't have a connection to redis
-          })
+        await context.cache.set({
+          key,
+          value,
+          source: 'API: From a call to a data source',
+          ttlInSeconds,
+        })
+
         return value
       } else {
         throw new InvalidCurrentValueError({
