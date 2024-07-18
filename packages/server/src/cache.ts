@@ -5,6 +5,7 @@ import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
 import Redlock from 'redlock'
 
+import { captureErrorEvent } from './error-event'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
 import { timeToMilliseconds, Time, Timer } from '~/timer'
 import { FunctionOrValue, isUpdateFunction } from '~/utils'
@@ -27,6 +28,14 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       if (times * delay > 300_000) throw new Error('Redis connection timed out')
       return delay
     },
+    maxRetriesPerRequest: 3,
+  })
+
+  client.on('error', (error) => {
+    captureErrorEvent({
+      error,
+      location: 'cache',
+    })
   })
 
   const lockManagers: Record<Priority, LockManager> = {
@@ -34,7 +43,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       retryCount: 0,
     }),
     [Priority.High]: createLockManager({
-      retryCount: 10,
+      retryCount: 5,
     }),
   }
 
@@ -178,6 +187,13 @@ function createLockManager({
   retryCount: number
 }): LockManager {
   const client = new Redis(process.env.REDIS_URL)
+  client.on('error', (error) => {
+    captureErrorEvent({
+      error,
+      location: 'Cache lockManager',
+    })
+    client.disconnect()
+  })
   const redlock = new Redlock([client], { retryCount })
 
   return {

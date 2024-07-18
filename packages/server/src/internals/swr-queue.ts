@@ -64,6 +64,7 @@ export function createSwrQueue({
     isWorker: false,
     removeOnFailure: true,
     removeOnSuccess: true,
+    autoConnect: false,
   })
 
   queue.on('error', (error) => {
