@@ -26,6 +26,7 @@ import {
   ConnectorRelationshipChangeType,
   ConnectorRequestContent,
 } from '@nmshd/connector-sdk'
+import crypto from 'crypto'
 import express, { Express, RequestHandler, Request, Response } from 'express'
 import { option as O } from 'fp-ts'
 import * as t from 'io-ts'
@@ -217,7 +218,7 @@ function createEnmeshedInitMiddleware(
 
       const createRelationshipResponse =
         await client.relationshipTemplates.createOwnRelationshipTemplate({
-          expiresAt: '2100-01-01T00:00:00.000Z',
+          expiresAt: getExpirationDate(),
           content: {
             '@type': 'RelationshipTemplateContent',
             title: 'LENABI Demo',
@@ -318,10 +319,12 @@ function createSetAttributesHandler(
       return validationError(res, 'Relationship not accepted yet.')
 
     const name = readQuery(req, 'name')
-    if (!name) return validationError(res, 'Missing required parameter: name.')
+    if (!name || !isValidAttributeName(name))
+      return validationError(res, 'Invalid or missing name parameter.')
+
     const value = readQuery(req, 'value')
-    if (!value)
-      return validationError(res, 'Missing required parameter: value.')
+    if (!value || !isValidAttributeValue(value))
+      return validationError(res, 'Invalid or missing value parameter.')
 
     const request = await client.outgoingRequests.createRequest({
       content: {
@@ -404,8 +407,12 @@ function createEnmeshedWebhookMiddleware(
   cache: Cache,
 ): RequestHandler {
   async function handleRequest(req: Request, res: Response) {
-    if (req.headers['x-api-key'] !== process.env.ENMESHED_WEBHOOK_SECRET) {
-      res.status(400).send('Wrong X-API-Key')
+    const apiKey = Array.isArray(req.headers['x-api-key'])
+      ? req.headers['x-api-key'][0]
+      : req.headers['x-api-key']
+
+    if (!secureCompare(apiKey, process.env.ENMESHED_WEBHOOK_SECRET)) {
+      res.status(400).send('Invalid API Key')
       return
     }
 
@@ -704,6 +711,27 @@ function readQuery(req: ExpressRequest, key: string): string | null {
   const value = req.query[key]
 
   return typeof value === 'string' ? value : null
+}
+
+function getExpirationDate(): string {
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + 30) // Set expiration to 30 days from now
+  return expiresAt.toISOString()
+}
+
+function isValidAttributeName(name: string): boolean {
+  // Implement proper validation logic
+  return /^[a-zA-Z0-9_]{1,50}$/.test(name)
+}
+
+function isValidAttributeValue(value: string): boolean {
+  // Implement proper validation logic
+  return value.length <= 1000 // Example: limit value length
+}
+
+function secureCompare(a: string | undefined, b: string | undefined): boolean {
+  if (!a || !b) return false
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
 }
 
 type ExpressRequest = Parameters<RequestHandler>[0]
