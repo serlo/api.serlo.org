@@ -2203,22 +2203,22 @@ __metadata:
   linkType: hard
 
 "@graphql-codegen/typescript-resolvers@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@graphql-codegen/typescript-resolvers@npm:4.1.0"
+  version: 4.2.1
+  resolution: "@graphql-codegen/typescript-resolvers@npm:4.2.1"
   dependencies:
     "@graphql-codegen/plugin-helpers": ^5.0.4
-    "@graphql-codegen/typescript": ^4.0.7
-    "@graphql-codegen/visitor-plugin-common": 5.2.0
+    "@graphql-codegen/typescript": ^4.0.9
+    "@graphql-codegen/visitor-plugin-common": 5.3.1
     "@graphql-tools/utils": ^10.0.0
     auto-bind: ~4.0.0
     tslib: ~2.6.0
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: d056ead630d35d1d8a336075d815615d80e0a5813934055560b7ce99c55ef2a610f97a95a07a82dc547b9cc1f0607722b6cd188083a2ae9e624470ee0a5916f0
+  checksum: d245f96f63fb2cc8455fbaced2d60a7c75e685e300c490a5e516eb793ee59fc8b7123adfe9bd98b47a3dbb7ac6d82704f29b2680aa3b8cc24a4b1403d29b61f6
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript@npm:^4.0.7":
+"@graphql-codegen/typescript@npm:^4.0.7, @graphql-codegen/typescript@npm:^4.0.9":
   version: 4.0.9
   resolution: "@graphql-codegen/typescript@npm:4.0.9"
   dependencies:
