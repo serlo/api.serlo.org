@@ -2,8 +2,10 @@ import * as serloAuth from '@serlo/authorization'
 import { instanceToScope, Scope } from '@serlo/authorization'
 import { createHash } from 'crypto'
 import { array as A, either as E, function as F, option as O } from 'fp-ts'
+import { NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
 import * as t from 'io-ts'
 import * as R from 'ramda'
+import { URL } from 'url'
 
 import { resolveUnrevisedEntityIds } from '../abstract-entity/resolvers'
 import { UuidResolver } from '../abstract-uuid/resolvers'
@@ -25,7 +27,6 @@ import {
   generateRole,
   isGlobalRole,
 } from '~/internals/graphql'
-import { CellValues, MajorDimension } from '~/model'
 import { EntityDecoder, UserDecoder } from '~/model/decoder'
 import {
   getPermissionsForRole,
@@ -36,6 +37,11 @@ import { resolveConnection } from '~/schema/connection/utils'
 import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
+
+enum MajorDimension {
+  Rows = 'ROWS',
+  Columns = 'COLUMNS',
+}
 
 export const ActiveUserIdsResolver = createCachedResolver<
   Record<string, never>,
@@ -200,12 +206,12 @@ export const resolvers: Resolvers = {
   User: {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
-    async motivation(user, _args, context) {
+    async motivation(user, _args, _context) {
+      const spreadsheetId = process.env.GOOGLE_SPREADSHEET_API_MOTIVATION
+      const range = 'Formularantworten!B:D'
+
       return F.pipe(
-        await context.dataSources.model.googleSpreadsheetApi.getValues({
-          spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
-          range: 'Formularantworten!B:D',
-        }),
+        await getSpreadsheetValues({ spreadsheetId, range }),
         E.mapLeft(addContext({ location: 'motivationSpreadsheet' })),
         E.getOrElse(consumeErrorEvent([] as string[][])),
         A.findLast(
@@ -622,11 +628,14 @@ async function fetchActivityByType(
   return result
 }
 
-async function activeDonorIDs(context: Context) {
+async function activeDonorIDs(_context: Context) {
+  const spreadsheetId = process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS
+  const range = 'Tabellenblatt1!A:A'
+
   return F.pipe(
-    await context.dataSources.model.googleSpreadsheetApi.getValues({
-      spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_ACTIVE_DONORS,
-      range: 'Tabellenblatt1!A:A',
+    await getSpreadsheetValues({
+      spreadsheetId,
+      range,
       majorDimension: MajorDimension.Columns,
     }),
     extractIDsFromFirstColumn,
@@ -673,5 +682,52 @@ async function deleteKratosUser(
 
   if (identity) {
     await authServices.kratos.admin.deleteIdentity({ id: identity.id })
+  }
+}
+
+type CellValues = NonEmptyArray<string[]>
+
+interface GetSpreadsheetValuesArgs {
+  spreadsheetId: string
+  range: string
+  majorDimension?: MajorDimension
+}
+
+async function getSpreadsheetValues(
+  args: GetSpreadsheetValuesArgs,
+): Promise<E.Either<ErrorEvent, CellValues>> {
+  const { spreadsheetId, range } = args
+  const majorDimension = args.majorDimension ?? MajorDimension.Rows
+  const url = new URL(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`,
+  )
+  url.searchParams.append('majorDimension', majorDimension)
+  const apiSecret = process.env.GOOGLE_SPREADSHEET_API_SECRET
+  url.searchParams.append('key', apiSecret)
+
+  const specifyErrorLocation = E.mapLeft(
+    addContext({
+      location: 'googleSpreadSheetApi',
+      locationContext: { ...args },
+    }),
+  )
+
+  try {
+    const response = await fetch(url.toString())
+    const data = (await response.json()) as { values?: string[][] }
+
+    if (
+      !data.values ||
+      !Array.isArray(data.values) ||
+      data.values.length === 0
+    ) {
+      return specifyErrorLocation(
+        E.left({ error: new Error('invalid response or empty range') }),
+      )
+    }
+
+    return specifyErrorLocation(E.right(data.values as CellValues))
+  } catch (error) {
+    return specifyErrorLocation(E.left({ error: E.toError(error) }))
   }
 }
