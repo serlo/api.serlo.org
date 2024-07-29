@@ -16,19 +16,21 @@ function run() {
     )
   }
   buildDockerImage({
-    name: 'api-server',
+    name: 'api.serlo.org/server',
     context: '../..',
     envName,
   })
   buildDockerImage({
-    name: 'api-swr-queue-worker',
+    name: 'api.serlo.org/swr-queue-worker',
     context: '../..',
     envName,
   })
 }
 
 function buildDockerImage({ name, context, envName }: DockerImageOptions) {
-  const remoteName = `eu.gcr.io/serlo-shared/${name}`
+  const registry = process.env.DOCKER_REGISTRY || 'ghcr.io'
+  const repository = process.env.DOCKER_REPOSITORY || `serlo/${name}`
+  const remoteName = `${registry}/${repository}`
   const date = new Date()
   const timestamp = `${date.toISOString().split('T')[0]}-${date.getTime()}`
 
