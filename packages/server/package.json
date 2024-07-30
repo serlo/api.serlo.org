@@ -14,8 +14,8 @@
     "build:server": "yarn _build --format cjs --target node --entry src/server.ts",
     "build:swr-queue-worker": "yarn _build --format cjs --target node --entry src/swr-queue-worker.ts",
     "codegen": "graphql-codegen --config codegen.yml",
-    "deploy:image:staging": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/deploy-env.js staging",
-    "deploy:image:production": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/deploy-env.js production"
+    "deploy:image:staging": "./scripts/deploy.sh staging",
+    "deploy:image:production": "./scripts/deploy.sh production"
   },
   "dependencies": {
     "bee-queue": "^1.7.1",
