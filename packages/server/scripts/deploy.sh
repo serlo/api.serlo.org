@@ -3,7 +3,7 @@
 set -e
 
 function run() {
-  local env_name=$1
+  env_name=$1
   if [ -z "$env_name" ]; then
     echo "You have to specify environment, staging or production"
     exit 1
@@ -14,15 +14,14 @@ function run() {
     exit 1
   fi
 
-  build_docker_image "server" "../.." "$env_name"
-  build_docker_image "swr-queue-worker" "../.." "$env_name"
+  build_docker_image "server"
+  build_docker_image "swr-queue-worker"
 }
 
 function build_docker_image() {
   local name=$1
-  local context=$2
-  local env_name=$3
 
+  local context="../.."
   local registry=${DOCKER_REGISTRY:-"ghcr.io"}
   local repository=${DOCKER_REPOSITORY:-"serlo/api.serlo.org/$name"}
   local remote_name="$registry/$repository"
