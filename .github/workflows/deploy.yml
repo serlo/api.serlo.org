@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
-      - uses: google-github-actions/auth@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
-      - run: gcloud auth configure-docker
-      - uses: google-github-actions/setup-gcloud@v2
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn deploy:images:${{ github.ref_name }}
   deploy-image:
     runs-on: ubuntu-latest
