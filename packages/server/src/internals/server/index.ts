@@ -1,4 +1,3 @@
-import { migrateDB } from '@serlo/db-migrations'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import createApp from 'express'
@@ -12,6 +11,7 @@ import { createCache, createEmptyCache } from '~/cache'
 import { createAuthServices, AuthServices } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
+import { captureErrorEvent } from '~/error-event'
 import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 import { Timer, createTimer } from '~/timer'
@@ -20,8 +20,6 @@ export { getGraphQLOptions } from './graphql-middleware'
 
 export async function start() {
   dotenv.config()
-
-  if (process.env.ENVIRONMENT === 'local') await migrateDB()
 
   initializeSentry({ context: 'server' })
   const timer = createTimer()
@@ -73,8 +71,30 @@ async function initializeServer({
   })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 
-  app.get(healthPath, (_req, res) => {
-    res.status(200).send('Okay!')
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  app.get(healthPath, async (_req, res) => {
+    try {
+      const response = await fetch('http://localhost:3001/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: '{ uuid(id: 1) { id } }' }),
+      })
+      const data: unknown = await response.json()
+      if (typeof data !== 'object' || !data || 'errors' in data) {
+        return res
+          .status(500)
+          .send('Graphql operations dependent on Redis are broken')
+      }
+      res.status(200).send('Okay!')
+    } catch (error) {
+      res.status(500).send(`Unexpected error occurred`)
+      captureErrorEvent({
+        error: error as Error,
+        location: '/health',
+      })
+    }
   })
 
   const port = 3001

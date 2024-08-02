@@ -19,7 +19,7 @@ void run()
 async function run() {
   const { version } = await fetchPackageJSON()
   buildDockerImage({
-    name: 'api-db-migration',
+    name: 'api.serlo.org/db-migration',
     version,
     Dockerfile: path.join(root, 'Dockerfile'),
     context: '.',
@@ -48,7 +48,9 @@ export function buildDockerImage({
     throw new Error(`illegal version number ${version}`)
   }
 
-  const remoteName = `eu.gcr.io/serlo-shared/${name}`
+  const registry = process.env.DOCKER_REGISTRY || 'ghcr.io'
+  const repository = process.env.DOCKER_REPOSITORY || `serlo/${name}`
+  const remoteName = `${registry}/${repository}`
 
   if (!shouldBuild()) {
     // eslint-disable-next-line no-console
@@ -64,25 +66,12 @@ export function buildDockerImage({
   pushTags(versions)
 
   function shouldBuild() {
-    const args = [
-      'container',
-      'images',
-      'list-tags',
-      remoteName,
-      '--filter',
-      `tags=${version}`,
-      '--format',
-      'json',
-    ]
-
-    const result = spawnSync('gcloud', args, { stdio: 'pipe' })
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const images = JSON.parse(String(result.stdout))
-
-    if (!Array.isArray(images))
-      throw new Error('Wrong response from google cloud')
-
-    return images.length === 0
+    const result = spawnSync(
+      'docker',
+      ['manifest', 'inspect', `${remoteName}:${version}`],
+      { stdio: 'pipe' },
+    )
+    return result.status !== 0
   }
 
   function runBuild(versions: string[]) {
