@@ -38,7 +38,7 @@ import { createThreadResolvers } from '~/schema/thread/utils'
 import { createUuidResolvers } from '~/schema/uuid/abstract-uuid/utils'
 import { Instance, Resolvers } from '~/types'
 
-enum MajorDimension {
+export enum MajorDimension {
   Rows = 'ROWS',
   Columns = 'COLUMNS',
 }
