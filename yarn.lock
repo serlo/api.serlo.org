@@ -8742,9 +8742,9 @@ __metadata:
   linkType: hard
 
 "default-import@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "default-import@npm:1.1.5"
-  checksum: 9e8bcbdfe4fcb9ec5e30a6efba79d09bf5adc4cc968f103a4d0d7b3c3980d0779932c51f9c0667b773e3b373bc1cbb7d3da209768a2442792ae47f21d3f37312
+  version: 1.1.6
+  resolution: "default-import@npm:1.1.6"
+  checksum: 765702ac4a1e54504c4b5968ae0d115f000c71cf39f04fbd1fe339a7fae923e6d882afabdda07a1c0d4ba008d7abfaac85c71989db88ce96ca5ccf0357520204
   languageName: node
   linkType: hard
 
