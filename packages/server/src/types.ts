@@ -1211,16 +1211,6 @@ export enum Role {
   Sysadmin = 'sysadmin'
 }
 
-export enum Scope {
-  Serlo = 'Serlo',
-  SerloDe = 'Serlo_De',
-  SerloEn = 'Serlo_En',
-  SerloEs = 'Serlo_Es',
-  SerloFr = 'Serlo_Fr',
-  SerloHi = 'Serlo_Hi',
-  SerloTa = 'Serlo_Ta'
-}
-
 export type ScopedRole = {
   __typename?: 'ScopedRole';
   role: Role;
@@ -2044,7 +2034,6 @@ export type ResolversTypes = {
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversTypes['User'], child: ResolversTypes['AbstractUuid'], parent: ResolversTypes['TaxonomyTerm'] }>>;
   ResourceMetadataConnection: ResolverTypeWrapper<ModelOf<ResourceMetadataConnection>>;
   Role: ResolverTypeWrapper<ModelOf<Role>>;
-  Scope: ResolverTypeWrapper<ModelOf<Scope>>;
   ScopedRole: ResolverTypeWrapper<ModelOf<ScopedRole>>;
   ScopedRoleConnection: ResolverTypeWrapper<ModelOf<ScopedRoleConnection>>;
   SetAbstractEntityInput: ResolverTypeWrapper<ModelOf<SetAbstractEntityInput>>;

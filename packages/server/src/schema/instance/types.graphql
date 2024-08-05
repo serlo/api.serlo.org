@@ -10,13 +10,3 @@ enum Instance {
 interface InstanceAware {
   instance: Instance!
 }
-
-enum Scope {
-  Serlo
-  Serlo_De
-  Serlo_En
-  Serlo_Es
-  Serlo_Fr
-  Serlo_Hi
-  Serlo_Ta
-}
