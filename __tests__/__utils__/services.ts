@@ -11,7 +11,6 @@ import type { Identity, KratosDB } from '~/context/auth-services'
 import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/schema/uuid/user/resolvers'
 
-
 export class MockKratos {
   identities: Identity[] = []
 

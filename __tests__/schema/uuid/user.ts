@@ -19,7 +19,6 @@ import { Model } from '~/internals/graphql'
 import { MajorDimension } from '~/schema/uuid/user/resolvers'
 import { Instance } from '~/types'
 
-
 const client = new Client()
 const adminUserId = 1
 const loginUserId = 9
