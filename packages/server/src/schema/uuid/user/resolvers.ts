@@ -212,7 +212,12 @@ export const resolvers: Resolvers = {
 
       return F.pipe(
         await getSpreadsheetValues({ spreadsheetId, range }),
-        E.mapLeft(addContext({ location: 'motivationSpreadsheet' })),
+        E.mapLeft(
+          addContext({
+            location: 'motivationSpreadsheet',
+            errorContext: { userId: user.id },
+          }),
+        ),
         E.getOrElse(consumeErrorEvent([] as string[][])),
         A.findLast(
           (row) =>
