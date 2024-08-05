@@ -14,7 +14,6 @@ services:
     ports:
       - '4433:4433' # public
       - '4434:4434' # admin
-    restart: unless-stopped
     environment:
       - LOG_LEVEL=trace
     command: serve -c /etc/config/kratos/config.yml --dev --watch-courier
