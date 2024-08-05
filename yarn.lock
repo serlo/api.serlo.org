@@ -62,8 +62,8 @@ __metadata:
   linkType: hard
 
 "@apollo/server@npm:^4.10.4":
-  version: 4.10.4
-  resolution: "@apollo/server@npm:4.10.4"
+  version: 4.10.5
+  resolution: "@apollo/server@npm:4.10.5"
   dependencies:
     "@apollo/cache-control-types": ^1.0.3
     "@apollo/server-gateway-interface": ^1.1.1
@@ -76,7 +76,6 @@ __metadata:
     "@apollo/utils.usagereporting": ^2.1.0
     "@apollo/utils.withrequired": ^2.0.0
     "@graphql-tools/schema": ^9.0.0
-    "@josephg/resolvable": ^1.0.0
     "@types/express": ^4.17.13
     "@types/express-serve-static-core": ^4.17.30
     "@types/node-fetch": ^2.6.1
@@ -92,7 +91,7 @@ __metadata:
     whatwg-mimetype: ^3.0.0
   peerDependencies:
     graphql: ^16.6.0
-  checksum: 28feeae48dca3ccff3c614df60ae5d6f736987bae9f1826f85b664cfded0a58d28929edd726f94c08c6ecf0eb6ba831d168dc7b753b8bccef2e928b5f7b5ee94
+  checksum: dff21fb53e08e008b2504091a78583518650cb63dcaca9abd67bfa0b6f000a9445b35e4461cbe1bf5665460cc738bbe1389a3c1e95723281a7b1747f7a14bec6
   languageName: node
   linkType: hard
 
@@ -3400,13 +3399,6 @@ __metadata:
     "@types/yargs": ^17.0.8
     chalk: ^4.0.0
   checksum: a0bcf15dbb0eca6bdd8ce61a3fb055349d40268622a7670a3b2eb3c3dbafe9eb26af59938366d520b86907b9505b0f9b29b85cec11579a9e580694b87cd90fcc
-  languageName: node
-  linkType: hard
-
-"@josephg/resolvable@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@josephg/resolvable@npm:1.0.1"
-  checksum: 64eb763b5138bdae4fb59c0c0e89ed261b690917ae6bd777b533257668f151b8868698fb73dfd7665746ad07c7c917fe89ccfdf2404048d39f373f57f1a14e34
   languageName: node
   linkType: hard
 
