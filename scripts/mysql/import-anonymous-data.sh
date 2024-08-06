@@ -2,7 +2,7 @@
 
 tmp_dir="/tmp"
 
-latest_dump=$(gsutil ls -l gs://anonymous-data | grep dump | sort -rk 2 | head -n 1 | awk '{ print $3 }' | tr -d '\n')
+latest_dump=$(gsutil ls -l gs://anonymous-dump | grep dump | sort -rk 2 | head -n 1 | awk '{ print $3 }' | tr -d '\n')
 
 if [ -z "$latest_dump" ]; then
   echo "❌ Could not fetch latest dump, check your gsutil setup"
