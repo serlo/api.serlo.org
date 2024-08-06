@@ -16,8 +16,8 @@ import {
   createFakeIdentity,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
-import { Instance } from '~/types'
 import { MajorDimension } from '~/model'
+import { Instance } from '~/types'
 
 const client = new Client()
 const adminUserId = 1
