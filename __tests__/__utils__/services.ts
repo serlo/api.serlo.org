@@ -9,11 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import type { Identity, KratosDB } from '~/context/auth-services'
 import { Model } from '~/internals/graphql'
-
-enum MajorDimension {
-  Rows = 'ROWS',
-  Columns = 'COLUMNS',
-}
+import type { MajorDimension } from '~/model'
 
 export class MockKratos {
   identities: Identity[] = []

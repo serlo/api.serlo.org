@@ -16,12 +16,8 @@ import {
   createFakeIdentity,
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
+import { MajorDimension } from '~/model'
 import { Instance } from '~/types'
-
-enum MajorDimension {
-  Rows = 'ROWS',
-  Columns = 'COLUMNS',
-}
 
 const client = new Client()
 const adminUserId = 1
