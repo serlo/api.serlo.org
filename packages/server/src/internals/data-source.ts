@@ -1,12 +1,15 @@
 import { RESTDataSource } from 'apollo-datasource-rest'
 
 import { Context } from '~/context'
-import { createChatModel } from '~/model'
+import { createGoogleSpreadsheetApiModel, createChatModel } from '~/model'
 import { createKratosModel } from '~/model/kratos'
 import { createMailchimpModel } from '~/model/mailchimp'
 
 export class ModelDataSource extends RESTDataSource {
   public chat: ReturnType<typeof createChatModel>
+  public googleSpreadsheetApi: ReturnType<
+    typeof createGoogleSpreadsheetApiModel
+  >
   public mailchimp: ReturnType<typeof createMailchimpModel>
   public kratos: ReturnType<typeof createKratosModel>
 
@@ -19,6 +22,7 @@ export class ModelDataSource extends RESTDataSource {
     super()
 
     this.chat = createChatModel({ context })
+    this.googleSpreadsheetApi = createGoogleSpreadsheetApiModel({ context })
     this.mailchimp = createMailchimpModel()
     this.kratos = createKratosModel({ context })
   }
