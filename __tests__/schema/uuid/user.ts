@@ -17,11 +17,7 @@ import {
 } from '../../__utils__'
 import { Model } from '~/internals/graphql'
 import { Instance } from '~/types'
-
-enum MajorDimension {
-  Rows = 'ROWS',
-  Columns = 'COLUMNS',
-}
+import { MajorDimension } from '~/model'
 
 const client = new Client()
 const adminUserId = 1
