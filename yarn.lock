@@ -5073,14 +5073,14 @@ __metadata:
   linkType: hard
 
 "@slack/web-api@npm:^7.0.4":
-  version: 7.1.0
-  resolution: "@slack/web-api@npm:7.1.0"
+  version: 7.3.4
+  resolution: "@slack/web-api@npm:7.3.4"
   dependencies:
     "@slack/logger": ^4.0.0
     "@slack/types": ^2.9.0
     "@types/node": ">=18.0.0"
     "@types/retry": 0.12.0
-    axios: ^1.6.5
+    axios: ^1.7.4
     eventemitter3: ^5.0.1
     form-data: ^4.0.0
     is-electron: 2.2.2
@@ -5088,7 +5088,7 @@ __metadata:
     p-queue: ^6
     p-retry: ^4
     retry: ^0.13.1
-  checksum: 2f21c0a05666e3f444cc5fbd36ea9e37463e4f28b3a0e0ade84f3d619474cbb336a80dce0f0b00b55fbd8748e91cb32efa582858d073d04d9bc567ae6c3c4aea
+  checksum: 5ae45976673eac0c8293fe66bf0b97ed27c5dacac0b86db735e85121cd40ea85313ef4251c22ae49d58f94c5c78e339a4fd2da18194e9431d73e7a132a1a8f61
   languageName: node
   linkType: hard
 
@@ -6840,7 +6840,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.6.5, axios@npm:^1.7.2":
+"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.7.2":
   version: 1.7.2
   resolution: "axios@npm:1.7.2"
   dependencies:
@@ -6848,6 +6848,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: e457e2b0ab748504621f6fa6609074ac08c824bf0881592209dfa15098ece7e88495300e02cd22ba50b3468fd712fe687e629dcb03d6a3f6a51989727405aedf
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.4":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 882d4fe0ec694a07c7f5c1f68205eb6dc5a62aecdb632cc7a4a3d0985188ce3030e0b277e1a8260ac3f194d314ae342117660a151fabffdc5081ca0b5a8b47fe
   languageName: node
   linkType: hard
 
