@@ -5525,13 +5525,13 @@ __metadata:
   linkType: hard
 
 "@types/pg@npm:*, @types/pg@npm:^8.11.6":
-  version: 8.11.6
-  resolution: "@types/pg@npm:8.11.6"
+  version: 8.11.8
+  resolution: "@types/pg@npm:8.11.8"
   dependencies:
     "@types/node": "*"
     pg-protocol: "*"
     pg-types: ^4.0.1
-  checksum: 231f7e5bfe8b4d14cca398d24cd55f4f14f582f815b62059e6f3ee74108cf92089fbd946568ebc35fa402f238ed9c8a8c1e10e7084e83e4ca3aff75957243014
+  checksum: da101e985abd93ced25d9bd4bbbeb86eac37773310b910afd83971009525cfd1fff3e2ec4f072b2cea184475b6387211c38df8bfbac916d3c73b5a62b6bfb692
   languageName: node
   linkType: hard
 
