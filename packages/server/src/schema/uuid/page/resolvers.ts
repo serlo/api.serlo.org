@@ -1,16 +1,6 @@
-import * as serloAuth from '@serlo/authorization'
-import { instanceToScope } from '@serlo/authorization'
-
 import { UuidResolver } from '../abstract-uuid/resolvers'
-import {
-  assertStringIsNotEmpty,
-  assertUserIsAuthenticated,
-  assertUserIsAuthorized,
-  createNamespace,
-} from '~/internals/graphql'
+import { createNamespace } from '~/internals/graphql'
 import { PageDecoder, PageRevisionDecoder } from '~/model/decoder'
-import { fetchScopeOfUuid } from '~/schema/authorization/utils'
-import { resolvers as EntityResolvers } from '~/schema/uuid/abstract-entity/resolvers'
 import {
   createRepositoryResolvers,
   createRevisionResolvers,
@@ -22,125 +12,11 @@ export const resolvers: Resolvers = {
   Query: {
     page: createNamespace(),
   },
-  Mutation: {
-    page: createNamespace(),
-  },
   Page: {
     ...createRepositoryResolvers({ revisionDecoder: PageRevisionDecoder }),
     ...createTaxonomyTermChildResolvers(),
   },
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
-  PageMutation: {
-    async addRevision(_parent, { input }, context, info) {
-      const { userId } = context
-      assertUserIsAuthenticated(userId)
-
-      const { pageId, content, title } = input
-
-      assertStringIsNotEmpty({ content, title })
-
-      const scope = await fetchScopeOfUuid({ id: pageId }, context)
-      await assertUserIsAuthorized({
-        message: 'You are not allowed to add revision to this page.',
-        guard: serloAuth.Uuid.create('PageRevision')(scope),
-        context,
-      })
-
-      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
-
-      if (typeof resolver !== 'function') {
-        throw new Error('Resolver is not a function')
-      }
-
-      return resolver(
-        {},
-        {
-          input: {
-            entityType: 'Page',
-            changes: 'Page updated',
-            subscribeThis: false,
-            subscribeThisByEmail: false,
-            needsReview: false,
-            entityId: pageId,
-            content,
-            title,
-          },
-        },
-        context,
-        info,
-      )
-    },
-    async checkoutRevision(_parent, { input }, context, info) {
-      const { userId } = context
-      assertUserIsAuthenticated(userId)
-
-      const scope = await fetchScopeOfUuid({ id: input.revisionId }, context)
-
-      await assertUserIsAuthorized({
-        message: 'You are not allowed to check out the provided revision.',
-        guard: serloAuth.Page.checkoutRevision(scope),
-        context,
-      })
-
-      const resolver = EntityResolvers.EntityMutation!.checkoutRevision!
-
-      if (typeof resolver !== 'function') {
-        throw new Error('Resolver is not a function')
-      }
-
-      return resolver({}, { input }, context, info)
-    },
-    async create(_parent, { input }, context, info) {
-      context.userId = 1
-      const { userId, database } = context
-      assertUserIsAuthenticated(userId)
-
-      const { content, title, instance } = input
-
-      assertStringIsNotEmpty({ content, title })
-
-      await assertUserIsAuthorized({
-        message: 'You are not allowed to create pages.',
-        guard: serloAuth.Uuid.create('Page')(instanceToScope(instance)),
-        context,
-      })
-
-      const resolver = EntityResolvers.EntityMutation!.setAbstractEntity!
-
-      if (typeof resolver !== 'function') {
-        throw new Error('Resolver is not a function')
-      }
-
-      const { taxonomyId } = await database.fetchOne<{ taxonomyId: number }>(
-        `
-        select
-          taxonomy.id as taxonomyId
-        from taxonomy
-        join instance on taxonomy.instance_id = instance.id
-        where taxonomy.name = 'Static Pages' and instance.subdomain = ?
-        `,
-        [instance],
-      )
-
-      return resolver(
-        {},
-        {
-          input: {
-            entityType: 'Page',
-            changes: 'Initial page creation',
-            subscribeThis: false,
-            subscribeThisByEmail: false,
-            needsReview: false,
-            parentId: taxonomyId,
-            content,
-            title,
-          },
-        },
-        context,
-        info,
-      )
-    },
-  },
   PageQuery: {
     async pages(_parent, payload, context) {
       const pages = await context.database.fetchAll<{ id: number }>(
