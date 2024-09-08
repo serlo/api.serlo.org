@@ -72,7 +72,7 @@
     "redis:list": "docker compose exec redis redis-cli KEYS '*'",
     "start": "run-s start:containers start:server",
     "start:enmeshed": "docker-compose -f enmeshed/docker-compose.yml up -d",
-    "start:containers": "docker compose pull && docker compose up --detach --force-recreate",
+    "start:containers": "docker compose pull && docker compose up --detach --force-recreate && ./scripts/mysql/wait-for-mysql.sh && yarn migrate:all",
     "start:kratos": "docker compose -f docker-compose.kratos.yml up --detach",
     "start:sso": "docker compose -f docker-compose.sso.yml up --detach",
     "start:server": "yarn _start packages/server/src/server.ts server.cjs",
