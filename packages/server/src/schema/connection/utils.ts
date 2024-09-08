@@ -10,7 +10,7 @@ export function resolveConnection<T>({
 }: {
   nodes: T[]
   payload: ConnectionPayload
-  createCursor(node: T): string
+  createCursor: (node: T) => string
   limit?: number
 }): Connection<T> {
   const { after, first = limit } = payload
