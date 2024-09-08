@@ -25,6 +25,7 @@ const mockedOpenAiResponse: ChoicesFromChatCompletion = {
             },
           ],
         }),
+        refusal: null,
       },
     },
   ],
