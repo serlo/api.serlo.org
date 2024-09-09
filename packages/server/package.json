@@ -44,7 +44,7 @@
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
     "cors": "^2.8.5",
-    "default-import": "^1.1.7",
+    "default-import": "^2.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fp-ts": "^2.16.9",
