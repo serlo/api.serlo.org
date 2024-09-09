@@ -95,7 +95,7 @@
     "@types/node": "^18.19.50",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
-    "default-import": "^1.1.7",
+    "default-import": "^2.0.1",
     "depcheck": "^1.4.7",
     "esbuild": "^0.23.1",
     "eslint": "^8.57.0",
