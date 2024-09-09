@@ -4670,7 +4670,7 @@ __metadata:
     "@types/node": ^18.19.50
     "@typescript-eslint/eslint-plugin": ^7.18.0
     "@typescript-eslint/parser": ^7.18.0
-    default-import: ^1.1.7
+    default-import: ^2.0.1
     depcheck: ^1.4.7
     esbuild: ^0.23.1
     eslint: ^8.57.0
@@ -4722,7 +4722,7 @@ __metadata:
     bee-queue: ^1.7.1
     bull-arena: ^4.4.2
     cors: ^2.8.5
-    default-import: ^1.1.7
+    default-import: ^2.0.1
     dotenv: ^16.4.5
     express: ^4.19.2
     fp-ts: ^2.16.9
@@ -8415,10 +8415,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"default-import@npm:^1.1.7":
-  version: 1.1.7
-  resolution: "default-import@npm:1.1.7"
-  checksum: 9e809eacd773130e9b180fe4da1b251e9112d286662a4489eacd0a02a6eec93df555821c581474ea7227e827528d1a408d0f269dc42116fdb412ed972392f12f
+"default-import@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "default-import@npm:2.0.1"
+  checksum: ec84a3c3b43517233be151216453dc0f48e0f640813e7f16d213b897cf2feb7795b8886e99877da44ad70d7bd6e176bc073f8513af2b3448440c70ea92a22098
   languageName: node
   linkType: hard
 
