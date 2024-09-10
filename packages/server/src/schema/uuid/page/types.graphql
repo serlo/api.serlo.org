@@ -48,35 +48,10 @@ type PageRevisionConnection implements AbstractEntityRevisionConnection {
   pageInfo: PageInfo!
 }
 
-extend type Mutation {
-  page: PageMutation!
-}
-
-type PageMutation {
-  addRevision(input: PageAddRevisionInput!): DefaultResponse!
-  checkoutRevision(input: CheckoutRevisionInput!): DefaultResponse!
-  create(input: CreatePageInput!): DefaultResponse!
-}
-
 extend type Query {
   page: PageQuery!
 }
 
 type PageQuery {
   pages(instance: Instance): [Page!]!
-}
-
-input PageAddRevisionInput {
-  content: String!
-  pageId: Int!
-  title: String!
-}
-
-input CreatePageInput {
-  content: String!
-  discussionsEnabled: Boolean!
-  instance: Instance!
-  licenseId: Int!
-  title: String!
-  forumId: Int
 }
