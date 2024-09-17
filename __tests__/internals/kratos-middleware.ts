@@ -137,7 +137,7 @@ function fetchKratosRegister({
   )
 }
 
-function fetchKratosSingleLogout(body?: string | undefined) {
+function fetchKratosSingleLogout(body?: string) {
   return fetch(
     bypass(`http://localhost:${port}/kratos/single-logout`, {
       method: 'POST',
