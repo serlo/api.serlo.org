@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import { ResolversParentTypes } from '~/types'
 
 export interface Schema {
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   resolvers: {}
   typeDefs: DocumentNode[]
 }

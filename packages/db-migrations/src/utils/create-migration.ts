@@ -125,7 +125,7 @@ async function changeUuidContents({
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         oldState = JSON.parse(uuid.content)
-      } catch (e) {
+      } catch {
         // Ignore (some articles have raw text)
         continue
       }
