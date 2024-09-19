@@ -544,15 +544,6 @@ export type CreateEntityRevisionNotificationEvent = AbstractNotificationEvent & 
   objectId: Scalars['Int']['output'];
 };
 
-export type CreatePageInput = {
-  content: Scalars['String']['input'];
-  discussionsEnabled: Scalars['Boolean']['input'];
-  forumId?: InputMaybe<Scalars['Int']['input']>;
-  instance: Instance;
-  licenseId: Scalars['Int']['input'];
-  title: Scalars['String']['input'];
-};
-
 export type CreateTaxonomyLinkNotificationEvent = AbstractNotificationEvent & InstanceAware & {
   __typename?: 'CreateTaxonomyLinkNotificationEvent';
   actor: User;
@@ -937,7 +928,6 @@ export type Mutation = {
   experiment: ExperimentMutation;
   notification: NotificationMutation;
   oauth: OauthMutation;
-  page: PageMutation;
   subscription: SubscriptionMutation;
   taxonomyTerm: TaxonomyTermMutation;
   thread: ThreadMutation;
@@ -1045,38 +1035,10 @@ export type PageThreadsArgs = {
   trashed?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type PageAddRevisionInput = {
-  content: Scalars['String']['input'];
-  pageId: Scalars['Int']['input'];
-  title: Scalars['String']['input'];
-};
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
-};
-
-export type PageMutation = {
-  __typename?: 'PageMutation';
-  addRevision: DefaultResponse;
-  checkoutRevision: DefaultResponse;
-  create: DefaultResponse;
-};
-
-
-export type PageMutationAddRevisionArgs = {
-  input: PageAddRevisionInput;
-};
-
-
-export type PageMutationCheckoutRevisionArgs = {
-  input: CheckoutRevisionInput;
-};
-
-
-export type PageMutationCreateArgs = {
-  input: CreatePageInput;
 };
 
 export type PageQuery = {
@@ -1991,7 +1953,6 @@ export type ResolversTypes = {
   CreateEntityLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversTypes['User'], child: ResolversTypes['AbstractEntity'], parent: ResolversTypes['AbstractEntity'] }>>;
   CreateEntityNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: ResolversTypes['User'], entity: ResolversTypes['AbstractEntity'] }>>;
   CreateEntityRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: ResolversTypes['User'], entity: ResolversTypes['AbstractRepository'], entityRevision: ResolversTypes['AbstractRevision'] }>>;
-  CreatePageInput: ResolverTypeWrapper<ModelOf<CreatePageInput>>;
   CreateTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversTypes['User'], child: ResolversTypes['AbstractUuid'], parent: ResolversTypes['TaxonomyTerm'] }>>;
   CreateTaxonomyTermNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: ResolversTypes['User'], taxonomyTerm: ResolversTypes['TaxonomyTerm'] }>>;
   CreateThreadNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: ResolversTypes['User'], object: ResolversTypes['AbstractUuid'], thread: ResolversTypes['Thread'] }>>;
@@ -2032,9 +1993,7 @@ export type ResolversTypes = {
   OauthAcceptResponse: ResolverTypeWrapper<ModelOf<OauthAcceptResponse>>;
   OauthMutation: ResolverTypeWrapper<ModelOf<OauthMutation>>;
   Page: ResolverTypeWrapper<ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<ResolversTypes['PageRevision']>, revisions: ResolversTypes['PageRevisionConnection'], taxonomyTerms: ResolversTypes['TaxonomyTermConnection'], threads: ResolversTypes['ThreadConnection'] }>>;
-  PageAddRevisionInput: ResolverTypeWrapper<ModelOf<PageAddRevisionInput>>;
   PageInfo: ResolverTypeWrapper<ModelOf<PageInfo>>;
-  PageMutation: ResolverTypeWrapper<ModelOf<Omit<PageMutation, 'addRevision' | 'checkoutRevision' | 'create'> & { addRevision: ResolversTypes['DefaultResponse'], checkoutRevision: ResolversTypes['DefaultResponse'], create: ResolversTypes['DefaultResponse'] }>>;
   PageQuery: ResolverTypeWrapper<ModelOf<Omit<PageQuery, 'pages'> & { pages: Array<ResolversTypes['Page']> }>>;
   PageRevision: ResolverTypeWrapper<ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: ResolversTypes['User'], repository: ResolversTypes['Page'], threads: ResolversTypes['ThreadConnection'] }>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<ResolversTypes['PageRevision']> }>>;
@@ -2140,7 +2099,6 @@ export type ResolversParentTypes = {
   CreateEntityLinkNotificationEvent: ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversParentTypes['User'], child: ResolversParentTypes['AbstractEntity'], parent: ResolversParentTypes['AbstractEntity'] }>;
   CreateEntityNotificationEvent: ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: ResolversParentTypes['User'], entity: ResolversParentTypes['AbstractEntity'] }>;
   CreateEntityRevisionNotificationEvent: ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: ResolversParentTypes['User'], entity: ResolversParentTypes['AbstractRepository'], entityRevision: ResolversParentTypes['AbstractRevision'] }>;
-  CreatePageInput: ModelOf<CreatePageInput>;
   CreateTaxonomyLinkNotificationEvent: ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversParentTypes['User'], child: ResolversParentTypes['AbstractUuid'], parent: ResolversParentTypes['TaxonomyTerm'] }>;
   CreateTaxonomyTermNotificationEvent: ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: ResolversParentTypes['User'], taxonomyTerm: ResolversParentTypes['TaxonomyTerm'] }>;
   CreateThreadNotificationEvent: ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: ResolversParentTypes['User'], object: ResolversParentTypes['AbstractUuid'], thread: ResolversParentTypes['Thread'] }>;
@@ -2179,9 +2137,7 @@ export type ResolversParentTypes = {
   OauthAcceptResponse: ModelOf<OauthAcceptResponse>;
   OauthMutation: ModelOf<OauthMutation>;
   Page: ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<ResolversParentTypes['PageRevision']>, revisions: ResolversParentTypes['PageRevisionConnection'], taxonomyTerms: ResolversParentTypes['TaxonomyTermConnection'], threads: ResolversParentTypes['ThreadConnection'] }>;
-  PageAddRevisionInput: ModelOf<PageAddRevisionInput>;
   PageInfo: ModelOf<PageInfo>;
-  PageMutation: ModelOf<Omit<PageMutation, 'addRevision' | 'checkoutRevision' | 'create'> & { addRevision: ResolversParentTypes['DefaultResponse'], checkoutRevision: ResolversParentTypes['DefaultResponse'], create: ResolversParentTypes['DefaultResponse'] }>;
   PageQuery: ModelOf<Omit<PageQuery, 'pages'> & { pages: Array<ResolversParentTypes['Page']> }>;
   PageRevision: ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: ResolversParentTypes['User'], repository: ResolversParentTypes['Page'], threads: ResolversParentTypes['ThreadConnection'] }>;
   PageRevisionConnection: ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<ResolversParentTypes['PageRevision']> }>;
@@ -2824,7 +2780,6 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   experiment?: Resolver<ResolversTypes['ExperimentMutation'], ParentType, ContextType>;
   notification?: Resolver<ResolversTypes['NotificationMutation'], ParentType, ContextType>;
   oauth?: Resolver<ResolversTypes['OauthMutation'], ParentType, ContextType>;
-  page?: Resolver<ResolversTypes['PageMutation'], ParentType, ContextType>;
   subscription?: Resolver<ResolversTypes['SubscriptionMutation'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTermMutation'], ParentType, ContextType>;
   thread?: Resolver<ResolversTypes['ThreadMutation'], ParentType, ContextType>;
@@ -2884,13 +2839,6 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PageMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageMutation'] = ResolversParentTypes['PageMutation']> = {
-  addRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationAddRevisionArgs, 'input'>>;
-  checkoutRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCheckoutRevisionArgs, 'input'>>;
-  create?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<PageMutationCreateArgs, 'input'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3338,7 +3286,6 @@ export type Resolvers<ContextType = Context> = {
   OauthMutation?: OauthMutationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
-  PageMutation?: PageMutationResolvers<ContextType>;
   PageQuery?: PageQueryResolvers<ContextType>;
   PageRevision?: PageRevisionResolvers<ContextType>;
   PageRevisionConnection?: PageRevisionConnectionResolvers<ContextType>;
