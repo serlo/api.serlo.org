@@ -201,6 +201,8 @@ export const resolvers: Resolvers = {
     ...createUuidResolvers(),
     ...createThreadResolvers(),
     async motivation(user, _args, context) {
+      return ''
+
       return F.pipe(
         await context.dataSources.model.googleSpreadsheetApi.getValues({
           spreadsheetId: process.env.GOOGLE_SPREADSHEET_API_MOTIVATION,
@@ -235,6 +237,7 @@ export const resolvers: Resolvers = {
       return ids.includes(user.id)
     },
     async isActiveDonor(user, _args, context) {
+      return false
       const ids = await activeDonorIDs(context)
 
       return ids.includes(user.id)
