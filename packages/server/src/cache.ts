@@ -43,7 +43,7 @@ export function createCache({ timer }: { timer: Timer }): Cache {
       retryCount: 0,
     }),
     [Priority.High]: createLockManager({
-      retryCount: 5,
+      retryCount: 10,
     }),
   }
 
