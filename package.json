@@ -98,7 +98,7 @@
     "default-import": "^2.0.1",
     "depcheck": "^1.4.7",
     "esbuild": "^0.23.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-react": "^7.35.2",
