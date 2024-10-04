@@ -91,11 +91,20 @@ function createKratosRegisterHandler(
       }
 
       for (const account of unsyncedAccounts) {
-        const legacyUserId = await createLegacyUser(
-          account.traits.username,
-          account.traits.email,
-          database,
-        )
+        let legacyUserId = (
+          await database.fetchOne<{ id: number }>(
+            `SELECT id FROM user WHERE username = ?`,
+            [account.traits.username],
+          )
+        ).id
+
+        if (!legacyUserId) {
+          legacyUserId = await createLegacyUser(
+            account.traits.username,
+            account.traits.email,
+            database,
+          )
+        }
 
         await kratos.admin.updateIdentity({
           id: account.id,
