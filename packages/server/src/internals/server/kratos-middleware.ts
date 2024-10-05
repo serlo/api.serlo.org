@@ -92,11 +92,11 @@ function createKratosRegisterHandler(
 
       for (const account of unsyncedAccounts) {
         let legacyUserId = (
-          await database.fetchOne<{ id: number }>(
-            `SELECT id FROM user WHERE username = ?`,
+          await database.fetchOptional<{ id: number }>(
+            'SELECT id FROM user WHERE username = ?',
             [account.traits.username],
           )
-        ).id
+        )?.id
 
         if (!legacyUserId) {
           legacyUserId = await createLegacyUser(
