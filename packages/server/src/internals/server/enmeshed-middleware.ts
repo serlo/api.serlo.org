@@ -60,10 +60,6 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-const GenericEventBody = t.type({
-  trigger: t.string,
-})
-
 const Relationship = t.type({
   id: t.string,
   peer: t.string,
@@ -418,7 +414,7 @@ function createEnmeshedWebhookMiddleware(
 
     const body = req.body as unknown
 
-    if (!GenericEventBody.is(body)) {
+    if (!t.type({trigger: t.string}).is(body)) {
       res.status(400).send('Illegal trigger body')
       return
     }
