@@ -28,7 +28,7 @@
         "enabled": false
       }
     },
-    "webhooksV2": {
+    "webhooks": {
       "enabled": true,
       "webhooks": [
         {
