@@ -21,7 +21,6 @@
  */
 import {
   ConnectorClient,
-  ConnectorError,
   ConnectorRelationshipAuditLogEntryReason,
   ConnectorRelationshipStatus,
 } from '@nmshd/connector-sdk'
@@ -241,9 +240,11 @@ function createEnmeshedInitMiddleware(
           content: attributesContent,
         },
       )
-      if (validationResponse.isError) {
+
+      if (!validationResponse.result.isSuccess) {
+        const { code, message } = validationResponse.result
         return handleConnectorError({
-          error: validationResponse.error,
+          error: { code, message },
           message: 'Error occurred while validating attributes',
           response: res,
         })
@@ -655,7 +656,7 @@ function handleConnectorError({
   message,
   response,
 }: {
-  error: ConnectorError
+  error: { code: string | undefined; message: string | undefined }
   message: string
   response?: Response
 }) {
