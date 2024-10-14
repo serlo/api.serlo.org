@@ -3325,6 +3325,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@js-soft/logging-abstractions@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@js-soft/logging-abstractions@npm:1.0.1"
+  checksum: 1551fb50a2d491fdd21d81388e7bd29e017b11facbf612dfe1caa9b54f4717bc13ff1b4621703814911c50b3e2bd912a4d39ab03a83fc3341922e8b97321c92b
+  languageName: node
+  linkType: hard
+
+"@js-soft/ts-serval@npm:2.0.11":
+  version: 2.0.11
+  resolution: "@js-soft/ts-serval@npm:2.0.11"
+  dependencies:
+    lodash: ^4.17.21
+    reflect-metadata: ^0.2.2
+  checksum: 0b4e45ef1e72ea38b952101c9678bcadb19dd731dee212b8a6a24c594dee37db92ef6c53257c53d3cdeb58dbd84934b031c801fc6603a932e14f92bd36ca0e8f
+  languageName: node
+  linkType: hard
+
 "@kamilkisiela/fast-url-parser@npm:^1.1.4":
   version: 1.1.4
   resolution: "@kamilkisiela/fast-url-parser@npm:1.1.4"
@@ -3478,14 +3495,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nmshd/connector-sdk@npm:^4.6.4":
-  version: 4.6.4
-  resolution: "@nmshd/connector-sdk@npm:4.6.4"
+"@nmshd/connector-sdk@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "@nmshd/connector-sdk@npm:6.0.2"
   dependencies:
-    axios: ^1.7.5
+    "@nmshd/content": 6.0.1
+    axios: ^1.7.7
     form-data: ^4.0.0
     qs: ^6.13.0
-  checksum: 8b4e02174d271bf1e4119fa7dad59ecf90aff00febb013f97fcdd5c3ec859550c9367eef3dc1f1592e6c0766d0e225ad19eb75e2320642c378a5ac9e3e11c169
+  checksum: 6336ea0159b2519ffc740387aa919338cc32d0c861ec4f3671075179e93416fde5278ff108f28140c33a648ace8b165d0cb962232b025bf76129e00529edc973
+  languageName: node
+  linkType: hard
+
+"@nmshd/content@npm:6.0.1":
+  version: 6.0.1
+  resolution: "@nmshd/content@npm:6.0.1"
+  dependencies:
+    "@js-soft/ts-serval": 2.0.11
+    "@nmshd/core-types": 6.0.1
+    "@nmshd/iql": ^1.0.2
+    luxon: ^3.5.0
+    ts-simple-nameof: ^1.3.1
+  checksum: bd9348bbe4750cc4af22291429484f376f0af2ec666995efbb9127bfa6f9907c217ae0458b2df2974b717613183d667fbcd0fa772f5d1819fbd05b9bab5acad1
+  languageName: node
+  linkType: hard
+
+"@nmshd/core-types@npm:6.0.1":
+  version: 6.0.1
+  resolution: "@nmshd/core-types@npm:6.0.1"
+  dependencies:
+    "@js-soft/logging-abstractions": ^1.0.1
+    "@js-soft/ts-serval": 2.0.11
+    json-stringify-safe: ^5.0.1
+    luxon: ^3.5.0
+  checksum: 662114b359b8c881c6e8d162ddc9c0271d6f5237062100ff98de75ab715c6ec8ecbdb9b0fe08ebafe3c7e7fa58b2e5d05be4e35d712444facf8f15ad5f421833
+  languageName: node
+  linkType: hard
+
+"@nmshd/iql@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@nmshd/iql@npm:1.0.2"
+  checksum: 91b8a64069d65242770bc940843d0b2b44c197c1be23bc942d9b12fb8ef5e0806038872abe10b18249bf76c363c5d6cdbff7c039850675b6c93856fd22871796
   languageName: node
   linkType: hard
 
@@ -4693,7 +4743,7 @@ __metadata:
     "@graphql-codegen/cli": ^5.0.2
     "@graphql-codegen/typescript": ^4.0.9
     "@graphql-codegen/typescript-resolvers": ^4.2.1
-    "@nmshd/connector-sdk": ^4.6.4
+    "@nmshd/connector-sdk": ^6.0.2
     "@ory/client": ^1.14.5
     "@sentry/node": ^8.28.0
     "@serlo/authorization": ^0.60.0
@@ -6641,7 +6691,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.7.4, axios@npm:^1.7.5":
+"axios@npm:^1.6.0, axios@npm:^1.6.1, axios@npm:^1.7.4, axios@npm:^1.7.7":
   version: 1.7.7
   resolution: "axios@npm:1.7.7"
   dependencies:
@@ -14229,6 +14279,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "luxon@npm:3.5.0"
+  checksum: f290fe5788c8e51e748744f05092160d4be12150dca70f9fadc0d233e53d60ce86acd82e7d909a114730a136a77e56f0d3ebac6141bbb82fd310969a4704825b
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:^0.25.2, magic-string@npm:^0.25.7":
   version: 0.25.9
   resolution: "magic-string@npm:0.25.9"
@@ -16988,6 +17045,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reflect-metadata@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "reflect-metadata@npm:0.2.2"
+  checksum: a66c7b583e4efdd8f3c3124fbff33da2d0c86d8280617516308b32b2159af7a3698c961db3246387f56f6316b1d33a608f39bb2b49d813316dfc58f6d3bf3210
+  languageName: node
+  linkType: hard
+
 "reflect.getprototypeof@npm:^1.0.4":
   version: 1.0.6
   resolution: "reflect.getprototypeof@npm:1.0.6"
@@ -19230,6 +19294,13 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: fde256c9073969e234526e2cfead42591b9a2aec5222bac154b0de2fa9e4ceb30efcd717ee8bc785a56f3a119bdd5aa27b333d9dbec94ed254bd26f8944c67ac
+  languageName: node
+  linkType: hard
+
+"ts-simple-nameof@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "ts-simple-nameof@npm:1.3.1"
+  checksum: 53766b15c3d3e3aec95ee9b026f40b88294930cdbef88469992ec5b840f2cc231a2b84b5733bc07e8253af62843874431197be4fe6b4826e7705f5acd84de234
   languageName: node
   linkType: hard
 
