@@ -92,7 +92,7 @@
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
     "@tsconfig/node20": "^20.1.4",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.50",
+    "@types/node": "^20.14.8",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "default-import": "^2.0.1",
