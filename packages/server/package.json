@@ -28,7 +28,7 @@
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.9",
     "@graphql-codegen/typescript-resolvers": "^4.2.1",
-    "@nmshd/connector-sdk": "^6.0.2",
+    "@nmshd/connector-sdk": "^6.1.2",
     "@ory/client": "^1.14.5",
     "@sentry/node": "^8.28.0",
     "@serlo/authorization": "^0.60.0",
