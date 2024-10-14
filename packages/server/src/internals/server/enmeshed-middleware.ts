@@ -21,10 +21,8 @@
  */
 import {
   ConnectorClient,
-  ConnectorError,
-  ConnectorRelationshipChangeStatus,
-  ConnectorRelationshipChangeType,
-  ConnectorRequestContent,
+  ConnectorRelationshipAuditLogEntryReason,
+  ConnectorRelationshipStatus,
 } from '@nmshd/connector-sdk'
 import crypto from 'crypto'
 import express, { Express, RequestHandler, Request, Response } from 'express'
@@ -60,8 +58,33 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-const GenericEventBody = t.type({
-  trigger: t.string,
+// we had to shadow this type since the library doesn't provide it yet
+enum RelationshipAttributeConfidentiality {
+  Public = 'public',
+}
+
+const RelationshipAuditLogReason = t.union([
+  t.literal(ConnectorRelationshipAuditLogEntryReason.Creation),
+  t.literal(ConnectorRelationshipAuditLogEntryReason.Termination),
+])
+
+type RelationshipAuditLogReason = t.TypeOf<typeof RelationshipAuditLogReason>
+
+const RelationshipAuditLogStatus = t.union([
+  t.literal(ConnectorRelationshipStatus.Pending),
+  t.literal(ConnectorRelationshipStatus.Rejected),
+])
+
+const RelationshipCreationContent = t.type({
+  '@type': t.literal('RelationshipCreationContent'),
+  response: t.type({
+    '@type': t.literal('Response'),
+  }),
+})
+
+const ArbitraryRelationshipCreationContent = t.type({
+  '@type': t.literal('ArbitraryRelationshipCreationContent'),
+  value: t.unknown,
 })
 
 const Relationship = t.type({
@@ -76,7 +99,16 @@ const Relationship = t.type({
       }),
     }),
   }),
-  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
+  auditLog: t.array(
+    t.type({
+      reason: RelationshipAuditLogReason,
+      newStatus: RelationshipAuditLogStatus,
+    }),
+  ),
+  creationContent: t.union([
+    RelationshipCreationContent,
+    ArbitraryRelationshipCreationContent,
+  ]),
 })
 
 type Relationship = t.TypeOf<typeof Relationship>
@@ -152,6 +184,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
+      const { owner } = createAttributeResponse.result.content
       const requestGroup = {
         '@type': 'RequestItemGroup',
         mustBeAccepted: true,
@@ -161,7 +194,7 @@ function createEnmeshedInitMiddleware(
             '@type': 'CreateAttributeRequestItem',
             mustBeAccepted: true,
             attribute: {
-              owner: '',
+              owner,
               key: 'LernstandMathe',
               confidentiality: 'public',
               '@type': 'RelationshipAttribute',
@@ -173,10 +206,10 @@ function createEnmeshedInitMiddleware(
             },
           },
         ],
-      } as ConnectorRequestContent['items'][number]
+      }
 
-      // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
-      const attributesContent: ConnectorRequestContent = {
+      const attributesContent = {
+        '@type': 'Request' as const,
         metadata: { sessionId: sessionId },
         items: [
           {
@@ -189,7 +222,7 @@ function createEnmeshedInitMiddleware(
                 mustBeAccepted: true,
                 attribute: {
                   '@type': 'IdentityAttribute',
-                  owner: '',
+                  owner,
                   value: {
                     '@type': 'DisplayName',
                     value: 'LENABI Demo',
@@ -208,9 +241,11 @@ function createEnmeshedInitMiddleware(
           content: attributesContent,
         },
       )
-      if (validationResponse.isError) {
+
+      if (!validationResponse.result.isSuccess) {
+        const { code, message } = validationResponse.result
         return handleConnectorError({
-          error: validationResponse.error,
+          error: { code, message },
           message: 'Error occurred while validating attributes',
           response: res,
         })
@@ -335,7 +370,7 @@ function createSetAttributesHandler(
             attribute: {
               key: name,
               owner: '',
-              confidentiality: 'public',
+              confidentiality: RelationshipAttributeConfidentiality.Public,
               '@type': 'RelationshipAttribute',
               value: {
                 '@type': 'ProprietaryString',
@@ -418,7 +453,7 @@ function createEnmeshedWebhookMiddleware(
 
     const body = req.body as unknown
 
-    if (!GenericEventBody.is(body)) {
+    if (!t.type({ trigger: t.string }).is(body)) {
       res.status(400).send('Illegal trigger body')
       return
     }
@@ -446,17 +481,24 @@ function createEnmeshedWebhookMiddleware(
       const sessionId =
         data.template.content?.onNewRelationship?.metadata?.sessionId ?? null
 
-      for (const change of data.changes) {
+      for (const auditLogEntry of data.auditLog) {
         if (
-          [ConnectorRelationshipChangeType.CREATION as string].includes(
-            change.type,
+          [ConnectorRelationshipAuditLogEntryReason.Creation].includes(
+            auditLogEntry.reason,
           ) &&
           [
-            ConnectorRelationshipChangeStatus.PENDING as string,
-            ConnectorRelationshipChangeStatus.REJECTED as string,
-          ].includes(change.status)
+            ConnectorRelationshipStatus.Pending,
+            ConnectorRelationshipStatus.Rejected,
+          ].includes(auditLogEntry.newStatus)
         ) {
-          await acceptRelationshipRequest(data, change, client)
+          const acceptRelationshipResponse =
+            await client.relationships.acceptRelationship(data.id)
+          if (acceptRelationshipResponse.isError) {
+            handleConnectorError({
+              error: acceptRelationshipResponse.error,
+              message: 'Failed while accepting relationship request',
+            })
+          }
           if (!sessionId) {
             await sendWelcomeMessage({ relationship: data, client })
             await sendAttributesChangeRequest({ relationship: data, client })
@@ -487,27 +529,6 @@ function createEnmeshedWebhookMiddleware(
         errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
-    })
-  }
-}
-
-/**
- * Accepts pending relationship request
- */
-async function acceptRelationshipRequest(
-  relationship: Relationship,
-  change: { id: string },
-  client: ConnectorClient,
-): Promise<void> {
-  const acceptRelationshipResponse =
-    await client.relationships.acceptRelationshipChange(
-      relationship.id,
-      change.id,
-    )
-  if (acceptRelationshipResponse.isError) {
-    handleConnectorError({
-      error: acceptRelationshipResponse.error,
-      message: 'Failed while accepting relationship request',
     })
   }
 }
@@ -580,7 +601,7 @@ async function sendAttributesChangeRequest({
           attribute: {
             key: 'LernstandMathe',
             owner: '',
-            confidentiality: 'public',
+            confidentiality: RelationshipAttributeConfidentiality.Public,
             '@type': 'RelationshipAttribute',
             value: {
               '@type': 'ProprietaryString',
@@ -636,7 +657,7 @@ function handleConnectorError({
   message,
   response,
 }: {
-  error: ConnectorError
+  error: { code: string | undefined; message: string | undefined }
   message: string
   response?: Response
 }) {
