@@ -3,7 +3,7 @@ import type { Server } from 'http'
 import { bypass } from 'msw'
 import { createPool } from 'mysql2/promise'
 
-import { Identity, Kratos } from '~/context/auth-services'
+import { Kratos } from '~/context/auth-services'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 const port = 8100
