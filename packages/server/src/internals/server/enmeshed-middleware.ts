@@ -184,6 +184,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
+      const { owner } = createAttributeResponse.result.content
       const requestGroup = {
         '@type': 'RequestItemGroup',
         mustBeAccepted: true,
@@ -193,7 +194,7 @@ function createEnmeshedInitMiddleware(
             '@type': 'CreateAttributeRequestItem',
             mustBeAccepted: true,
             attribute: {
-              owner: '',
+              owner,
               key: 'LernstandMathe',
               confidentiality: 'public',
               '@type': 'RelationshipAttribute',
@@ -221,7 +222,7 @@ function createEnmeshedInitMiddleware(
                 mustBeAccepted: true,
                 attribute: {
                   '@type': 'IdentityAttribute',
-                  owner: '',
+                  owner,
                   value: {
                     '@type': 'DisplayName',
                     value: 'LENABI Demo',
