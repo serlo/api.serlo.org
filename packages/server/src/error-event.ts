@@ -56,7 +56,7 @@ export function assertAll(
 export function captureErrorEvent(event: ErrorEvent) {
   if (process.env.ENVIRONMENT === 'local') {
     // eslint-disable-next-line no-console
-    console.error(event.error)
+    console.error(event)
   }
 
   Sentry.captureException(event.error, (scope) => {
