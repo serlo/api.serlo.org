@@ -63,30 +63,6 @@ enum RelationshipAttributeConfidentiality {
   Public = 'public',
 }
 
-const RelationshipAuditLogReason = t.union([
-  t.literal(ConnectorRelationshipAuditLogEntryReason.Creation),
-  t.literal(ConnectorRelationshipAuditLogEntryReason.Termination),
-])
-
-type RelationshipAuditLogReason = t.TypeOf<typeof RelationshipAuditLogReason>
-
-const RelationshipAuditLogStatus = t.union([
-  t.literal(ConnectorRelationshipStatus.Pending),
-  t.literal(ConnectorRelationshipStatus.Rejected),
-])
-
-const RelationshipCreationContent = t.type({
-  '@type': t.literal('RelationshipCreationContent'),
-  response: t.type({
-    '@type': t.literal('Response'),
-  }),
-})
-
-const ArbitraryRelationshipCreationContent = t.type({
-  '@type': t.literal('ArbitraryRelationshipCreationContent'),
-  value: t.unknown,
-})
-
 const Relationship = t.type({
   id: t.string,
   peer: t.string,
@@ -101,14 +77,11 @@ const Relationship = t.type({
   }),
   auditLog: t.array(
     t.type({
-      reason: RelationshipAuditLogReason,
-      newStatus: RelationshipAuditLogStatus,
+      reason: t.string,
+      newStatus: t.string,
     }),
   ),
-  creationContent: t.union([
-    RelationshipCreationContent,
-    ArbitraryRelationshipCreationContent,
-  ]),
+  creationContent: t.unknown,
 })
 
 type Relationship = t.TypeOf<typeof Relationship>
@@ -469,9 +442,13 @@ function createEnmeshedWebhookMiddleware(
     if (!EventBody.is(body)) {
       captureErrorEvent({
         error: new Error('Illegal body event'),
-        errorContext: { body, route: '/enmeshed/webhook' },
+        errorContext: {
+          body,
+          validationError: EventBody.decode(body),
+          route: '/enmeshed/webhook',
+        },
       })
-      res.status(400).send('Illegal trigger body')
+      res.status(400).send('Illegal body event')
       return
     }
 
@@ -483,12 +460,11 @@ function createEnmeshedWebhookMiddleware(
 
       for (const auditLogEntry of data.auditLog) {
         if (
-          [ConnectorRelationshipAuditLogEntryReason.Creation].includes(
-            auditLogEntry.reason,
-          ) &&
+          (ConnectorRelationshipAuditLogEntryReason.Creation as string) ===
+            auditLogEntry.reason &&
           [
-            ConnectorRelationshipStatus.Pending,
-            ConnectorRelationshipStatus.Rejected,
+            ConnectorRelationshipStatus.Pending as string,
+            ConnectorRelationshipStatus.Rejected as string,
           ].includes(auditLogEntry.newStatus)
         ) {
           const acceptRelationshipResponse =
