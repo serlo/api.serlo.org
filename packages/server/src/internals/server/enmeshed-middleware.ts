@@ -467,14 +467,17 @@ function createEnmeshedWebhookMiddleware(
             ConnectorRelationshipStatus.Rejected as string,
           ].includes(auditLogEntry.newStatus)
         ) {
-          const acceptRelationshipResponse =
-            await client.relationships.acceptRelationship(data.id)
-          if (acceptRelationshipResponse.isError) {
-            handleConnectorError({
-              error: acceptRelationshipResponse.error,
-              message: 'Failed while accepting relationship request',
-            })
+          if (data.status !== (ConnectorRelationshipStatus.Active as string)) {
+            const acceptRelationshipResponse =
+              await client.relationships.acceptRelationship(data.id)
+            if (acceptRelationshipResponse.isError) {
+              handleConnectorError({
+                error: acceptRelationshipResponse.error,
+                message: 'Failed while accepting relationship request',
+              })
+            }
           }
+
           if (!sessionId) {
             await sendWelcomeMessage({ relationship: data, client })
             await sendAttributesChangeRequest({ relationship: data, client })
