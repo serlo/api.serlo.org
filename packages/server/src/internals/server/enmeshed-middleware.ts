@@ -479,7 +479,6 @@ function createEnmeshedWebhookMiddleware(
           }
 
           if (!sessionId) {
-            await sendWelcomeMessage({ relationship: data, client })
             await sendAttributesChangeRequest({ relationship: data, client })
           }
         }
@@ -508,54 +507,6 @@ function createEnmeshedWebhookMiddleware(
         errorContext: { headers: request.headers },
       })
       return response.status(500).send('Internal Server Error')
-    })
-  }
-}
-
-/**
- * Sends a welcome message with a test file attachment to be saved within the users' data wallet
- */
-async function sendWelcomeMessage({
-  relationship,
-  client,
-}: {
-  relationship: Relationship
-  client: ConnectorClient
-}): Promise<void> {
-  const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 1)
-  const uploadFileResponse = await client.files.uploadOwnFile({
-    title: 'Serlo Testdatei',
-    description: 'Test file created by Serlo',
-    file: Buffer.from(
-      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! - Dies ist eine Testdatei.</p></body></html>',
-    ),
-    filename: 'serlo-test.html',
-    expiresAt: expiresAt.toISOString(),
-  })
-
-  if (uploadFileResponse.isError) {
-    handleConnectorError({
-      error: uploadFileResponse.error,
-      message: 'Failed to upload file in welcome message',
-    })
-  }
-
-  const sendMessageResponse = await client.messages.sendMessage({
-    recipients: [relationship.peer],
-    content: {
-      '@type': 'Mail',
-      to: [relationship.peer],
-      subject: 'Danke für dein Vertrauen.',
-      body: 'Hallo!\nDanke für deine Anfrage, wir freuen uns über dein Vertrauen.\nDein Serlo-Team',
-    },
-    attachments: [uploadFileResponse.result.id],
-  })
-
-  if (sendMessageResponse.isError) {
-    handleConnectorError({
-      error: sendMessageResponse.error,
-      message: 'Failed to upload file in welcome message',
     })
   }
 }
