@@ -21,10 +21,8 @@
  */
 import {
   ConnectorClient,
-  ConnectorError,
-  ConnectorRelationshipChangeStatus,
-  ConnectorRelationshipChangeType,
-  ConnectorRequestContent,
+  ConnectorRelationshipAuditLogEntryReason,
+  ConnectorRelationshipStatus,
 } from '@nmshd/connector-sdk'
 import crypto from 'crypto'
 import express, { Express, RequestHandler, Request, Response } from 'express'
@@ -60,9 +58,10 @@ export function applyEnmeshedMiddleware({
   return `${basePath}/init`
 }
 
-const GenericEventBody = t.type({
-  trigger: t.string,
-})
+// we had to shadow this type since the library doesn't provide it yet
+enum RelationshipAttributeConfidentiality {
+  Public = 'public',
+}
 
 const Relationship = t.type({
   id: t.string,
@@ -76,7 +75,13 @@ const Relationship = t.type({
       }),
     }),
   }),
-  changes: t.array(t.type({ type: t.string, status: t.string, id: t.string })),
+  auditLog: t.array(
+    t.type({
+      reason: t.string,
+      newStatus: t.string,
+    }),
+  ),
+  creationContent: t.unknown,
 })
 
 type Relationship = t.TypeOf<typeof Relationship>
@@ -152,6 +157,7 @@ function createEnmeshedInitMiddleware(
         })
       }
 
+      const { owner } = createAttributeResponse.result.content
       const requestGroup = {
         '@type': 'RequestItemGroup',
         mustBeAccepted: true,
@@ -161,7 +167,7 @@ function createEnmeshedInitMiddleware(
             '@type': 'CreateAttributeRequestItem',
             mustBeAccepted: true,
             attribute: {
-              owner: '',
+              owner,
               key: 'LernstandMathe',
               confidentiality: 'public',
               '@type': 'RelationshipAttribute',
@@ -173,10 +179,10 @@ function createEnmeshedInitMiddleware(
             },
           },
         ],
-      } as ConnectorRequestContent['items'][number]
+      }
 
-      // TODO: Handle privacy See https://github.com/serlo/api.serlo.org/blob/83db29db4a98f6b32c389a0a0f89612fb9f760f8/packages/server/src/internals/server/enmeshed-middleware.ts#L470
-      const attributesContent: ConnectorRequestContent = {
+      const attributesContent = {
+        '@type': 'Request' as const,
         metadata: { sessionId: sessionId },
         items: [
           {
@@ -189,7 +195,7 @@ function createEnmeshedInitMiddleware(
                 mustBeAccepted: true,
                 attribute: {
                   '@type': 'IdentityAttribute',
-                  owner: '',
+                  owner,
                   value: {
                     '@type': 'DisplayName',
                     value: 'LENABI Demo',
@@ -208,9 +214,11 @@ function createEnmeshedInitMiddleware(
           content: attributesContent,
         },
       )
-      if (validationResponse.isError) {
+
+      if (!validationResponse.result.isSuccess) {
+        const { code, message } = validationResponse.result
         return handleConnectorError({
-          error: validationResponse.error,
+          error: { code, message },
           message: 'Error occurred while validating attributes',
           response: res,
         })
@@ -335,7 +343,7 @@ function createSetAttributesHandler(
             attribute: {
               key: name,
               owner: '',
-              confidentiality: 'public',
+              confidentiality: RelationshipAttributeConfidentiality.Public,
               '@type': 'RelationshipAttribute',
               value: {
                 '@type': 'ProprietaryString',
@@ -418,7 +426,7 @@ function createEnmeshedWebhookMiddleware(
 
     const body = req.body as unknown
 
-    if (!GenericEventBody.is(body)) {
+    if (!t.type({ trigger: t.string }).is(body)) {
       res.status(400).send('Illegal trigger body')
       return
     }
@@ -434,9 +442,13 @@ function createEnmeshedWebhookMiddleware(
     if (!EventBody.is(body)) {
       captureErrorEvent({
         error: new Error('Illegal body event'),
-        errorContext: { body, route: '/enmeshed/webhook' },
+        errorContext: {
+          body,
+          validationError: EventBody.decode(body),
+          route: '/enmeshed/webhook',
+        },
       })
-      res.status(400).send('Illegal trigger body')
+      res.status(400).send('Illegal body event')
       return
     }
 
@@ -446,19 +458,27 @@ function createEnmeshedWebhookMiddleware(
       const sessionId =
         data.template.content?.onNewRelationship?.metadata?.sessionId ?? null
 
-      for (const change of data.changes) {
+      for (const auditLogEntry of data.auditLog) {
         if (
-          [ConnectorRelationshipChangeType.CREATION as string].includes(
-            change.type,
-          ) &&
+          (ConnectorRelationshipAuditLogEntryReason.Creation as string) ===
+            auditLogEntry.reason &&
           [
-            ConnectorRelationshipChangeStatus.PENDING as string,
-            ConnectorRelationshipChangeStatus.REJECTED as string,
-          ].includes(change.status)
+            ConnectorRelationshipStatus.Pending as string,
+            ConnectorRelationshipStatus.Rejected as string,
+          ].includes(auditLogEntry.newStatus)
         ) {
-          await acceptRelationshipRequest(data, change, client)
+          if (data.status !== (ConnectorRelationshipStatus.Active as string)) {
+            const acceptRelationshipResponse =
+              await client.relationships.acceptRelationship(data.id)
+            if (acceptRelationshipResponse.isError) {
+              handleConnectorError({
+                error: acceptRelationshipResponse.error,
+                message: 'Failed while accepting relationship request',
+              })
+            }
+          }
+
           if (!sessionId) {
-            await sendWelcomeMessage({ relationship: data, client })
             await sendAttributesChangeRequest({ relationship: data, client })
           }
         }
@@ -492,75 +512,6 @@ function createEnmeshedWebhookMiddleware(
 }
 
 /**
- * Accepts pending relationship request
- */
-async function acceptRelationshipRequest(
-  relationship: Relationship,
-  change: { id: string },
-  client: ConnectorClient,
-): Promise<void> {
-  const acceptRelationshipResponse =
-    await client.relationships.acceptRelationshipChange(
-      relationship.id,
-      change.id,
-    )
-  if (acceptRelationshipResponse.isError) {
-    handleConnectorError({
-      error: acceptRelationshipResponse.error,
-      message: 'Failed while accepting relationship request',
-    })
-  }
-}
-
-/**
- * Sends a welcome message with a test file attachment to be saved within the users' data wallet
- */
-async function sendWelcomeMessage({
-  relationship,
-  client,
-}: {
-  relationship: Relationship
-  client: ConnectorClient
-}): Promise<void> {
-  const expiresAt = new Date()
-  expiresAt.setHours(expiresAt.getHours() + 1)
-  const uploadFileResponse = await client.files.uploadOwnFile({
-    title: 'Serlo Testdatei',
-    description: 'Test file created by Serlo',
-    file: Buffer.from(
-      '<html><head><title>Serlo Testdatei</title></head><body><p>Hello World! - Dies ist eine Testdatei.</p></body></html>',
-    ),
-    filename: 'serlo-test.html',
-    expiresAt: expiresAt.toISOString(),
-  })
-
-  if (uploadFileResponse.isError) {
-    handleConnectorError({
-      error: uploadFileResponse.error,
-      message: 'Failed to upload file in welcome message',
-    })
-  }
-
-  const sendMessageResponse = await client.messages.sendMessage({
-    recipients: [relationship.peer],
-    content: {
-      '@type': 'Mail',
-      to: [relationship.peer],
-      subject: 'Danke für dein Vertrauen.',
-      body: 'Hallo!\nDanke für deine Anfrage, wir freuen uns über dein Vertrauen.\nDein Serlo-Team',
-    },
-    attachments: [uploadFileResponse.result.id],
-  })
-
-  if (sendMessageResponse.isError) {
-    handleConnectorError({
-      error: sendMessageResponse.error,
-      message: 'Failed to upload file in welcome message',
-    })
-  }
-}
-
-/**
  * Requests user to change and share attributes in data wallet
  * Attributes will be sent to connector webhook after confirmation
  */
@@ -580,7 +531,7 @@ async function sendAttributesChangeRequest({
           attribute: {
             key: 'LernstandMathe',
             owner: '',
-            confidentiality: 'public',
+            confidentiality: RelationshipAttributeConfidentiality.Public,
             '@type': 'RelationshipAttribute',
             value: {
               '@type': 'ProprietaryString',
@@ -636,7 +587,7 @@ function handleConnectorError({
   message,
   response,
 }: {
-  error: ConnectorError
+  error: { code: string | undefined; message: string | undefined }
   message: string
   response?: Response
 }) {

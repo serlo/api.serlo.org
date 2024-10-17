@@ -3,7 +3,7 @@ import type { Server } from 'http'
 import { bypass } from 'msw'
 import { createPool } from 'mysql2/promise'
 
-import { Identity, Kratos } from '~/context/auth-services'
+import { Kratos } from '~/context/auth-services'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 
 const port = 8100
@@ -32,19 +32,6 @@ describe('Kratos middleware - register endpoint', () => {
   })
 
   test('successful if it finds an account to sync', async () => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    kratosMock.db.executeSingleQuery<Identity> = async () => {
-      return Promise.resolve([
-        {
-          id: '23af75f5-009a-4a11-a9d0-d79ac8bc8d34',
-          traits: {
-            username: 'serlo-user',
-            email: 'email@serlo.org',
-          },
-        },
-      ] as Identity[])
-    }
-
     const response = await fetchKratosRegister({})
 
     expect(response.status).toBe(200)
@@ -188,6 +175,17 @@ function createKratosMock() {
     db: {
       getIdByCredentialIdentifier: async () => {
         return Promise.resolve('23af75f5-009a-4a11-a9d0-d79ac8bc8d34')
+      },
+      executeSingleQuery: async () => {
+        return Promise.resolve([
+          {
+            id: '23af75f5-009a-4a11-a9d0-d79ac8bc8d34',
+            traits: {
+              username: 'serlo-user',
+              email: 'email@serlo.org',
+            },
+          },
+        ])
       },
     },
   } as unknown as Kratos
