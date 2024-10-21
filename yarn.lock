@@ -3496,14 +3496,14 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^6.1.2":
-  version: 6.1.2
-  resolution: "@nmshd/connector-sdk@npm:6.1.2"
+  version: 6.2.0
+  resolution: "@nmshd/connector-sdk@npm:6.2.0"
   dependencies:
     "@nmshd/content": 6.3.1
     axios: ^1.7.7
     form-data: ^4.0.1
     qs: ^6.13.0
-  checksum: ccade024a1a24c70f9edaa86822f4ae63e7c360cd0d256370cba9bac94b177785d25230bfd6bb1c77a7c00cd4b95042fb7d5f3455ed7d03714ae21920141f0af
+  checksum: dea111a560bf6026fbfcfa6227bb12325be9784688d681fded004d84c503d9c6e89e2e19f25abf2c238e3e3f1d57449dfccda4a26339f70839f9095200007d8a
   languageName: node
   linkType: hard
 
