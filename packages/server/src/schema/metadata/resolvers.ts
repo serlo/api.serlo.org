@@ -113,7 +113,7 @@ export const resolvers: Resolvers = {
             -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
             -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
             -- Exclude content under "Baustelle", "Community" (from de, en and es instances), "Zum Testen" and "Testbereich" taxonomies
-            WHERE child.parent_id NOT IN (87993, 106081, 146728, 48537, 164234)
+            WHERE child.parent_id NOT IN (87993, 106081, 146728, 48537, 164234, 141588)
                 AND child.id NOT IN (75211, 105140, 107772, 135390, 25107, 106082)
         )
         SELECT
