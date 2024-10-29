@@ -29,6 +29,9 @@ test('endpoint `publisher` returns publisher', async () => {
     })
 })
 
+/**
+ * For more complete and complex tests go to `serlo/metadata-exports` and run `pipenv run validate_local`. Remember to run `yarn mysql:import-anonymous-data` first.
+ */
 describe('endpoint "resources"', () => {
   const query = new Client().prepareQuery({
     query: gql`
