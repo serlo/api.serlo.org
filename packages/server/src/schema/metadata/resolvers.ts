@@ -150,6 +150,7 @@ export const resolvers: Resolvers = {
             AND type.name IN ("applet", "article", "course", "text-exercise",
                               "text-exercise-group", "video")
             AND NOT subject_mapping.subject_id = 146728
+            AND license.url NOT LIKE "https://www.youtube.com/static?%"
         GROUP BY entity.id
         ORDER BY entity.id
         LIMIT ?
