@@ -402,10 +402,12 @@ enum Scheme {
 function getRaWSubject(id: number): RawSubject[] {
   switch (id) {
     // Mathematik (Schule)
+    // Chancenwerk 268835 has only created math content so far
     case 5:
     case 23593:
     case 141587:
     case 169580:
+    case 268835:
       return [{ id: '1017', scheme: Scheme.SchoolSubject }]
 
     // Nachhaltigkeit => Biologie, Ethik (Schule)
@@ -420,7 +422,9 @@ function getRaWSubject(id: number): RawSubject[] {
     case 18230:
       return [{ id: '1002', scheme: Scheme.SchoolSubject }]
     // Biologie (Schule)
+    // Forensik 195927
     case 23362:
+    case 195927:
       return [{ id: '1001', scheme: Scheme.SchoolSubject }]
     // Englisch (Shule)
     case 25979:
@@ -437,7 +441,6 @@ function getRaWSubject(id: number): RawSubject[] {
     // Informatik (Schule)
     case 47899:
       return [{ id: '1013', scheme: Scheme.SchoolSubject }]
-
     // Politik => Politik, Sachunterricht (Schule)
     case 79159:
     case 107556:
@@ -461,8 +464,10 @@ function getRaWSubject(id: number): RawSubject[] {
     case 112723:
       return [{ id: '1006', scheme: Scheme.SchoolSubject }]
     // Geschichte (Schule)
+    // Estudios en Diásporas Africanas 242308
     case 136362:
     case 140528:
+    case 242308:
       return [{ id: '1011', scheme: Scheme.SchoolSubject }]
     // Wirtschaftskunde (Schule)
     case 137757:
@@ -506,6 +511,16 @@ function getRaWSubject(id: number): RawSubject[] {
       return [
         { id: '1043', scheme: Scheme.SchoolSubject },
         { id: '1005', scheme: Scheme.SchoolSubject },
+      ]
+    // Lerntipps,  => Erziehungswissenschaft (Schule)
+    case 181883:
+    case 148619:
+      return [{ id: '1043', scheme: Scheme.SchoolSubject }]
+    // Schlau-Werkstatt,  => Mathematik, Deutsch als Zweitsprache (Schule)
+    case 146870:
+      return [
+        { id: '1017', scheme: Scheme.SchoolSubject },
+        { id: '1006', scheme: Scheme.SchoolSubject },
       ]
     default:
       return []
