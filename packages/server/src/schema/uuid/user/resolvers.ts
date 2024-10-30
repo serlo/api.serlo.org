@@ -320,18 +320,6 @@ export const resolvers: Resolvers = {
       if (id == null) {
         throw new UserInputError('no user with given username')
       }
-      await database.mutate(
-        `
-        INSERT INTO role (name)
-        SELECT ?
-        WHERE NOT EXISTS (
-          SELECT 1
-          FROM role
-          WHERE name = ?
-        )
-        `,
-        [generateRole(role, instance), generateRole(role, instance)],
-      )
 
       await database.mutate(
         `
