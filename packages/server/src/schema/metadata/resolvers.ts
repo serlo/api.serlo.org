@@ -1,5 +1,6 @@
 import * as R from 'ramda'
 
+import { captureErrorEvent } from '~/error-event'
 import { UserInputError } from '~/errors'
 import { createNamespace, decodeId } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -112,8 +113,8 @@ export const resolvers: Resolvers = {
             JOIN subject_mapping ON subject_mapping.taxonomy_id = child.parent_id
             -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
             -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
-            WHERE child.parent_id NOT IN (87993, 106081, 146728)
-                -- Exclude content under "Baustelle", "Community", "Zum Testen" and "Testbereich" taxonomies
+            -- Exclude content under "Baustelle", "Community" (from de, en and es instances), "Zum Testen" and "Testbereich" taxonomies
+            WHERE child.parent_id NOT IN (87993, 106081, 146728, 48537, 164234, 141588, 268835, 146870)
                 AND child.id NOT IN (75211, 105140, 107772, 135390, 25107, 106082)
         )
         SELECT
@@ -150,6 +151,7 @@ export const resolvers: Resolvers = {
             AND type.name IN ("applet", "article", "course", "text-exercise",
                               "text-exercise-group", "video")
             AND NOT subject_mapping.subject_id = 146728
+            AND license.url NOT LIKE "https://www.youtube.com/static?%"
         GROUP BY entity.id
         ORDER BY entity.id
         LIMIT ?
@@ -419,7 +421,9 @@ function getRaWSubject(id: number): RawSubject[] {
     case 18230:
       return [{ id: '1002', scheme: Scheme.SchoolSubject }]
     // Biologie (Schule)
+    // Forensik 195927
     case 23362:
+    case 195927:
       return [{ id: '1001', scheme: Scheme.SchoolSubject }]
     // Englisch (Shule)
     case 25979:
@@ -436,7 +440,6 @@ function getRaWSubject(id: number): RawSubject[] {
     // Informatik (Schule)
     case 47899:
       return [{ id: '1013', scheme: Scheme.SchoolSubject }]
-
     // Politik => Politik, Sachunterricht (Schule)
     case 79159:
     case 107556:
@@ -460,8 +463,10 @@ function getRaWSubject(id: number): RawSubject[] {
     case 112723:
       return [{ id: '1006', scheme: Scheme.SchoolSubject }]
     // Geschichte (Schule)
+    // Estudios en Diásporas Africanas 242308
     case 136362:
     case 140528:
+    case 242308:
       return [{ id: '1011', scheme: Scheme.SchoolSubject }]
     // Wirtschaftskunde (Schule)
     case 137757:
@@ -506,7 +511,20 @@ function getRaWSubject(id: number): RawSubject[] {
         { id: '1043', scheme: Scheme.SchoolSubject },
         { id: '1005', scheme: Scheme.SchoolSubject },
       ]
+    // Lerntipps,  => Erziehungswissenschaft (Schule)
+    case 181883:
+    case 148619:
+      return [{ id: '1043', scheme: Scheme.SchoolSubject }]
     default:
+      captureErrorEvent({
+        error: new Error(
+          'metadata: subject could not be mapped to field `about`',
+        ),
+        errorContext: {
+          subjectId: id,
+          warning: 'It will break the export to Mein Bildungsraum',
+        },
+      })
       return []
   }
 }
