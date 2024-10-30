@@ -113,7 +113,7 @@ export const resolvers: Resolvers = {
             -- "Fächer im Aufbau" taxonomy is on the level of normal Serlo subjects, therefore we need a level below it.
             -- "Partner" taxonomy is below the subject "Mathematik", but we only want the entities with the specific partner as the subject.
             -- Exclude content under "Baustelle", "Community" (from de, en and es instances), "Zum Testen" and "Testbereich" taxonomies
-            WHERE child.parent_id NOT IN (87993, 106081, 146728, 48537, 164234, 141588)
+            WHERE child.parent_id NOT IN (87993, 106081, 146728, 48537, 164234, 141588, 268835, 146870)
                 AND child.id NOT IN (75211, 105140, 107772, 135390, 25107, 106082)
         )
         SELECT
@@ -402,12 +402,10 @@ enum Scheme {
 function getRaWSubject(id: number): RawSubject[] {
   switch (id) {
     // Mathematik (Schule)
-    // Chancenwerk 268835 has only created math content so far
     case 5:
     case 23593:
     case 141587:
     case 169580:
-    case 268835:
       return [{ id: '1017', scheme: Scheme.SchoolSubject }]
 
     // Nachhaltigkeit => Biologie, Ethik (Schule)
@@ -516,12 +514,6 @@ function getRaWSubject(id: number): RawSubject[] {
     case 181883:
     case 148619:
       return [{ id: '1043', scheme: Scheme.SchoolSubject }]
-    // Schlau-Werkstatt,  => Mathematik, Deutsch als Zweitsprache (Schule)
-    case 146870:
-      return [
-        { id: '1017', scheme: Scheme.SchoolSubject },
-        { id: '1006', scheme: Scheme.SchoolSubject },
-      ]
     default:
       return []
   }
