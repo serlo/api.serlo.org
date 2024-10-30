@@ -1,5 +1,6 @@
 import * as R from 'ramda'
 
+import { captureErrorEvent } from '~/error-event'
 import { UserInputError } from '~/errors'
 import { createNamespace, decodeId } from '~/internals/graphql'
 import { resolveConnection } from '~/schema/connection/utils'
@@ -515,6 +516,15 @@ function getRaWSubject(id: number): RawSubject[] {
     case 148619:
       return [{ id: '1043', scheme: Scheme.SchoolSubject }]
     default:
+      captureErrorEvent({
+        error: new Error(
+          'metadata: subject could not be mapped to field `about`',
+        ),
+        errorContext: {
+          subjectId: id,
+          warning: 'It will break the export to Mein Bildungsraum',
+        },
+      })
       return []
   }
 }
