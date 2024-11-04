@@ -127,6 +127,26 @@ test('updates the cache', async () => {
   })
 })
 
+test('Is successful even when user has already role', async () => {
+  await uuidQuery.shouldReturnData({
+    uuid: {
+      roles: {
+        nodes: [{ role: Role.Login, scope: Scope.Serlo }],
+      },
+    },
+  })
+  await mutation
+    .withInput({ username: regularUser.username, role: Role.Login })
+    .execute()
+  await uuidQuery.shouldReturnData({
+    uuid: {
+      roles: {
+        nodes: [{ role: Role.Login, scope: Scope.Serlo }],
+      },
+    },
+  })
+})
+
 test('fails when user is not authenticated', async () => {
   await mutation.forUnauthenticatedUser().shouldFailWithError('UNAUTHENTICATED')
 })
