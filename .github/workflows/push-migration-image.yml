@@ -19,7 +19,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           cd packages/db-migrations
-          DOCKER_REGISTRY=ghcr.io DOCKER_REPOSITORY=$(echo $GITHUB_REPOSITORY)/db-migration lerna run --stream push-image
+          DOCKER_REGISTRY=ghcr.io DOCKER_REPOSITORY=$(echo $GITHUB_REPOSITORY)/db-migration yarn push-image
         env:
           DOCKER_REGISTRY: ghcr.io
           DOCKER_REPOSITORY: ${{ github.repository }}/db-migration
