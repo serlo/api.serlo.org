@@ -321,20 +321,29 @@ export const resolvers: Resolvers = {
         throw new UserInputError('no user with given username')
       }
 
+      const userHasAlreadyRole = await database.fetchOptional(
+        `
+        SELECT 1
+          FROM role_user
+          WHERE user_id = ? 
+          AND role_id = ( SELECT id
+            FROM role
+            WHERE name = ?)`,
+        [id, generateRole(role, instance)],
+      )
+
+      if (userHasAlreadyRole) {
+        return { success: true, query: {} }
+      }
+
       await database.mutate(
         `
         INSERT INTO role_user (user_id, role_id)
         SELECT ?, role.id
         FROM role
         WHERE role.name = ?
-        AND NOT EXISTS (
-          SELECT 1
-          FROM role_user
-          WHERE role_user.user_id = ?
-          AND role_user.role_id = role.id
-        )
         `,
-        [id, generateRole(role, instance), id],
+        [id, generateRole(role, instance)],
       )
 
       await UuidResolver.removeCacheEntry({ id }, context)
