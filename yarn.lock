@@ -5742,7 +5742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:^6.9.15":
+"@types/qs@npm:*":
   version: 6.9.15
   resolution: "@types/qs@npm:6.9.15"
   checksum: 97d8208c2b82013b618e7a9fc14df6bd40a73e1385ac479b6896bafc7949a46201c15f42afd06e86a05e914f146f495f606b6fb65610cc60cf2e0ff743ec38a2
@@ -16089,18 +16089,16 @@ __metadata:
   linkType: hard
 
 "openai@npm:^4.58.1":
-  version: 4.61.0
-  resolution: "openai@npm:4.61.0"
+  version: 4.72.0
+  resolution: "openai@npm:4.72.0"
   dependencies:
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.4
-    "@types/qs": ^6.9.15
     abort-controller: ^3.0.0
     agentkeepalive: ^4.2.1
     form-data-encoder: 1.7.2
     formdata-node: ^4.3.2
     node-fetch: ^2.6.7
-    qs: ^6.10.3
   peerDependencies:
     zod: ^3.23.8
   peerDependenciesMeta:
@@ -16108,7 +16106,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 6e610435feea234eee02644385facdb7fa78faf98727858215601f8be302a8c2fdf6eec55ae12f45dcee73fd98970be6d44c263b5bb5d79828ba47e673bbe9d7
+  checksum: 483fac9ea6b3215b50be054b16c35d181563d0d2ac5dd9d802d373742dbe2a499d6531bb3d3267ea8835a1563dc185e64b0aecf541b508e576bea8db5884bcf0
   languageName: node
   linkType: hard
 
@@ -17211,7 +17209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.13.0, qs@npm:^6.10.3, qs@npm:^6.13.0":
+"qs@npm:6.13.0, qs@npm:^6.13.0":
   version: 6.13.0
   resolution: "qs@npm:6.13.0"
   dependencies:
