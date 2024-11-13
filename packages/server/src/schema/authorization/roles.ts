@@ -137,7 +137,6 @@ export function getRolesWithInheritance(initialRoles: Role[] = []): Role[] {
   const allRoles: Role[] = []
   const queue = [...initialRoles]
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const role = queue.pop()
     if (!role) return allRoles
