@@ -12,8 +12,7 @@ updates:
 
   - package-ecosystem: 'docker'
     directories:
-      - 'packages/server/docker/server'
-      - 'packages/server/docker/swr-queue-worker'
+      - 'packages/server'
     schedule:
       interval: 'weekly'
     # we want LTS version of NodeJS and not suggested current version
