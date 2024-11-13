@@ -13,6 +13,7 @@ updates:
   - package-ecosystem: 'docker'
     directories:
       - 'packages/server'
+      - 'packages/db-migrations'
     schedule:
       interval: 'weekly'
     # we want LTS version of NodeJS and not suggested current version
