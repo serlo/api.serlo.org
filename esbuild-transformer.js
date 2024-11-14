@@ -18,5 +18,4 @@ async function processAsync(src, filename) {
   }
 }
 
-// eslint-disable-next-line import/no-default-export
 export default { processAsync }
