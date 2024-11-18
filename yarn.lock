@@ -2499,22 +2499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript@npm:^4.0.9, @graphql-codegen/typescript@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@graphql-codegen/typescript@npm:4.1.0"
-  dependencies:
-    "@graphql-codegen/plugin-helpers": ^5.0.4
-    "@graphql-codegen/schema-ast": ^4.0.2
-    "@graphql-codegen/visitor-plugin-common": 5.4.0
-    auto-bind: ~4.0.0
-    tslib: ~2.6.0
-  peerDependencies:
-    graphql: ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: e41f3e807bef26fd0d2d6898bd3112666799a273a34ac6f4e8676d400991d53e9216b50fb568c0d23aed32097183209397b6224eee345dc4f2e6bafe4563bccf
-  languageName: node
-  linkType: hard
-
-"@graphql-codegen/typescript@npm:^4.1.1":
+"@graphql-codegen/typescript@npm:^4.0.9, @graphql-codegen/typescript@npm:^4.1.0, @graphql-codegen/typescript@npm:^4.1.1":
   version: 4.1.1
   resolution: "@graphql-codegen/typescript@npm:4.1.1"
   dependencies:
