@@ -5143,7 +5143,7 @@ __metadata:
     prettier-plugin-packagejson: ^2.5.2
     prettier-plugin-sh: ^0.14.0
     ts-node: ^10.9.2
-    ts-unused-exports: ^10.1.0
+    ts-unused-exports: ^11.0.1
     tsdx: ^0.14.1
     typescript: ^5.5.4
   languageName: unknown
@@ -5236,7 +5236,7 @@ __metadata:
     semver: ^7.6.3
     ts-jest: ^29.2.5
     ts-node: ^10.9.2
-    ts-unused-exports: ^10.1.0
+    ts-unused-exports: ^11.0.1
     tsx: ^4.19.0
     typescript: ^5.5.4
   languageName: unknown
@@ -19914,9 +19914,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-unused-exports@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "ts-unused-exports@npm:10.1.0"
+"ts-unused-exports@npm:^11.0.1":
+  version: 11.0.1
+  resolution: "ts-unused-exports@npm:11.0.1"
   dependencies:
     chalk: ^4.0.0
     tsconfig-paths: ^3.9.0
@@ -19927,7 +19927,7 @@ __metadata:
       optional: false
   bin:
     ts-unused-exports: bin/ts-unused-exports
-  checksum: 16e80adb0c9b998f9639833089a7806d299d0dc463955e229c6383c9482a42978a529f0fc5cf2426dc2222dc6fcbf216e4bc7a3fa9824ea6b04ec3ab5b5a3b79
+  checksum: c539c147b99d5baa84969d546c0621b8db7e45c33b87f04ef2cbbbd238ad6161dfcce610ae7bd3a274b01b2f5d88b4a5e4fcb41a4526b29b8e884647d5bf2f69
   languageName: node
   linkType: hard
 
