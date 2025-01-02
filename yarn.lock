@@ -3772,39 +3772,39 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^6.1.2":
-  version: 6.6.1
-  resolution: "@nmshd/connector-sdk@npm:6.6.1"
+  version: 6.10.0
+  resolution: "@nmshd/connector-sdk@npm:6.10.0"
   dependencies:
-    "@nmshd/content": 6.7.0
-    axios: ^1.7.7
+    "@nmshd/content": 6.20.0
+    axios: ^1.7.9
     form-data: ^4.0.1
-    qs: ^6.13.0
-  checksum: ee1c1e754d04c2669b525a71573e7ee2cdb78dd047086de459fd9827f895a9d4199b9f4cb07c2a005d9d08d014dd9a6ecd468bfb42a4862801979592785b9903
+    qs: ^6.13.1
+  checksum: 628041b16dec96082648ea60b8a746efe6b5b45aa475a1841e9a07b5f0036a131987448a8127c0df36c31a9f61c1aa66c3cb916d13988a3bc2bce371bb60fb88
   languageName: node
   linkType: hard
 
-"@nmshd/content@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@nmshd/content@npm:6.7.0"
+"@nmshd/content@npm:6.20.0":
+  version: 6.20.0
+  resolution: "@nmshd/content@npm:6.20.0"
   dependencies:
     "@js-soft/ts-serval": 2.0.11
-    "@nmshd/core-types": 6.7.0
+    "@nmshd/core-types": 6.20.0
     "@nmshd/iql": ^1.0.2
     luxon: ^3.5.0
     ts-simple-nameof: ^1.3.1
-  checksum: 4daa32a6e8805fad9051e77be47d3a0f329597c66d8d4168bc60a89cfe2651ab4e1ce52c6521a8debca58bca72ff67d061a3145952aabbb7032b07f2b558f3c2
+  checksum: b5fb995952395a89ca7e192df03a6dafb97233724872f4b0c60eca7ce1b211c6a3f36a01b254b9c987e069fce7679e04737190b838b1d816ed9353e3ca933879
   languageName: node
   linkType: hard
 
-"@nmshd/core-types@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@nmshd/core-types@npm:6.7.0"
+"@nmshd/core-types@npm:6.20.0":
+  version: 6.20.0
+  resolution: "@nmshd/core-types@npm:6.20.0"
   dependencies:
     "@js-soft/logging-abstractions": ^1.0.1
     "@js-soft/ts-serval": 2.0.11
     json-stringify-safe: ^5.0.1
     luxon: ^3.5.0
-  checksum: d30380e323c2b90cd8f20e8755b41c018c4d1809df91e31b621fe3538de4a714d146a745eedefb55ccb2a5f182ef7cd64343261c6c65a7f2cbf87a10e2dadd3b
+  checksum: ec7fd4536be6b65e6e668fd643f777ec29c8cd269dd18c4d64dfee35a39d3aae14ef0f7c019f757ec24a65a2df2c365458b5fd2a67454ab9b37ee314d2530dd1
   languageName: node
   linkType: hard
 
@@ -7067,7 +7067,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.1, axios@npm:^1.7.4, axios@npm:^1.7.7":
+"axios@npm:^1.6.1, axios@npm:^1.7.4":
   version: 1.7.7
   resolution: "axios@npm:1.7.7"
   dependencies:
@@ -7075,6 +7075,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: 882d4fe0ec694a07c7f5c1f68205eb6dc5a62aecdb632cc7a4a3d0985188ce3030e0b277e1a8260ac3f194d314ae342117660a151fabffdc5081ca0b5a8b47fe
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.9":
+  version: 1.7.9
+  resolution: "axios@npm:1.7.9"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: cb8ce291818effda09240cb60f114d5625909b345e10f389a945320e06acf0bc949d0f8422d25720f5dd421362abee302c99f5e97edec4c156c8939814b23d19
   languageName: node
   linkType: hard
 
@@ -17343,12 +17354,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.13.0, qs@npm:^6.13.0":
+"qs@npm:6.13.0":
   version: 6.13.0
   resolution: "qs@npm:6.13.0"
   dependencies:
     side-channel: ^1.0.6
   checksum: e9404dc0fc2849245107108ce9ec2766cde3be1b271de0bf1021d049dc5b98d1a2901e67b431ac5509f865420a7ed80b7acb3980099fe1c118a1c5d2e1432ad8
+  languageName: node
+  linkType: hard
+
+"qs@npm:^6.13.1":
+  version: 6.13.1
+  resolution: "qs@npm:6.13.1"
+  dependencies:
+    side-channel: ^1.0.6
+  checksum: 86c5059146955fab76624e95771031541328c171b1d63d48a7ac3b1fdffe262faf8bc5fcadc1684e6f3da3ec87a8dedc8c0009792aceb20c5e94dc34cf468bb9
   languageName: node
   linkType: hard
 
