@@ -5325,14 +5325,14 @@ __metadata:
   linkType: hard
 
 "@slack/web-api@npm:^7.4.0":
-  version: 7.7.0
-  resolution: "@slack/web-api@npm:7.7.0"
+  version: 7.8.0
+  resolution: "@slack/web-api@npm:7.8.0"
   dependencies:
     "@slack/logger": ^4.0.0
     "@slack/types": ^2.9.0
     "@types/node": ">=18.0.0"
     "@types/retry": 0.12.0
-    axios: ^1.7.4
+    axios: ^1.7.8
     eventemitter3: ^5.0.1
     form-data: ^4.0.0
     is-electron: 2.2.2
@@ -5340,7 +5340,7 @@ __metadata:
     p-queue: ^6
     p-retry: ^4
     retry: ^0.13.1
-  checksum: f65986446c8debb2dc09fb00425aa47afb69d2c73958cd4791fc38ee8806873696e510ad2237e19e82c56e048017cd2164b50a971c6523ba2d1cb38fd821ac9c
+  checksum: d76fcb6cfe8a8ebdaf71aaee7dfef54f3ce4fb5958f9f841bcba095097349f649c47e5e79adbaabbd4051fe0c8d6d96445adeeab3d67416c161ae20868f637f0
   languageName: node
   linkType: hard
 
@@ -7078,7 +7078,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.7.9":
+"axios@npm:^1.7.8, axios@npm:^1.7.9":
   version: 1.7.9
   resolution: "axios@npm:1.7.9"
   dependencies:
