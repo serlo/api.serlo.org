@@ -23,7 +23,7 @@ jobs:
           build-args: |
             image=${{ matrix.image }}
           tags: api-${{ matrix.image }}-local-build:latest
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - name: Start containers
         run: yarn start:containers
       - name: Wait until all containers are ready
