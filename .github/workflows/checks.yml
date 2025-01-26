@@ -10,21 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:eslint
 
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:prettier
 
   tsc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:tsc
 
   test:
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: serlo/configure-repositories/actions/setup-mysql@main
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - run: yarn start:containers
       - run: scripts/mysql/wait-for-mysql.sh
       - run: yarn migrate:all
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-node@main
+      - uses: ./.github/actions/setup-node
       - run: yarn codegen
       - name: Check for uncommitted changes
         run: |
