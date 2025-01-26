@@ -13,7 +13,7 @@ COPY lerna.json .
 COPY yarn.lock .
 
 FROM base AS build_dist
-RUN yarn --immutable --immutable-cache --silent
+RUN yarn --immutable --silent
 COPY packages/authorization packages/authorization
 COPY packages/server packages/server
 RUN yarn build:${image}

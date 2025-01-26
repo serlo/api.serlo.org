@@ -82,9 +82,9 @@ dist/
 .idea
 .vscode
 
-# Yarn (with Zero-Installs)
+# Yarn (without PnP and zero-installs)
+.pnp.*
 .yarn/*
-!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
