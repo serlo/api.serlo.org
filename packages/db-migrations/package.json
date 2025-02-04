@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "db-migrate": "^0.11.14",
-    "db-migrate-mysql": "^3.0.0"
+    "db-migrate-mysql": "^3.0.0",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@jest/types": "^29.6.3",
