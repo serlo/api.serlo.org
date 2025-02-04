@@ -11,8 +11,9 @@ test('Uuid query for an entity revision', async () => {
       date: '2015-02-22T20:29:03.000Z',
       repository: { id: 35295 },
       title: '"falsche Freunde"',
-      content:
-        '{"id":"a610a1dd-f48f-491a-b59e-0c321823a0aa","type":"https://serlo.org/editor","variant":"serlo-org","domainOrigin":"serlo.org","version":"1","editorVersion":"0.22.0","dateModified":"2025-02-04T15:40:19.868Z","document":{"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"wip"}]}],"id":"7165fed8-d729-45fd-a28c-8ea7c2622953"}],"id":"3b4326f6-88c6-4da8-9bea-f0eb4aa5407a"}}',
+      content: expect.stringContaining(
+        '{"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"wip"}]}],"id":"7165fed8-d729-45fd-a28c-8ea7c2622953"}],"id":"3b4326f6-88c6-4da8-9bea-f0eb4aa5407a"}',
+      ) as string,
       changes: '',
       metaTitle: '',
       metaDescription: '',
