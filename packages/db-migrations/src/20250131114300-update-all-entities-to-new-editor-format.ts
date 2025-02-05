@@ -38,7 +38,7 @@ function wrapEntityRevisionContentInEditorMetadata(
     type: 'https://serlo.org/editor',
     variant: 'serlo-org',
     domainOrigin: 'serlo.org',
-    version: '1',
+    version: '2',
     editorVersion: '0.22.0',
     dateModified: new Date().toISOString(),
     document: content,
@@ -50,7 +50,7 @@ interface EditorStorageFormat {
   type: 'https://serlo.org/editor'
   variant: 'serlo-org'
   domainOrigin: 'serlo.org'
-  version: '1'
+  version: '2'
   editorVersion: '0.22.0'
   dateModified: string
   document: Plugin
