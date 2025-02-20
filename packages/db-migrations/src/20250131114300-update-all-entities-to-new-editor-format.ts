@@ -1,18 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import {
-  ApiCache,
-  Database,
-  migrateSerloEditorContent,
-  Plugin,
-  SlackLogger,
-} from './utils'
+import { ApiCache, Database, migrateSerloEditorContent, Plugin } from './utils'
 
 export async function up(db: Database) {
   const apiCache = new ApiCache()
-  const logger = new SlackLogger(
-    '20250131114300-update-all-entities-to-new-editor-format',
-  )
 
   await migrateSerloEditorContent({
     apiCache,
@@ -24,7 +15,6 @@ export async function up(db: Database) {
     },
   })
 
-  await logger.closeAndSend()
   // To reduce the time between deleting the keys and finishing the DB
   // transaction, this should be the last command
   await apiCache.deleteKeysAndQuit()
