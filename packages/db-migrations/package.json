@@ -1,6 +1,6 @@
 {
   "name": "@serlo/db-migrations",
-  "version": "1.2.0",
+  "version": "2.0.2",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "db-migrate": "^0.11.14",
-    "db-migrate-mysql": "^3.0.0"
+    "db-migrate-mysql": "^3.0.0",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@jest/types": "^29.6.3",
