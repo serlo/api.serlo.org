@@ -112,7 +112,7 @@ You may want to run `mysql:delete-last-migration` or even `yarn mysql:rollback` 
 To create a new image, just change the version at `packages/db-migrations/package.json`.
 If the migration isn't supposed to be used by other developers nor to be run in CI, create version with prerelease (v.g. `2.0.2-staging.0`).
 
-After deploying the image in production, create a new test dump. Follow the steps at [serlo/serlo-mysql](https://github.com/serlo/serlo-mysql).
+After deploying the image in production, create a new test dump. Follow the steps at [serlo/serlo-mysql-database](https://github.com/serlo/serlo-mysql-database).
 
 ## Changelog
 
