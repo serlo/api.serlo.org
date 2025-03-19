@@ -112,12 +112,12 @@ async function changeUuidContents({
   log: (message: string) => void
 }) {
   const querySQL = query + ' LIMIT ?'
-  let uuids: Uuid[] = []
+  let lastID = 0
 
-  do {
-    const lastID = uuids.at(-1)?.id ?? 0
+  while (true) {
     log(`Last ID: ${lastID}`)
-    uuids = await db.runSql(querySQL, lastID, 5000)
+    const uuids: Uuid[] = await db.runSql(querySQL, lastID, 5000)
+    lastID = uuids.at(-1)?.id ?? 0
 
     for (const uuid of uuids) {
       let oldState
@@ -159,7 +159,11 @@ async function changeUuidContents({
         })
       }
     }
-  } while (uuids.length > 0)
+
+    if (uuids.length === 0) {
+      break
+    }
+  }
 }
 
 interface Uuid {

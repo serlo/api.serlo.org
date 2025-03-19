@@ -100,6 +100,20 @@ With `git push --no-verify` you can bypass the automatic checks.
 - `yarn codegen` generates TypeScript types from GraphQL schema
 - `yarn start` spins up the development environment
 
+## Developing DB migrations
+
+Run `yarn migrate:new` to create a new file with the migration timestamp.
+
+You can copy and paste one of the existing migrations as a template for the new one.
+
+Do `yarn migrate:run <path to your migration>` to test your code.
+You may want to run `mysql:delete-last-migration` or even `yarn mysql:rollback` every now and then.
+
+To create a new image, just change the version at `packages/db-migrations/package.json`.
+If the migration isn't supposed to be used by other developers nor to be run in CI, create version with prerelease (v.g. `2.0.2-staging.0`).
+
+After deploying the image in production, create a new test dump. Follow the steps at [serlo/serlo-mysql-database](https://github.com/serlo/serlo-mysql-database).
+
 ## Changelog
 
 Via filtering PRs by [`base:production`](https://github.com/serlo/api.serlo.org/pulls?q=is%3Apr+base%3Aproduction+) you can access the changelog of production.
