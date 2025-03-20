@@ -38,13 +38,13 @@ selfservice:
             client_id: ${nbp_client_id}
             client_secret: ${nbp_client_secret}
             issuer_url: https://aai.demo.meinbildungsraum.de/realms/nbp-aai
-            mapper_url: base64://${nbp_user_mapper}
+            mapper_url: file:///etc/config/kratos/user_mapper.jsonnet
           - id: vidis
             provider: generic
             client_id: ${vidis_client_id}
             client_secret: ${vidis_client_secret}
             issuer_url: ${vidis_issuer_url}
-            mapper_url: base64://${vidis_user_mapper}
+            mapper_url: file:///etc/config/kratos/vidis_user_mapper.jsonnet
 
   flows:
     error:
@@ -79,7 +79,7 @@ selfservice:
               config:
                 url: https://api.serlo-staging.dev/kratos/updateLastLogin
                 method: POST
-                body: base64://${user_id_mapper}
+                body: file:///etc/config/kratos/identity_id.jsonnet
                 response:
                   ignore: true
         oidc:
@@ -95,7 +95,7 @@ selfservice:
             config:
               url: https://api.serlo-staging.dev/kratos/register
               method: POST
-              body: base64://${user_id_mapper}
+              body:  file:///etc/config/kratos/identity_id.jsonnet
               auth:
                 type: api_key
                 config:
@@ -106,7 +106,7 @@ selfservice:
             config:
               url: https://${mailchimp_server}.api.mailchimp.com/3.0/lists/a7bb2bbc4f/members
               method: POST
-              body: base64://${subscribe_newsletter_mapper}
+              body:  file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
               can_interrupt: false
               response:
                 ignore: true
@@ -122,7 +122,7 @@ selfservice:
               config:
                 url: https://api.serlo-staging.dev/kratos/register
                 method: POST
-                body: base64://${user_id_mapper}
+                body: file:///etc/config/kratos/identity_id.jsonnet
                 auth:
                   type: api_key
                   config:
@@ -134,7 +134,7 @@ selfservice:
               config:
                 url: https://${mailchimp_server}.api.mailchimp.com/3.0/lists/a7bb2bbc4f/members
                 method: POST
-                body: base64://${subscribe_newsletter_mapper}
+                body: file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
                 can_interrupt: false
                 response:
                   ignore: true
