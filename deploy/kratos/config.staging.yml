@@ -35,15 +35,15 @@ selfservice:
         providers:
           - id: nbp
             provider: generic
-            client_id: ${nbp_client_id}
-            client_secret: ${nbp_client_secret}
+            client_id: PLACEHOLDER
+            client_secret: PLACEHOLDER
             issuer_url: https://aai.demo.meinbildungsraum.de/realms/nbp-aai
             mapper_url: file:///etc/config/kratos/user_mapper.jsonnet
           - id: vidis
             provider: generic
-            client_id: ${vidis_client_id}
-            client_secret: ${vidis_client_secret}
-            issuer_url: ${vidis_issuer_url}
+            client_id: PLACEHOLDER
+            client_secret: PLACEHOLDER
+            issuer_url: http://PLACEHOLDER
             mapper_url: file:///etc/config/kratos/vidis_user_mapper.jsonnet
 
   flows:
@@ -100,11 +100,11 @@ selfservice:
                 type: api_key
                 config:
                   name: x-kratos-key
-                  value: ${kratos_secret}
+                  value: PLACEHOLDER
                   in: header
           - hook: web_hook
             config:
-              url: https://${mailchimp_server}.api.mailchimp.com/3.0/lists/a7bb2bbc4f/members
+              url: https://PLACEHOLDER
               method: POST
               body:  file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
               can_interrupt: false
@@ -114,7 +114,7 @@ selfservice:
                 type: basic_auth
                 config:
                   user: serlo
-                  password: ${newsletter_api_key}
+                  password: PLACEHOLDER
         oidc:
           default_browser_return_url: https://serlo-staging.dev/auth/login
           hooks:
@@ -127,12 +127,12 @@ selfservice:
                   type: api_key
                   config:
                     name: x-kratos-key
-                    value: ${kratos_secret}
+                    value: PLACEHOLDER
                     in: header
             - hook: session
             - hook: web_hook
               config:
-                url: https://${mailchimp_server}.api.mailchimp.com/3.0/lists/a7bb2bbc4f/members
+                url: https://PLACEHOLDER
                 method: POST
                 body: file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
                 can_interrupt: false
@@ -142,14 +142,14 @@ selfservice:
                   type: basic_auth
                   config:
                     user: serlo
-                    password: ${newsletter_api_key}
+                    password: PLACEHOLDER
 
 session:
   lifespan: 720h
 
 secrets:
   cookie:
-    - ${cookie_secret}
+    - PLACEHOLDER
 
 identity:
   default_schema_id: default
@@ -159,7 +159,7 @@ identity:
 
 courier:
   smtp:
-    connection_uri: smtp://SMTP_Injection:${smtp_password}@smtp.eu.sparkpostmail.com:2525
+    connection_uri: smtp://PLACEHOLDER
     from_name: Serlo
     from_address: no-reply@mail.serlo.org
   templates:
