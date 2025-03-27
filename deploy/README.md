@@ -3,16 +3,18 @@
 ## Requirements
 - Docker
 - Nginx
+- Git
 
 ## Steps for the Staging deployment
 
-1. Set up Nginx on the host machine using configuration file `nginx.staging.conf`.
+1. `git clone https://github.com/serlo/api.serlo.org && cd api.serlo.org`
+2. Set up Nginx on the host machine using configuration file `nginx.staging.conf`.
 ```console
-$ cp nginx.staging.conf /etc/nginx/sites-available/default
-$ systemctl restart nginx
+$ sudo cp nginx.staging.conf /etc/nginx/sites-available/default
+$ sudo systemctl restart nginx
 ```
-2. Be sure the values at `.staging.env` and `kratos/config.staging.yml` (change the values with "PLACEHODER") are correct.
-3. Deploy using Docker Compose with file `docker-compose.staging.yml`.
+3. Be sure the values at `.staging.env` and `kratos/config.staging.yml` (change the values with "PLACEHODER") are correct.
+4. Deploy using Docker Compose with file `docker-compose.staging.yml`.
 ```console
 $ docker compose -f docker-compose.staging.yml up -d
 ```
