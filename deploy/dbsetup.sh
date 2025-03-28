@@ -2,7 +2,7 @@
 
 set -e
 
-mysql_connect="docker compose -f docker-compose.staging.yml exec mysql mysql --user=serlo --password=secret"
+mysql_connect="docker compose -f docker-compose.staging.yml exec -T mysql mysql --user=serlo --password=secret"
 
 echo "wait for mysql database to be ready"
 until $mysql_connect -e "SHOW DATABASES" >/dev/null 2>/dev/null; do
@@ -36,8 +36,10 @@ $mysql_connect serlo <"/tmp/mysql.sql" || {
     echo "import of dump failed"
     exit 1
 }
-$mysql_connect -e "LOAD DATA LOCAL INFILE '/tmp/user.csv' INTO TABLE user FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;" serlo || {
-    echo "import of dump failed"
+
+docker compose -f docker-compose.staging.yml exec -T mysql mysql --user=root --password=secret -e "SET GLOBAL local_infile = 1"
+$mysql_connect --local-infile=1 -e "LOAD DATA LOCAL INFILE '/tmp/user.csv' INTO TABLE user FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;" serlo || {
+    echo "import of users failed"
     exit 1
 }
 $mysql_connect serlo -e "UPDATE user SET description = NULL WHERE description = 'NULL'"
@@ -48,7 +50,7 @@ echo "Recreating kratos database"
 
 docker compose -f docker-compose.staging.yml cp /tmp/kratos.sql postgres:/tmp/kratos.sql
 
-postgres_connect="docker compose -f docker-compose.staging.yml exec postgres psql --user=serlo kratos "
+postgres_connect="docker compose -f docker-compose.staging.yml exec -T postgres psql --user=serlo kratos "
 $postgres_connect -c "DROP SCHEMA public CASCADE;"
 $postgres_connect -c "CREATE SCHEMA public;"
 $postgres_connect -c "GRANT ALL ON SCHEMA public TO serlo;"
