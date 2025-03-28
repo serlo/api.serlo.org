@@ -41,5 +41,5 @@ $ docker compose -f docker-compose.staging.yml up -d
    2. Put the key in a file `staging_service_account_key.json` in the home directory
    3. `echo $GCLOUD_SERVICE_ACCOUNT_KEY > $HOME/staging_service_account_key.json`
    4. `gcloud auth activate-service-account ${GCLOUD_SERVICE_ACCOUNT_NAME} --key-file ~/staging_service_account_key.json` Replace GCLOUD_SERVICE_ACCOUNT_NAME with the email of the service account.
-   5. Run `./dbsetup.sh`
+   5. Run `./dbsetup.sh` in host
    6. Set cron tab to run the dbsetup script every night at 2 am.
