@@ -95,7 +95,7 @@ selfservice:
             config:
               url: https://api.serlo-staging.dev/kratos/register
               method: POST
-              body:  file:///etc/config/kratos/identity_id.jsonnet
+              body: file:///etc/config/kratos/identity_id.jsonnet
               auth:
                 type: api_key
                 config:
@@ -106,7 +106,7 @@ selfservice:
             config:
               url: https://PLACEHOLDER
               method: POST
-              body:  file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
+              body: file:///etc/config/kratos/subscribe_newsletter_mapper.jsonnet
               can_interrupt: false
               response:
                 ignore: true
