@@ -3,7 +3,7 @@ services:
     image: ghcr.io/serlo/api.serlo.org/server:staging
     pull_policy: always
     env_file:
-      - .staging.env
+      - .env
     ports:
       - '3001:3001'
     # TODO best practice: healthcheck
@@ -14,7 +14,7 @@ services:
     image: ghcr.io/serlo/api.serlo.org/swr-queue-worker:staging
     pull_policy: always
     env_file:
-      - .staging.env
+      - .env
     # TODO: ports needed?
     ports:
       - '3000:3000'
@@ -44,14 +44,14 @@ services:
       - kratos-migrate
     command: serve -c /etc/config/kratos/config.staging.yml --watch-courier
     volumes:
-      - ./kratos:/etc/config/kratos
+      - ../kratos:/etc/config/kratos
   kratos-migrate:
     image: oryd/kratos:v1.3.0
     command: -c /etc/config/kratos/config.staging.yml migrate sql -e --yes
     depends_on:
       - postgres
     volumes:
-      - ./kratos:/etc/config/kratos
+      - ../kratos:/etc/config/kratos
     restart: on-failure
   postgres:
     image: postgres:13
