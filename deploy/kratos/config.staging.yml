@@ -149,7 +149,7 @@ session:
 
 secrets:
   cookie:
-    - PLACEHOLDER
+    - PLACEHOLDERPLACEHOLDER
 
 identity:
   default_schema_id: default

@@ -42,12 +42,12 @@ services:
     depends_on:
       - postgres
       - kratos-migrate
-    command: serve -c /etc/config/kratos/config.yml --dev --watch-courier
+    command: serve -c /etc/config/kratos/config.staging.yml --watch-courier
     volumes:
       - ./kratos:/etc/config/kratos
   kratos-migrate:
     image: oryd/kratos:v1.3.0
-    command: -c /etc/config/kratos/config.yml migrate sql -e --yes
+    command: -c /etc/config/kratos/config.staging.yml migrate sql -e --yes
     depends_on:
       - postgres
     volumes:
