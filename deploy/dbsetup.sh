@@ -17,7 +17,6 @@ newest_dump_uri=$(gsutil ls -l gs://anonymous-dump | grep dump | sort -rk 2 | he
 }
 
 newest_dump=$(basename $newest_dump_uri)
-[ -f "/tmp/$newest_dump" ] && exit 0
 
 gsutil cp $newest_dump_uri "/tmp/$newest_dump"
 echo "downloaded newest dump $newest_dump"
@@ -31,17 +30,17 @@ echo "Recreating serlo database"
 docker compose -f docker-compose.staging.yml cp /tmp/mysql.sql mysql:/tmp/mysql.sql
 docker compose -f docker-compose.staging.yml cp /tmp/user.csv mysql:/tmp/user.csv
 
-mysql $mysql_connect -e "DROP DATABASE serlo"
-mysql $mysql_connect -e "CREATE DATABASE serlo"
-mysql $mysql_connect serlo <"/tmp/mysql.sql" || {
+$mysql_connect -e "DROP DATABASE serlo"
+$mysql_connect -e "CREATE DATABASE serlo"
+$mysql_connect serlo <"/tmp/mysql.sql" || {
     echo "import of dump failed"
     exit 1
 }
-mysql $mysql_connect -e "LOAD DATA LOCAL INFILE '/tmp/user.csv' INTO TABLE user FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;" serlo || {
+$mysql_connect -e "LOAD DATA LOCAL INFILE '/tmp/user.csv' INTO TABLE user FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;" serlo || {
     echo "import of dump failed"
     exit 1
 }
-mysql $mysql_connect serlo -e "UPDATE user SET description = NULL WHERE description = 'NULL'"
+$mysql_connect serlo -e "UPDATE user SET description = NULL WHERE description = 'NULL'"
 
 echo "imported serlo database dump $newest_dump"
 
@@ -50,10 +49,10 @@ echo "Recreating kratos database"
 docker compose -f docker-compose.staging.yml cp /tmp/kratos.sql postgres:/tmp/kratos.sql
 
 postgres_connect="docker compose -f docker-compose.staging.yml exec postgres psql --user=serlo kratos "
-psql $postgres_connect -c "DROP SCHEMA public CASCADE;"
-psql $postgres_connect -c "CREATE SCHEMA public;"
-psql $postgres_connect -c "GRANT ALL ON SCHEMA public TO serlo;"
-psql $postgres_connect </tmp/kratos.sql
+$postgres_connect -c "DROP SCHEMA public CASCADE;"
+$postgres_connect -c "CREATE SCHEMA public;"
+$postgres_connect -c "GRANT ALL ON SCHEMA public TO serlo;"
+$postgres_connect </tmp/kratos.sql
 
 echo "Recreated kratos database"
 
