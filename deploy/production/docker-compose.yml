@@ -1,0 +1,117 @@
+services:
+  api:
+    image: ghcr.io/serlo/api.serlo.org/server:production
+    pull_policy: always
+    env_file:
+      - .env
+    ports:
+      - '3001:3001'
+    # TODO best practice: healthcheck
+    depends_on:
+      - mysql
+      - redis
+  swr-queue-worker:
+    image: ghcr.io/serlo/api.serlo.org/swr-queue-worker:production
+    pull_policy: always
+    env_file:
+      - .env
+    # TODO: ports needed?
+    ports:
+      - '3000:3000'
+    # TODO best practice: healthcheck
+    depends_on:
+      - mysql
+      - redis
+  redis:
+    image: redis:7
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=serlo
+      - MYSQL_USER=serlo
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+  kratos:
+    image: oryd/kratos:v1.3.0
+    ports:
+      - '4433:4433' # public
+    environment:
+      - DSN=postgres://serlo:secret@postgres:5432/kratos?sslmode=disable
+    depends_on:
+      - postgres
+      - kratos-migrate
+    command: serve -c /etc/config/kratos/config.production.yml --watch-courier
+    volumes:
+      - ../kratos:/etc/config/kratos
+  kratos-migrate:
+    image: oryd/kratos:v1.3.0
+    command: -c /etc/config/kratos/config.production.yml migrate sql -e --yes
+    depends_on:
+      - postgres
+    volumes:
+      - ../kratos:/etc/config/kratos
+    restart: on-failure
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=serlo
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=kratos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  hydra:
+    image: oryd/hydra:v2.2.0
+    ports:
+      # why both?
+      - '4444:4444'
+      - '4445:4445'
+    command: serve all --dev
+    volumes:
+      # using sqlite, maybe postgres would be better
+      - hydra_data:/var/lib/sqlite
+    environment:
+      # - LOG_LEVEL=debug
+      - LOG_LEAK_SENSITIVE_VALUES=true
+      - OAUTH2_EXPOSE_INTERNAL_ERRORS=1
+      - URLS_SELF_ISSUER=http://localhost:4444
+      - URLS_LOGIN=http://localhost:3000/auth/oauth/login
+      - URLS_LOGOUT=http://localhost:3000/auth/oauth/logout
+      - URLS_CONSENT=http://localhost:3000/auth/oauth/consent
+      - DSN=memory
+      - SECRETS_SYSTEM=youReallyNeedToChangeThis
+      - OIDC_SUBJECT_IDENTIFIERS_ENABLED=public,pairwise
+      - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=youReallyNeedToChangeThis
+  rocketchat:
+    image: registry.rocket.chat/rocketchat/rocket.chat:7.4.0
+    restart: on-failure
+    environment:
+      MONGO_URL: 'mongodb://mongodb:27017/rocketchat?replicaSet=rs0'
+      MONGO_OPLOG_URL: 'mongodb://mongodb:27017/local?replicaSet=rs0'
+      ROOT_URL: http://localhost:3030
+      PORT: '3030'
+      DEPLOY_METHOD: docker
+    depends_on:
+      - mongodb
+    ports:
+      - '3030:3030'
+  mongodb:
+    image: docker.io/bitnami/mongodb:6.0
+    restart: on-failure
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+    environment:
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_NAME: rs0
+      MONGODB_PORT_NUMBER: '27017'
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: '27017'
+      MONGODB_ADVERTISED_HOSTNAME: mongodb
+      MONGODB_ENABLE_JOURNAL: 'true'
+      ALLOW_EMPTY_PASSWORD: 'yes'
+volumes:
+  mongodb_data:
+  hydra_data:
+  postgres_data:
+  mysql_data:
