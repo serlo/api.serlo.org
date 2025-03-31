@@ -2350,17 +2350,17 @@ __metadata:
   linkType: hard
 
 "@graphql-codegen/typescript@npm:^4.1.5":
-  version: 4.1.5
-  resolution: "@graphql-codegen/typescript@npm:4.1.5"
+  version: 4.1.6
+  resolution: "@graphql-codegen/typescript@npm:4.1.6"
   dependencies:
     "@graphql-codegen/plugin-helpers": ^5.1.0
     "@graphql-codegen/schema-ast": ^4.0.2
-    "@graphql-codegen/visitor-plugin-common": 5.7.1
+    "@graphql-codegen/visitor-plugin-common": 5.8.0
     auto-bind: ~4.0.0
     tslib: ~2.6.0
   peerDependencies:
     graphql: ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: fc2a9a107b3e597b8484e4bc1770ca402d35a5eab642f15b5701e14357ee313d27fc1f00be5f3d9608e144fa02b09f53f1c11178fccb6a9aa7113cdede8a294c
+  checksum: 459fc3fc834801b797cd718d45f3ee910431cf192e3439be155433a4dd845559d39ef4e9df4338e0965300d5cf294e0c335b01ba00dea94667a454600d52ae01
   languageName: node
   linkType: hard
 
@@ -2381,6 +2381,26 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: d48e90e0fc510d74645e11aa1690d9b9cdc42f6192a28de9773af2796c2c6313ed4b105046b1b88198f72626b841e6ba71fc2432f777ceb5e3bd22834fdd3c76
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/visitor-plugin-common@npm:5.8.0":
+  version: 5.8.0
+  resolution: "@graphql-codegen/visitor-plugin-common@npm:5.8.0"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^5.1.0
+    "@graphql-tools/optimize": ^2.0.0
+    "@graphql-tools/relay-operation-optimizer": ^7.0.0
+    "@graphql-tools/utils": ^10.0.0
+    auto-bind: ~4.0.0
+    change-case-all: 1.0.15
+    dependency-graph: ^0.11.0
+    graphql-tag: ^2.11.0
+    parse-filepath: ^1.0.2
+    tslib: ~2.6.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: e9594790d51fd8c2ee6c6ff7593a5be73fe9b9e4c667bcb54652a09ee8ebfcfae9a6da32c34e88ab57265bc55a6be43ff2c472be1c72ca2000d6bbd1c5111b4f
   languageName: node
   linkType: hard
 
