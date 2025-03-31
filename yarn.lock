@@ -4496,11 +4496,11 @@ __metadata:
   linkType: hard
 
 "@ory/client@npm:^1.18.5":
-  version: 1.18.5
-  resolution: "@ory/client@npm:1.18.5"
+  version: 1.19.0
+  resolution: "@ory/client@npm:1.19.0"
   dependencies:
     axios: ^1.6.1
-  checksum: bee0a9086d09453b3c64eadd038cba221a208be58ef0f9743f4c4b588ca812dee8b6a8bcd29e26cb8f44cad02a0b311869298c1b6a5a3a0ef0cbe032590517a1
+  checksum: 1190387886e1e8ed05bb7b11877d51bf13fde5ad3be9cf15a10d96c716662676c8c6f1b156ecbe85f97cacf343312f8d1e833acf64ad4002c95e7aec15eccda3
   languageName: node
   linkType: hard
 
