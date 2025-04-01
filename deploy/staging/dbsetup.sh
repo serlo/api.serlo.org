@@ -2,7 +2,7 @@
 
 set -e
 
-mysql_connect="docker compose -f docker-compose.staging.yml exec -T mysql mysql --user=serlo --password=secret"
+mysql_connect="docker compose  exec -T mysql mysql --user=serlo --password=secret"
 
 echo "wait for mysql database to be ready"
 until $mysql_connect -e "SHOW DATABASES" >/dev/null 2>/dev/null; do
@@ -27,8 +27,8 @@ unzip -o "/tmp/$newest_dump" -d /tmp || {
 
 echo "Recreating serlo database"
 
-docker compose -f docker-compose.staging.yml cp /tmp/mysql.sql mysql:/tmp/mysql.sql
-docker compose -f docker-compose.staging.yml cp /tmp/user.csv mysql:/tmp/user.csv
+docker compose cp /tmp/mysql.sql mysql:/tmp/mysql.sql
+docker compose cp /tmp/user.csv mysql:/tmp/user.csv
 
 $mysql_connect -e "DROP DATABASE serlo"
 $mysql_connect -e "CREATE DATABASE serlo"
@@ -37,7 +37,7 @@ $mysql_connect serlo <"/tmp/mysql.sql" || {
     exit 1
 }
 
-docker compose -f docker-compose.staging.yml exec -T mysql mysql --user=root --password=secret -e "SET GLOBAL local_infile = 1"
+docker compose exec -T mysql mysql --user=root --password=secret -e "SET GLOBAL local_infile = 1"
 $mysql_connect --local-infile=1 -e "LOAD DATA LOCAL INFILE '/tmp/user.csv' INTO TABLE user FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' IGNORE 1 ROWS;" serlo || {
     echo "import of users failed"
     exit 1
@@ -48,9 +48,9 @@ echo "imported serlo database dump $newest_dump"
 
 echo "Recreating kratos database"
 
-docker compose -f docker-compose.staging.yml cp /tmp/kratos.sql postgres:/tmp/kratos.sql
+docker compose cp /tmp/kratos.sql postgres:/tmp/kratos.sql
 
-postgres_connect="docker compose -f docker-compose.staging.yml exec -T postgres psql --user=serlo kratos "
+postgres_connect="docker compose exec -T postgres psql --user=serlo kratos "
 $postgres_connect -c "DROP SCHEMA public CASCADE;"
 $postgres_connect -c "CREATE SCHEMA public;"
 $postgres_connect -c "GRANT ALL ON SCHEMA public TO serlo;"
