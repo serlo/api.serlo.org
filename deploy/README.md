@@ -31,6 +31,7 @@
    ```
 4. Be sure the values at corresponding `.env` and `kratos/config.staging.yml` or `kratos/config.production.yml` (change the values with "PLACEHODER") are correct.
 5. Deploy using Docker Compose.
+6. Set the DNS accordingly. At the server, remember set the firewall rules to allow http and https.
 
 ## Additional steps for STAGING
 
