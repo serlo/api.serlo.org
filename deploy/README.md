@@ -39,14 +39,13 @@
 
 You need to fill up the database with data and set the cronjob for that for every night.
 
-Set up the Gsutil. You need to authenticate and may use a key of the appropriate service account
+Set up the Gsutil. You need to authenticate and may use a key of the appropriate service account.
 
 1.  Go to GC Console -> IAM -> Service Accounts -> choose the dbreader account -> generate a new one
 2.  Put the key in a file `staging_service_account_key.json` in the home directory
-3.  `echo $GCLOUD_SERVICE_ACCOUNT_KEY > $HOME/staging_service_account_key.json`
-4.  `gcloud auth activate-service-account ${GCLOUD_SERVICE_ACCOUNT_NAME} --key-file ~/staging_service_account_key.json` Replace GCLOUD_SERVICE_ACCOUNT_NAME with the email of the service account.
-5.  Run `./dbsetup.sh` in host
-6.  Set cron tab to run the dbsetup script every night at 2 am.
+3.  `gcloud auth activate-service-account --key-file ~/staging_service_account_key.json`
+4.  Run `./dbsetup.sh` in host
+5.  Set cron tab to run the dbsetup script every night at 2 am.
 
 ### DB Migration Cronjob
 
@@ -56,7 +55,13 @@ TODO
 
 ### Serlo DB Dump
 
-You need to set up a cronjob for doing mysql and postgres dump every night
+You need to set up the cronjob for dumping the database for staging.
+
+Set up the Gsutil. You need the credentials of a service account in order that the script runs correctly.
+
+1.  Go to GC Console -> IAM -> Service Accounts -> choose the dbreader account -> generate a new one
+2.  Put the key in a file `production_service_account_key.json` in the home directory
+3.  Set cron tab to run the dbsetup script every night at 1 am.
 
 ### Rocket Chat DB Dump
 
