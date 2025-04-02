@@ -59,6 +59,7 @@ services:
       - POSTGRES_USER=serlo
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=kratos
+      - PGPASSWORD=secret
     volumes:
       - postgres_data:/var/lib/postgresql/data
   hydra:
