@@ -10,6 +10,9 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - staging-network
+
   swr-queue-worker:
     image: ghcr.io/serlo/api.serlo.org/swr-queue-worker:staging
     pull_policy: always
@@ -22,8 +25,14 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - staging-network
+
   redis:
     image: redis:7
+    networks:
+      - staging-network
+
   mysql:
     image: mysql:8
     environment:
@@ -33,6 +42,9 @@ services:
       - MYSQL_PASSWORD=secret
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - staging-network
+
   kratos:
     image: oryd/kratos:v1.3.0
     ports:
@@ -45,6 +57,9 @@ services:
     command: serve -c /etc/config/kratos/config.staging.yml --watch-courier
     volumes:
       - ../kratos:/etc/config/kratos
+    networks:
+      - staging-network
+
   kratos-migrate:
     image: oryd/kratos:v1.3.0
     command: -c /etc/config/kratos/config.staging.yml migrate sql -e --yes
@@ -53,6 +68,9 @@ services:
     volumes:
       - ../kratos:/etc/config/kratos
     restart: on-failure
+    networks:
+      - staging-network
+
   postgres:
     image: postgres:13
     environment:
@@ -62,6 +80,12 @@ services:
       - PGPASSWORD=secret
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - staging-network
+
+networks:
+  staging-network:
+    driver: bridge
 
 volumes:
   postgres_data:

@@ -49,7 +49,10 @@ Set up the Gsutil. You need to authenticate and may use a key of the appropriate
 
 ### DB Migration Cronjob
 
-TODO
+Add a crontab in host with the following command (replace the missing values) for 3 am.
+```
+docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network staging-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
+```
 
 ## Additional steps for PRODUCTION
 
@@ -66,3 +69,10 @@ Set up the Gsutil. You need the credentials of a service account in order that t
 ### Rocket Chat DB Dump
 
 You need to set up a cronjob for doing the db dump of rocket chat every night
+
+### DB Migration
+
+In case of db migration, run the following command in host (replace the missing values).
+```
+docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network production-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
+```

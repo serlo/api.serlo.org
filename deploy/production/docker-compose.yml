@@ -10,6 +10,8 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - production-network
   swr-queue-worker:
     image: ghcr.io/serlo/api.serlo.org/swr-queue-worker:production
     pull_policy: always
@@ -22,8 +24,12 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - production-network
   redis:
     image: redis:7
+    networks:
+      - production-network
   mysql:
     image: mysql:8
     environment:
@@ -33,6 +39,8 @@ services:
       - MYSQL_PASSWORD=secret
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - production-network
   kratos:
     image: oryd/kratos:v1.3.0
     ports:
@@ -45,6 +53,8 @@ services:
     command: serve -c /etc/config/kratos/config.production.yml --watch-courier
     volumes:
       - ../kratos:/etc/config/kratos
+    networks:
+      - production-network
   kratos-migrate:
     image: oryd/kratos:v1.3.0
     command: -c /etc/config/kratos/config.production.yml migrate sql -e --yes
@@ -53,6 +63,8 @@ services:
     volumes:
       - ../kratos:/etc/config/kratos
     restart: on-failure
+    networks:
+      - production-network
   postgres:
     image: postgres:13
     environment:
@@ -62,6 +74,8 @@ services:
       - PGPASSWORD=secret
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - production-network
   hydra:
     image: oryd/hydra:v2.2.0
     ports:
@@ -84,6 +98,8 @@ services:
       - SECRETS_SYSTEM=youReallyNeedToChangeThis
       - OIDC_SUBJECT_IDENTIFIERS_ENABLED=public,pairwise
       - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=youReallyNeedToChangeThis
+    networks:
+      - production-network
   rocketchat:
     image: registry.rocket.chat/rocketchat/rocket.chat:7.4.0
     restart: on-failure
@@ -97,6 +113,8 @@ services:
       - mongodb
     ports:
       - '3030:3030'
+    networks:
+      - production-network
   mongodb:
     image: docker.io/bitnami/mongodb:6.0
     restart: on-failure
@@ -111,6 +129,13 @@ services:
       MONGODB_ADVERTISED_HOSTNAME: mongodb
       MONGODB_ENABLE_JOURNAL: 'true'
       ALLOW_EMPTY_PASSWORD: 'yes'
+    networks:
+      - production-network
+
+networks:
+  production-network:
+    driver: bridge
+
 volumes:
   mongodb_data:
   hydra_data:
