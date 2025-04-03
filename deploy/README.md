@@ -50,6 +50,7 @@ Set up the Gsutil. You need to authenticate and may use a key of the appropriate
 ### DB Migration Cronjob
 
 Add a crontab in host with the following command (replace the missing values) for 3 am.
+
 ```
 docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network staging-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
 ```
@@ -64,15 +65,25 @@ Set up the Gsutil. You need the credentials of a service account in order that t
 
 1.  Go to GC Console -> IAM -> Service Accounts -> choose the dbreader account -> generate a new one
 2.  Put the key in a file `production_service_account_key.json` in the home directory
-3.  Set cron tab to run the dbsetup script every night at 1 am.
+3.  Set cron tab to run the dbdump script every night at 1 am.
 
 ### Rocket Chat DB Dump
 
-You need to set up a cronjob for doing the db dump of rocket chat every night
+In your first deployment, you will need to import the existing data into mongodb container.
+
+1. Download the dump from the corresponding bucket in the GC project 'production'
+2. Run
+   ```
+   $ docker compose cp dump-????.gz mongodb:/dump.gz
+   $ docker compose exec mongodb mongorestore --archive=dump.gz --gzip
+   ```
+
+Now, set up a crontab to upload a backup of the data to the bucket at midnight, using the script `mongodbdump.sh`.
 
 ### DB Migration
 
 In case of db migration, run the following command in host (replace the missing values).
+
 ```
 docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network production-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
 ```

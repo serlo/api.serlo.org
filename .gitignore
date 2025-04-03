@@ -3,7 +3,7 @@ user.csv
 mysql.sql
 kratos.sql
 temp.sql
-dump-*.zip
+dump-*
 
 # Local enmeshed connector
 /enmeshed/logs
