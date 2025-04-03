@@ -59,7 +59,11 @@ docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PL
 
 ### Serlo DB Dump
 
-You need to set up the cronjob for dumping the database for staging.
+In your first deployment, you will need to import the existing data into mysql and postgres containers.
+Manually dump the production databases. Take a look at `staging/dbsetup.sh` for some inspiration on how to
+import the data.
+
+Afterwards, You need to set up the cronjob for dumping the database for staging.
 
 Set up the Gsutil. You need the credentials of a service account in order that the script runs correctly.
 
