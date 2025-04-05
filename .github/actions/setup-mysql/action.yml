@@ -1,0 +1,8 @@
+name: Setup local MySQL DB for CI tests
+runs:
+  using: composite
+  steps:
+    - run: docker compose up mysql --detach
+      shell: bash
+    - run: ./scripts/mysql/wait-for-mysql.sh
+      shell: bash
