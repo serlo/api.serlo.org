@@ -46,7 +46,7 @@
     "cors": "^2.8.5",
     "default-import": "^2.0.8",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "fp-ts": "^2.16.9",
     "graphql": "^16.10.0",
     "graphql-playground-middleware-express": "^1.7.23",
