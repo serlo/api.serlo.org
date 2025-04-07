@@ -2044,24 +2044,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/eslintrc@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@eslint/eslintrc@npm:3.3.0"
-  dependencies:
-    ajv: ^6.12.4
-    debug: ^4.3.2
-    espree: ^10.0.1
-    globals: ^14.0.0
-    ignore: ^5.2.0
-    import-fresh: ^3.2.1
-    js-yaml: ^4.1.0
-    minimatch: ^3.1.2
-    strip-json-comments: ^3.1.1
-  checksum: 1d8a4205c2db0c46dee8251800725f6c7dfd0b1594813ddcc41f2091a53223cd78334a6664efe348118cc0963c1176d4fa873b1673c853fc76031aaa1fc49b98
-  languageName: node
-  linkType: hard
-
-"@eslint/eslintrc@npm:^3.3.1":
+"@eslint/eslintrc@npm:^3.3.0, @eslint/eslintrc@npm:^3.3.1":
   version: 3.3.1
   resolution: "@eslint/eslintrc@npm:3.3.1"
   dependencies:
