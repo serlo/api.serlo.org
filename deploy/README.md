@@ -52,7 +52,7 @@ Set up the Gsutil. You need to authenticate and may use a key of the appropriate
 Add a crontab in host with the following command (replace the missing values) for 3 am.
 
 ```
-docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network staging-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
+docker run --rm --name db-migration --env-file PATH/TO/.env -e SLACK_CHANNEL="PLACEHOLDER" -e SLACK_TOKEN="PLACEHOLDER"  --network staging_staging-network ghcr.io/serlo/api.serlo.org/db-migration:PLACEHOLDER
 ```
 
 ## Additional steps for PRODUCTION
