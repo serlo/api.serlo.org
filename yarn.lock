@@ -4705,16 +4705,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:9.8.0":
-  version: 9.8.0
-  resolution: "@sentry/core@npm:9.8.0"
-  checksum: 7fd7a8b68b0b73a21b2a11b81a96fd56c201bd44925684f738442b5d6d81633690a99437d1f098fbd8f34744b37acc89994da1044908b71669559ddaca018985
+"@sentry/core@npm:9.12.0":
+  version: 9.12.0
+  resolution: "@sentry/core@npm:9.12.0"
+  checksum: 6bf8b5f7fe91897a598c608a17a6b2024d59c2055e5714629aba280ba7004dae4171481b455d61514367d264b3e2a5b2e82fd0cc264993020cc8fd93ddac03dc
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^9.5.0":
-  version: 9.8.0
-  resolution: "@sentry/node@npm:9.8.0"
+  version: 9.12.0
+  resolution: "@sentry/node@npm:9.12.0"
   dependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1
@@ -4747,18 +4747,18 @@ __metadata:
     "@opentelemetry/sdk-trace-base": ^1.30.1
     "@opentelemetry/semantic-conventions": ^1.30.0
     "@prisma/instrumentation": 6.5.0
-    "@sentry/core": 9.8.0
-    "@sentry/opentelemetry": 9.8.0
+    "@sentry/core": 9.12.0
+    "@sentry/opentelemetry": 9.12.0
     import-in-the-middle: ^1.13.0
-  checksum: 2d79555c991a14809b6ccd474ac78391a62143430f8a461e015ea133c536d5c4101f6059f6a1eeb14a41c06549e93b750c2f7cd053d5025d739e29f2012e3be8
+  checksum: 063ce9a3c9468d0a59c262afe99e6d82f1e28246dab421df720a6189264e2ff3e43f2248a1b814ea30419ecc11c6398b0548846385353a5d31ff11e65adea382
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:9.8.0":
-  version: 9.8.0
-  resolution: "@sentry/opentelemetry@npm:9.8.0"
+"@sentry/opentelemetry@npm:9.12.0":
+  version: 9.12.0
+  resolution: "@sentry/opentelemetry@npm:9.12.0"
   dependencies:
-    "@sentry/core": 9.8.0
+    "@sentry/core": 9.12.0
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1
@@ -4766,7 +4766,7 @@ __metadata:
     "@opentelemetry/instrumentation": ^0.57.1
     "@opentelemetry/sdk-trace-base": ^1.30.1
     "@opentelemetry/semantic-conventions": ^1.28.0
-  checksum: 20ff6bf15a4cf75cc5638501ad966058262bf53605bd8d4cdf487854bae27681b69b502e388a32e2b7bee3cb608f72488f5893d1146ae8a6a8dd391ab2fc887f
+  checksum: 9ff4091e39e54dade4a9836364f54f54e68476df225f830a0baa2241e5539fd12a888f8fec3a55e82be370b9092af551dee20659e1d413db97138344847067af
   languageName: node
   linkType: hard
 
