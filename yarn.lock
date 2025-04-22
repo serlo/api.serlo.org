@@ -4712,16 +4712,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:9.12.0":
-  version: 9.12.0
-  resolution: "@sentry/core@npm:9.12.0"
-  checksum: 6bf8b5f7fe91897a598c608a17a6b2024d59c2055e5714629aba280ba7004dae4171481b455d61514367d264b3e2a5b2e82fd0cc264993020cc8fd93ddac03dc
+"@sentry/core@npm:9.13.0":
+  version: 9.13.0
+  resolution: "@sentry/core@npm:9.13.0"
+  checksum: 37299dc92980c47c513fde40a4f391935c46f740531d56ef3b6afe870696756a2040eb14a30f47bccdb68cbba0eb9723d811d831e035e60eda6dad1e226c980c
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^9.5.0":
-  version: 9.12.0
-  resolution: "@sentry/node@npm:9.12.0"
+  version: 9.13.0
+  resolution: "@sentry/node@npm:9.13.0"
   dependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1
@@ -4754,18 +4754,18 @@ __metadata:
     "@opentelemetry/sdk-trace-base": ^1.30.1
     "@opentelemetry/semantic-conventions": ^1.30.0
     "@prisma/instrumentation": 6.5.0
-    "@sentry/core": 9.12.0
-    "@sentry/opentelemetry": 9.12.0
+    "@sentry/core": 9.13.0
+    "@sentry/opentelemetry": 9.13.0
     import-in-the-middle: ^1.13.0
-  checksum: 063ce9a3c9468d0a59c262afe99e6d82f1e28246dab421df720a6189264e2ff3e43f2248a1b814ea30419ecc11c6398b0548846385353a5d31ff11e65adea382
+  checksum: ad5b093cfd5a18e54aa83d324df1dff9176ebb83a16fdac02a827554be3f2171387d8d073c303ec7ebd3f2b06c37283c0430d06635912ec7fcb9cecdf682cea9
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:9.12.0":
-  version: 9.12.0
-  resolution: "@sentry/opentelemetry@npm:9.12.0"
+"@sentry/opentelemetry@npm:9.13.0":
+  version: 9.13.0
+  resolution: "@sentry/opentelemetry@npm:9.13.0"
   dependencies:
-    "@sentry/core": 9.12.0
+    "@sentry/core": 9.13.0
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1
@@ -4773,7 +4773,7 @@ __metadata:
     "@opentelemetry/instrumentation": ^0.57.1
     "@opentelemetry/sdk-trace-base": ^1.30.1
     "@opentelemetry/semantic-conventions": ^1.28.0
-  checksum: 9ff4091e39e54dade4a9836364f54f54e68476df225f830a0baa2241e5539fd12a888f8fec3a55e82be370b9092af551dee20659e1d413db97138344847067af
+  checksum: 70c0e95e33ebe999d9051f1f4f90cbd939777654fc898db53dcc7d25670b430d99b8e7f91d9c98a18c3c4fb61cac70ba6fa0e3e74a60fddeeace406c4965f179
   languageName: node
   linkType: hard
 
