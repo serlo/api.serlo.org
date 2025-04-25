@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: serlo/configure-repositories/actions/setup-mysql@main
+      - uses: ./.github/actions/setup-mysql
       - uses: ./.github/actions/setup-node
       - run: yarn start:containers
       - run: scripts/mysql/wait-for-mysql.sh
