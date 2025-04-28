@@ -3421,13 +3421,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@js-soft/ts-serval@npm:2.0.11":
-  version: 2.0.11
-  resolution: "@js-soft/ts-serval@npm:2.0.11"
+"@js-soft/ts-serval@npm:2.0.12":
+  version: 2.0.12
+  resolution: "@js-soft/ts-serval@npm:2.0.12"
   dependencies:
     lodash: ^4.17.21
     reflect-metadata: ^0.2.2
-  checksum: 0b4e45ef1e72ea38b952101c9678bcadb19dd731dee212b8a6a24c594dee37db92ef6c53257c53d3cdeb58dbd84934b031c801fc6603a932e14f92bd36ca0e8f
+  checksum: f7d23d4a29a1f83f9adc114e93231dd0a8578174e8164df674653022e81ae16f2b3c830c0a889d6a9b6a041b8ba0eb11be384ad3f5f6026ae7be9109a48bb7be
   languageName: node
   linkType: hard
 
@@ -3595,39 +3595,50 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^6.16.3":
-  version: 6.16.3
-  resolution: "@nmshd/connector-sdk@npm:6.16.3"
+  version: 6.23.0
+  resolution: "@nmshd/connector-sdk@npm:6.23.0"
   dependencies:
-    "@nmshd/content": 6.30.0
-    axios: ^1.8.2
+    "@nmshd/content": 6.38.0
+    axios: ^1.8.4
     form-data: ^4.0.2
     qs: ^6.14.0
-  checksum: bd5051fbbc8d8def22395442d04d3c8938e118dc04ea6a1dee03551ad1d7b786fff0ff7b0f322b9ed3a61723b42c4e11b3d120268eac9386f749a40c6dd7f7f0
+  checksum: 4627f10fe4539b2ef81c66872c9e51714a18c3c044670205233a5ed4869f061dee6e96f194ea08c3840e27d4629ad4542bc57a879068c0836ab4a5ab58280418
   languageName: node
   linkType: hard
 
-"@nmshd/content@npm:6.30.0":
-  version: 6.30.0
-  resolution: "@nmshd/content@npm:6.30.0"
+"@nmshd/content@npm:6.38.0":
+  version: 6.38.0
+  resolution: "@nmshd/content@npm:6.38.0"
   dependencies:
-    "@js-soft/ts-serval": 2.0.11
-    "@nmshd/core-types": 6.30.0
+    "@js-soft/ts-serval": 2.0.12
+    "@nmshd/core-types": 6.38.0
     "@nmshd/iql": ^1.0.2
-    luxon: ^3.5.0
+    luxon: ^3.6.1
     ts-simple-nameof: ^1.3.1
-  checksum: 111b1ae6e51bdc644179b4c25f1bad16c4781b06a6c9a2a42ee3a9828d9a03976deb665f8f00adb62b38edbf6da08d0c2456eafb3dff438b0555a259425ff732
+  checksum: 1c9f7d9694292dfd85492469f2b247f6d980e9189890cfb56046453f8563a7f4e87f427a2d620a96764b33ca5e7d2e08364328289e73bfc18e805d97686c4b3e
   languageName: node
   linkType: hard
 
-"@nmshd/core-types@npm:6.30.0":
-  version: 6.30.0
-  resolution: "@nmshd/core-types@npm:6.30.0"
+"@nmshd/core-types@npm:6.38.0":
+  version: 6.38.0
+  resolution: "@nmshd/core-types@npm:6.38.0"
   dependencies:
     "@js-soft/logging-abstractions": ^1.0.1
-    "@js-soft/ts-serval": 2.0.11
+    "@js-soft/ts-serval": 2.0.12
+    "@nmshd/crypto": ^2.1.1
     json-stringify-safe: ^5.0.1
-    luxon: ^3.5.0
-  checksum: 5f78bc70cac93b5bfffab5f61f8410ed1697ead9187af487372ec5135b07d7359684ca1bf80fb55b96b6726688d6cda5edbcc35d9a7b40573758aa081816ae33
+    luxon: ^3.6.1
+  checksum: 4ed8623b064f7a1d56c31037bdefdc3a2c9bb154cd95ba9186f4826cf8891a8f6b98d31e86c2286a237ec5006ffa89b7388f851268fbb434049461382814fbef
+  languageName: node
+  linkType: hard
+
+"@nmshd/crypto@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@nmshd/crypto@npm:2.1.1"
+  dependencies:
+    libsodium-wrappers-sumo: 0.7.15
+    uuid: 10.0.0
+  checksum: d1b04b1cfc4f5a2f7f1d3aeb0c78b9c03587a12376965e260a0dc8ecbc67d5101f1242b769a9bb174fa39e0415ee74e76c35641adc52d6960eba9199aacb76ed
   languageName: node
   linkType: hard
 
@@ -6756,7 +6767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.1, axios@npm:^1.7.4, axios@npm:^1.8.2":
+"axios@npm:^1.6.1, axios@npm:^1.7.4":
   version: 1.8.3
   resolution: "axios@npm:1.8.3"
   dependencies:
@@ -6775,6 +6786,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: e901dc1730bdcd769839b3d93ae6d6457a53d79b19a0eb623ebfea333441259ab51e63ca118baa47a5156567401466ac739f31087b4ee5e6770ab2e227484538
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.8.4":
+  version: 1.9.0
+  resolution: "axios@npm:1.9.0"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 631f02c9c279f2ae90637a4989cc9d75c1c27aefd16b6e8eb90f98a4d0bddaccfd1cb1387be12101d1ab0f9bbf0c47e2451b4de0cf2870462a7d9ed3de8da3f2
   languageName: node
   linkType: hard
 
@@ -14233,6 +14255,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"libsodium-sumo@npm:^0.7.15":
+  version: 0.7.15
+  resolution: "libsodium-sumo@npm:0.7.15"
+  checksum: 77dc9a43420b7d7d8827c1c2d6329126aaff236ba9b26197d9a2ab373fdcbc79f56641e9f29cf9f1038b31341dd5bd6711ebeb9504ba8c07a4f2820cb5994955
+  languageName: node
+  linkType: hard
+
+"libsodium-wrappers-sumo@npm:0.7.15":
+  version: 0.7.15
+  resolution: "libsodium-wrappers-sumo@npm:0.7.15"
+  dependencies:
+    libsodium-sumo: ^0.7.15
+  checksum: 5e2e72c9abbc8cb5be62afb82cdf96694b0dce0d9878dec9b2dce62891aac753f7f76e6669d901eab6d7ccabc7f23e3085ee0eea0dde8dcc48af7e1e840002e5
+  languageName: node
+  linkType: hard
+
 "lines-and-columns@npm:2.0.3":
   version: 2.0.3
   resolution: "lines-and-columns@npm:2.0.3"
@@ -14572,10 +14610,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.2.1, luxon@npm:^3.5.0":
+"luxon@npm:^3.2.1":
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
   checksum: f290fe5788c8e51e748744f05092160d4be12150dca70f9fadc0d233e53d60ce86acd82e7d909a114730a136a77e56f0d3ebac6141bbb82fd310969a4704825b
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.6.1":
+  version: 3.6.1
+  resolution: "luxon@npm:3.6.1"
+  checksum: bc6c24dde90f4263f548cc5a4ea3328e9c9511bee0b2255bd319639712862f1eb14a39c1b2dcbff8a8bf6686996d28f45b8fc902994a72dd05a29cef1269a6a4
   languageName: node
   linkType: hard
 
@@ -20478,7 +20523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^10.0.0":
+"uuid@npm:10.0.0, uuid@npm:^10.0.0":
   version: 10.0.0
   resolution: "uuid@npm:10.0.0"
   bin:
