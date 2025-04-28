@@ -2006,14 +2006,14 @@ __metadata:
   linkType: hard
 
 "@eslint/compat@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "@eslint/compat@npm:1.2.7"
+  version: 1.2.8
+  resolution: "@eslint/compat@npm:1.2.8"
   peerDependencies:
     eslint: ^9.10.0
   peerDependenciesMeta:
     eslint:
       optional: true
-  checksum: bdb5102a1e2328fa5c2bcfa56b6f56cd21f861115c8ead6fd7ffb8e41594d0c4c9036d8403b5f828e0fb5464e3458f54c73b840445b81e79867339f2516928b1
+  checksum: 521c9c401a6248c14d71ff37f45e93685d42d0e9a537074bc295a6c38ff29e0f004f35a925fa50db425f3f45da9c5e135c739e804d4925a3f4e0e9e1bddba33c
   languageName: node
   linkType: hard
 
