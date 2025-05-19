@@ -7438,8 +7438,8 @@ __metadata:
   linkType: hard
 
 "bull-arena@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "bull-arena@npm:4.4.2"
+  version: 4.5.1
+  resolution: "bull-arena@npm:4.5.1"
   dependencies:
     body-parser: ^1.20.0
     express: ^4.19.2
@@ -7448,7 +7448,7 @@ __metadata:
     lodash: ^4.17.15
     moment: ^2.29.1
     tablesort: ^5.0.1
-  checksum: bd100df1f39347f61f20f69f2119b08c3f90fa7396c48d53cfd149ca2be1b49a86b53826b0e4bd34cb207a1aea49126f59000378973bc52eb2567348acaa243d
+  checksum: a00f8b924fba48bc36d5ea6f44da4c5fadfd6e28173048bd2747e290edc3ff958a193e281ae816267233590789f3da5e1c07178197a8e4e1cc69e7aa9839d1b2
   languageName: node
   linkType: hard
 
