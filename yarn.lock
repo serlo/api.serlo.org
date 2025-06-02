@@ -3624,9 +3624,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mswjs/interceptors@npm:^0.37.0":
-  version: 0.37.0
-  resolution: "@mswjs/interceptors@npm:0.37.0"
+"@mswjs/interceptors@npm:^0.38.7":
+  version: 0.38.7
+  resolution: "@mswjs/interceptors@npm:0.38.7"
   dependencies:
     "@open-draft/deferred-promise": ^2.2.0
     "@open-draft/logger": ^0.3.0
@@ -3634,7 +3634,7 @@ __metadata:
     is-node-process: ^1.2.0
     outvariant: ^1.4.3
     strict-event-emitter: ^0.5.1
-  checksum: 7d99c336535e83080028b7fe584b5585b04ce440a5d7ae6d326ba7f4e16908b13f29d03d319a49ed2e67e368d902fa210d359bd83924ce5149ed321adced441a
+  checksum: 96debc7595b02d45366e1d2a77b84e4b28f9db24796e058f7645f344fa0d20c477d3a11bcec25c1c3f147f22a3d3df9ba2d9d878f07635d77f2c69b3f2c6244d
   languageName: node
   linkType: hard
 
@@ -15326,14 +15326,14 @@ __metadata:
   linkType: hard
 
 "msw@npm:^2.7.3":
-  version: 2.7.3
-  resolution: "msw@npm:2.7.3"
+  version: 2.8.7
+  resolution: "msw@npm:2.8.7"
   dependencies:
     "@bundled-es-modules/cookie": ^2.0.1
     "@bundled-es-modules/statuses": ^1.0.1
     "@bundled-es-modules/tough-cookie": ^0.1.6
     "@inquirer/confirm": ^5.0.0
-    "@mswjs/interceptors": ^0.37.0
+    "@mswjs/interceptors": ^0.38.7
     "@open-draft/deferred-promise": ^2.2.0
     "@open-draft/until": ^2.1.0
     "@types/cookie": ^0.6.0
@@ -15354,7 +15354,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 6f1125aebee753f7cf0fe3a52ae161a744b6cf3bed5c6355b1cc6e05064423fa5bf7dc97a180fb85cbf1ed8bd80d67fcc86b8959fe238f5e6fdce2a8c2be4946
+  checksum: 9814e9306364d9cc17be7d9683d7000e3ea3c41b6325b473e192f26cc953c4a2e7f2160b01785880c883ebc2af560fc117aea6dda5cf22503979c0f5a4ec986b
   languageName: node
   linkType: hard
 
