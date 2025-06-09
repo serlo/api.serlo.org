@@ -3650,50 +3650,50 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^6.16.3":
-  version: 6.28.1
-  resolution: "@nmshd/connector-sdk@npm:6.28.1"
+  version: 6.30.0
+  resolution: "@nmshd/connector-sdk@npm:6.30.0"
   dependencies:
-    "@nmshd/content": 6.50.0
+    "@nmshd/content": 6.53.0
     axios: ^1.9.0
     form-data: ^4.0.2
     qs: ^6.14.0
-  checksum: 13ae97a4a6d0d2fbc7f676f00d434568b373113e4152882aa1d1fd0ef5e48c8d39a95c6a74912d3a1bebd9f9196b2da730178e09f6f7ba194085e6367d8b487d
+  checksum: 7539a0c3e8f915a699dd17d698afeb3eb569ff5c6124675ec38036e77400ae66723fe4715661978bfe7f3235ae300b54f57fae35760598839186c172f63347d6
   languageName: node
   linkType: hard
 
-"@nmshd/content@npm:6.50.0":
-  version: 6.50.0
-  resolution: "@nmshd/content@npm:6.50.0"
+"@nmshd/content@npm:6.53.0":
+  version: 6.53.0
+  resolution: "@nmshd/content@npm:6.53.0"
   dependencies:
     "@js-soft/ts-serval": 2.0.12
-    "@nmshd/core-types": 6.50.0
+    "@nmshd/core-types": 6.53.0
     "@nmshd/iql": ^1.0.3
     luxon: ^3.6.1
     ts-simple-nameof: ^1.3.1
-  checksum: 2c922d1a5fdab20448c87444298d98070a94fb6f32b66beb768fd98d5dddc2282ce596ff3c7d559f63b23007fa21a0605c07e9f5603a49197e4e559687e1b724
+  checksum: a9d2ac628a56b0a19f9b5aeb9d7aa3464879e6bb03744375c1335b0a8c8050fb2178091268063eedece8503db6a3884ad55e0e2799eff51386a3d1c51edab1d4
   languageName: node
   linkType: hard
 
-"@nmshd/core-types@npm:6.50.0":
-  version: 6.50.0
-  resolution: "@nmshd/core-types@npm:6.50.0"
+"@nmshd/core-types@npm:6.53.0":
+  version: 6.53.0
+  resolution: "@nmshd/core-types@npm:6.53.0"
   dependencies:
     "@js-soft/logging-abstractions": ^1.0.1
     "@js-soft/ts-serval": 2.0.12
-    "@nmshd/crypto": ^2.1.1
+    "@nmshd/crypto": ^2.1.2
     json-stringify-safe: ^5.0.1
     luxon: ^3.6.1
-  checksum: a9933b5152195f36c60090a3d4c2696cc7eac37784c52396086646137ecf7ec5960d5c167c7947c50c39d3a433ab9ab3beefc4e2ae3e62d66ad273c03b6e4ca6
+  checksum: 245d087ea7f54829bf9f2e023b9a14ed8432e5220511f9eda2672fd3cd8119104c9dd56eee8869ed8b555d42c2db7c1442eba785fd1ca8e91c9db6b034985141
   languageName: node
   linkType: hard
 
-"@nmshd/crypto@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@nmshd/crypto@npm:2.1.1"
+"@nmshd/crypto@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@nmshd/crypto@npm:2.1.2"
   dependencies:
     libsodium-wrappers-sumo: 0.7.15
-    uuid: 10.0.0
-  checksum: d1b04b1cfc4f5a2f7f1d3aeb0c78b9c03587a12376965e260a0dc8ecbc67d5101f1242b769a9bb174fa39e0415ee74e76c35641adc52d6960eba9199aacb76ed
+    uuid: ^11.1.0
+  checksum: f89b96f566e1afc22184670a40ebdf65826b23b55881bfe5530c92897d20c2c6db2a6ae3f7822baffa1571d1f8236ad6ed529e9040b93d3d7b78e65f059bf494
   languageName: node
   linkType: hard
 
@@ -20601,7 +20601,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:10.0.0, uuid@npm:^10.0.0":
+"uuid@npm:^10.0.0":
   version: 10.0.0
   resolution: "uuid@npm:10.0.0"
   bin:
