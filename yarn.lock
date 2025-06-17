@@ -3650,50 +3650,50 @@ __metadata:
   linkType: hard
 
 "@nmshd/connector-sdk@npm:^6.16.3":
-  version: 6.28.1
-  resolution: "@nmshd/connector-sdk@npm:6.28.1"
+  version: 6.31.0
+  resolution: "@nmshd/connector-sdk@npm:6.31.0"
   dependencies:
-    "@nmshd/content": 6.50.0
+    "@nmshd/content": 6.54.0
     axios: ^1.9.0
-    form-data: ^4.0.2
+    form-data: ^4.0.3
     qs: ^6.14.0
-  checksum: 13ae97a4a6d0d2fbc7f676f00d434568b373113e4152882aa1d1fd0ef5e48c8d39a95c6a74912d3a1bebd9f9196b2da730178e09f6f7ba194085e6367d8b487d
+  checksum: d08a518cb0acb48ed24adacb01c3ba15dd4e21606bfb1ca76743e503e99e7e356c4ca0f4515958dcd8c44d2c1e10a27501fac0918d34330a25897dcaf66a6cc9
   languageName: node
   linkType: hard
 
-"@nmshd/content@npm:6.50.0":
-  version: 6.50.0
-  resolution: "@nmshd/content@npm:6.50.0"
+"@nmshd/content@npm:6.54.0":
+  version: 6.54.0
+  resolution: "@nmshd/content@npm:6.54.0"
   dependencies:
     "@js-soft/ts-serval": 2.0.12
-    "@nmshd/core-types": 6.50.0
+    "@nmshd/core-types": 6.54.0
     "@nmshd/iql": ^1.0.3
     luxon: ^3.6.1
     ts-simple-nameof: ^1.3.1
-  checksum: 2c922d1a5fdab20448c87444298d98070a94fb6f32b66beb768fd98d5dddc2282ce596ff3c7d559f63b23007fa21a0605c07e9f5603a49197e4e559687e1b724
+  checksum: fc241f3decb103c3409cead3e49a7e74b9c6a34b5cb2a1f807fadb4e389f8c6291771d7f175c1cfcaddfccfb341d2d13712d7bbf87ab7e98450c156aae57b51c
   languageName: node
   linkType: hard
 
-"@nmshd/core-types@npm:6.50.0":
-  version: 6.50.0
-  resolution: "@nmshd/core-types@npm:6.50.0"
+"@nmshd/core-types@npm:6.54.0":
+  version: 6.54.0
+  resolution: "@nmshd/core-types@npm:6.54.0"
   dependencies:
     "@js-soft/logging-abstractions": ^1.0.1
     "@js-soft/ts-serval": 2.0.12
-    "@nmshd/crypto": ^2.1.1
+    "@nmshd/crypto": ^2.1.2
     json-stringify-safe: ^5.0.1
     luxon: ^3.6.1
-  checksum: a9933b5152195f36c60090a3d4c2696cc7eac37784c52396086646137ecf7ec5960d5c167c7947c50c39d3a433ab9ab3beefc4e2ae3e62d66ad273c03b6e4ca6
+  checksum: ff351ca475d633360fc8a472ea42dde5ff98c121bde2f3d8f840e3402b93d35b34c645990a5a83915d8421c9784a4d3dd3d58b6591d566e80fa461acc9556d9c
   languageName: node
   linkType: hard
 
-"@nmshd/crypto@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@nmshd/crypto@npm:2.1.1"
+"@nmshd/crypto@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@nmshd/crypto@npm:2.1.2"
   dependencies:
     libsodium-wrappers-sumo: 0.7.15
-    uuid: 10.0.0
-  checksum: d1b04b1cfc4f5a2f7f1d3aeb0c78b9c03587a12376965e260a0dc8ecbc67d5101f1242b769a9bb174fa39e0415ee74e76c35641adc52d6960eba9199aacb76ed
+    uuid: ^11.1.0
+  checksum: f89b96f566e1afc22184670a40ebdf65826b23b55881bfe5530c92897d20c2c6db2a6ae3f7822baffa1571d1f8236ad6ed529e9040b93d3d7b78e65f059bf494
   languageName: node
   linkType: hard
 
@@ -10729,7 +10729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0, form-data@npm:^4.0.2":
+"form-data@npm:^4.0.0":
   version: 4.0.2
   resolution: "form-data@npm:4.0.2"
   dependencies:
@@ -10738,6 +10738,19 @@ __metadata:
     es-set-tostringtag: ^2.1.0
     mime-types: ^2.1.12
   checksum: e887298b22c13c7c9c5a8ba3716f295a479a13ca78bfd855ef11cbce1bcf22bc0ae2062e94808e21d46e5c667664a1a1a8a7f57d7040193c1fefbfb11af58aab
+  languageName: node
+  linkType: hard
+
+"form-data@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "form-data@npm:4.0.3"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.8
+    es-set-tostringtag: ^2.1.0
+    hasown: ^2.0.2
+    mime-types: ^2.1.12
+  checksum: b8e2568c0853ce167b2b9c9c4b81fe563f9ade647178baf6b6381cf8a11e3c01dd2b78a63ba367e6f5eab59afab8284a9438bb5ae768133f9d9fce6567fbc26a
   languageName: node
   linkType: hard
 
@@ -20601,7 +20614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:10.0.0, uuid@npm:^10.0.0":
+"uuid@npm:^10.0.0":
   version: 10.0.0
   resolution: "uuid@npm:10.0.0"
   bin:
