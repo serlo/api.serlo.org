@@ -114,7 +114,6 @@ function generateRandomString(length: number) {
 }
 
 declare global {
-  /* eslint-disable no-var */
   var cache: Cache
   var server: ReturnType<typeof import('msw/node').setupServer>
   var timer: MockTimer
