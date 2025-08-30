@@ -7,6 +7,11 @@ updates:
       - '/'
       - 'packages/authorization'
       - 'packages/server'
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
     schedule:
       interval: 'weekly'
 
