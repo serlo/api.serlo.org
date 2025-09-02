@@ -5716,21 +5716,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:^17.0.33":
+"@types/yargs@npm:^17.0.33, @types/yargs@npm:^17.0.8":
   version: 17.0.33
   resolution: "@types/yargs@npm:17.0.33"
   dependencies:
     "@types/yargs-parser": "*"
   checksum: ee013f257472ab643cb0584cf3e1ff9b0c44bca1c9ba662395300a7f1a6c55fa9d41bd40ddff42d99f5d95febb3907c9ff600fbcb92dadbec22c6a76de7e1236
-  languageName: node
-  linkType: hard
-
-"@types/yargs@npm:^17.0.8":
-  version: 17.0.32
-  resolution: "@types/yargs@npm:17.0.32"
-  dependencies:
-    "@types/yargs-parser": "*"
-  checksum: 4505bdebe8716ff383640c6e928f855b5d337cb3c68c81f7249fc6b983d0aa48de3eee26062b84f37e0d75a5797bc745e0c6e76f42f81771252a758c638f36ba
   languageName: node
   linkType: hard
 
@@ -15233,7 +15224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mysql2@npm:^3.14.4":
+"mysql2@npm:^3.14.4, mysql2@npm:^3.9.7":
   version: 3.14.4
   resolution: "mysql2@npm:3.14.4"
   dependencies:
@@ -15247,23 +15238,6 @@ __metadata:
     seq-queue: ^0.0.5
     sqlstring: ^2.3.2
   checksum: dcc93186f35b75626a572ed7ab659d4c1bbe92d2b65ea8b841b89a80e9a0a42dae2e99dc37f58609caa548fbe96bce62684c9e28864340ffafc56a75cfa81615
-  languageName: node
-  linkType: hard
-
-"mysql2@npm:^3.9.7":
-  version: 3.14.3
-  resolution: "mysql2@npm:3.14.3"
-  dependencies:
-    aws-ssl-profiles: ^1.1.1
-    denque: ^2.1.0
-    generate-function: ^2.3.1
-    iconv-lite: ^0.6.3
-    long: ^5.2.1
-    lru.min: ^1.0.0
-    named-placeholders: ^1.1.3
-    seq-queue: ^0.0.5
-    sqlstring: ^2.3.2
-  checksum: 011fa91d62630ba8354a3153ab88b2fd1be208802f866dfce16cd71cc1399deac713fe0a9864f2f994116357049047b3866640d7680252943e6ca3a965e78ee9
   languageName: node
   linkType: hard
 
