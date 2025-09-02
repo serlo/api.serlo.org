@@ -4880,7 +4880,7 @@ __metadata:
     msgpack5: ^6.0.2
     mysql2: ^3.14.3
     newtype-ts: ^0.3.5
-    openai: ^4.104.0
+    openai: ^5.16.0
     pg: ^8.16.3
     ramda: ^0.31.3
     redlock: ^5.0.0-beta2
@@ -4918,7 +4918,7 @@ __metadata:
     ioredis: ^5.7.0
     jest: ^29.7.0
     npm-run-all: ^4.1.5
-    openai: ^4.104.0
+    openai: ^5.16.0
     prettier: ^3.6.2
     ramda: ^0.31.3
     semver: ^7.7.2
@@ -5439,7 +5439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.1, @types/node-fetch@npm:^2.6.4":
+"@types/node-fetch@npm:^2.6.1":
   version: 2.6.11
   resolution: "@types/node-fetch@npm:2.6.11"
   dependencies:
@@ -5455,15 +5455,6 @@ __metadata:
   dependencies:
     undici-types: ~6.21.0
   checksum: a110b66f079ea882be1e300e72978cd3a5e7be8217b362b72152e09f64087731a235a0557fca72d621912a8ba1347d9ba49468c35755dd2581edb7f3f6e016e2
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^18.11.18":
-  version: 18.19.101
-  resolution: "@types/node@npm:18.19.101"
-  dependencies:
-    undici-types: ~5.26.4
-  checksum: f914672092008bcebb6eedbd98b5791a9400b3821cf27a91736d6c64a1827c8551c6a7549663f94303656a6c8159df9d7f8a80632fd9b1d3d77b2c63141c9efe
   languageName: node
   linkType: hard
 
@@ -6201,15 +6192,6 @@ __metadata:
   dependencies:
     debug: ^4.3.4
   checksum: 51c158769c5c051482f9ca2e6e1ec085ac72b5a418a9b31b4e82fe6c0a6699adb94c1c42d246699a587b3335215037091c79e0de512c516f73b6ea844202f037
-  languageName: node
-  linkType: hard
-
-"agentkeepalive@npm:^4.2.1":
-  version: 4.5.0
-  resolution: "agentkeepalive@npm:4.5.0"
-  dependencies:
-    humanize-ms: ^1.2.1
-  checksum: 13278cd5b125e51eddd5079f04d6fe0914ac1b8b91c1f3db2c1822f99ac1a7457869068997784342fe455d59daaff22e14fb7b8c3da4e741896e7e31faf92481
   languageName: node
   linkType: hard
 
@@ -10577,13 +10559,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data-encoder@npm:1.7.2":
-  version: 1.7.2
-  resolution: "form-data-encoder@npm:1.7.2"
-  checksum: aeebd87a1cb009e13cbb5e4e4008e6202ed5f6551eb6d9582ba8a062005178907b90f4887899d3c993de879159b6c0c940af8196725b428b4248cec5af3acf5f
-  languageName: node
-  linkType: hard
-
 "form-data@npm:^2.5.0":
   version: 2.5.1
   resolution: "form-data@npm:2.5.1"
@@ -10616,16 +10591,6 @@ __metadata:
     combined-stream: ^1.0.6
     mime-types: ^2.1.12
   checksum: 10c1780fa13dbe1ff3100114c2ce1f9307f8be10b14bf16e103815356ff567b6be39d70fc4a40f8990b9660012dc24b0f5e1dde1b6426166eb23a445ba068ca3
-  languageName: node
-  linkType: hard
-
-"formdata-node@npm:^4.3.2":
-  version: 4.4.1
-  resolution: "formdata-node@npm:4.4.1"
-  dependencies:
-    node-domexception: 1.0.0
-    web-streams-polyfill: 4.0.0-beta.3
-  checksum: d91d4f667cfed74827fc281594102c0dabddd03c9f8b426fc97123eedbf73f5060ee43205d89284d6854e2fc5827e030cd352ef68b93beda8decc2d72128c576
   languageName: node
   linkType: hard
 
@@ -11661,15 +11626,6 @@ __metadata:
   version: 3.32.1
   resolution: "humanize-duration@npm:3.32.1"
   checksum: 17f6f2ec09a931eb0bf7de1fc8ac01f90174f366f60390289bd0797c6e4545255bd5d770dd18909c9b21685d76cc190b3a8ec880d2ecc088a1ad032e0d2f57cb
-  languageName: node
-  linkType: hard
-
-"humanize-ms@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "humanize-ms@npm:1.2.1"
-  dependencies:
-    ms: ^2.0.0
-  checksum: 9c7a74a2827f9294c009266c82031030eae811ca87b0da3dceb8d6071b9bde22c9f3daef0469c3c533cc67a97d8a167cd9fc0389350e5f415f61a79b171ded16
   languageName: node
   linkType: hard
 
@@ -15092,7 +15048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.1.3, ms@npm:^2.0.0, ms@npm:^2.1.1, ms@npm:^2.1.3":
+"ms@npm:2.1.3, ms@npm:^2.1.1, ms@npm:^2.1.3":
   version: 2.1.3
   resolution: "ms@npm:2.1.3"
   checksum: aa92de608021b242401676e35cfa5aa42dd70cbdc082b916da7fb925c542173e36bce97ea3e804923fe92c0ad991434e4a38327e15a1b5b5f945d66df615ae6d
@@ -15343,13 +15299,6 @@ __metadata:
   version: 3.1.1
   resolution: "node-abort-controller@npm:3.1.1"
   checksum: 2c340916af9710328b11c0828223fc65ba320e0d082214a211311bf64c2891028e42ef276b9799188c4ada9e6e1c54cf7a0b7c05dd9d59fcdc8cd633304c8047
-  languageName: node
-  linkType: hard
-
-"node-domexception@npm:1.0.0":
-  version: 1.0.0
-  resolution: "node-domexception@npm:1.0.0"
-  checksum: ee1d37dd2a4eb26a8a92cd6b64dfc29caec72bff5e1ed9aba80c294f57a31ba4895a60fd48347cf17dd6e766da0ae87d75657dfd1f384ebfa60462c2283f5c7f
   languageName: node
   linkType: hard
 
@@ -15902,17 +15851,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.104.0":
-  version: 4.104.0
-  resolution: "openai@npm:4.104.0"
-  dependencies:
-    "@types/node": ^18.11.18
-    "@types/node-fetch": ^2.6.4
-    abort-controller: ^3.0.0
-    agentkeepalive: ^4.2.1
-    form-data-encoder: 1.7.2
-    formdata-node: ^4.3.2
-    node-fetch: ^2.6.7
+"openai@npm:^5.16.0":
+  version: 5.16.0
+  resolution: "openai@npm:5.16.0"
   peerDependencies:
     ws: ^8.18.0
     zod: ^3.23.8
@@ -15923,7 +15864,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 2bd3ba14a37a3421703d9108bdb61be38d2555fbefbfb491c890d3c47cef72f5c9fefada78f33923f86e5d2ada86bcb3a3c04662f16e85f735a2c1ecd0fa031e
+  checksum: 3bb3f3b67a024b340a92aabd4631f94e45788a37edda43347cff7c1c559f80e039309aa890358b324b0637cf04b0fd4303a90dd2c622a77c8aa9dce1a5b29626
   languageName: node
   linkType: hard
 
@@ -20129,13 +20070,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~5.26.4":
-  version: 5.26.5
-  resolution: "undici-types@npm:5.26.5"
-  checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~6.21.0":
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
@@ -20516,13 +20450,6 @@ __metadata:
   dependencies:
     defaults: ^1.0.3
   checksum: 814e9d1ddcc9798f7377ffa448a5a3892232b9275ebb30a41b529607691c0491de47cba426e917a4d08ded3ee7e9ba2f3fe32e62ee3cd9c7d3bafb7754bd553c
-  languageName: node
-  linkType: hard
-
-"web-streams-polyfill@npm:4.0.0-beta.3":
-  version: 4.0.0-beta.3
-  resolution: "web-streams-polyfill@npm:4.0.0-beta.3"
-  checksum: dfec1fbf52b9140e4183a941e380487b6c3d5d3838dd1259be81506c1c9f2abfcf5aeb670aeeecfd9dff4271a6d8fef931b193c7bedfb42542a3b05ff36c0d16
   languageName: node
   linkType: hard
 
