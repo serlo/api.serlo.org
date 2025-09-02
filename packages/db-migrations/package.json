@@ -23,7 +23,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@jest/types": "^29.6.3",
+    "@jest/types": "^30.0.5",
     "@slack/web-api": "^7.10.0",
     "@tsconfig/node20": "^20.1.6",
     "@types/jest": "^29.5.14",
