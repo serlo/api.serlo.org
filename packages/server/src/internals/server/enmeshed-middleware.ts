@@ -21,8 +21,8 @@
  */
 import {
   ConnectorClient,
-  ConnectorRelationshipAuditLogEntryReason,
-  ConnectorRelationshipStatus,
+  RelationshipAuditLogEntryReason,
+  RelationshipStatus,
 } from '@nmshd/connector-sdk'
 import crypto from 'crypto'
 import express, { Express, RequestHandler, Request, Response } from 'express'
@@ -460,14 +460,14 @@ function createEnmeshedWebhookMiddleware(
 
       for (const auditLogEntry of data.auditLog) {
         if (
-          (ConnectorRelationshipAuditLogEntryReason.Creation as string) ===
+          (RelationshipAuditLogEntryReason.Creation as string) ===
             auditLogEntry.reason &&
           [
-            ConnectorRelationshipStatus.Pending as string,
-            ConnectorRelationshipStatus.Rejected as string,
+            RelationshipStatus.Pending as string,
+            RelationshipStatus.Rejected as string,
           ].includes(auditLogEntry.newStatus)
         ) {
-          if (data.status !== (ConnectorRelationshipStatus.Active as string)) {
+          if (data.status !== (RelationshipStatus.Active as string)) {
             const acceptRelationshipResponse =
               await client.relationships.acceptRelationship(data.id)
             if (acceptRelationshipResponse.isError) {
