@@ -26,7 +26,7 @@
     "@google-cloud/storage": "^7.17.0",
     "@graphql-codegen/add": "^5.0.3",
     "@graphql-codegen/cli": "^5.0.7",
-    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript": "^5.0.0",
     "@graphql-codegen/typescript-resolvers": "^4.5.2",
     "@nmshd/connector-sdk": "^6.16.3",
     "@ory/client": "^1.22.0",
