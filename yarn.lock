@@ -1984,7 +1984,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint-community/eslint-utils@npm:^4.2.0, @eslint-community/eslint-utils@npm:^4.7.0":
+"@eslint-community/eslint-utils@npm:^4.7.0":
   version: 4.7.0
   resolution: "@eslint-community/eslint-utils@npm:4.7.0"
   dependencies:
@@ -1992,6 +1992,17 @@ __metadata:
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
   checksum: b177e3b75c0b8d0e5d71f1c532edb7e40b31313db61f0c879f9bf19c3abb2783c6c372b5deb2396dab4432f2946b9972122ac682e77010376c029dfd0149c681
+  languageName: node
+  linkType: hard
+
+"@eslint-community/eslint-utils@npm:^4.8.0":
+  version: 4.9.0
+  resolution: "@eslint-community/eslint-utils@npm:4.9.0"
+  dependencies:
+    eslint-visitor-keys: ^3.4.3
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+  checksum: ae9b98eea006d1354368804b0116b8b45017a4e47b486d1b9cfa048a8ed3dc69b9b074eb2b2acb14034e6897c24048fd42b6a6816d9dc8bb9daad79db7d478d2
   languageName: node
   linkType: hard
 
@@ -2058,10 +2069,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.34.0, @eslint/js@npm:^9.34.0":
-  version: 9.34.0
-  resolution: "@eslint/js@npm:9.34.0"
-  checksum: 933d4ba321b1abc83eecde40eb703871ce00f133eedec54cf928b7fedb61706174dd526997c3f151776922412e3d95cb3634f97ef7b5861b4908f9992f403a63
+"@eslint/js@npm:9.35.0, @eslint/js@npm:^9.34.0":
+  version: 9.35.0
+  resolution: "@eslint/js@npm:9.35.0"
+  checksum: ea644f0b1abb4da49ba0cb61db4d039492e844d959e7127dd7c501aa27a256348496bce43334ecd3ca990c9a49fb3ea93d6729de0a79d216f63869236c153148
   languageName: node
   linkType: hard
 
@@ -4535,11 +4546,11 @@ __metadata:
   linkType: hard
 
 "@ory/client@npm:^1.22.0":
-  version: 1.22.0
-  resolution: "@ory/client@npm:1.22.0"
+  version: 1.22.1
+  resolution: "@ory/client@npm:1.22.1"
   dependencies:
     axios: ^1.6.1
-  checksum: ec6a67eee97187a093be96c4e6bba5af608ab92a096cf605e6f5c3f9f919878c51f25ec9aae7b0dcef066b85c3dc42ed19ce8ffed640fc998b409904acb99ed6
+  checksum: 90f497077edaa09193e74a1627de30d98f769f9d97c73bde50aae8b7de2e0e1734de388dab571b47b8f1d199c641edc67044c53a7ce8ce24e2b754feaf135022
   languageName: node
   linkType: hard
 
@@ -4748,19 +4759,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:10.8.0":
-  version: 10.8.0
-  resolution: "@sentry/core@npm:10.8.0"
-  checksum: 0efb85f915aaf557e56b011b0b9497ac457464506296a3ad5131292db5e31a70aebe0b759af021be75bf32d9a7412edc368121a9202911aa429e2da1ea5be3b5
+"@sentry/core@npm:10.10.0":
+  version: 10.10.0
+  resolution: "@sentry/core@npm:10.10.0"
+  checksum: 413d2c8d549460fffd2c8e33d749fe5d254530c92930bfaff350383346b4305d59810210ba2a650f5c7eb5a15c11f62b65de90a7913c4db41804217c7dd4f3e8
   languageName: node
   linkType: hard
 
-"@sentry/node-core@npm:10.8.0":
-  version: 10.8.0
-  resolution: "@sentry/node-core@npm:10.8.0"
+"@sentry/node-core@npm:10.10.0":
+  version: 10.10.0
+  resolution: "@sentry/node-core@npm:10.10.0"
   dependencies:
-    "@sentry/core": 10.8.0
-    "@sentry/opentelemetry": 10.8.0
+    "@sentry/core": 10.10.0
+    "@sentry/opentelemetry": 10.10.0
     import-in-the-middle: ^1.14.2
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
@@ -4770,13 +4781,13 @@ __metadata:
     "@opentelemetry/resources": ^1.30.1 || ^2.0.0
     "@opentelemetry/sdk-trace-base": ^1.30.1 || ^2.0.0
     "@opentelemetry/semantic-conventions": ^1.34.0
-  checksum: 26678ca307bf21e4cc610cfafe0682487f2b4570d80f57c2e5c2d7e2b62103f0599c5207f414a5041ea80ff26f93da8fd0341b35f8f1ed63fde941f87bf4b702
+  checksum: 2afffa8208bca5145c83d210f0e7cd5f0e05d4686071f28176831153718f09706718192c25060da3469feff19c01967711140d7ad74c2acfe7f010383967fc64
   languageName: node
   linkType: hard
 
 "@sentry/node@npm:^10.8.0":
-  version: 10.8.0
-  resolution: "@sentry/node@npm:10.8.0"
+  version: 10.10.0
+  resolution: "@sentry/node@npm:10.10.0"
   dependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^2.0.0
@@ -4808,27 +4819,27 @@ __metadata:
     "@opentelemetry/sdk-trace-base": ^2.0.0
     "@opentelemetry/semantic-conventions": ^1.34.0
     "@prisma/instrumentation": 6.14.0
-    "@sentry/core": 10.8.0
-    "@sentry/node-core": 10.8.0
-    "@sentry/opentelemetry": 10.8.0
+    "@sentry/core": 10.10.0
+    "@sentry/node-core": 10.10.0
+    "@sentry/opentelemetry": 10.10.0
     import-in-the-middle: ^1.14.2
     minimatch: ^9.0.0
-  checksum: 8e26bc5f649b7c90c64a082bab89ae849493d875fd680d68f9704c9e5db9879fb162772b4fba990f5062741646212b9c1970f951f4f5a2a489409d7f2a1e0818
+  checksum: 6cb8b85bac6d0108ab4dec3ce3f2c244ac62e5328d400e5d19fcad3af6ee34802dceab88e5b5ee172b72252ac93f77ca3f33affe56251156cc79af8caa3dac9a
   languageName: node
   linkType: hard
 
-"@sentry/opentelemetry@npm:10.8.0":
-  version: 10.8.0
-  resolution: "@sentry/opentelemetry@npm:10.8.0"
+"@sentry/opentelemetry@npm:10.10.0":
+  version: 10.10.0
+  resolution: "@sentry/opentelemetry@npm:10.10.0"
   dependencies:
-    "@sentry/core": 10.8.0
+    "@sentry/core": 10.10.0
   peerDependencies:
     "@opentelemetry/api": ^1.9.0
     "@opentelemetry/context-async-hooks": ^1.30.1 || ^2.0.0
     "@opentelemetry/core": ^1.30.1 || ^2.0.0
     "@opentelemetry/sdk-trace-base": ^1.30.1 || ^2.0.0
     "@opentelemetry/semantic-conventions": ^1.34.0
-  checksum: e7b685ba388f2ea0a2126cef918f0175e609896e1012385567341b7387101c5d7c2410bd8432f05b210613056cdceaa73318c1cc171e5aa3b22776db082407a8
+  checksum: 8c2ccb02214cfbd0e53030dc178ef12d9e3d1ecee603ed6489734f1eb16109028f92dbde92d85f33d455d1768b62581d327057253dd2f5b0204cc5261b7624d7
   languageName: node
   linkType: hard
 
@@ -5622,9 +5633,9 @@ __metadata:
   linkType: hard
 
 "@types/semver@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@types/semver@npm:7.7.0"
-  checksum: d488eaeddb23879a0a8a759bed667e1a76cb0dd4d23e3255538e24c189db387357953ca9e7a3bda2bb7f95e84cac8fe0db4fbe6b3456e893043337732d1d23cc
+  version: 7.7.1
+  resolution: "@types/semver@npm:7.7.1"
+  checksum: 76d218e414482a398148d5c28f2bfa017108869f3fc18cda379c9d8d062348f8b9653ae2fa8642d3b5b52e211928fe8be34f22da4e1f08245c84e0e51e040673
   languageName: node
   linkType: hard
 
@@ -9753,16 +9764,16 @@ __metadata:
   linkType: hard
 
 "eslint@npm:^9.34.0":
-  version: 9.34.0
-  resolution: "eslint@npm:9.34.0"
+  version: 9.35.0
+  resolution: "eslint@npm:9.35.0"
   dependencies:
-    "@eslint-community/eslint-utils": ^4.2.0
+    "@eslint-community/eslint-utils": ^4.8.0
     "@eslint-community/regexpp": ^4.12.1
     "@eslint/config-array": ^0.21.0
     "@eslint/config-helpers": ^0.3.1
     "@eslint/core": ^0.15.2
     "@eslint/eslintrc": ^3.3.1
-    "@eslint/js": 9.34.0
+    "@eslint/js": 9.35.0
     "@eslint/plugin-kit": ^0.3.5
     "@humanfs/node": ^0.16.6
     "@humanwhocodes/module-importer": ^1.0.1
@@ -9798,7 +9809,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 6de97f6197774821a086783e1bd73b9518c4eb8896165e448a8bb2359142c63cad40faa5dc79bcdc28fab20b57e1376ccbb76a6ae081da5e94baa18d2d3b92fe
+  checksum: 45b12539f84d7ae474920f279b4a0f1e1074eaff152f6d2b6a5fb112174914853f18071876da6421c11d678319fd78745ea03ed56b6808d77f76397e488cde28
   languageName: node
   linkType: hard
 
@@ -15908,8 +15919,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^5.16.0":
-  version: 5.18.1
-  resolution: "openai@npm:5.18.1"
+  version: 5.19.1
+  resolution: "openai@npm:5.19.1"
   peerDependencies:
     ws: ^8.18.0
     zod: ^3.23.8
@@ -15920,7 +15931,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: b9729fd77b08d098a15c6f23baffd12bbbcf6d1dd4524b74d90e7b930a19412514a619fb00d69b3dfdc226162a8f0640021983f201359d20039ca9a07225e056
+  checksum: 43b165b416c968d5f5cc6c0b233dbaf49dcc49d608c509b4c189a305e81d128054cc4f5f920356c78864fcd2e85401f96b9eeff7308a944d9b9c295f90ab526e
   languageName: node
   linkType: hard
 
