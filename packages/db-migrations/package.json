@@ -20,7 +20,7 @@
   "dependencies": {
     "db-migrate": "^0.11.14",
     "db-migrate-mysql": "^3.0.0",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@jest/types": "^30.0.5",
@@ -30,9 +30,9 @@
     "@types/node": "^24.10.1",
     "@types/ramda": "^0.31.0",
     "@types/semver": "^7.7.0",
-    "@types/uuid": "^10.0.0",
+    "@types/uuid": "^11.0.0",
     "depcheck": "^1.4.7",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.3",
     "esbuild": "^0.25.9",
     "fp-ts": "^2.16.11",
     "io-ts": "^2.2.22",
@@ -41,7 +41,7 @@
     "npm-run-all": "^4.1.5",
     "openai": "^6.9.1",
     "prettier": "^3.6.2",
-    "ramda": "^0.31.3",
+    "ramda": "^0.32.0",
     "semver": "^7.7.2",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",

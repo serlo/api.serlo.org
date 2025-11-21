@@ -4947,14 +4947,14 @@ __metadata:
     "@types/ramda": ^0.31.0
     "@types/redlock": ^4.0.7
     "@types/semver": ^7.7.0
-    "@types/uuid": ^10.0.0
+    "@types/uuid": ^11.0.0
     apollo-datasource-rest: ^3.7.0
     basic-auth: ^2.0.1
     bee-queue: ^1.7.1
     bull-arena: ^4.6.0
     cors: ^2.8.5
     default-import: ^2.0.8
-    dotenv: ^16.6.1
+    dotenv: ^17.2.3
     express: ^5.1.0
     fp-ts: ^2.16.11
     graphql: ^16.11.0
@@ -4970,11 +4970,11 @@ __metadata:
     newtype-ts: ^0.3.5
     openai: ^6.9.1
     pg: ^8.16.3
-    ramda: ^0.31.3
+    ramda: ^0.32.0
     redlock: ^5.0.0-beta2
     semver: ^7.7.2
     ts-toolbelt: ^9.6.0
-    uuid: ^11.1.0
+    uuid: ^13.0.0
   languageName: unknown
   linkType: soft
 
@@ -4995,11 +4995,11 @@ __metadata:
     "@types/node": ^24.10.1
     "@types/ramda": ^0.31.0
     "@types/semver": ^7.7.0
-    "@types/uuid": ^10.0.0
+    "@types/uuid": ^11.0.0
     db-migrate: ^0.11.14
     db-migrate-mysql: ^3.0.0
     depcheck: ^1.4.7
-    dotenv: ^16.6.1
+    dotenv: ^17.2.3
     esbuild: ^0.25.9
     fp-ts: ^2.16.11
     io-ts: ^2.2.22
@@ -5008,14 +5008,14 @@ __metadata:
     npm-run-all: ^4.1.5
     openai: ^6.9.1
     prettier: ^3.6.2
-    ramda: ^0.31.3
+    ramda: ^0.32.0
     semver: ^7.7.2
     ts-jest: ^29.4.1
     ts-node: ^10.9.2
     ts-unused-exports: ^11.0.1
     tsx: ^4.20.5
     typescript: ^5.9.2
-    uuid: ^11.1.0
+    uuid: ^13.0.0
   languageName: unknown
   linkType: soft
 
@@ -5534,16 +5534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=18.0.0":
-  version: 22.18.0
-  resolution: "@types/node@npm:22.18.0"
-  dependencies:
-    undici-types: ~6.21.0
-  checksum: a110b66f079ea882be1e300e72978cd3a5e7be8217b362b72152e09f64087731a235a0557fca72d621912a8ba1347d9ba49468c35755dd2581edb7f3f6e016e2
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^24.10.1":
+"@types/node@npm:*, @types/node@npm:>=18.0.0, @types/node@npm:^24.10.1":
   version: 24.10.1
   resolution: "@types/node@npm:24.10.1"
   dependencies:
@@ -5747,10 +5738,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@types/uuid@npm:10.0.0"
-  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
+"@types/uuid@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "@types/uuid@npm:11.0.0"
+  dependencies:
+    uuid: "*"
+  checksum: 9f94bd34e5d220c53cc58ea9f48a0061d3bc343e29bc33a17edc705f5e21fedda21553318151f2bc227c2b2b03727bbb536da2b82a61f84d2e1ca38abc5e5c3f
   languageName: node
   linkType: hard
 
@@ -9019,10 +9012,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.4.4, dotenv@npm:^16.6.1":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.4.4":
   version: 16.6.1
   resolution: "dotenv@npm:16.6.1"
   checksum: e8bd63c9a37f57934f7938a9cf35de698097fadf980cb6edb61d33b3e424ceccfe4d10f37130b904a973b9038627c2646a3365a904b4406514ea94d7f1816b69
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^17.2.3":
+  version: 17.2.3
+  resolution: "dotenv@npm:17.2.3"
+  checksum: fde23eb88649041ec7a0f6a47bbe59cac3c454fc2007cf2e40b9c984aaf0636347218c56cfbbf067034b0a73f530a2698a19b4058695787eb650ec69fe234624
   languageName: node
   linkType: hard
 
@@ -14604,14 +14604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.2.1":
-  version: 3.7.1
-  resolution: "luxon@npm:3.7.1"
-  checksum: 19e5b20304f2e558b1e5e1f4f04f227419642d373f7c10ccf8f0e7d63c05828187a6aa39d70caf87d18a4834800dcbf29cf5f5d81d03c7d2471cd0b61cee97f6
-  languageName: node
-  linkType: hard
-
-"luxon@npm:^3.7.2":
+"luxon@npm:^3.2.1, luxon@npm:^3.7.2":
   version: 3.7.2
   resolution: "luxon@npm:3.7.2"
   checksum: fc115fd6a7acc2adb7df3476d20c672beb2985d2a034294282f2c31de8c07f29a15460f5a2b7dd0107797be0dab545ddbc64862662b059fb18c1931a726064f4
@@ -17097,10 +17090,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ramda@npm:^0.31.3":
-  version: 0.31.3
-  resolution: "ramda@npm:0.31.3"
-  checksum: 7658f7ec75f61b9c0cd8a250285f66954f1e866a1b2e98a0c14fcc7c940f87550a6d1855e349b696a3507358a5d279794de5d0a567b11fd8a26ee5ad1363de52
+"ramda@npm:^0.32.0":
+  version: 0.32.0
+  resolution: "ramda@npm:0.32.0"
+  checksum: d26ce9796b60e89496ba3663d2e3d7f7eb0cb885c3949bc4fb0353b27b4409c25af4006c88f6970888d743ca16a0d8b616bcf8aaa353dc09b830f6f90cddb7b1
   languageName: node
   linkType: hard
 
@@ -20210,13 +20203,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: 46331c7d6016bf85b3e8f20c159d62f5ae471aba1eb3dc52fff35a0259d58dcc7d592d4cc4f00c5f9243fa738a11cfa48bd20203040d4a9e6bc25e807fab7ab3
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~7.16.0":
   version: 7.16.0
   resolution: "undici-types@npm:7.16.0"
@@ -20412,6 +20398,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
+  languageName: node
+  linkType: hard
+
+"uuid@npm:*, uuid@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "uuid@npm:13.0.0"
+  bin:
+    uuid: dist-node/bin/uuid
+  checksum: 7510ee1ab371be5339ef26ff8cabc2f4a2c60640ff880652968f758072f53bd4f4af1c8b0e671a8c9bb29ef926a24dec3ef0e3861d78183b39291a85743a9f96
   languageName: node
   linkType: hard
 
