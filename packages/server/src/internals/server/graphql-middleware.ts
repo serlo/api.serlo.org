@@ -1,6 +1,6 @@
 import { ApolloServer, ApolloServerOptions } from '@apollo/server'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
-import { expressMiddleware } from '@as-integrations/express4'
+import { expressMiddleware } from '@as-integrations/express5'
 import { Storage } from '@google-cloud/storage'
 import { defaultImport } from 'default-import'
 import { Express, json } from 'express'
