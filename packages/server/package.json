@@ -41,12 +41,12 @@
     "@types/ramda": "^0.31.0",
     "@types/redlock": "^4.0.7",
     "@types/semver": "^7.7.0",
-    "@types/uuid": "^10.0.0",
+    "@types/uuid": "^11.0.0",
     "apollo-datasource-rest": "^3.7.0",
     "basic-auth": "^2.0.1",
     "cors": "^2.8.5",
     "default-import": "^2.0.8",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "fp-ts": "^2.16.11",
     "graphql": "^16.11.0",
@@ -62,10 +62,10 @@
     "newtype-ts": "^0.3.5",
     "openai": "^6.9.1",
     "pg": "^8.16.3",
-    "ramda": "^0.31.3",
+    "ramda": "^0.32.0",
     "redlock": "^5.0.0-beta2",
     "semver": "^7.7.2",
     "ts-toolbelt": "^9.6.0",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   }
 }
