@@ -22,7 +22,8 @@
     "bull-arena": "^4.6.0"
   },
   "devDependencies": {
-    "@apollo/server": "^4.12.2",
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/express5": "^1.1.2",
     "@google-cloud/storage": "^7.17.0",
     "@graphql-codegen/add": "^5.0.3",
     "@graphql-codegen/cli": "^5.0.7",
