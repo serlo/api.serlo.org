@@ -266,6 +266,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@as-integrations/express4@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@as-integrations/express4@npm:1.1.2"
+  peerDependencies:
+    "@apollo/server": ^4.0.0 || ^5.0.0
+    express: ^4.0.0
+  checksum: 70497f29114d2bc1dc5d725b3fef232316e0ffad92d90a35c7b5cbec5d57a7b905368198c3b1c62bb6e68b7eccd83d207bf38d854d409619973984cddd52885b
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.24.7, @babel/code-frame@npm:^7.5.5":
   version: 7.24.7
   resolution: "@babel/code-frame@npm:7.24.7"
@@ -4833,6 +4843,7 @@ __metadata:
   resolution: "@serlo/api.serlo.org@workspace:packages/server"
   dependencies:
     "@apollo/server": ^5.0.0
+    "@as-integrations/express4": ^1.1.2
     "@google-cloud/storage": ^7.17.0
     "@graphql-codegen/add": ^5.0.3
     "@graphql-codegen/cli": ^5.0.7
