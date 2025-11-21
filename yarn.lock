@@ -61,9 +61,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/server@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@apollo/server@npm:5.0.0"
+"@apollo/server@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@apollo/server@npm:5.1.0"
   dependencies:
     "@apollo/cache-control-types": ^1.0.3
     "@apollo/server-gateway-interface": ^2.0.0
@@ -87,7 +87,7 @@ __metadata:
     whatwg-mimetype: ^4.0.0
   peerDependencies:
     graphql: ^16.11.0
-  checksum: 922b6d5747f626f941d33c34de69d2595b3a6eb66e78f7cfc90a116ae46ebcfeec73a22c4bc931f8e335ffea9caa0ceaa7218a285ac9b5fbc10da8e3fd118aa8
+  checksum: 49add9eaf33afedac5f9090682b8d75db0b1a0911ec9b4d3e9e8a2d4d7a17b70b6d1b8b107cffde845fcd0154e2198c7f033a1c254ad73e574cc297c7848dae3
   languageName: node
   linkType: hard
 
@@ -4842,7 +4842,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/api.serlo.org@workspace:packages/server"
   dependencies:
-    "@apollo/server": ^5.0.0
+    "@apollo/server": ^5.1.0
     "@as-integrations/express5": ^1.1.2
     "@google-cloud/storage": ^7.17.0
     "@graphql-codegen/add": ^5.0.3
@@ -4882,7 +4882,7 @@ __metadata:
     msgpack5: ^6.0.2
     mysql2: ^3.14.4
     newtype-ts: ^0.3.5
-    openai: ^5.16.0
+    openai: ^6.9.1
     pg: ^8.16.3
     ramda: ^0.31.3
     redlock: ^5.0.0-beta2
@@ -4920,7 +4920,7 @@ __metadata:
     ioredis: ^5.7.0
     jest: ^29.7.0
     npm-run-all: ^4.1.5
-    openai: ^5.16.0
+    openai: ^6.9.1
     prettier: ^3.6.2
     ramda: ^0.31.3
     semver: ^7.7.2
@@ -15873,12 +15873,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^5.16.0":
-  version: 5.18.1
-  resolution: "openai@npm:5.18.1"
+"openai@npm:^6.9.1":
+  version: 6.9.1
+  resolution: "openai@npm:6.9.1"
   peerDependencies:
     ws: ^8.18.0
-    zod: ^3.23.8
+    zod: ^3.25 || ^4.0
   peerDependenciesMeta:
     ws:
       optional: true
@@ -15886,7 +15886,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: b9729fd77b08d098a15c6f23baffd12bbbcf6d1dd4524b74d90e7b930a19412514a619fb00d69b3dfdc226162a8f0640021983f201359d20039ca9a07225e056
+  checksum: 7b10559222c5d5d0f6f83ccb5d9182b4a4be343f939bd96d90c42fe95328866b39e1c5e395f73c5f7f10e538dac137de014ff5673e4b7be63246490cb03a4994
   languageName: node
   linkType: hard
 
