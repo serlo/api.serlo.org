@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base_image
+FROM node:24-alpine AS base_image
 WORKDIR /app
 COPY package.json .
 RUN corepack enable
