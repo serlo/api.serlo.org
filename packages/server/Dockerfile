@@ -1,4 +1,4 @@
-FROM node:20 AS base
+FROM node:24 AS base
 ARG image
 WORKDIR /usr/src/app
 COPY .yarn .yarn
@@ -21,7 +21,7 @@ RUN yarn build:${image}
 FROM base AS build_node_modules
 RUN yarn workspaces focus --all --production
 
-FROM node:20-alpine AS release
+FROM node:24-alpine AS release
 ARG image
 WORKDIR /usr/src/app
 COPY --from=build_dist /usr/src/app/dist dist
