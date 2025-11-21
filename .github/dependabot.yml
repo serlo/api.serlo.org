@@ -14,6 +14,10 @@ updates:
           - patch
     schedule:
       interval: 'weekly'
+    ignore:
+      # we want the current LTS version of node
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: 'docker'
     directories:

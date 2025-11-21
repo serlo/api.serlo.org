@@ -4896,7 +4896,7 @@ __metadata:
     "@luckycatfactory/esbuild-graphql-loader": ^3.8.1
     "@tsconfig/node24": ^24.0.3
     "@types/jest": ^29.5.14
-    "@types/node": ^22.18.0
+    "@types/node": ^24.10.1
     "@typescript-eslint/eslint-plugin": ^8.41.0
     "@typescript-eslint/parser": ^8.41.0
     default-import: ^2.0.8
@@ -4992,7 +4992,7 @@ __metadata:
     "@slack/web-api": ^7.10.0
     "@tsconfig/node24": ^24.0.3
     "@types/jest": ^29.5.14
-    "@types/node": ^22.18.0
+    "@types/node": ^24.10.1
     "@types/ramda": ^0.31.0
     "@types/semver": ^7.7.0
     "@types/uuid": ^10.0.0
@@ -5534,12 +5534,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=18.0.0, @types/node@npm:^22.18.0":
+"@types/node@npm:*, @types/node@npm:>=18.0.0":
   version: 22.18.0
   resolution: "@types/node@npm:22.18.0"
   dependencies:
     undici-types: ~6.21.0
   checksum: a110b66f079ea882be1e300e72978cd3a5e7be8217b362b72152e09f64087731a235a0557fca72d621912a8ba1347d9ba49468c35755dd2581edb7f3f6e016e2
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^24.10.1":
+  version: 24.10.1
+  resolution: "@types/node@npm:24.10.1"
+  dependencies:
+    undici-types: ~7.16.0
+  checksum: c2f370ae7a97c04991e0eee6b57e588a2abef0814a5f6e41fda5a9200cf02ae6654fad51c8372ee203ae4134bab80f5bf441c586f7f50e0fda3ba422f35eb3c0
   languageName: node
   linkType: hard
 
@@ -20205,6 +20214,13 @@ __metadata:
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 46331c7d6016bf85b3e8f20c159d62f5ae471aba1eb3dc52fff35a0259d58dcc7d592d4cc4f00c5f9243fa738a11cfa48bd20203040d4a9e6bc25e807fab7ab3
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.16.0":
+  version: 7.16.0
+  resolution: "undici-types@npm:7.16.0"
+  checksum: 1ef68fc6c5bad200c8b6f17de8e5bc5cfdcadc164ba8d7208cd087cfa8583d922d8316a7fd76c9a658c22b4123d3ff847429185094484fbc65377d695c905857
   languageName: node
   linkType: hard
 
