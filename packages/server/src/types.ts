@@ -1840,7 +1840,7 @@ export type ResolverTypeWrapper<T> = Promise<T> | T;
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+export type Resolver<TResult, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -1877,21 +1877,21 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+export type SubscriptionResolver<TResult, TKey extends string, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+export type TypeResolveFn<TTypes, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = (
   next: NextResolverFn<TResult>,
   parent: TParent,
   args: TArgs,
@@ -1900,18 +1900,164 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 
+
+
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = {
-  AbstractEntity: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> );
-  AbstractEntityRevision: ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> );
-  AbstractEntityRevisionConnection: ( ModelOf<Omit<AppletRevisionConnection, 'nodes'> & { nodes: Array<_RefType['AppletRevision']> }> ) | ( ModelOf<Omit<ArticleRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ArticleRevision']> }> ) | ( ModelOf<Omit<CoursePageRevisionConnection, 'nodes'> & { nodes: Array<_RefType['CoursePageRevision']> }> ) | ( ModelOf<Omit<CourseRevisionConnection, 'nodes'> & { nodes: Array<_RefType['CourseRevision']> }> ) | ( ModelOf<Omit<EventRevisionConnection, 'nodes'> & { nodes: Array<_RefType['EventRevision']> }> ) | ( ModelOf<Omit<ExerciseGroupRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ExerciseGroupRevision']> }> ) | ( ModelOf<Omit<ExerciseRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ExerciseRevision']> }> ) | ( ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<_RefType['PageRevision']> }> ) | ( ModelOf<Omit<VideoRevisionConnection, 'nodes'> & { nodes: Array<_RefType['VideoRevision']> }> );
-  AbstractNotificationEvent: ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateCommentNotificationEvent, 'actor' | 'comment' | 'thread'> & { actor: _RefType['User'], comment: _RefType['Comment'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: _RefType['User'], entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: _RefType['User'], entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'actor' | 'repository'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<Omit<SetTaxonomyParentNotificationEvent, 'actor' | 'child' | 'parent' | 'previousParent'> & { actor: _RefType['User'], child: _RefType['TaxonomyTerm'], parent?: Maybe<_RefType['TaxonomyTerm']>, previousParent?: Maybe<_RefType['TaxonomyTerm']> }> ) | ( ModelOf<Omit<SetTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<SetThreadStateNotificationEvent, 'actor' | 'thread'> & { actor: _RefType['User'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'actor' | 'object'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'] }> );
-  AbstractRepository: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> );
-  AbstractRevision: ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> );
-  AbstractTaxonomyTermChild: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> );
-  AbstractUuid: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Comment, 'author' | 'events' | 'legacyObject'> & { author: _RefType['User'], events: _RefType['AbstractNotificationEventConnection'], legacyObject: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<User, 'activityByType' | 'threads' | 'unrevisedEntities'> & { activityByType: _RefType['UserActivityByType'], threads: _RefType['ThreadConnection'], unrevisedEntities: _RefType['AbstractEntityConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> );
-  InstanceAware: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CreateCommentNotificationEvent, 'actor' | 'comment' | 'thread'> & { actor: _RefType['User'], comment: _RefType['Comment'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: _RefType['User'], entity: _RefType['AbstractEntity'] }> ) | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: _RefType['User'], entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> ) | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<SetLicenseNotificationEvent, 'actor' | 'repository'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'] }> ) | ( ModelOf<Omit<SetTaxonomyParentNotificationEvent, 'actor' | 'child' | 'parent' | 'previousParent'> & { actor: _RefType['User'], child: _RefType['TaxonomyTerm'], parent?: Maybe<_RefType['TaxonomyTerm']>, previousParent?: Maybe<_RefType['TaxonomyTerm']> }> ) | ( ModelOf<Omit<SetTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> ) | ( ModelOf<Omit<SetThreadStateNotificationEvent, 'actor' | 'thread'> & { actor: _RefType['User'], thread: _RefType['Thread'] }> ) | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'actor' | 'object'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'] }> ) | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> );
-  ThreadAware: ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<User, 'activityByType' | 'threads' | 'unrevisedEntities'> & { activityByType: _RefType['UserActivityByType'], threads: _RefType['ThreadConnection'], unrevisedEntities: _RefType['AbstractEntityConnection'] }> ) | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> ) | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> );
+  AbstractEntity:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  AbstractEntityRevision:
+    | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  AbstractEntityRevisionConnection:
+    | ( ModelOf<Omit<AppletRevisionConnection, 'nodes'> & { nodes: Array<_RefType['AppletRevision']> }> )
+    | ( ModelOf<Omit<ArticleRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ArticleRevision']> }> )
+    | ( ModelOf<Omit<CoursePageRevisionConnection, 'nodes'> & { nodes: Array<_RefType['CoursePageRevision']> }> )
+    | ( ModelOf<Omit<CourseRevisionConnection, 'nodes'> & { nodes: Array<_RefType['CourseRevision']> }> )
+    | ( ModelOf<Omit<EventRevisionConnection, 'nodes'> & { nodes: Array<_RefType['EventRevision']> }> )
+    | ( ModelOf<Omit<ExerciseGroupRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ExerciseGroupRevision']> }> )
+    | ( ModelOf<Omit<ExerciseRevisionConnection, 'nodes'> & { nodes: Array<_RefType['ExerciseRevision']> }> )
+    | ( ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<_RefType['PageRevision']> }> )
+    | ( ModelOf<Omit<VideoRevisionConnection, 'nodes'> & { nodes: Array<_RefType['VideoRevision']> }> )
+  ;
+  AbstractNotificationEvent:
+    | ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<CreateCommentNotificationEvent, 'actor' | 'comment' | 'thread'> & { actor: _RefType['User'], comment: _RefType['Comment'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> )
+    | ( ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: _RefType['User'], entity: _RefType['AbstractEntity'] }> )
+    | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: _RefType['User'], entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<SetLicenseNotificationEvent, 'actor' | 'repository'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'] }> )
+    | ( ModelOf<Omit<SetTaxonomyParentNotificationEvent, 'actor' | 'child' | 'parent' | 'previousParent'> & { actor: _RefType['User'], child: _RefType['TaxonomyTerm'], parent?: Maybe<_RefType['TaxonomyTerm']>, previousParent?: Maybe<_RefType['TaxonomyTerm']> }> )
+    | ( ModelOf<Omit<SetTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<SetThreadStateNotificationEvent, 'actor' | 'thread'> & { actor: _RefType['User'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'actor' | 'object'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'] }> )
+  ;
+  AbstractRepository:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  AbstractRevision:
+    | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  AbstractTaxonomyTermChild:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  AbstractUuid:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Comment, 'author' | 'events' | 'legacyObject'> & { author: _RefType['User'], events: _RefType['AbstractNotificationEventConnection'], legacyObject: _RefType['AbstractUuid'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<User, 'activityByType' | 'threads' | 'unrevisedEntities'> & { activityByType: _RefType['UserActivityByType'], threads: _RefType['ThreadConnection'], unrevisedEntities: _RefType['AbstractEntityConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  InstanceAware:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CheckoutRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CreateCommentNotificationEvent, 'actor' | 'comment' | 'thread'> & { actor: _RefType['User'], comment: _RefType['Comment'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<CreateEntityLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractEntity'], parent: _RefType['AbstractEntity'] }> )
+    | ( ModelOf<Omit<CreateEntityNotificationEvent, 'actor' | 'entity'> & { actor: _RefType['User'], entity: _RefType['AbstractEntity'] }> )
+    | ( ModelOf<Omit<CreateEntityRevisionNotificationEvent, 'actor' | 'entity' | 'entityRevision'> & { actor: _RefType['User'], entity: _RefType['AbstractRepository'], entityRevision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<CreateTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<CreateTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<CreateThreadNotificationEvent, 'actor' | 'object' | 'thread'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'], revision: _RefType['AbstractRevision'] }> )
+    | ( ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: _RefType['User'], child: _RefType['AbstractUuid'], parent: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<SetLicenseNotificationEvent, 'actor' | 'repository'> & { actor: _RefType['User'], repository: _RefType['AbstractRepository'] }> )
+    | ( ModelOf<Omit<SetTaxonomyParentNotificationEvent, 'actor' | 'child' | 'parent' | 'previousParent'> & { actor: _RefType['User'], child: _RefType['TaxonomyTerm'], parent?: Maybe<_RefType['TaxonomyTerm']>, previousParent?: Maybe<_RefType['TaxonomyTerm']> }> )
+    | ( ModelOf<Omit<SetTaxonomyTermNotificationEvent, 'actor' | 'taxonomyTerm'> & { actor: _RefType['User'], taxonomyTerm: _RefType['TaxonomyTerm'] }> )
+    | ( ModelOf<Omit<SetThreadStateNotificationEvent, 'actor' | 'thread'> & { actor: _RefType['User'], thread: _RefType['Thread'] }> )
+    | ( ModelOf<Omit<SetUuidStateNotificationEvent, 'actor' | 'object'> & { actor: _RefType['User'], object: _RefType['AbstractUuid'] }> )
+    | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+  ;
+  ThreadAware:
+    | ( ModelOf<Omit<Applet, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['AppletRevision']>, revisions: _RefType['AppletRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<AppletRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Applet'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Article, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ArticleRevision']>, revisions: _RefType['ArticleRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ArticleRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Article'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Course, 'currentRevision' | 'pages' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['CourseRevision']>, pages: Array<_RefType['CoursePage']>, revisions: _RefType['CourseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePage, 'course' | 'currentRevision' | 'revisions' | 'threads'> & { course: _RefType['Course'], currentRevision?: Maybe<_RefType['CoursePageRevision']>, revisions: _RefType['CoursePageRevisionConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CoursePageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['CoursePage'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<CourseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Course'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Event, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['EventRevision']>, revisions: _RefType['EventRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<EventRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Event'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Exercise, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseRevision']>, revisions: _RefType['ExerciseRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroup, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['ExerciseGroupRevision']>, revisions: _RefType['ExerciseGroupRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseGroupRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['ExerciseGroup'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<ExerciseRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Exercise'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<Page, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['PageRevision']>, revisions: _RefType['PageRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Page'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<TaxonomyTerm, 'children' | 'parent' | 'path' | 'threads'> & { children: _RefType['AbstractUuidConnection'], parent?: Maybe<_RefType['TaxonomyTerm']>, path: Array<Maybe<_RefType['TaxonomyTerm']>>, threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<User, 'activityByType' | 'threads' | 'unrevisedEntities'> & { activityByType: _RefType['UserActivityByType'], threads: _RefType['ThreadConnection'], unrevisedEntities: _RefType['AbstractEntityConnection'] }> )
+    | ( ModelOf<Omit<Video, 'currentRevision' | 'revisions' | 'taxonomyTerms' | 'threads'> & { currentRevision?: Maybe<_RefType['VideoRevision']>, revisions: _RefType['VideoRevisionConnection'], taxonomyTerms: _RefType['TaxonomyTermConnection'], threads: _RefType['ThreadConnection'] }> )
+    | ( ModelOf<Omit<VideoRevision, 'author' | 'repository' | 'threads'> & { author: _RefType['User'], repository: _RefType['Video'], threads: _RefType['ThreadConnection'] }> )
+  ;
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -1984,7 +2130,7 @@ export type ResolversTypes = {
   MediaType: ResolverTypeWrapper<ModelOf<MediaType>>;
   MediaUpload: ResolverTypeWrapper<ModelOf<MediaUpload>>;
   MetadataQuery: ResolverTypeWrapper<ModelOf<MetadataQuery>>;
-  Mutation: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Notification: ResolverTypeWrapper<ModelOf<Omit<Notification, 'event'> & { event?: Maybe<ResolversTypes['AbstractNotificationEvent']> }>>;
   NotificationConnection: ResolverTypeWrapper<ModelOf<Omit<NotificationConnection, 'nodes'> & { nodes: Array<ResolversTypes['Notification']> }>>;
   NotificationMutation: ResolverTypeWrapper<ModelOf<Omit<NotificationMutation, 'setState'> & { setState?: Maybe<ResolversTypes['DefaultResponse']> }>>;
@@ -1997,7 +2143,7 @@ export type ResolversTypes = {
   PageQuery: ResolverTypeWrapper<ModelOf<Omit<PageQuery, 'pages'> & { pages: Array<ResolversTypes['Page']> }>>;
   PageRevision: ResolverTypeWrapper<ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: ResolversTypes['User'], repository: ResolversTypes['Page'], threads: ResolversTypes['ThreadConnection'] }>>;
   PageRevisionConnection: ResolverTypeWrapper<ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<ResolversTypes['PageRevision']> }>>;
-  Query: ResolverTypeWrapper<{}>;
+  Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   RejectRevisionInput: ResolverTypeWrapper<ModelOf<RejectRevisionInput>>;
   RejectRevisionNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: ResolversTypes['User'], repository: ResolversTypes['AbstractRepository'], revision: ResolversTypes['AbstractRevision'] }>>;
   RemoveTaxonomyLinkNotificationEvent: ResolverTypeWrapper<ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversTypes['User'], child: ResolversTypes['AbstractUuid'], parent: ResolversTypes['TaxonomyTerm'] }>>;
@@ -2128,7 +2274,7 @@ export type ResolversParentTypes = {
   MediaQuery: ModelOf<MediaQuery>;
   MediaUpload: ModelOf<MediaUpload>;
   MetadataQuery: ModelOf<MetadataQuery>;
-  Mutation: {};
+  Mutation: Record<PropertyKey, never>;
   Notification: ModelOf<Omit<Notification, 'event'> & { event?: Maybe<ResolversParentTypes['AbstractNotificationEvent']> }>;
   NotificationConnection: ModelOf<Omit<NotificationConnection, 'nodes'> & { nodes: Array<ResolversParentTypes['Notification']> }>;
   NotificationMutation: ModelOf<Omit<NotificationMutation, 'setState'> & { setState?: Maybe<ResolversParentTypes['DefaultResponse']> }>;
@@ -2141,7 +2287,7 @@ export type ResolversParentTypes = {
   PageQuery: ModelOf<Omit<PageQuery, 'pages'> & { pages: Array<ResolversParentTypes['Page']> }>;
   PageRevision: ModelOf<Omit<PageRevision, 'author' | 'repository' | 'threads'> & { author: ResolversParentTypes['User'], repository: ResolversParentTypes['Page'], threads: ResolversParentTypes['ThreadConnection'] }>;
   PageRevisionConnection: ModelOf<Omit<PageRevisionConnection, 'nodes'> & { nodes: Array<ResolversParentTypes['PageRevision']> }>;
-  Query: {};
+  Query: Record<PropertyKey, never>;
   RejectRevisionInput: ModelOf<RejectRevisionInput>;
   RejectRevisionNotificationEvent: ModelOf<Omit<RejectRevisionNotificationEvent, 'actor' | 'repository' | 'revision'> & { actor: ResolversParentTypes['User'], repository: ResolversParentTypes['AbstractRepository'], revision: ResolversParentTypes['AbstractRevision'] }>;
   RemoveTaxonomyLinkNotificationEvent: ModelOf<Omit<RemoveTaxonomyLinkNotificationEvent, 'actor' | 'child' | 'parent'> & { actor: ResolversParentTypes['User'], child: ResolversParentTypes['AbstractUuid'], parent: ResolversParentTypes['TaxonomyTerm'] }>;
@@ -2203,115 +2349,55 @@ export type ResolversParentTypes = {
 
 export type AbstractEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntity'] = ResolversParentTypes['AbstractEntity']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  currentRevision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  revisions?: Resolver<ResolversTypes['AbstractEntityRevisionConnection'], ParentType, ContextType, Partial<AbstractEntityRevisionsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityConnection'] = ResolversParentTypes['AbstractEntityConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AbstractEntityRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevision'] = ResolversParentTypes['AbstractEntityRevision']> = {
   __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'PageRevision' | 'VideoRevision', ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  changes?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  metaDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  metaTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  repository?: Resolver<ResolversTypes['AbstractEntity'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type AbstractEntityRevisionConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractEntityRevisionConnection'] = ResolversParentTypes['AbstractEntityRevisionConnection']> = {
   __resolveType: TypeResolveFn<'AppletRevisionConnection' | 'ArticleRevisionConnection' | 'CoursePageRevisionConnection' | 'CourseRevisionConnection' | 'EventRevisionConnection' | 'ExerciseGroupRevisionConnection' | 'ExerciseRevisionConnection' | 'PageRevisionConnection' | 'VideoRevisionConnection', ParentType, ContextType>;
-  nodes?: Resolver<Array<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AbstractNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEvent'] = ResolversParentTypes['AbstractNotificationEvent']> = {
   __resolveType: TypeResolveFn<'CheckoutRevisionNotificationEvent' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'RejectRevisionNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent', ParentType, ContextType>;
-  actor?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  objectId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type AbstractNotificationEventConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractNotificationEventConnection'] = ResolversParentTypes['AbstractNotificationEventConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AbstractRepositoryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRepository'] = ResolversParentTypes['AbstractRepository']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'CoursePage' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AbstractRepositoryThreadsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractRevision'] = ResolversParentTypes['AbstractRevision']> = {
   __resolveType: TypeResolveFn<'AppletRevision' | 'ArticleRevision' | 'CoursePageRevision' | 'CourseRevision' | 'EventRevision' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'PageRevision' | 'VideoRevision', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<AbstractRevisionThreadsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractTaxonomyTermChildResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractTaxonomyTermChild'] = ResolversParentTypes['AbstractTaxonomyTermChild']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'Course' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'Video', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
-  licenseId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  taxonomyTerms?: Resolver<ResolversTypes['TaxonomyTermConnection'], ParentType, ContextType, Partial<AbstractTaxonomyTermChildTaxonomyTermsArgs>>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractUuidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuid'] = ResolversParentTypes['AbstractUuid']> = {
   __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Comment' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
-  alias?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
 
 export type AbstractUuidConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AbstractUuidConnection'] = ResolversParentTypes['AbstractUuidConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['AbstractUuid']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AiQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AiQuery'] = ResolversParentTypes['AiQuery']> = {
   executePrompt?: Resolver<ResolversTypes['ExecutePromptResponse'], ParentType, ContextType, RequireFields<AiQueryExecutePromptArgs, 'messages'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AppletResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Applet'] = ResolversParentTypes['Applet']> = {
@@ -2422,7 +2508,6 @@ export type CommentConnectionResolvers<ContextType = Context, ParentType extends
   nodes?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CourseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = {
@@ -2586,20 +2671,17 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type DefaultResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DefaultResponse'] = ResolversParentTypes['DefaultResponse']> = {
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type DeletedEntityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntity'] = ResolversParentTypes['DeletedEntity']> = {
   dateOfDeletion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   entity?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type DeletedEntityConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletedEntityConnection'] = ResolversParentTypes['DeletedEntityConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['DeletedEntity']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityMutation'] = ResolversParentTypes['EntityMutation']> = {
@@ -2607,12 +2689,10 @@ export type EntityMutationResolvers<ContextType = Context, ParentType extends Re
   rejectRevision?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationRejectRevisionArgs, 'input'>>;
   setAbstractEntity?: Resolver<ResolversTypes['SetEntityResponse'], ParentType, ContextType, RequireFields<EntityMutationSetAbstractEntityArgs, 'input'>>;
   updateLicense?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<EntityMutationUpdateLicenseArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EntityQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EntityQuery'] = ResolversParentTypes['EntityQuery']> = {
   deletedEntities?: Resolver<ResolversTypes['DeletedEntityConnection'], ParentType, ContextType, Partial<EntityQueryDeletedEntitiesArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
@@ -2657,7 +2737,6 @@ export type EventRevisionConnectionResolvers<ContextType = Context, ParentType e
 export type ExecutePromptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExecutePromptResponse'] = ResolversParentTypes['ExecutePromptResponse']> = {
   record?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ExerciseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Exercise'] = ResolversParentTypes['Exercise']> = {
@@ -2740,12 +2819,10 @@ export type ExerciseRevisionConnectionResolvers<ContextType = Context, ParentTyp
 
 export type ExperimentMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ExperimentMutation'] = ResolversParentTypes['ExperimentMutation']> = {
   createExerciseSubmission?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ExperimentMutationCreateExerciseSubmissionArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type InstanceAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['InstanceAware'] = ResolversParentTypes['InstanceAware']> = {
   __resolveType: TypeResolveFn<'Applet' | 'Article' | 'CheckoutRevisionNotificationEvent' | 'Course' | 'CoursePage' | 'CreateCommentNotificationEvent' | 'CreateEntityLinkNotificationEvent' | 'CreateEntityNotificationEvent' | 'CreateEntityRevisionNotificationEvent' | 'CreateTaxonomyLinkNotificationEvent' | 'CreateTaxonomyTermNotificationEvent' | 'CreateThreadNotificationEvent' | 'Event' | 'Exercise' | 'ExerciseGroup' | 'Page' | 'RejectRevisionNotificationEvent' | 'RemoveTaxonomyLinkNotificationEvent' | 'SetLicenseNotificationEvent' | 'SetTaxonomyParentNotificationEvent' | 'SetTaxonomyTermNotificationEvent' | 'SetThreadStateNotificationEvent' | 'SetUuidStateNotificationEvent' | 'TaxonomyTerm' | 'Video', ParentType, ContextType>;
-  instance?: Resolver<ResolversTypes['Instance'], ParentType, ContextType>;
 };
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -2758,20 +2835,17 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type MediaQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaQuery'] = ResolversParentTypes['MediaQuery']> = {
   newUpload?: Resolver<ResolversTypes['MediaUpload'], ParentType, ContextType, RequireFields<MediaQueryNewUploadArgs, 'mediaType'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MediaUploadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MediaUpload'] = ResolversParentTypes['MediaUpload']> = {
   uploadUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   urlAfterUpload?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MetadataQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['MetadataQuery'] = ResolversParentTypes['MetadataQuery']> = {
   publisher?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   resources?: Resolver<ResolversTypes['ResourceMetadataConnection'], ParentType, ContextType, Partial<MetadataQueryResourcesArgs>>;
   version?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -2793,32 +2867,27 @@ export type NotificationResolvers<ContextType = Context, ParentType extends Reso
   event?: Resolver<Maybe<ResolversTypes['AbstractNotificationEvent']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   unread?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type NotificationConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationConnection'] = ResolversParentTypes['NotificationConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['Notification']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type NotificationMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotificationMutation'] = ResolversParentTypes['NotificationMutation']> = {
   setState?: Resolver<Maybe<ResolversTypes['DefaultResponse']>, ParentType, ContextType, RequireFields<NotificationMutationSetStateArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type OauthAcceptResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OauthAcceptResponse'] = ResolversParentTypes['OauthAcceptResponse']> = {
   redirectUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type OauthMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OauthMutation'] = ResolversParentTypes['OauthMutation']> = {
   acceptConsent?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptConsentArgs, 'input'>>;
   acceptLogin?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLoginArgs, 'input'>>;
   acceptLogout?: Resolver<ResolversTypes['OauthAcceptResponse'], ParentType, ContextType, RequireFields<OauthMutationAcceptLogoutArgs, 'challenge'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
@@ -2839,12 +2908,10 @@ export type PageResolvers<ContextType = Context, ParentType extends ResolversPar
 export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageQuery'] = ResolversParentTypes['PageQuery']> = {
   pages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, Partial<PageQueryPagesArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageRevisionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageRevision'] = ResolversParentTypes['PageRevision']> = {
@@ -2914,20 +2981,17 @@ export type RemoveTaxonomyLinkNotificationEventResolvers<ContextType = Context, 
 export type ResourceMetadataConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ResourceMetadataConnection'] = ResolversParentTypes['ResourceMetadataConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['JSONObject']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ScopedRoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRole'] = ResolversParentTypes['ScopedRole']> = {
   role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   scope?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ScopedRoleConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ScopedRoleConnection'] = ResolversParentTypes['ScopedRoleConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['ScopedRole']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SetEntityResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetEntityResponse'] = ResolversParentTypes['SetEntityResponse']> = {
@@ -2936,7 +3000,6 @@ export type SetEntityResponseResolvers<ContextType = Context, ParentType extends
   record?: Resolver<Maybe<ResolversTypes['AbstractEntity']>, ParentType, ContextType>;
   revision?: Resolver<Maybe<ResolversTypes['AbstractEntityRevision']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SetLicenseNotificationEventResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SetLicenseNotificationEvent'] = ResolversParentTypes['SetLicenseNotificationEvent']> = {
@@ -2997,36 +3060,30 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   taxonomyTerm?: Resolver<ResolversTypes['TaxonomyTerm'], ParentType, ContextType>;
   unrevisedEntities?: Resolver<ResolversTypes['AbstractEntityConnection'], ParentType, ContextType, Partial<SubjectUnrevisedEntitiesArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubjectQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectQuery'] = ResolversParentTypes['SubjectQuery']> = {
   subjects?: Resolver<Array<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<SubjectQuerySubjectsArgs, 'instance'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubscriptionInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionInfo'] = ResolversParentTypes['SubscriptionInfo']> = {
   object?: Resolver<ResolversTypes['AbstractUuid'], ParentType, ContextType>;
   sendEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubscriptionInfoConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionInfoConnection'] = ResolversParentTypes['SubscriptionInfoConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['SubscriptionInfo']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubscriptionMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionMutation'] = ResolversParentTypes['SubscriptionMutation']> = {
   set?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<SubscriptionMutationSetArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubscriptionQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubscriptionQuery'] = ResolversParentTypes['SubscriptionQuery']> = {
   currentUserHasSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<SubscriptionQueryCurrentUserHasSubscribedArgs, 'id'>>;
   getSubscriptions?: Resolver<ResolversTypes['SubscriptionInfoConnection'], ParentType, ContextType, Partial<SubscriptionQueryGetSubscriptionsArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TaxonomyTermResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTerm'] = ResolversParentTypes['TaxonomyTerm']> = {
@@ -3050,14 +3107,12 @@ export type TaxonomyTermConnectionResolvers<ContextType = Context, ParentType ex
   nodes?: Resolver<Array<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TaxonomyTermCreateResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermCreateResponse'] = ResolversParentTypes['TaxonomyTermCreateResponse']> = {
   query?: Resolver<ResolversTypes['Query'], ParentType, ContextType>;
   record?: Resolver<Maybe<ResolversTypes['TaxonomyTerm']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TaxonomyTermMutation'] = ResolversParentTypes['TaxonomyTermMutation']> = {
@@ -3066,7 +3121,6 @@ export type TaxonomyTermMutationResolvers<ContextType = Context, ParentType exte
   deleteEntityLinks?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationDeleteEntityLinksArgs, 'input'>>;
   setNameAndDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSetNameAndDescriptionArgs, 'input'>>;
   sort?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<TaxonomyTermMutationSortArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Thread'] = ResolversParentTypes['Thread']> = {
@@ -3078,19 +3132,16 @@ export type ThreadResolvers<ContextType = Context, ParentType extends ResolversP
   status?: Resolver<ResolversTypes['CommentStatus'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   trashed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadAwareResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadAware'] = ResolversParentTypes['ThreadAware']> = {
   __resolveType: TypeResolveFn<'Applet' | 'AppletRevision' | 'Article' | 'ArticleRevision' | 'Course' | 'CoursePage' | 'CoursePageRevision' | 'CourseRevision' | 'Event' | 'EventRevision' | 'Exercise' | 'ExerciseGroup' | 'ExerciseGroupRevision' | 'ExerciseRevision' | 'Page' | 'PageRevision' | 'TaxonomyTerm' | 'User' | 'Video' | 'VideoRevision', ParentType, ContextType>;
-  threads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ThreadAwareThreadsArgs>>;
 };
 
 export type ThreadConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadConnection'] = ResolversParentTypes['ThreadConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['Thread']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadMutation'] = ResolversParentTypes['ThreadMutation']> = {
@@ -3101,12 +3152,10 @@ export type ThreadMutationResolvers<ContextType = Context, ParentType extends Re
   setThreadArchived?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadArchivedArgs, 'input'>>;
   setThreadState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStateArgs, 'input'>>;
   setThreadStatus?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<ThreadMutationSetThreadStatusArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ThreadQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ThreadQuery'] = ResolversParentTypes['ThreadQuery']> = {
   allThreads?: Resolver<ResolversTypes['ThreadConnection'], ParentType, ContextType, Partial<ThreadQueryAllThreadsArgs>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -3138,21 +3187,18 @@ export type UserActivityByTypeResolvers<ContextType = Context, ParentType extend
   edits?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   reviews?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   taxonomy?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserConnection'] = ResolversParentTypes['UserConnection']> = {
   nodes?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserDeleteRegularUsersResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserDeleteRegularUsersResponse'] = ResolversParentTypes['UserDeleteRegularUsersResponse']> = {
   reason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserMutation'] = ResolversParentTypes['UserMutation']> = {
@@ -3161,19 +3207,16 @@ export type UserMutationResolvers<ContextType = Context, ParentType extends Reso
   deleteRegularUser?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationDeleteRegularUserArgs, 'input'>>;
   removeRole?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationRemoveRoleArgs, 'input'>>;
   setDescription?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UserMutationSetDescriptionArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserQueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserQuery'] = ResolversParentTypes['UserQuery']> = {
   potentialSpamUsers?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, Partial<UserQueryPotentialSpamUsersArgs>>;
   userByUsername?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<UserQueryUserByUsernameArgs, 'username'>>;
   usersByRole?: Resolver<ResolversTypes['UserConnection'], ParentType, ContextType, RequireFields<UserQueryUsersByRoleArgs, 'role'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UuidMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UuidMutation'] = ResolversParentTypes['UuidMutation']> = {
   setState?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<UuidMutationSetStateArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type VideoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Video'] = ResolversParentTypes['Video']> = {
@@ -3217,7 +3260,6 @@ export type VideoRevisionConnectionResolvers<ContextType = Context, ParentType e
 
 export type _CacheMutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['_cacheMutation'] = ResolversParentTypes['_cacheMutation']> = {
   remove?: Resolver<ResolversTypes['DefaultResponse'], ParentType, ContextType, RequireFields<_CacheMutationRemoveArgs, 'input'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
