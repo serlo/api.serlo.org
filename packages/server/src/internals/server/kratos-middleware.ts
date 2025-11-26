@@ -273,7 +273,7 @@ function updateLastLoginHandler(kratos: Kratos): RequestHandler {
             lastLogin: new Date(),
           },
           metadata_admin: kratosUser.metadata_admin,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           traits: kratosUser.traits,
           state: IdentityStateEnum.Active,
         },

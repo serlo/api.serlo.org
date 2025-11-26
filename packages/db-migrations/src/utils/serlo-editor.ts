@@ -109,7 +109,6 @@ function transformRecursively(
       const newValue = value.flatMap((element) => {
         const transformation = transform(element)
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return transformation !== undefined ? transformation : [element]
       })
 
@@ -142,7 +141,6 @@ function transformLists(
       const newValue = value.flatMap((element) => {
         const transformation = transform(element)
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return transformation !== undefined ? transformation : [element]
       })
 

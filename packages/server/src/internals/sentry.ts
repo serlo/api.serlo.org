@@ -46,10 +46,8 @@ const ignoredErrorCodes = [
 
 export function createSentryPlugin(): ApolloServerPlugin {
   return {
-    // eslint-disable-next-line @typescript-eslint/require-await
     async requestDidStart() {
       return {
-        // eslint-disable-next-line @typescript-eslint/require-await
         async didEncounterErrors(
           ctx: GraphQLRequestContextDidEncounterErrors<
             Pick<Context, 'service' | 'userId'>
