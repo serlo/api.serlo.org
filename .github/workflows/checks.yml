@@ -9,28 +9,28 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
       - run: yarn lint:eslint
 
   prettier:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
       - run: yarn lint:prettier
 
   tsc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
       - run: yarn lint:tsc
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-mysql
       - uses: ./.github/actions/setup-node
       - run: yarn start:containers
@@ -46,7 +46,7 @@ jobs:
   codegen:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
       - run: yarn codegen
       - name: Check for uncommitted changes
