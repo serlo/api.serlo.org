@@ -100,7 +100,7 @@
     "@typescript-eslint/parser": "^8.41.0",
     "default-import": "^2.0.8",
     "depcheck": "^1.4.7",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.27.0",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
