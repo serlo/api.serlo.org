@@ -8,6 +8,7 @@ generates:
       - typescript
       - typescript-resolvers
     config:
+      addInterfaceFieldResolverTypes: true
       contextType: '~/context#Context'
       defaultMapper: ModelOf<{T}>
       scalars:
