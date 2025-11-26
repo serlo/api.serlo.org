@@ -123,7 +123,6 @@ async function changeUuidContents({
       let oldState
 
       try {
-         
         oldState = JSON.parse(uuid.content)
       } catch {
         // Ignore (some articles have raw text)

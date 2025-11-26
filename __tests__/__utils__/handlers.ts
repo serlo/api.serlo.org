@@ -39,7 +39,6 @@ function createCommunityChatHandler({
     return HttpResponse.json(body)
   })
 
-   
   handler.predicate = async ({ request }) => {
     return R.toPairs(parameters).every(([name, value]) => {
       const url = new URL(request.url)

@@ -273,7 +273,7 @@ function updateLastLoginHandler(kratos: Kratos): RequestHandler {
             lastLogin: new Date(),
           },
           metadata_admin: kratosUser.metadata_admin,
-           
+
           traits: kratosUser.traits,
           state: IdentityStateEnum.Active,
         },

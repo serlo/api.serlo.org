@@ -46,10 +46,8 @@ const ignoredErrorCodes = [
 
 export function createSentryPlugin(): ApolloServerPlugin {
   return {
-     
     async requestDidStart() {
       return {
-         
         async didEncounterErrors(
           ctx: GraphQLRequestContextDidEncounterErrors<
             Pick<Context, 'service' | 'userId'>

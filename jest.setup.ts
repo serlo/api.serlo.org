@@ -96,7 +96,7 @@ class MockTimer implements Timer {
   }
 
   // We make this synchronous function asynchronous just to make clear that this would be asynchronous in production.
-   
+
   public async waitFor(time: Time) {
     this.currentTime += timeToMilliseconds(time)
   }
