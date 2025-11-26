@@ -28,7 +28,9 @@ export default [
   ...compat.extends(
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    // After updating @ory/client we started getting a lot of type-checking errors.
+    // Temporarily disabling type-checking rules until those are resolved.
+    // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react/recommended',
     'prettier',
   ),

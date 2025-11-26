@@ -71,7 +71,7 @@ async function initializeServer({
   })
   const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+   
   app.get(healthPath, async (_req, res) => {
     try {
       const response = await fetch('http://localhost:3001/graphql', {
