@@ -2205,15 +2205,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/compat@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@eslint/compat@npm:1.3.2"
+"@eslint/compat@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@eslint/compat@npm:1.4.1"
+  dependencies:
+    "@eslint/core": ^0.17.0
   peerDependencies:
     eslint: ^8.40 || 9
   peerDependenciesMeta:
     eslint:
       optional: true
-  checksum: 64ef212d38c039b92d1210bbcc640bbc1d21335ff343ca3c6dcbd63d7e7fa734395ab476b7787dbc3466ff40c264db5b11322ac371b4a409f5850e053829010b
+  checksum: 2389344cf1fe6b34f14977cb449ab24214e3342cdf99fc045896bb1063343e6009765ee3ca0bf7b893e94b476bb569ddf4d5e79a957054a246d610355acbbb75
   languageName: node
   linkType: hard
 
@@ -2263,7 +2265,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.39.1, @eslint/js@npm:^9.34.0":
+"@eslint/js@npm:9.39.1, @eslint/js@npm:^9.39.1":
   version: 9.39.1
   resolution: "@eslint/js@npm:9.39.1"
   checksum: b651930aec03a5aef97bc144627aebb05070afec5364cd3c5fd7c5dbb97f4fd82faf1b200b3be17572d5ebb7f8805211b655f463be96f2b02202ec7250868048
@@ -5299,19 +5301,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/api.serlo.org-workspace@workspace:."
   dependencies:
-    "@eslint/compat": ^1.3.2
+    "@eslint/compat": ^1.4.1
     "@eslint/eslintrc": ^3.3.1
-    "@eslint/js": ^9.34.0
+    "@eslint/js": ^9.39.1
     "@luckycatfactory/esbuild-graphql-loader": ^3.8.1
     "@tsconfig/node24": ^24.0.3
     "@types/jest": ^29.5.14
     "@types/node": ^24.10.1
-    "@typescript-eslint/eslint-plugin": ^8.41.0
-    "@typescript-eslint/parser": ^8.41.0
+    "@typescript-eslint/eslint-plugin": ^8.48.0
+    "@typescript-eslint/parser": ^8.48.0
     default-import: ^2.0.8
     depcheck: ^1.4.7
     esbuild: ^0.27.0
-    eslint: ^9.34.0
+    eslint: ^9.39.1
     eslint-config-prettier: ^10.1.8
     eslint-plugin-import: ^2.32.0
     eslint-plugin-react: ^7.37.5
@@ -5323,7 +5325,7 @@ __metadata:
     lerna: ^8.2.4
     msw: ^2.11.1
     npm-run-all: ^4.1.5
-    prettier: ^3.6.2
+    prettier: ^3.7.1
     prettier-plugin-packagejson: ^2.5.19
     prettier-plugin-sh: ^0.18.0
     ts-node: ^10.9.2
@@ -5416,7 +5418,7 @@ __metadata:
     jest: ^29.7.0
     npm-run-all: ^4.1.5
     openai: ^6.9.1
-    prettier: ^3.6.2
+    prettier: ^3.7.1
     ramda: ^0.32.0
     semver: ^7.7.2
     ts-jest: ^29.4.1
@@ -6176,7 +6178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^8.41.0":
+"@typescript-eslint/eslint-plugin@npm:^8.48.0":
   version: 8.48.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.48.0"
   dependencies:
@@ -6228,7 +6230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^8.41.0":
+"@typescript-eslint/parser@npm:^8.48.0":
   version: 8.48.0
   resolution: "@typescript-eslint/parser@npm:8.48.0"
   dependencies:
@@ -10320,7 +10322,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.34.0":
+"eslint@npm:^9.39.1":
   version: 9.39.1
   resolution: "eslint@npm:9.39.1"
   dependencies:
@@ -17395,12 +17397,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.6.2":
-  version: 3.6.2
-  resolution: "prettier@npm:3.6.2"
+"prettier@npm:^3.7.1":
+  version: 3.7.1
+  resolution: "prettier@npm:3.7.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 0206f5f437892e8858f298af8850bf9d0ef1c22e21107a213ba56bfb9c2387a2020bfda244a20161d8e3dad40c6b04101609a55d370dece53d0a31893b64f861
+  checksum: e3d92142c9dcf7a565b2788ae59e4bf0be839ad57e540eaa417261a4ae33aeffe19d182697029ed7d4179e8c76d978a7da7b5397c58d01309ac4c347bba0028b
   languageName: node
   linkType: hard
 
