@@ -3972,20 +3972,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@js-soft/logging-abstractions@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@js-soft/logging-abstractions@npm:1.0.1"
-  checksum: 1551fb50a2d491fdd21d81388e7bd29e017b11facbf612dfe1caa9b54f4717bc13ff1b4621703814911c50b3e2bd912a4d39ab03a83fc3341922e8b97321c92b
+"@js-soft/logging-abstractions@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@js-soft/logging-abstractions@npm:1.0.2"
+  checksum: 0dbe12308518bc3412ed92b8b83a7bba9022760060a5281992bca9846fd0775e7bdcade737dd9b5fdab43738f16134792c0012aca3c1620df8e8a006c7fe42eb
   languageName: node
   linkType: hard
 
-"@js-soft/ts-serval@npm:2.0.13":
-  version: 2.0.13
-  resolution: "@js-soft/ts-serval@npm:2.0.13"
+"@js-soft/ts-serval@npm:2.0.14":
+  version: 2.0.14
+  resolution: "@js-soft/ts-serval@npm:2.0.14"
   dependencies:
     lodash: ^4.17.21
     reflect-metadata: ^0.2.2
-  checksum: fea755768cf939a82a3c24b1e38502587c6147a854a725a1884bdb559f890d738d0a5f4a273d70ec948d6c61844b46094d0d531c93cb3a8b4af8f0f523661d44
+  checksum: 70b480882c82671d0d8e9793ef4ccb803aee251ee2c16cb8352287af0319f02c7af7a9aadefaad37a1a741ce037834915592896fb7283cc05bc88f0817c7d891
   languageName: node
   linkType: hard
 
@@ -4149,67 +4149,67 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nmshd/connector-sdk@npm:^6.16.3":
-  version: 6.36.6
-  resolution: "@nmshd/connector-sdk@npm:6.36.6"
+"@nmshd/connector-sdk@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@nmshd/connector-sdk@npm:7.1.0"
   dependencies:
-    "@nmshd/content": 6.63.2
-    "@nmshd/runtime-types": 6.63.2
-    axios: ^1.11.0
-    form-data: ^4.0.4
+    "@nmshd/content": 7.0.3
+    "@nmshd/runtime-types": 7.0.3
+    axios: ^1.13.2
+    form-data: ^4.0.5
     qs: ^6.14.0
-  checksum: 1ec7a8a84e24ad11ecedb3df0e6c6390435be6ecd622a7125a91259fa42a264aa09a3a86c60d1aad7640f0206f205c193e393a6b5c19d9bb4728aad7b18cd742
+  checksum: 229b1ce93f5756fc67ae7ca24ce05d341fc929a30061cbf70f1860b89cfb2b06c2c9e22dcc512973b4f78792563217cb3d3d28b563248ab6860d1da5155b66da
   languageName: node
   linkType: hard
 
-"@nmshd/content@npm:6.63.2":
-  version: 6.63.2
-  resolution: "@nmshd/content@npm:6.63.2"
+"@nmshd/content@npm:7.0.3":
+  version: 7.0.3
+  resolution: "@nmshd/content@npm:7.0.3"
   dependencies:
-    "@js-soft/ts-serval": 2.0.13
-    "@nmshd/core-types": 6.63.2
-    "@nmshd/iql": ^1.0.3
+    "@js-soft/ts-serval": 2.0.14
+    "@nmshd/core-types": 7.0.3
+    "@nmshd/iql": ^1.0.4
     luxon: ^3.7.2
     ts-simple-nameof: ^1.3.3
-  checksum: 3da8122ae9f8488a6297cbd222ef5fff80886f80ec6d1f570c31a74545aa1fbcf62b92fdb07d11d4e69cc7ffd0f048e1eac291d84c33176b268d46a4fbfe2f09
+  checksum: e3403f8a8254228d26cc9995061dcc82fae230ccb9e687a6312ca83a688ff1b394b0e13ef344cec5096772569f3f15faf78b51d6fe4ac6a66091fd32cd54d1a0
   languageName: node
   linkType: hard
 
-"@nmshd/core-types@npm:6.63.2":
-  version: 6.63.2
-  resolution: "@nmshd/core-types@npm:6.63.2"
+"@nmshd/core-types@npm:7.0.3":
+  version: 7.0.3
+  resolution: "@nmshd/core-types@npm:7.0.3"
   dependencies:
-    "@js-soft/logging-abstractions": ^1.0.1
-    "@js-soft/ts-serval": 2.0.13
-    "@nmshd/crypto": ^2.1.2
+    "@js-soft/logging-abstractions": ^1.0.2
+    "@js-soft/ts-serval": 2.0.14
+    "@nmshd/crypto": ^2.1.3
     json-stringify-safe: ^5.0.1
     luxon: ^3.7.2
     uuid: ^11.1.0
-  checksum: 88f3cf71db4c35022f1cca4a0673cbd76c253a7cd1fe3c3423db86857dd20eded839a8271879651abae097bff87496ba8cdd49de89a8b7ef8d9dfb1eb127970a
+  checksum: 9a91f4a27d9b973c424f4ea6cd6aac1d1b35507171a01c2f43c5262a8a1dc417fcda09b06fa76d9d0b1d132cad3f56ab7c033b65b308b7995202c14bf774f5df
   languageName: node
   linkType: hard
 
-"@nmshd/crypto@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "@nmshd/crypto@npm:2.1.2"
+"@nmshd/crypto@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@nmshd/crypto@npm:2.1.3"
   dependencies:
     libsodium-wrappers-sumo: 0.7.15
     uuid: ^11.1.0
-  checksum: f89b96f566e1afc22184670a40ebdf65826b23b55881bfe5530c92897d20c2c6db2a6ae3f7822baffa1571d1f8236ad6ed529e9040b93d3d7b78e65f059bf494
+  checksum: 2288461fd8ef0bbd54e373cc9399575ad2250a49f78f1124d7e8e23b48cb330437c5b61e6f01d3583493c03a8d1424849dc21341515d0d9160eb2139442cdcf7
   languageName: node
   linkType: hard
 
-"@nmshd/iql@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@nmshd/iql@npm:1.0.3"
-  checksum: f455934fd97cba12c8f35db91f2ed6850be203f3cbce7e5578dab1211de376a82e4509149896e599ca358d435e687c52245ed317003d2dd4c392712b68d29790
+"@nmshd/iql@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@nmshd/iql@npm:1.0.4"
+  checksum: 03ed33d8ac9a3de09a79c88d72c3c875e54d4e15e1ced06947bded33bfb1e8de52b2e40015b815a45294cf994619f9f9e2f244959abd0a3b0bcc7a717cb1c59a
   languageName: node
   linkType: hard
 
-"@nmshd/runtime-types@npm:6.63.2":
-  version: 6.63.2
-  resolution: "@nmshd/runtime-types@npm:6.63.2"
-  checksum: 4e9a6e2154d2f7d6a2496da671c09255285b8847274a9784afcb38fc12beee0e1421ef90d67cb69ccb0542bf48a8bb64fc682e1354f0d91ea9cc845ae0073c0b
+"@nmshd/runtime-types@npm:7.0.3":
+  version: 7.0.3
+  resolution: "@nmshd/runtime-types@npm:7.0.3"
+  checksum: 9c0ac36f2d3fc4633e4577c1c90d8fdd07eb9b0982d44ce7cdec46e02a11db4aa40ed46c01ae2a876ed2bc1bfca22554e93ff211f6e28abf7a7fd7fdce66a5c2
   languageName: node
   linkType: hard
 
@@ -5520,7 +5520,7 @@ __metadata:
     "@graphql-codegen/cli": ^6.1.0
     "@graphql-codegen/typescript": ^5.0.5
     "@graphql-codegen/typescript-resolvers": ^5.1.3
-    "@nmshd/connector-sdk": ^6.16.3
+    "@nmshd/connector-sdk": ^7.1.0
     "@ory/client": ^1.22.12
     "@sentry/node": ^10.27.0
     "@serlo/authorization": ^0.60.0
@@ -7398,7 +7398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.11.0, axios@npm:^1.12.0, axios@npm:^1.6.1":
+"axios@npm:^1.11.0, axios@npm:^1.12.0, axios@npm:^1.13.2, axios@npm:^1.6.1":
   version: 1.13.2
   resolution: "axios@npm:1.13.2"
   dependencies:
@@ -11420,16 +11420,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "form-data@npm:4.0.4"
+"form-data@npm:^4.0.4, form-data@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "form-data@npm:4.0.5"
   dependencies:
     asynckit: ^0.4.0
     combined-stream: ^1.0.8
     es-set-tostringtag: ^2.1.0
     hasown: ^2.0.2
     mime-types: ^2.1.12
-  checksum: 9b7788836df9fa5a6999e0c02515b001946b2a868cfe53f026c69e2c537a2ff9fbfb8e9d2b678744628f3dc7a2d6e14e4e45dfaf68aa6239727f0bdb8ce0abf2
+  checksum: af8328413c16d0cded5fccc975a44d227c5120fd46a9e81de8acf619d43ed838414cc6d7792195b30b248f76a65246949a129a4dadd148721948f90cd6d4fb69
   languageName: node
   linkType: hard
 
