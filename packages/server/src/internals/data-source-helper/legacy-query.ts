@@ -166,8 +166,10 @@ export interface LegacyQuerySpec<Payload, Result> {
 /**
  * The specification object of a query extended by some helper functions.
  */
-interface LegacyQuerySpecWithHelpers<Payload, Result>
-  extends LegacyQuerySpec<Payload, Result> {
+interface LegacyQuerySpecWithHelpers<Payload, Result> extends LegacyQuerySpec<
+  Payload,
+  Result
+> {
   /**
    * Function to update the cache of one or many values.
    */
