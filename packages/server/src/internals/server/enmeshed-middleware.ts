@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/api.serlo.org for the canonical source repository
  */
 import {
+  ApiKeyAuthenticator,
   ConnectorClient,
   RelationshipAuditLogEntryReason,
   RelationshipStatus,
@@ -44,7 +45,9 @@ export function applyEnmeshedMiddleware({
   const basePath = '/enmeshed'
   const client = ConnectorClient.create({
     baseUrl: `${process.env.ENMESHED_SERVER_HOST}`,
-    apiKey: `${process.env.ENMESHED_SERVER_SECRET}`,
+    authenticator: new ApiKeyAuthenticator(
+      `${process.env.ENMESHED_SERVER_SECRET}`,
+    ),
   })
 
   app.post(`${basePath}/init`, createEnmeshedInitMiddleware(client, cache))
@@ -140,7 +143,7 @@ function createEnmeshedInitMiddleware(
       const nameParts = name?.split(' ') ?? []
 
       const createAttributeResponse =
-        await client.attributes.createRepositoryAttribute({
+        await client.attributes.createOwnIdentityAttribute({
           content: {
             value: {
               '@type': 'DisplayName',
