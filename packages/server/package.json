@@ -18,7 +18,7 @@
     "deploy:image:production": "./scripts/deploy.sh production"
   },
   "dependencies": {
-    "bee-queue": "^1.7.1",
+    "bee-queue": "^2.0.0",
     "bull-arena": "^4.9.2"
   },
   "devDependencies": {
