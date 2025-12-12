@@ -563,6 +563,7 @@ async function sendAttributesChangeRequest({
       to: [relationship.peer],
       subject: 'Dein Lernstand',
       body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand.\nDein Serlo-Team',
+      bodyFormat: 'PlainText',
     },
   })
 
