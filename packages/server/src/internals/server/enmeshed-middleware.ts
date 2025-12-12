@@ -374,6 +374,7 @@ function createSetAttributesHandler(
         to: [session.enmeshedId],
         subject: 'Aktualisierung deines Lernstands',
         body: 'Gratulation!\nDu hast den Kurs zum logistischen Wachstum erfolgreich absolviert. Bitte speichere den aktualisierten Lernstand.\nDein Serlo-Team',
+        bodyFormat: 'PlainText',
       },
     })
 
@@ -562,6 +563,7 @@ async function sendAttributesChangeRequest({
       to: [relationship.peer],
       subject: 'Dein Lernstand',
       body: 'Hallo!\nBitte speichere deinen aktuellen Lernstand.\nDein Serlo-Team',
+      bodyFormat: 'PlainText',
     },
   })
 
