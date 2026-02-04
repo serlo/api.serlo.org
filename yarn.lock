@@ -70,8 +70,8 @@ __metadata:
   linkType: hard
 
 "@apollo/server@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "@apollo/server@npm:5.2.0"
+  version: 5.4.0
+  resolution: "@apollo/server@npm:5.4.0"
   dependencies:
     "@apollo/cache-control-types": ^1.0.3
     "@apollo/server-gateway-interface": ^2.0.0
@@ -85,7 +85,8 @@ __metadata:
     "@apollo/utils.withrequired": ^3.0.0
     "@graphql-tools/schema": ^10.0.0
     async-retry: ^1.2.1
-    body-parser: ^2.2.0
+    body-parser: ^2.2.2
+    content-type: ^1.0.5
     cors: ^2.8.5
     finalhandler: ^2.1.0
     loglevel: ^1.6.8
@@ -95,7 +96,7 @@ __metadata:
     whatwg-mimetype: ^4.0.0
   peerDependencies:
     graphql: ^16.11.0
-  checksum: 3af820de5934508271e672f80268b23f39ef275baa369d311c8d2c7f72f35107b788a1cdc075c7285d405eb68ed0ed8b5b1fd87beac71d3b00965a2b588e55c9
+  checksum: 7a6952b5430c592675d33fe51b94454511436d04c0267e0d2833a8facac0942d7048f6821c2759dd688ff44517f4deb7d1e2e96f02d3cc7522f9e576e379743d
   languageName: node
   linkType: hard
 
@@ -6409,7 +6410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^2.2.0, body-parser@npm:^2.2.1":
+"body-parser@npm:^2.2.1":
   version: 2.2.1
   resolution: "body-parser@npm:2.2.1"
   dependencies:
@@ -6423,6 +6424,23 @@ __metadata:
     raw-body: ^3.0.1
     type-is: ^2.0.1
   checksum: 4a111af3534e6a5d37e8b98c23da403d5d1f046a24546193a417b2a4da7c52ee7c367f18cea73638fa25b8699b02923948bc4b55f366b879d3ca8ede49e201aa
+  languageName: node
+  linkType: hard
+
+"body-parser@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "body-parser@npm:2.2.2"
+  dependencies:
+    bytes: ^3.1.2
+    content-type: ^1.0.5
+    debug: ^4.4.3
+    http-errors: ^2.0.0
+    iconv-lite: ^0.7.0
+    on-finished: ^2.4.1
+    qs: ^6.14.1
+    raw-body: ^3.0.1
+    type-is: ^2.0.1
+  checksum: 0b8764065ff2a8c7cf3c905193b5b528d6ab5246f0df4c743c0e887d880abcc336dad5ba86d959d7efee6243a49c2c2e5b0cee43f0ccb7d728f5496c97537a90
   languageName: node
   linkType: hard
 
@@ -14664,7 +14682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.14.0, qs@npm:~6.14.0":
+"qs@npm:^6.14.0, qs@npm:^6.14.1, qs@npm:~6.14.0":
   version: 6.14.1
   resolution: "qs@npm:6.14.1"
   dependencies:
