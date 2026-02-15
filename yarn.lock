@@ -4469,7 +4469,7 @@ __metadata:
     msw: ^2.12.3
     npm-run-all: ^4.1.5
     prettier: ^3.7.1
-    prettier-plugin-packagejson: ^2.5.19
+    prettier-plugin-packagejson: ^3.0.0
     prettier-plugin-sh: ^0.18.0
     ts-node: ^10.9.2
     ts-unused-exports: ^11.0.1
@@ -14526,17 +14526,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-packagejson@npm:^2.5.19":
-  version: 2.5.22
-  resolution: "prettier-plugin-packagejson@npm:2.5.22"
+"prettier-plugin-packagejson@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "prettier-plugin-packagejson@npm:3.0.0"
   dependencies:
     sort-package-json: 3.6.0
   peerDependencies:
-    prettier: ">= 1.16.0"
+    prettier: ^3
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: ad1260a54be65331fb3800ac314cab24f4ec041c6be1f2fbd7a39abaf0c1ed5a9ed2256dacb3214075fc61570d58c7037c4d584eeac872cbf9ddce62d578c2fe
+  checksum: 9d620b8e2abdf43c380976b3231f15e263840e1253886620f7ff3ef0c313a4445e4efb5a9a57721b7fc521d6fe985888585069b5f032700c7651f4bc788c4c99
   languageName: node
   linkType: hard
 
