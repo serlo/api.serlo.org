@@ -91,7 +91,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@luckycatfactory/esbuild-graphql-loader": "^3.8.1",
     "@tsconfig/node24": "^24.0.3",
     "@types/jest": "^30.0.0",
