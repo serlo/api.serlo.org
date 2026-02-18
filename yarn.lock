@@ -8957,13 +8957,13 @@ __metadata:
   linkType: hard
 
 "fast-xml-parser@npm:^5.3.4":
-  version: 5.3.5
-  resolution: "fast-xml-parser@npm:5.3.5"
+  version: 5.3.6
+  resolution: "fast-xml-parser@npm:5.3.6"
   dependencies:
     strnum: ^2.1.2
   bin:
     fxparser: src/cli/cli.js
-  checksum: 0aa34c9fd517177eec6147ba4a267d3385bd743859a00eaf8b46ef6e57bb027a3546c4cfa3a7aa13e0ae2c14e264fdf9d7cc937f59b025e662589ba6b2ba0213
+  checksum: 62363dfe997f14debf5ebac22df8f3930f6a6fdc249ff2cda81aa442dafa52e7997cf62854f8d6e29d239f6b342feb448ec41d382d879d968fa4f59c144b522a
   languageName: node
   linkType: hard
 
