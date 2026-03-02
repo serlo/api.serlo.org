@@ -4,6 +4,7 @@ import {
   type RowDataPacket,
   type ResultSetHeader,
 } from 'mysql2/promise'
+import { ExecuteValues } from 'mysql2/typings/mysql/lib/protocol/sequences/Query'
 
 import { InternalServerError } from './errors'
 
@@ -104,14 +105,14 @@ export class Database {
 
   public async fetchAll<T = unknown>(
     sql: string,
-    params?: unknown[],
+    params?: ExecuteValues,
   ): Promise<T[]> {
     return this.execute<(T & RowDataPacket)[]>(sql, params)
   }
 
   public async fetchOptional<T = unknown>(
     sql: string,
-    params?: unknown[],
+    params?: ExecuteValues,
   ): Promise<T | null> {
     const [result] = await this.execute<(T & RowDataPacket)[]>(sql, params)
 
@@ -120,7 +121,7 @@ export class Database {
 
   public async fetchOne<T = unknown>(
     sql: string,
-    params?: unknown[],
+    params?: ExecuteValues,
   ): Promise<T> {
     const result = await this.fetchOptional<T>(sql, params)
 
@@ -131,7 +132,7 @@ export class Database {
 
   public async mutate(
     sql: string,
-    params?: unknown[],
+    params?: ExecuteValues,
   ): Promise<ResultSetHeader> {
     return this.execute<ResultSetHeader>(sql, params)
   }
@@ -142,7 +143,7 @@ export class Database {
 
   private async execute<T extends RowDataPacket[] | ResultSetHeader>(
     sql: string,
-    params?: unknown[],
+    params?: ExecuteValues,
   ): Promise<T> {
     if (this.state.type === 'OutsideOfTransaction') {
       const [rows] = await this.pool.execute<T>(sql, params)

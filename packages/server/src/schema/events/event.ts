@@ -82,7 +82,7 @@ async function createNotifications(
     objectId,
     ...('uuidParameter' in event ? [event.uuidParameter] : []),
     ...('uuidParameter2' in event ? [event.uuidParameter2] : []),
-  ]
+  ] as number[]
   const subscribers = []
 
   for (const objectId of objectIds) {

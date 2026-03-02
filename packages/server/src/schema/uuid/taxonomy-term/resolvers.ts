@@ -443,7 +443,7 @@ export const resolvers: Resolvers = {
           SET name = ?, description = ?
           WHERE taxonomy.id = ?;
         `,
-        [input.name, input.description, input.id],
+        [input.name, input.description || null, input.id],
       )
 
       await createEvent(
