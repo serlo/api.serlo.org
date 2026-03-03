@@ -19,6 +19,7 @@ export const resolvers: Resolvers = {
   PageRevision: createRevisionResolvers({ repositoryDecoder: PageDecoder }),
   PageQuery: {
     async pages(_parent, payload, context) {
+      const instance = payload.instance || null
       const pages = await context.database.fetchAll<{ id: number }>(
         `
         select entity.id
@@ -28,7 +29,7 @@ export const resolvers: Resolvers = {
         where type.name = 'page'
           and (? is null or instance.subdomain = ?)
         order by entity.id desc`,
-        [payload.instance, payload.instance],
+        [instance, instance],
       )
 
       return await Promise.all(
