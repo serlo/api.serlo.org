@@ -134,11 +134,15 @@ export async function executePrompt(args: {
         `Message: ${error.message}`,
       ].join('\n')
 
-      throw new Error(detailedMessage)
+      throw new Error(detailedMessage, { cause: error })
     } else if (error instanceof Error) {
-      throw new Error(`Error when executing prompt: ${error.message}`)
+      throw new Error(`Error when executing prompt: ${error.message}`, {
+        cause: error,
+      })
     } else {
-      throw new Error('Unknown error occurred in executing prompt')
+      throw new Error('Unknown error occurred in executing prompt', {
+        cause: error,
+      })
     }
   }
 }

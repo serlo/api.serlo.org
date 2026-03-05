@@ -134,7 +134,7 @@ function createEnmeshedInitMiddleware(
 
     const session = await getSession(cache, sessionId)
 
-    let relationshipTemplateId = ''
+    let relationshipTemplateId: string
 
     if (session) {
       relationshipTemplateId = session.relationshipTemplateId

@@ -1383,10 +1383,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:^9.39.1":
-  version: 9.39.2
-  resolution: "@eslint/js@npm:9.39.2"
-  checksum: 362aa447266fa5717e762b2b252f177345cb0d7b2954113db9773b3a28898f7cbbc807e07f8078995e6da3f62791f7c5fa2c03517b7170a8e76613cf7fd83c92
+"@eslint/js@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "@eslint/js@npm:10.0.1"
+  peerDependencies:
+    eslint: ^10.0.0
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 5e60b80ec48d303c9273d5c2803ae3fe12fd5335d57d889d4f9df9249910a97e2921118403765bff26a00b734182437f91a0f6f552654cf12ad73bb49995e22e
   languageName: node
   linkType: hard
 
@@ -4387,7 +4392,7 @@ __metadata:
   dependencies:
     "@eslint/compat": ^2.0.0
     "@eslint/eslintrc": ^3.3.1
-    "@eslint/js": ^9.39.1
+    "@eslint/js": ^10.0.1
     "@luckycatfactory/esbuild-graphql-loader": ^3.8.1
     "@tsconfig/node24": ^24.0.3
     "@types/jest": ^30.0.0
@@ -4397,7 +4402,7 @@ __metadata:
     default-import: ^2.0.8
     depcheck: ^1.4.7
     esbuild: ^0.27.0
-    eslint: ^10.0.0
+    eslint: ^10.0.2
     eslint-config-prettier: ^10.1.8
     eslint-plugin-import: ^2.32.0
     eslint-plugin-react: ^7.37.5
@@ -8493,7 +8498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.0.0":
+"eslint@npm:^10.0.2":
   version: 10.0.2
   resolution: "eslint@npm:10.0.2"
   dependencies:
