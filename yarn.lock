@@ -4402,7 +4402,7 @@ __metadata:
     default-import: ^2.0.8
     depcheck: ^1.4.7
     esbuild: ^0.27.0
-    eslint: ^10.0.0
+    eslint: ^10.0.2
     eslint-config-prettier: ^10.1.8
     eslint-plugin-import: ^2.32.0
     eslint-plugin-react: ^7.37.5
@@ -8498,7 +8498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.0.0":
+"eslint@npm:^10.0.2":
   version: 10.0.2
   resolution: "eslint@npm:10.0.2"
   dependencies:
