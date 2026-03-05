@@ -27,7 +27,7 @@ export function createMailchimpModel() {
       if (response.status === 204 || response.status === 404) {
         return { success: true }
       } else {
-        let mailchimpResponse = undefined
+        let mailchimpResponse
 
         try {
           mailchimpResponse = (await response.json()) as unknown
