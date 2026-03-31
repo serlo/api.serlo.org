@@ -3856,7 +3856,7 @@ __metadata:
     openai: ^6.33.0
     pg: ^8.20.0
     ramda: ^0.32.0
-    redlock: ^5.0.0-beta2
+    redlock-universal: ^0.8.4
     semver: ^7.7.4
     ts-toolbelt: ^9.6.0
     uuid: ^13.0.0
@@ -12166,13 +12166,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-abort-controller@npm:^3.0.1":
-  version: 3.1.1
-  resolution: "node-abort-controller@npm:3.1.1"
-  checksum: 2c340916af9710328b11c0828223fc65ba320e0d082214a211311bf64c2891028e42ef276b9799188c4ada9e6e1c54cf7a0b7c05dd9d59fcdc8cd633304c8047
-  languageName: node
-  linkType: hard
-
 "node-domexception@npm:^1.0.0":
   version: 1.0.0
   resolution: "node-domexception@npm:1.0.0"
@@ -14007,12 +14000,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redlock@npm:^5.0.0-beta2":
-  version: 5.0.0-beta2
-  resolution: "redlock@npm:5.0.0-beta2"
-  dependencies:
-    node-abort-controller: ^3.0.1
-  checksum: d8a0d6d472922d146077e3c12946b942108e3041439fdadced79c3dc285ec3d509a48cee33f7da125e71b3868c65ba248b612fb65825aacfa5e67c118e1ba543
+"redlock-universal@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "redlock-universal@npm:0.8.4"
+  peerDependencies:
+    "@valkey/valkey-glide": ">=2.0.0"
+    ioredis: ">=5.0.0"
+    redis: ">=4.0.0"
+  peerDependenciesMeta:
+    "@valkey/valkey-glide":
+      optional: true
+    ioredis:
+      optional: true
+    redis:
+      optional: true
+  checksum: 19733bad31d7ae8470140858c1c9f120f59037d0e29525be3b1320c26dc7adc27ca4d0e60abd1b59898a7e6c83cff774aed8ef666626d42ef328e095d7197152
   languageName: node
   linkType: hard
 

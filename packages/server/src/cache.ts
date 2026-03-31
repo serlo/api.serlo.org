@@ -3,7 +3,7 @@ import Redis from 'ioredis'
 // @ts-expect-error Missing types
 import createMsgpack from 'msgpack5'
 import * as R from 'ramda'
-import Redlock from 'redlock'
+import { createLock, IoredisAdapter } from 'redlock-universal'
 
 import { captureErrorEvent } from './error-event'
 import { Priority, Cache, CacheEntry } from '~/context/cache'
@@ -39,12 +39,8 @@ export function createCache({ timer }: { timer: Timer }): Cache {
   })
 
   const lockManagers: Record<Priority, LockManager> = {
-    [Priority.Low]: createLockManager({
-      retryCount: 0,
-    }),
-    [Priority.High]: createLockManager({
-      retryCount: 10,
-    }),
+    [Priority.Low]: createLockManager({ retryCount: 0 }),
+    [Priority.High]: createLockManager({ retryCount: 10 }),
   }
 
   let isReady = false
@@ -194,16 +190,16 @@ function createLockManager({
     })
     client.disconnect()
   })
-  // @ts-expect-error Missing types
-  const redlock = new Redlock([client], { retryCount })
+  const adapter = new IoredisAdapter(client)
 
   return {
     async lock(key: string) {
-      const lock = await redlock.acquire([`locks:${key}`], 10000)
+      const lock = createLock({ adapter, key, retryAttempts: retryCount })
+      const handel = await lock.acquire()
 
       return {
         unlock: async () => {
-          await lock.unlock()
+          await lock.release(handel)
         },
       }
     },
