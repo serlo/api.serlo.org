@@ -23,8 +23,5 @@
       "~/*": ["./packages/server/src/*"]
     },
     "types": ["jest"]
-  },
-  "ts-node": {
-    "esm": true
   }
 }
