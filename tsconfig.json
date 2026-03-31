@@ -13,6 +13,7 @@
     "checkJs": true,
     "incremental": true,
     "noImplicitAny": true,
+    "lib": ["es2024"],
     "outDir": "dist",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -20,7 +21,8 @@
       "@serlo/authorization": ["./packages/authorization/src"],
       "@serlo/db-migrations": ["./packages/db-migrations"],
       "~/*": ["./packages/server/src/*"]
-    }
+    },
+    "types": ["jest"]
   },
   "ts-node": {
     "esm": true
