@@ -194,6 +194,7 @@ function createLockManager({
     })
     client.disconnect()
   })
+  // @ts-expect-error Missing types
   const redlock = new Redlock([client], { retryCount })
 
   return {
@@ -202,7 +203,7 @@ function createLockManager({
 
       return {
         unlock: async () => {
-          await lock.release()
+          await lock.unlock()
         },
       }
     },
