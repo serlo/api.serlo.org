@@ -13,17 +13,15 @@
     "checkJs": true,
     "incremental": true,
     "noImplicitAny": true,
+    "lib": ["es2024"],
     "outDir": "dist",
     "module": "esnext",
-    "moduleResolution": "node",
-    "baseUrl": "./packages",
+    "moduleResolution": "bundler",
     "paths": {
-      "@serlo/authorization": ["authorization/src"],
-      "@serlo/db-migrations": ["db-migrations"],
-      "~/*": ["server/src/*"]
-    }
-  },
-  "ts-node": {
-    "esm": true
+      "@serlo/authorization": ["./packages/authorization/src"],
+      "@serlo/db-migrations": ["./packages/db-migrations"],
+      "~/*": ["./packages/server/src/*"]
+    },
+    "types": ["jest"]
   }
 }

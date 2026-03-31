@@ -63,7 +63,7 @@
     "openai": "^6.33.0",
     "pg": "^8.20.0",
     "ramda": "^0.32.0",
-    "redlock": "^5.0.0-beta2",
+    "redlock-universal": "^0.8.4",
     "semver": "^7.7.4",
     "ts-toolbelt": "^9.6.0",
     "uuid": "^13.0.0"

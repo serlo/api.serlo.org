@@ -4,7 +4,6 @@ import {
   type RowDataPacket,
   type ResultSetHeader,
 } from 'mysql2/promise'
-import { ExecuteValues } from 'mysql2/typings/mysql/lib/protocol/sequences/Query'
 
 import { InternalServerError } from './errors'
 
@@ -157,6 +156,7 @@ export class Database {
   }
 }
 
+type ExecuteValues = Parameters<Pool['execute']>[1]
 type DatabaseState = OutsideOfTransaction | InsideTransaction | InsideSavepoint
 
 interface OutsideOfTransaction {
