@@ -1,4 +1,8 @@
 name: Setup repository for CI tests
+inputs:
+  install:
+    description: Whether to run "yarn install --immutable" or not
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -20,4 +24,5 @@ runs:
           ${{ runner.os }}-yarn-
 
     - run: yarn --immutable
+      if: inputs.install == 'true'
       shell: bash
