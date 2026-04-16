@@ -117,7 +117,7 @@
     "tsdx": "^2.0.0",
     "typescript": "^6.0.2"
   },
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.13.0",
   "engines": {
     "node": "^24.0.0"
   }
