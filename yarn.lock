@@ -2534,34 +2534,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@js-soft/logging-abstractions@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@js-soft/logging-abstractions@npm:1.0.2"
-  checksum: 10/be0791b7dff0851acc3fb1ee7d406ff8ea411d0c5dc78102b6a54af971cd91fa9ad9ff71e4f4a961700f5a01aef2834baead726663ceed076a6d508dfed199bb
-  languageName: node
-  linkType: hard
-
-"@js-soft/ts-serval@npm:2.0.16":
-  version: 2.0.16
-  resolution: "@js-soft/ts-serval@npm:2.0.16"
-  dependencies:
-    lodash: "npm:^4.17.23"
-    reflect-metadata: "npm:^0.2.2"
-  checksum: 10/00f25b498a6568333329e2e9ef356da10377b8e139ec327f9483d57b073a5e6841782a61f9e2196eeb3f822760f9a6bb2e487f5ea4d34235d23ee29f122c3c58
-  languageName: node
-  linkType: hard
-
-"@js-soft/ts-utils@npm:2.3.5":
-  version: 2.3.5
-  resolution: "@js-soft/ts-utils@npm:2.3.5"
-  dependencies:
-    eventemitter2: "npm:^6.4.9"
-    json-stringify-safe: "npm:^5.0.1"
-    reflect-metadata: "npm:^0.2.2"
-  checksum: 10/cc118aaca2218a4eeb266fbb380c137f7ee03a2cb248d36cac32febc49c3d197dbaf5211286b09cea5682c934aaa4aeb4b006fc629a73130e72bf6f7beea4b45
-  languageName: node
-  linkType: hard
-
 "@luckycatfactory/esbuild-graphql-loader@npm:^3.8.1":
   version: 3.8.1
   resolution: "@luckycatfactory/esbuild-graphql-loader@npm:3.8.1"
@@ -2648,73 +2620,6 @@ __metadata:
     "@emnapi/runtime": "npm:^1.4.3"
     "@tybys/wasm-util": "npm:^0.10.0"
   checksum: 10/5fd518182427980c28bc724adf06c5f32f9a8915763ef560b5f7d73607d30cd15ac86d0cbd2eb80d4cfab23fc80d0876d89ca36a9daadcb864bc00917c94187c
-  languageName: node
-  linkType: hard
-
-"@nmshd/connector-sdk@npm:^7.3.2":
-  version: 7.3.2
-  resolution: "@nmshd/connector-sdk@npm:7.3.2"
-  dependencies:
-    "@nmshd/content": "npm:7.2.2"
-    "@nmshd/runtime-types": "npm:7.2.2"
-    axios: "npm:^1.13.6"
-    form-data: "npm:^4.0.5"
-    qs: "npm:^6.15.0"
-  checksum: 10/8ab967a9c679d8438d9b832502bbd478527be75c4e1ad962e86b761c70b05e29558a680a22aa91e41f4c1511cc841813702d4c4b60b5a117240f1ea3515ae84f
-  languageName: node
-  linkType: hard
-
-"@nmshd/content@npm:7.2.2":
-  version: 7.2.2
-  resolution: "@nmshd/content@npm:7.2.2"
-  dependencies:
-    "@js-soft/ts-serval": "npm:2.0.16"
-    "@nmshd/core-types": "npm:7.2.2"
-    "@nmshd/iql": "npm:^1.0.4"
-    ibantools: "npm:^4.5.1"
-    luxon: "npm:^3.7.2"
-    ts-simple-nameof: "npm:^1.3.3"
-  checksum: 10/75eae643c817cdb47bc289d6590725d04b967176cac4c7ec7c5ff07cda9544fac3b941ac246848f98e57410dea0069d5b15fea88dc9ce6339f46a94d99703b44
-  languageName: node
-  linkType: hard
-
-"@nmshd/core-types@npm:7.2.2":
-  version: 7.2.2
-  resolution: "@nmshd/core-types@npm:7.2.2"
-  dependencies:
-    "@js-soft/logging-abstractions": "npm:^1.0.2"
-    "@js-soft/ts-serval": "npm:2.0.16"
-    "@nmshd/crypto": "npm:^2.1.3"
-    json-stringify-safe: "npm:^5.0.1"
-    luxon: "npm:^3.7.2"
-  checksum: 10/1127a55f2ffdd80da9fbd55630c4dc7447369e9dd1ee76288d845d6375a4509db91baaa7bdb91da13878e5db605eaa602389f66ab6faeef9365f0b8efccc80a3
-  languageName: node
-  linkType: hard
-
-"@nmshd/crypto@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "@nmshd/crypto@npm:2.1.3"
-  dependencies:
-    libsodium-wrappers-sumo: "npm:0.7.15"
-    uuid: "npm:^11.1.0"
-  checksum: 10/b43679e24f80c006ace68877de77e47c3fcc2d4d86ac446216afc3e933597668dbb9a1e29f1125010350a1297ac1f26d2b147d7054d43f97b012512500606a89
-  languageName: node
-  linkType: hard
-
-"@nmshd/iql@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@nmshd/iql@npm:1.0.4"
-  checksum: 10/93ecfb135908dc07e6c875262cad2117b8d9c0683c21ed29826d1d3e0ce615ad5f9f6b9b81b8eb39978ee0eb30cb776e212b3ee9efb1b3aa884f5dd00a0eec0f
-  languageName: node
-  linkType: hard
-
-"@nmshd/runtime-types@npm:7.2.2":
-  version: 7.2.2
-  resolution: "@nmshd/runtime-types@npm:7.2.2"
-  dependencies:
-    "@js-soft/ts-utils": "npm:2.3.5"
-    "@nmshd/content": "npm:7.2.2"
-  checksum: 10/ed4969645d79a2b5b769db7598e979d203ee8682622ea90e869407cb959612a0fb140c66df420ed180684aeaf9b192ce5b40d298d95cba9b3adf74ad39273f30
   languageName: node
   linkType: hard
 
@@ -3983,7 +3888,6 @@ __metadata:
     "@graphql-codegen/cli": "npm:^6.2.1"
     "@graphql-codegen/typescript": "npm:^5.0.9"
     "@graphql-codegen/typescript-resolvers": "npm:^5.1.7"
-    "@nmshd/connector-sdk": "npm:^7.3.2"
     "@ory/client": "npm:^1.22.33"
     "@sentry/node": "npm:^10.47.0"
     "@serlo/authorization": "npm:^0.60.0"
@@ -5537,7 +5441,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.0, axios@npm:^1.13.5, axios@npm:^1.13.6, axios@npm:^1.6.1":
+"axios@npm:^1.12.0, axios@npm:^1.13.5, axios@npm:^1.6.1":
   version: 1.15.0
   resolution: "axios@npm:1.15.0"
   dependencies:
@@ -7931,13 +7835,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter2@npm:^6.4.9":
-  version: 6.4.9
-  resolution: "eventemitter2@npm:6.4.9"
-  checksum: 10/b829b1c6b11e15926b635092b5ad62b4463d1c928859831dcae606e988cf41893059e3541f5a8209d21d2f15314422ddd4d84d20830b4bf44978608d15b06b08
-  languageName: node
-  linkType: hard
-
 "eventemitter3@npm:^4.0.4":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
@@ -9282,13 +9179,6 @@ __metadata:
   version: 8.0.1
   resolution: "human-signals@npm:8.0.1"
   checksum: 10/903389a018b16f330c5e0f6e8b76d592c79552152ea892f249e5290e71c790f5722dc9b740fedd4bdef30566754a69012aaed97a6a528da0d417fad990a6f515
-  languageName: node
-  linkType: hard
-
-"ibantools@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "ibantools@npm:4.5.1"
-  checksum: 10/8373f380202027003726b297f5f0e53036fc429418d224720e65a6b518db9135d58b6c386c485fde81e599d9ef30c468a1814b04e98f67fb67f02239aa1f13dc
   languageName: node
   linkType: hard
 
@@ -11035,22 +10925,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libsodium-sumo@npm:^0.7.15":
-  version: 0.7.15
-  resolution: "libsodium-sumo@npm:0.7.15"
-  checksum: 10/2600d208fca1bbad8a727d9f4b3e9bead92e338be74e40d52c7b53d1b5f6b611a24cad885ae4d5268d923e66379509b4efe7db3010480f382fca8d75853c1454
-  languageName: node
-  linkType: hard
-
-"libsodium-wrappers-sumo@npm:0.7.15":
-  version: 0.7.15
-  resolution: "libsodium-wrappers-sumo@npm:0.7.15"
-  dependencies:
-    libsodium-sumo: "npm:^0.7.15"
-  checksum: 10/060cc18069e633b0038c5eb5751b9ab0574469a5f2e272ec6ea845de627c46af5c22644f64bb9cd0b2891c118159b0c1f4e7b796232ad8cb9420dc6db92b3fa8
-  languageName: node
-  linkType: hard
-
 "lines-and-columns@npm:2.0.3":
   version: 2.0.3
   resolution: "lines-and-columns@npm:2.0.3"
@@ -11208,7 +11082,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:^4.17.23, lodash@npm:~4.17.0":
+"lodash@npm:^4.17.14, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:~4.17.0":
   version: 4.17.23
   resolution: "lodash@npm:4.17.23"
   checksum: 10/82504c88250f58da7a5a4289f57a4f759c44946c005dd232821c7688b5fcfbf4a6268f6a6cdde4b792c91edd2f3b5398c1d2a0998274432cff76def48735e233
@@ -11344,7 +11218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.2.1, luxon@npm:^3.7.2":
+"luxon@npm:^3.2.1":
   version: 3.7.2
   resolution: "luxon@npm:3.7.2"
   checksum: 10/b24cd205ed306ce7415991687897dcc4027921ae413c9116590bc33a95f93b86ce52cf74ba72b4f5c5ab1c10090517f54ac8edfb127c049e0bf55b90dc2260be
@@ -13644,7 +13518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.14.0, qs@npm:^6.14.1, qs@npm:^6.15.0":
+"qs@npm:^6.14.0, qs@npm:^6.14.1":
   version: 6.15.0
   resolution: "qs@npm:6.15.0"
   dependencies:
@@ -13904,13 +13778,6 @@ __metadata:
     redis:
       optional: true
   checksum: 10/882fbe363bb06dd5af48338460388aaf070c9336544ad86e7032ac2950d618ff07d08023cc7e242d8679b0157ec91ae3635c18bdbe69de389f374a02a8949519
-  languageName: node
-  linkType: hard
-
-"reflect-metadata@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "reflect-metadata@npm:0.2.2"
-  checksum: 10/1c93f9ac790fea1c852fde80c91b2760420069f4862f28e6fae0c00c6937a56508716b0ed2419ab02869dd488d123c4ab92d062ae84e8739ea7417fae10c4745
   languageName: node
   linkType: hard
 
@@ -15424,13 +15291,6 @@ __metadata:
   version: 2.2.5
   resolution: "ts-log@npm:2.2.5"
   checksum: 10/b8fb444ae3b05ac8f709a1acee26dba014ed601e1fc36fa2bfcac5555032eb6c6ca9cd16b8da21832f1631785c3ad7de7177d8e7631c197a1aeca64f03a872a4
-  languageName: node
-  linkType: hard
-
-"ts-simple-nameof@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "ts-simple-nameof@npm:1.3.3"
-  checksum: 10/52a4857cbc864ffbf413c2b9c565c9259ceeaff9a60f46012511a4b270da6ddc4449f520da9b6f4c3625e44bd893feefb8b6186d4cb12583a0a2f97616af117c
   languageName: node
   linkType: hard
 
