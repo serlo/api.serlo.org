@@ -12,7 +12,6 @@ import { createAuthServices, AuthServices } from '~/context/auth-services'
 import { Cache } from '~/context/cache'
 import { SwrQueue } from '~/context/swr-queue'
 import { captureErrorEvent } from '~/error-event'
-import { applyEnmeshedMiddleware } from '~/internals/server/enmeshed-middleware'
 import { applyKratosMiddleware } from '~/internals/server/kratos-middleware'
 import { Timer, createTimer } from '~/timer'
 
@@ -69,7 +68,6 @@ async function initializeServer({
     kratos: authServices.kratos,
     pool,
   })
-  const enmeshedPath = applyEnmeshedMiddleware({ app, cache })
 
   app.get(healthPath, async (_req, res) => {
     try {
@@ -106,9 +104,6 @@ async function initializeServer({
     console.log(`SWR Queue Dashboard: ${host}${dashboardPath}`)
     console.log(`Kratos endpoint:     ${host}${kratosPath}`)
     console.log(`Health endpoint:     ${host}${healthPath}`)
-    if (enmeshedPath) {
-      console.log(`Enmeshed endpoint:   ${host}${enmeshedPath}`)
-    }
     /* eslint-enable no-console */
   })
 }
