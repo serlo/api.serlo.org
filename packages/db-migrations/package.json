@@ -20,7 +20,7 @@
   "dependencies": {
     "db-migrate": "^0.11.14",
     "db-migrate-mysql": "^3.0.0",
-    "uuid": "^13.0.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@slack/web-api": "^7.15.0",
