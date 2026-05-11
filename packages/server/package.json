@@ -25,7 +25,7 @@
     "@apollo/server": "^5.5.0",
     "@as-integrations/express5": "^1.1.2",
     "@google-cloud/storage": "^7.19.0",
-    "@graphql-codegen/add": "^6.0.0",
+    "@graphql-codegen/add": "^7.0.0",
     "@graphql-codegen/cli": "^7.0.0",
     "@graphql-codegen/typescript": "^5.0.9",
     "@graphql-codegen/typescript-resolvers": "^5.1.7",
