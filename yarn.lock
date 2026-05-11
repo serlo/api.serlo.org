@@ -1396,6 +1396,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-codegen/plugin-helpers@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@graphql-codegen/plugin-helpers@npm:7.0.1"
+  dependencies:
+    "@graphql-tools/utils": "npm:^11.0.0"
+    change-case-all: "npm:^2.1.0"
+    common-tags: "npm:1.8.2"
+    import-from: "npm:4.0.0"
+    tslib: "npm:^2.8.0"
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 10/f93d8b26a6ca7f6e061091c18bf4f236f85495a689fc08e3390167cd8e91d3f73d13044e6e6e6a73e14a36e0a8a4d1cb3a64ef0a38bf052e7c5ab5b1a96649fd
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/schema-ast@npm:^5.0.1":
   version: 5.0.1
   resolution: "@graphql-codegen/schema-ast@npm:5.0.1"
@@ -1456,23 +1471,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-codegen/typescript-resolvers@npm:^5.1.7":
-  version: 5.1.7
-  resolution: "@graphql-codegen/typescript-resolvers@npm:5.1.7"
+"@graphql-codegen/typescript-resolvers@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "@graphql-codegen/typescript-resolvers@npm:6.0.1"
   dependencies:
-    "@graphql-codegen/plugin-helpers": "npm:^6.1.1"
-    "@graphql-codegen/typescript": "npm:^5.0.9"
-    "@graphql-codegen/visitor-plugin-common": "npm:^6.2.4"
+    "@graphql-codegen/plugin-helpers": "npm:^7.0.1"
+    "@graphql-codegen/typescript": "npm:^6.0.0"
+    "@graphql-codegen/visitor-plugin-common": "npm:^7.0.0"
     "@graphql-tools/utils": "npm:^11.0.0"
-    auto-bind: "npm:~4.0.0"
-    tslib: "npm:~2.6.0"
+    auto-bind: "npm:^5.0.0"
+    tslib: "npm:^2.8.0"
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     graphql-sock: ^1.0.0
   peerDependenciesMeta:
     graphql-sock:
       optional: true
-  checksum: 10/59d4101671dd6263edefd8b1459b550e8af894b355b4b7bc4b6bdcc9cdbc62f4de3f9b075b280bc4712cf8fac3f901c828d2775ad5e8a2cf7b5af00bb014be39
+  checksum: 10/0266e95c2897423bc7efbda9683f030a78164c011239ae32d4aabfcb5ad5f1cd0a91fc141aa65babfb1fad595e3c2e850b48d1b887473af3e20fb255a7094ea5
   languageName: node
   linkType: hard
 
@@ -4199,7 +4214,7 @@ __metadata:
     "@graphql-codegen/add": "npm:^7.0.0"
     "@graphql-codegen/cli": "npm:^7.0.0"
     "@graphql-codegen/typescript": "npm:^5.0.9"
-    "@graphql-codegen/typescript-resolvers": "npm:^5.1.7"
+    "@graphql-codegen/typescript-resolvers": "npm:^6.0.1"
     "@ory/client": "npm:^1.22.33"
     "@sentry/node": "npm:^10.47.0"
     "@serlo/authorization": "npm:^0.60.0"
