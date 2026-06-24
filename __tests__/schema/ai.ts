@@ -52,6 +52,7 @@ const query = new Client({ userId: user.id }).prepareQuery({
 })
 
 beforeEach(() => {
+  global.server.close()
   server.listen({
     // We want to know if there are any requests going through to the OpenAI
     // server. It should not happen! If this fails, check if the URL we are
@@ -79,6 +80,7 @@ afterEach(() => {
 
 // set it back to 'bypass' as defined in our 'sjest.setup.ts
 afterAll(() => {
+  global.server.close()
   global.server.listen({ onUnhandledRequest: 'bypass' })
 })
 
