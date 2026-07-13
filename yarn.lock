@@ -3858,7 +3858,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-react: "npm:^7.37.5"
     globals: "npm:^17.4.0"
-    graphql: "npm:^16.13.2"
+    graphql: "npm:^17.0.1"
     graphql-tag: "npm:^2.12.6"
     jest: "npm:^30.3.0"
     jest-transform-graphql: "npm:^2.1.0"
@@ -3905,7 +3905,7 @@ __metadata:
     dotenv: "npm:^17.3.1"
     express: "npm:^5.2.1"
     fp-ts: "npm:^2.16.11"
-    graphql: "npm:^16.13.2"
+    graphql: "npm:^17.0.1"
     graphql-playground-middleware-express: "npm:^1.7.23"
     graphql-type-json: "npm:^0.3.2"
     io-ts: "npm:^2.2.22"
@@ -8895,6 +8895,13 @@ __metadata:
   version: 16.13.2
   resolution: "graphql@npm:16.13.2"
   checksum: 10/9ede86f0a7227d47a41e2076e0132839f66fbd14899abfd818d7de2ab81076ee249c8788ad42243367d68a027a8763cc4c7be2e441ccfb03a8549490c7b66c2f
+  languageName: node
+  linkType: hard
+
+"graphql@npm:^17.0.1":
+  version: 17.0.1
+  resolution: "graphql@npm:17.0.1"
+  checksum: 10/f59d39448ec380e0378958cf834905e12e86cbcbe06bc6739a3d903b575f30a87cffee98bd838c40d2546253278e3faf0c4ec848817cda17f663185c511a80ae
   languageName: node
   linkType: hard
 
