@@ -1,3 +1,10 @@
+# May contain sensitive information
+user.csv
+mysql.sql
+kratos.sql
+temp.sql
+dump-*
+
 # Local enmeshed connector
 /enmeshed/logs
 /enmeshed/config.json

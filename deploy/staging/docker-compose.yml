@@ -1,0 +1,92 @@
+services:
+  api:
+    image: ghcr.io/serlo/api.serlo.org/server:staging
+    pull_policy: always
+    env_file:
+      - .env
+    ports:
+      - '3001:3001'
+    # TODO best practice: healthcheck
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - staging-network
+
+  swr-queue-worker:
+    image: ghcr.io/serlo/api.serlo.org/swr-queue-worker:staging
+    pull_policy: always
+    env_file:
+      - .env
+    # TODO: ports needed?
+    ports:
+      - '3000:3000'
+    # TODO best practice: healthcheck
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - staging-network
+
+  redis:
+    image: redis:7
+    networks:
+      - staging-network
+
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=serlo
+      - MYSQL_USER=serlo
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - staging-network
+
+  kratos:
+    image: oryd/kratos:v1.3.0
+    ports:
+      - '4433:4433' # public
+    environment:
+      - DSN=postgres://serlo:secret@postgres:5432/kratos?sslmode=disable
+    depends_on:
+      - postgres
+      - kratos-migrate
+    command: serve -c /etc/config/kratos/config.staging.yml --watch-courier
+    volumes:
+      - ../kratos:/etc/config/kratos
+    networks:
+      - staging-network
+
+  kratos-migrate:
+    image: oryd/kratos:v1.3.0
+    command: -c /etc/config/kratos/config.staging.yml migrate sql -e --yes
+    depends_on:
+      - postgres
+    volumes:
+      - ../kratos:/etc/config/kratos
+    restart: on-failure
+    networks:
+      - staging-network
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=serlo
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=kratos
+      - PGPASSWORD=secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - staging-network
+
+networks:
+  staging-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mysql_data:
