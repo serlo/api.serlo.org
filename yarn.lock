@@ -11851,14 +11851,14 @@ __metadata:
   linkType: hard
 
 "msgpack5@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "msgpack5@npm:6.0.2"
+  version: 6.1.0
+  resolution: "msgpack5@npm:6.1.0"
   dependencies:
     bl: "npm:^5.0.0"
     inherits: "npm:^2.0.3"
     readable-stream: "npm:^3.0.0"
     safe-buffer: "npm:^5.1.2"
-  checksum: 10/ba6c4460a5414a934a9e170a8cf18177f7e1fe6a8bbde7ed533056892a3d8deca9e940ef4794d8ee17237100574a6ec8aeec7d1eff107564f58ffcdca1e9b729
+  checksum: 10/877e4551d4450b2a75e709fd8028b6bd11495994b33fc3b7f46d3c77050fa8ff170e4d6c7c7a070951d1c590281f8488fb682cff47f1e937e093a92d62be2772
   languageName: node
   linkType: hard
 
