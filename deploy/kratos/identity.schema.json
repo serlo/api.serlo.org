@@ -1,0 +1,51 @@
+{
+  "$id": "https://serlo.org/auth/kratos-identity.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User",
+  "type": "object",
+  "properties": {
+    "traits": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "ory.sh/kratos": {
+            "credentials": { "password": { "identifier": true } },
+            "verification": { "via": "email" },
+            "recovery": { "via": "email" }
+          }
+        },
+        "username": {
+          "type": "string",
+          "ory.sh/kratos": {
+            "credentials": { "password": { "identifier": true } }
+          },
+          "pattern": "^[\\w\\-]+$",
+          "maxLength": 32
+        },
+        "subscribedNewsletter": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "motivation": {
+          "type": "string"
+        },
+        "profileImage": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "interest": {
+          "type": "string",
+          "enum": ["parent", "teacher", "pupil", "student", "other", ""]
+        }
+      },
+      "required": ["email", "username", "interest"],
+      "additionalProperties": false
+    }
+  }
+}
