@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@slack/web-api": "^7.15.0",
-    "@types/ramda": "^0.31.1",
+    "@types/ramda": "^0.32.0",
     "@types/semver": "^7.7.1",
     "@types/uuid": "^11.0.0",
     "dotenv": "^17.3.1",
